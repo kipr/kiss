@@ -1,0 +1,18 @@
+KISS 1.9.0:
+  - CBC target was added
+
+KISS 1.4.9:
+	- Fixed flipped axis problem
+	- Minor performance improvements on all platforms
+
+KISS 1.4.8:
+	- Added better support for various versions of OpenGL
+
+KISS 1.4.7:
+	- Fixed gcc.target file for linux
+	- Fixed srand
+	- Fixed fopen, now defaults to opening files with the same path as the program
+	- /** comments now colorize correctly
+	- Match case checkbox now behaves correctly
+	- Save as now adds .c extension on all platforms
+	- Font size increases now affect margin width

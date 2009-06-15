@@ -1,0 +1,13 @@
+[General]
+description=Calls a native GCC compiler
+display_name=This Machine
+extensions=C Sources (*.c *.h)
+manual=targets/gcc/manual.html
+name=gcc
+template=targets/gcc/template.c
+
+[Target]
+cflags=-Wimplicit
+include_dirs=targets/gcc/include
+lflags=-lkiss -lglfw -lGLee -lopengl32
+lib_dirs=targets/gcc/lib

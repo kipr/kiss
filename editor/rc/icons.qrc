@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/shortcuts/edit" >
+        <file>icon_set/icons/arrow_redo.png</file>
+        <file>icon_set/icons/arrow_undo.png</file>
+        <file>icon_set/icons/cut.png</file>
+        <file>icon_set/icons/page_white_copy.png</file>
+        <file>icon_set/icons/page_white_paste.png</file>
+    </qresource>
+    <qresource prefix="/shortcuts/file" >
+        <file>icon_set/icons/cross.png</file>
+        <file>icon_set/icons/disk.png</file>
+        <file>icon_set/icons/folder.png</file>
+        <file>icon_set/icons/page_white.png</file>
+    </qresource>
+    <qresource prefix="/shortcuts/target" >
+        <file>icon_set/icons/application_go.png</file>
+        <file>icon_set/icons/application_put.png</file>
+        <file>icon_set/icons/brick.png</file>
+        <file>icon_set/icons/brick_go.png</file>
+        <file>icon_set/icons/bricks.png</file>
+        <file>icon_set/icons/bullet_arrow_down.png</file>
+        <file>icon_set/icons/bullet_go.png</file>
+        <file>icon_set/icons/cog_go.png</file>
+        <file>icon_set/icons/link.png</file>
+        <file>icon_set/icons/page_white_put.png</file>
+        <file>icon_set/icons/ruby_blue.png</file>
+        <file>icon_set/icons/shape_flip_vertical.png</file>
+        <file>icon_set/icons/spellcheck.png</file>
+        <file>icon_set/icons/stop.png</file>
+        <file>icon_set/icons/tick.png</file>
+    </qresource>
+    <qresource prefix="/" >
+        <file>splash_screen.png</file>
+    </qresource>
+</RCC>

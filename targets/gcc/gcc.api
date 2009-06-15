@@ -1,0 +1,51 @@
+serial_open(char *portname, int baud); /* returns a connection handle, or -1 on fail */
+serial_reopen(int handle, char * portname, int baud); /* re-connects a specific handle, returning 1 on success, 0 on failure */
+serial_close(int handle); /* closes the specified serial handle */
+serial_set_baud(int handle, int baud); /* sets the baud rate for a handle, returning 1 on success, 0 on failure */
+serial_update_buffer(int handle); /* reads information from the OS into a serial buffer for that handle, returns buffer count */
+serial_write(int handle, unsigned char *data, int count); /* writes the specified data out to the specified handle */
+serial_read(int handle, unsigned char *data, int count); /* calls update_buffer, and then reads data from it */
+serial_iflush(int handle); /* flushes the input buffer, discarding any unread data */
+serial_oflush(int handle); /* flushes the output buffer, discarding any unwritten data */
+serial_ioflush(int handle); /* flushes both buffers, discarding any unused data */
+serial_writeb(int handle, unsigned char byte); /* writes a single byte to a handle */
+serial_readb(int handle); /* updates the buffer, and reads a single byte from it */
+serial_set_mode(int mode); /* Sets the mode of the default serial port */
+serial_write_byte(unsigned char byte); /* Writes a byte to the default serial port */
+serial_read_byte(); /* Reads a byte from the default serial port */
+serial_flush(); /* Flushes the IO buffers of the default serial port */
+serial_set_extra(); /* Stub, only necessary on the XBC v3 */
+start_process(function); /* Starts a new process, returning an integer id */
+kill_process(int pid); /* Kills te process indicated by pid */
+defer(); /* Yields the rest of this thread's processor time */
+create_mutex(); /* Returns a kiss_mutex, or 0 on failure */
+destroy_mutex(); /* Destroys a previously created mutex */
+lock_mutex(kiss_mutex mutex); /* Waits until the specified mutex is unlocked, and then locks it */
+unlock_mutex(kiss_mutex mutex); /* Unlock a previously locked mutex */
+fsleep(float seconds); /* Sleeps the specified number of seconds */
+msleep(long milliseconds); /* Sleeps the specified number of milliseconds */
+seconds(); /* Returns a float representing the number of seconds since the first call to a kiss function */
+kiss_random(); /* Returns a random number */
+kiss_srandom(int seed); /* Seeds the random number generator */
+rand(); /* Returns a random number */
+srand(int seed); /* Seeds the random number generator, usually done with time(NULL) */
+random(); /* Returns a random number */
+srandom(int seed); /* Seeds the random number generator, usually done with time(NULL) */
+graphics_init(int width, int height); /* Opens a graphics window with the specified dimensions */
+graphics_quit(); /* Closes the graphics window */
+graphics_update(); /* Paints any recent draws to the screen */
+graphics_fill(int r, int g, int b); /* Fills the screen with the specified color */
+graphics_pixel(int x, int y, int r, int g, int b); /* Draws a pixel */
+graphics_line(int x1, int y1, int x2, int y2, int r, int g, int b); /* Draws a line */
+graphics_circle(int cx, int cy, int radius, int r, int g, int b); /* Draws an empty circle */
+graphics_circle_fill(int cx, int cy, int radius, int r, int g, int b); /* Draws a filled circle */
+graphics_rectangle(int x1, int y1, int x2, int y2, int r, int g, int b); /* Draws an empty rectangle */
+graphics_rectangle_fill(int x1, int y1, int x2, int y2, int r, int g, int b); /* Draws a filled rectangle */
+graphics_triangle(int x1, int y1, int x2, int y2, int x3, int y3, int r, int g, int b); /* Draws an emtpy triangle */
+graphics_triangle_fill(int x1, int y1, int x2, int y2, int x3, int y3, int r, int g, int b); /* Draws a filled triangle */
+kiss_get_key(int key); /* Returns the state of the specified key */
+kiss_get_mouse_position(int *x, int *y); /* Sets the provided x and y variables to the current mouse position */
+kiss_get_mouse_button(int button); /* Returns a mouse button state */
+kiss_get_mouse_wheel(); /* Returns the position of the mosue wheel */
+kiss_grab_mouse(); /* Grab mouse focus, hiding it */
+kiss_release_mouse(); /* Release mouse focus */

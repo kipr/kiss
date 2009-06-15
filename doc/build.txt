@@ -1,0 +1,21 @@
+KISS 3rd Party Software:
+	Qt
+	QScintilla
+	GLFW
+	GLee
+
+Qt and QScintilla must be installed on your computer.  Installing these packages is simple, but slightly different on each platform. 
+
+Qt can be found at http://www.trolltech.com
+QScintilla can be found at http://riverbankcomputing.co.uk
+
+GLFW and GLee binaries are included in the source package for convenience, as well as sources.
+
+To build KISS, run the following commands:
+
+cd ${KISS-SOURCE-DIR}
+qmake
+make
+make install
+
+After these commands are run, there should be a new directory in the KISS root directory named 'deployment'.  This directory will contain the KISS binary along with the current stable targets.  Have fun, and good luck!
