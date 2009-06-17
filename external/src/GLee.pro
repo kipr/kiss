@@ -18,17 +18,20 @@ CONFIG += staticlib
 HEADERS += GLee.h
 SOURCES += GLee.c
 
+gl_dir.target = ../include/GL
 copy_header.target = ../include/GL/GLee.h
 
 unix: {
+gl_dir.commands = mkdir -p ../include/GL
 copy_header.commands = cp GLee/GLee.h ../include/GL
 }
 
 win32: {
+## FIXME: Add gl_dir.commands for windows
 copy_header.commands = copy GLee\\GLee.h ..\\include\\GL
 }
 
-QMAKE_EXTRA_TARGETS = copy_header
-POST_TARGETDEPS += $$copy_header.target
+QMAKE_EXTRA_TARGETS = gl_dir copy_header
+POST_TARGETDEPS += $$gl_dir.target $$copy_header.target
 
 QMAKE_CLEAN += $${DESTDIR}/lib$${TARGET}.a ../include/GL/GLee.h
