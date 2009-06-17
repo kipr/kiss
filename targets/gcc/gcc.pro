@@ -26,6 +26,17 @@ QMAKE_CLEAN += $(DESTDIR)/$(TARGET) src/*~
 unix:  COPY = cp
 !unix: COPY = copy
 
+unix: {
+lib_dir.target = lib
+lib_dir.commands = mkdir -p lib
+
+include_dir.target = include
+include_dir.commands = mkdir -p include/GL
+}
+
+QMAKE_EXTRA_TARGETS += lib_dir include_dir
+POST_TARGETDEPS += $$lib_dir.target $$include_dir.target
+
 ##############################
 # Install proper target file #
 ##############################
