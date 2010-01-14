@@ -3,15 +3,13 @@
 ######################################################################
 
 include(../config.pri)
+include(../trademarks/branding.pri)
 
 TEMPLATE = app
 TARGET = KISS
 DEPENDPATH += src
 INCLUDEPATH += src
 DESTDIR=..
-
-macx: ICON = rc/mac_icon.icns
-win32: RC_FILE = rc/kiss.rc
 
 win32 {
 INCLUDEPATH += Qsci
@@ -54,7 +52,7 @@ FORMS += ui/MainWindow.ui \
 	 ui/EditorSettingsDialog.ui \
 	 ui/TargetSettingsDialog.ui
 
-RESOURCES = rc/icons.qrc
+RESOURCES += rc/icons.qrc
 
 unix:QMAKE_CLEAN += src/*~
 

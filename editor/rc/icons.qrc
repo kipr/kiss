@@ -29,7 +29,4 @@
         <file>icon_set/icons/stop.png</file>
         <file>icon_set/icons/tick.png</file>
     </qresource>
-    <qresource prefix="/" >
-        <file>splash_screen.png</file>
-    </qresource>
 </RCC>
