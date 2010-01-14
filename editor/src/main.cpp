@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 	QApplication::setOrganizationName("KIPR");
 	QApplication::setOrganizationDomain("kipr.org");
 	QApplication::setApplicationName("KISS");
-
+	QApplication::setWindowIcon(QIcon(":/icon.png"));
 	/* Now actually do stuff */
 	
 	QPixmap splashPixmap(":/splash_screen.png");
