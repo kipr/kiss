@@ -324,4 +324,12 @@ void Target::unloadPlugin()
 	}
 }
 
+void Target::setCurrentFile(SourceFile *sourceFile)
+{
+    if(m_targetInterface)
+        m_targetInterface->setCurrentFile(sourceFile);
+    else
+        qWarning("Target::setCurrentFile() invalid target interface");
+}
+
 

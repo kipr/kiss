@@ -29,6 +29,7 @@
 
 #include "LexerSpec.h"
 #include "LexerStyles.h"
+#include "SourceFile.h"
 
 class TargetInterface 
 {
@@ -64,6 +65,8 @@ public:
 	void setPort(QString port) {m_defaultPort=port;}
 	void setTargetFile(QString filename) {m_targetFile=filename;}
 	
+	virtual void setCurrentFile(SourceFile *sourceFile) = 0;
+	
 	/* Also, you have the option of defining a signal
 		named "void requestPort()" in your plugin.  
 		This signal will pop up a port selection dialog
@@ -81,6 +84,6 @@ protected:
 	QList<QAction*> m_actionList;
 };
 
-Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/2.0");
+Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/2.1");
 
 #endif

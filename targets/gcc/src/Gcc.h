@@ -27,6 +27,8 @@
 #include <QSettings>
 
 #include "TargetInterface.h"
+#include "SourceFile.h"
+#include "ExtraGUIToolBar.h"
 #include "LexerSpec.h"
 #include "LexerStyles.h"
 
@@ -50,6 +52,7 @@ public:
 	bool hasDownload() { return false; }
 	bool hasStop() { return false; }
 	bool hasSimulate() {return false; }
+	void setCurrentFile(SourceFile *sourceFile);
 
 private:
 	QProcess m_gcc;
@@ -57,6 +60,7 @@ private:
 	QString m_gccPath;
 	QString m_outputFileName;
 	QStringList m_cflags,m_lflags;
+	ExtraGUIToolBar m_toolbar;
 	
 	void processCompilerOutput();
 	void processLinkerOutput();

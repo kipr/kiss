@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/shortcuts/extraGUI" >
+        <file>cog_add.png</file>
+        <file>function.png</file>
+        <file>help.png</file>
+        <file>if_else.PNG</file>
+        <file>loop.png</file>
+        <file>question.png</file>
+        <file>switch.PNG</file>
+        <file>template.png</file>
+    </qresource>
+</RCC>

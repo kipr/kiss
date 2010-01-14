@@ -4,7 +4,7 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(gcc_plugin)
 DEPENDPATH += src
-INCLUDEPATH += src ../../editor/src
+INCLUDEPATH += src ../../editor/src ../../libraries/extraGUI/src
 DESTDIR = .
 
 win32:CONFIG -= embed_manifest_dll
@@ -13,7 +13,7 @@ win32:TARGET = $$qtLibraryTarget(libgcc_plugin)
 CONFIG -= debug debug_and_release
 CONFIG += release
 
-LIBS += -lqscintilla2
+LIBS += -lqscintilla2 -L../../libraries/extraGUI -lextraGUI
 
 HEADERS += Gcc.h
 SOURCES += Gcc.cpp

@@ -27,6 +27,8 @@
 #include <QSettings>
 
 #include "TargetInterface.h"
+#include "SourceFile.h"
+#include "ExtraGUIToolBar.h"
 #include "LexerSpec.h"
 #include "LexerStyles.h"
 #include "SerialClient.h"
@@ -51,6 +53,7 @@ public:
 	bool hasDownload() { return true; }
 	bool hasStop() { return false; }
 	bool hasSimulate() { return true; }
+	void setCurrentFile(SourceFile *sourceFile);
 	
 signals:
     void requestPort();
@@ -61,14 +64,15 @@ private:
 	QString m_gccPath;
 	QString m_outputFileName;
 	QStringList m_cflags,m_lflags;
-    SerialClient m_serial;
+  SerialClient m_serial;
+  ExtraGUIToolBar m_toolbar;
 	
 	void processCompilerOutput();
 	void processLinkerOutput();
 	void refreshSettings();
 	void setLexerSpecs();
 	
-    QStringList getPaths(QString string);
+  QStringList getPaths(QString string);
 };
 
 #endif

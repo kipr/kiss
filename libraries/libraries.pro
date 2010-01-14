@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 SUBDIRS = kiss \
-          kiss_sim
+          kiss_sim \
+	  extraGUI

@@ -52,6 +52,8 @@ public:
 	LexerSpec  *getLexerSpec();
 	QList<QAction*> getActionList();
 	
+	void setCurrentFile(SourceFile *sourceFile);
+	
 	// These two load some settings from the target file
 	QString getSourceExtensions();
 	QString getSourceTemplate();

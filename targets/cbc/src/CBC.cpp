@@ -46,6 +46,8 @@ CBC::CBC()
 	m_gcc.setReadChannel(QProcess::StandardError);
 
 	setLexerSpecs();
+	
+	m_actionList.push_back(m_toolbar.toolbarAction());
 
 //FIXME This is ugly
 #ifdef Q_OS_MAC
@@ -339,6 +341,15 @@ void CBC::setLexerSpecs()
 							  "double else enum extern float for goto if int long "
 							  "register return short signed sizeof static struct "
 							  "switch typedef union unsigned void volatile while";
+							  
+	m_lexerSpec.defaultColor[LexerCPP::Keyword2] = QColor("darkMagenta"); // for ExtraGUIToolBar
+	m_lexerSpec.defaultFont[LexerCPP::Keyword2] = QFont("", -1, QFont::Bold); // for ExtraGUIToolBar
+	m_lexerSpec.keywords[2] = "boolean_expression  variable a_value starting_value ending_value change_in_variable"; // for ExtraGUIToolBar
 }
 
-Q_EXPORT_PLUGIN2(gcc_plugin, CBC);
+void CBC::setCurrentFile(SourceFile *sourceFile)
+{
+	m_toolbar.setCurrentFile(sourceFile);
+}
+
+Q_EXPORT_PLUGIN2(cbc_plugin, CBC);

@@ -320,8 +320,8 @@ void MainWindow::on_actionChange_Target_triggered(bool)
 
 	/* Tells the settings dialog which target file to use */
 	m_targetSettingsDialog.setTargetFile(m_chooseTargetDialog.getSelectedTargetFilePath());
-
-	/* Determines which buttons should go on the tool bar */
+	
+	/* Determines which default buttons should go on the tool bar */
 	if(m_target.hasCompile())
 		ui_targetToolBar->insertAction(0,actionCompile);
 	if(m_target.hasDownload())
@@ -333,6 +333,13 @@ void MainWindow::on_actionChange_Target_triggered(bool)
 	if(m_target.hasStop())
 		ui_targetToolBar->insertAction(0,actionStop);
 	ui_targetToolBar->setVisible(true);
+	
+	/* Adds custom buttons to the toolbar */
+	QList<QAction*> actionList = m_target.getActionList();
+	int i;
+	
+	for(i = 0;i < actionList.size();i++)
+		ui_targetToolBar->insertAction(0, actionList[i]);
 	
 	/* Pops up a port select dialog if the target should have a port set */
 	if(targetSettings.value("port_dialog").toBool())
@@ -550,6 +557,8 @@ void MainWindow::on_ui_tabWidget_currentChanged(int index)
 	}
 	else
 		ui_errorView->hide();
+		
+	m_target.setCurrentFile(m_currentSourceFile);
 }
 
 /********************

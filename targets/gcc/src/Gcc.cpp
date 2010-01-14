@@ -51,6 +51,8 @@ Gcc::Gcc()
 #ifdef Q_OS_MAC
 	system(("ranlib " + QDir::currentPath() + "/targets/gcc/lib/*.a").toLocal8Bit());
 #endif
+
+	m_actionList.push_back(m_toolbar.toolbarAction());
 }
 
 Gcc::~Gcc()
@@ -285,6 +287,15 @@ void Gcc::setLexerSpecs()
 							  "double else enum extern float for goto if int long "
 							  "register return short signed sizeof static struct "
 							  "switch typedef union unsigned void volatile while";
+	
+	m_lexerSpec.defaultColor[LexerCPP::Keyword2] = QColor("darkMagenta"); // for ExtraGUIToolBar
+	m_lexerSpec.defaultFont[LexerCPP::Keyword2] = QFont("", -1, QFont::Bold); // for ExtraGUIToolBar
+	m_lexerSpec.keywords[2] = "boolean_expression  variable a_value starting_value ending_value change_in_variable"; // for ExtraGUIToolBar
+}
+
+void Gcc::setCurrentFile(SourceFile *sourceFile)
+{
+	m_toolbar.setCurrentFile(sourceFile);
 }
 
 Q_EXPORT_PLUGIN2(gcc_plugin, Gcc);
