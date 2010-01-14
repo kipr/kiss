@@ -1,0 +1,121 @@
+start_process(void (*function)()); /* Starts a new process, returning an integer id */
+kill_process(int pid); /* Kills the process indicated by pid */
+defer(); /* Yields the rest of this thread's processor time */
+create_mutex(); /* Returns a kiss_mutex, or 0 on failure */
+destroy_mutex(); /* Destroys a previously created mutex */
+lock_mutex(kiss_mutex mutex); /* Waits until the specified mutex is unlocked, and then locks it */
+unlock_mutex(kiss_mutex mutex); /* Unlock a previously locked mutex */
+fsleep(float seconds); /* Sleeps the specified number of seconds */
+msleep(long milliseconds); /* Sleeps the specified number of milliseconds */
+seconds(); /* Returns a float representing the number of seconds since the first call to a kiss function */
+kiss_random(); /* Returns a random number */
+kiss_srandom(int seed); /* Seeds the random number generator */
+rand(); /* Returns a random number */
+srand(int seed); /* Seeds the random number generator, usually done with time(NULL) */
+random(); /* Returns a random number */
+srandom(int seed); /* Seeds the random number generator, usually done with time(NULL) */
+create_connect(); /* opens serial line between processor and Create, returns 0 if successful */
+create_disconnect() ; /* closes serial line to Create */
+create_start(); /* initializes Create (done by create_connect)*/
+create_passive(); /* allow Create to talk, but not move */
+create_safe(); /* create can talk and move, but will stop at cliff or when wheel drops; violates 3rd law */
+create_full() ; /* create will do whatever you tell it to do, violates 2nd law */
+create_spot() ; /* does Roomba spot clean script */
+create_cover(); /* does Roomba room clean script */
+create_demo(int d) ; /* executes Create demo script d, see the Create documentation*/
+create_cover_dock(); /* will search for charging dock */
+create_mode(); /* updates global gc_mode with mode value*/
+create_sensor_update(); /* updates all gc_ globals */
+create_wall(); /* updates gc_wall, gc_wall_hb & gc_wall_amt */
+create_buttons() ; /* updates gc_play_button & gc_advance_button */
+create_bumpdrop(); /* updates gc_frdrop, gc_ldrop, gc_rdrop, gc_lbump, gc_rbump*/
+create_cliffs() ; /* updates gc_lcliff,gc_lfcliff, gc_rfcliff,gc_rcliff, gc_lcliff_amt,gc_lfcliff_amt, gc_rfcliff_amt,gc_rcliff_amt */
+create_angle() ; /*updates gc_total_angle & gc_angle */
+create_distance();/*updates gc_distance */
+create_velocity();/* updates gc_vel, gc_radius, gc_lvel & gc_rvel */
+int create_read_IR();/*updates gc_IR */
+create_overcurrents();/* updates gc_overcurrents */
+create_battery_charge();/*updates gc_charge_state, gc_batt_voltage, gc_current_flow, gc_batt_charge, gc_batt_capacity */
+create_cargo_bay_inputs();/*updates gc_digital_in & gc_analog_in */
+create_stop();/* turns off the create's motors */
+create_drive (int speed, int radius);/* moves create at speed around a circle with radius */
+create_drive_straight (int speed);/* moves Create at speed mm/s*/
+create_spin_CW (int speed);/* spins create CW with wheels moving +/- speed mm/s*/
+create_spin_CCW (int speed);/* spins create CCW with wheels moving +/- speed mm/s*/
+create_drive_direct(int r_speed, int l_speed);/*moves  right wheel r_speed and left wheel at l_speed */
+create_spin_block(int speed, int angle);/* spins create at speed and blocks until it has turned at least angle */
+create_advance_led(int on) ;/* if on is 0, turns off led, other values turn it on */
+create_play_led(int on) ;/* if on is 0, turns off led, other values turn it on*/
+create_power_led(int color, int brightness) ;/* color varies from green (0) to red (255) and brightness off (0) to full on (255) */
+create_digital_output(int bits);/* sets the 3 digital output pins, 20, 7 & 19. bits should be 0-7*/
+create_pwm_low_side_drivers(int p24, int p23, int p22);/* sets pwm form pins 24,23 & 22 */
+create_low_side_drivers(int p24, int p23, int p22);/*  sets output driver for pins on or off 24,23 & 22. Set to 0 or 1 */
+create_load_song(int num);/* loads song from gc_song_array (0 to 15) into create, see manual */
+create_play_song(int num);/* plays a song that was loaded with create_play_song*/
+a_button(); /* returns 1 if A button is pressed and 0 otherwise */
+b_button(); /* returns 1 if B button is pressed and 0 otherwise */
+up_button(); /* returns 1 if Up arrow button is pressed and 0 otherwise */
+down_button(); /* returns 1 if Down arrow button is pressed and 0 otherwise */
+left_button(); /* returns 1 if Left arrow button is pressed and 0 otherwise */
+right_button(); /* returns 1 if Right arrow button is pressed and 0 otherwise */
+black_button(); /* returns 1 if Black button on CBC (or period on simulator) is pressed and 0 otherwise */
+kissSim_init(int world, int rx, int ry, float rt); /* initiates the graphics CBC/Create simulator with robot at initial x,y and at heading of rt radians */
+kissSimEnablePause();/* will pause simulation if space bar is pressed when this is called */
+kissSimPause();/* will pause simulation when this is called -- press space bar to resume */
+tone(int frequency, int duration); /* makes a sound at frequency for duration ms */
+beep(); /* make a beep */
+digital(int port); /* returns a 1 or 0 reflecting the state of port (0 to 7) */
+set_digital_output_value(int port, int value); /*sets port (0 to 7)to value (0 or 1) */
+analog10(int port); /* returns 10-bit value from analog port (ports 8 to 15) */
+analog(int port); /* returns 8-bit value from analog port (ports 8 to 15) */
+accel_x(); /* returns x accelleration (-2047 to 2047, +/- 1.5 gee) */
+accel_y(); /* returns y accelleration (-2047 to 2047, +/- 1.5 gee) */
+accel_z(); /* returns z accelleration (-2047 to 2047, +/- 1.5 gee) */
+sonar(int port); /* returns range in mm for sonar plugged into port (13-15)*/
+sonar_inches(int port); /* returns range in whole inches for sonar plugged into port (13-15)*/
+power_level(); /* returns a float battery voltage */
+enable_servos(); /* powers up the servos */
+disable_servos(); /* powers down the servos */
+set_servo_position(int servo, int pos); /* sets servo (1 to 4) to pos (0 to 2047) */
+get_servo_position(int servo); /* returns int of last setting for servo (1 to 4) */
+get_motor_position_counter(int motor); /* returns int of motor (0 to 3) position +/-2147483647 */
+clear_motor_position_counter(int motor); /* sets motor (0 to 3) counter to 0 */
+move_at_velocity(int motor, int velocity); /* PID control of motor (0 to 3) at velocity tick per second */
+mav(int motor, int velocity); /* PID control of motor (0 to 3) at velocity tick per second */
+move_to_position(int motor, int speed, long goal_pos)/* move motor (0 to 3) at speed to goal_pos */
+mtp(int motor, int speed, long goal_pos)/* move motor (0 to 3) at speed to goal_pos */
+move_relative_position(int motor, int speed, long delta_pos)/* move motor (0 to 3) at speed by delta_pos */
+mrp(int motor, int speed, long delta_pos)/* move motor (0 to 3) at speed by delta_pos */
+freeze(int motor)/* keep motor (0 to 3) at current position */
+get_motor_done(int motor); /* returns 1 if motor (0 to 3) is moving to a goal and 0 otherwise */
+block_motor_done(int motor); /* returns when motor (0 to 3) has reached goal */
+bmd(int motor); /* returns when motor (0 to 3) has reached goal */
+setpwm(int motor, int pwm); /* turns on motor (0 to 3) at pwm (-255 to 255)*/
+fd(int motor); /* motor (0 to 3) at full forward */
+bk(int motor); /* motor (0 to 3) at full reverse */
+motor (int motor, int percent);/* motor (0 to 3) at percent % of full (-100 to 100)*/
+off(int motor); /* turns motor (0 to 3) off */
+ao(); /* turns all motors off */
+init_camera(); /*initialize the camera before any other camera functions*/
+track_update(); /*tracking data for a new frame and make it available for retrieval by the other vision functions*/
+track_get_frame(); /*return value is the frame number used to generate the tracking data.*/
+track_count(int ch); /*return the number of blobs available for the channel ch*/
+track_size(int ch, int i); /* returns the number of pixels in the blob*/
+track_x(int ch, int i); /*gets the pixel x coordinate of the centroid of the blob*/
+track_y(int ch, int i); *gets the pixel y coordinate of the centroid of the blob*/
+track_confidence(int ch, int i); /*area/bounding box area (range 0-100, low numbers bad, high numbers good)*/
+track_bbox_left(int ch, int i); /*gets the pixel x coordinate of the leftmost pixel in the blob i*/
+track_bbox_right(int ch, int i); /*gets the pixel x coordinate of the rightmost pixel in the blob i*/
+track_bbox_top(int ch, int i); /*gets the pixel y coordinate of the topmost pixel in the blob i*/
+track_bbox_bottom(int ch, int i); /*gets the pixel y coordinate of the bottommost pixel in the blob i*/
+track_bbox_width(int ch, int i); /*gets the pixel x width of the bounding box of the blob i*/
+track_bbox_height(int ch, int i); /*gets the pixel y height of the bounding box of the blob i*/
+track_angle(int ch, int i); /*gets the angle in radians of the major axis of the blob i*/
+track_major_axis(int ch, int i); /*gets the length in pixels of the major  axis of the bounding ellipse*/
+track_minor_axis(int ch, int i); /*gets the length in pixels of the minor axis of the bounding ellipse*/
+shut_down_in(float time); /*Turns of motors and freezes servo positions */
+wait_for_light(int port); /* does light calibration for sensor in analog port*/
+cbc_display_clear(); /* Clears CBC console display (7 blanks lines in simulator)*/
+cbc_printf(int col, int row, char *t, ...); /*Starts printing at col, row then normal printf control string and args*/                                       
+
+
