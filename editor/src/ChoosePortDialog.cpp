@@ -109,7 +109,7 @@ void ChoosePortDialog::refreshPortList()
 #ifdef Q_OS_MAC
 	devListFilter << "tty.*";
 #else
-	devListFilter << "ttyS*";
+	devListFilter << "ttyUSB*";
 #endif
 
 	// Basically the same as "ls /dev/tty.*" or "ls /dev/ttyS*"
