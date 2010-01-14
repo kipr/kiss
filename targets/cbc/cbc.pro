@@ -71,10 +71,17 @@ target_base.files = cbc.api \
 target_base.path = ../../$${INSTALL_BASE}/targets/cbc
 target_base.extra = $${COPY} cbc.target $${CBC_TARGET_FILE_INSTALL}
 
-target_include.files = ../../libraries/kiss_sim/include/kiss-sim.h include/botball.c
-target_include.path = ../../$${INSTALL_BASE}/targets/cbc/include
+exists(../../trademarks) {
+target_include.files = ../../trademarks/simulator/cbc_sim/include/cbc-sim.h include/botball.c
 
-target_lib.files = ../../libraries/kiss_sim/libkiss_sim.a
+target_lib.files = ../../trademarks/simulator/cbc_sim/libcbc_sim.a
+}
+!exists(../../trademarks) {
+target_include.files = ../../libraries/cbc_sim/include/cbc-sim.h include/botball.c
+target_lib.files = ../../libraries/cbc_sim/libcbc_sim.a
+}
+
+target_include.path = ../../$${INSTALL_BASE}/targets/cbc/include
 target_lib.path = ../../$${INSTALL_BASE}/targets/cbc/lib
 
 target.path = ../../$${INSTALL_BASE}/targets/cbc
@@ -94,48 +101,69 @@ target_manual.path = ../../$${INSTALL_BASE}/targets/cbc/manual
 
 INSTALLS += target target_base target_include target_lib target_manual
 
-##################
-# kiss_sim stuff #
-##################
+#################
+# cbc_sim stuff #
+#################
 
 # Way ugly but nicer in the end
 
+exists(../../trademarks) {
 unix: {
-KISS_SIM_LIB = ../../libraries/kiss_sim/libkiss_sim.a
-KISS_SIM_LIB_DEST = lib/libkiss_sim.a
+CBC_SIM_LIB = ../../trademarks/simulator/cbc_sim/libcbc_sim.a
+CBC_SIM_LIB_DEST = lib/libcbc_sim.a
 
-KISS_SIM_HEADER = ../../libraries/kiss_sim/include/kiss-sim.h
-KISS_SIM_HEADER_DEST = include/kiss-sim.h
+CBC_SIM_HEADER = ../../trademarks/simulator/cbc_sim/include/cbc-sim.h
+CBC_SIM_HEADER_DEST = include/cbc-sim.h
 }
 
 !unix:{
-KISS_SIM_LIB = ..\\..\\libraries\\kiss_sim\\libkiss_sim.a
-KISS_SIM_LIB_DEST = lib\\libkiss_sim.a
+CBC_SIM_LIB = ..\\..\\trademarks\\simulator\\cbc_sim\\libcbc_sim.a
+CBC_SIM_LIB_DEST = lib\\libcbc_sim.a
 
-KISS_SIM_HEADER = ..\\..\\libraries\\kiss_sim\\include\\kiss-sim.h
-KISS_SIM_HEADER_DEST = include\\kiss-sim.h
+CBC_SIM_HEADER = ..\\..\\trademarks\\simulator\\cbc_sim\\include\\cbc-sim.h
+CBC_SIM_HEADER_DEST = include\\cbc-sim.h
+}
 }
 
-kiss_sim.target = kiss_sim
-kiss_sim.depends = kiss_sim-lib kiss_sim-headers
+!exists(../../trademarks) {
+unix: {
+CBC_SIM_LIB = ../../libraries/cbc_sim/libcbc_sim.a
+CBC_SIM_LIB_DEST = lib/libcbc_sim.a
 
-kiss_sim-headers.target = kiss_sim-headers
-kiss_sim-headers.depends = kiss_sim-header
+CBC_SIM_HEADER = ../../libraries/cbc_sim/include/cbc-sim.h
+CBC_SIM_HEADER_DEST = include/cbc-sim.h
+}
 
-kiss_sim-lib.target = $${KISS_SIM_LIB_DEST}
-kiss_sim-lib.commands = $${COPY} $${KISS_SIM_LIB} $${KISS_SIM_LIB_DEST}
-kiss_sim-lib.depends = $${KISS_SIM_LIB}
+!unix:{
+CBC_SIM_LIB = ..\\..\\libraries\\cbc_sim\\libcbc_sim.a
+CBC_SIM_LIB_DEST = lib\\libcbc_sim.a
 
-kiss_sim-header.target = $${KISS_SIM_HEADER_DEST}
-kiss_sim-header.commands = $${COPY} $${KISS_SIM_HEADER} $${KISS_SIM_HEADER_DEST}
-kiss_sim-header.depends = $${KISS_SIM_HEADER}
+CBC_SIM_HEADER = ..\\..\\libraries\\cbc_sim\\include\\cbc-sim.h
+CBC_SIM_HEADER_DEST = include\\cbc-sim.h
+}
 
-QMAKE_EXTRA_TARGETS += kiss_sim kiss_sim-lib kiss_sim-headers kiss_sim-header
+}
 
-POST_TARGETDEPS += kiss_sim
+cbc_sim.target = cbc_sim
+cbc_sim.depends = cbc_sim-lib cbc_sim-headers
 
-QMAKE_CLEAN += $${KISS_SIM_LIB_DEST} \
-				$${KISS_SIM_HEADER_DEST}
+cbc_sim-headers.target = cbc_sim-headers
+cbc_sim-headers.depends = cbc_sim-header
+
+cbc_sim-lib.target = $${CBC_SIM_LIB_DEST}
+cbc_sim-lib.commands = $${COPY} $${CBC_SIM_LIB} $${CBC_SIM_LIB_DEST}
+cbc_sim-lib.depends = $${CBC_SIM_LIB}
+
+cbc_sim-header.target = $${CBC_SIM_HEADER_DEST}
+cbc_sim-header.commands = $${COPY} $${CBC_SIM_HEADER} $${CBC_SIM_HEADER_DEST}
+cbc_sim-header.depends = $${CBC_SIM_HEADER}
+
+QMAKE_EXTRA_TARGETS += cbc_sim cbc_sim-lib cbc_sim-headers cbc_sim-header
+
+POST_TARGETDEPS += cbc_sim
+
+QMAKE_CLEAN += $${CBC_SIM_LIB_DEST} \
+				$${CBC_SIM_HEADER_DEST}
 
 #############################
 # OS X Specific dylib stuff #
