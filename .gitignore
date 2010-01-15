@@ -28,3 +28,13 @@ external/Makefile
 editor/build/
 editor/Makefile
 Makefile
+targets/cbc2/libcbc_plugin.so
+targets/cbc2/lib/
+targets/cbc2/include/cbc2-sim.h
+targets/cbc2/cbc.target
+targets/cbc2/build/
+targets/cbc/include/cbc-sim.h
+libraries/extraGUI/libextraGUI.a
+libraries/extraGUI/build/
+deploy/
+trademarks/
