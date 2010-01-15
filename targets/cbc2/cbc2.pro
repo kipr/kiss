@@ -2,7 +2,7 @@ include(../../config.pri)
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(cbc_plugin)
+TARGET = $$qtLibraryTarget(cbc2_plugin)
 DEPENDPATH += ../cbc/src
 INCLUDEPATH += ../cbc/src ../../editor/src ../../libraries/extraGUI/src
 DESTDIR = .
