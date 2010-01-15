@@ -88,6 +88,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_editorSettingsD
 
 	/* Show all of these changes */
 	setUpdatesEnabled(true);
+	
+	//FIXME changing targets is broken right now
+	actionChange_Target->setEnabled(false);
 
 }
 
