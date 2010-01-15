@@ -9,5 +9,5 @@ template=targets/gcc/template.c
 [Target]
 cflags=-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc -Wimplicit
 include_dirs=targets/gcc/include
-lflags=-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc -lGLee -lkiss -lpthread -lm -lglfw -framework AGL -framework OpenGL -framework Carbon -Wl,-w
+lflags=-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc -lGLee -lkiss -lpthread -lm -lglfw -framework AGL -framework OpenGL -framework Carbon -Wl\,-w
 lib_dirs=targets/gcc/lib
