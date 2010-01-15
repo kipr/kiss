@@ -40,15 +40,15 @@ POST_TARGETDEPS += $$lib_dir.target $$include_dir.target
 # Install proper target file #
 ##############################
 
-macx: CBC_TARGET_SOURCE = cbc.target.mac
-unix:!macx: CBC_TARGET_SOURCE = cbc.target.linux
-windows: CBC_TARGET_SOURCE = cbc.target.windows
+macx: CBC_TARGET_SOURCE = cbc2.target.mac
+unix:!macx: CBC_TARGET_SOURCE = cbc2.target.linux
+windows: CBC_TARGET_SOURCE = cbc2.target.windows
 
 cbc-target.target = cbc-target
 cbc-target.depends = cbc-target-file
 
-cbc-target-file.target = cbc.target
-cbc-target-file.commands = $${COPY} $${CBC_TARGET_SOURCE} cbc.target
+cbc-target-file.target = cbc2.target
+cbc-target-file.commands = $${COPY} $${CBC_TARGET_SOURCE} cbc2.target
 cbc-target-file.depends = cbc-target-source
 
 cbc-target-source.target = $${CBC_TARGET_SOURCE}
@@ -57,19 +57,19 @@ QMAKE_EXTRA_TARGETS += cbc-target cbc-target-file cbc-target-source
 
 POST_TARGETDEPS += cbc-target
 
-QMAKE_CLEAN += cbc.target
+QMAKE_CLEAN += cbc2.target
 
 ######################
 # Install Directives #
 ######################
 
-unix: CBC_TARGET_FILE_INSTALL = ../../$${INSTALL_BASE}/targets/cbc2/cbc.target
-!unix: CBC_TARGET_FILE_INSTALL = ..\\..\\$${INSTALL_BASE}\\targets\\cbc2\\cbc.target
+unix: CBC_TARGET_FILE_INSTALL = ../../$${INSTALL_BASE}/targets/cbc2/cbc2.target
+!unix: CBC_TARGET_FILE_INSTALL = ..\\..\\$${INSTALL_BASE}\\targets\\cbc2\\cbc2.target
 
-target_base.files = cbc.api \
+target_base.files = cbc2.api \
 					template.c
 target_base.path = ../../$${INSTALL_BASE}/targets/cbc2
-target_base.extra = $${COPY} cbc.target $${CBC_TARGET_FILE_INSTALL}
+target_base.extra = $${COPY} cbc2.target $${CBC_TARGET_FILE_INSTALL}
 
 exists(../../trademarks) {
 target_include.files = ../../trademarks/simulator/cbc2_sim/include/cbc2-sim.h include/botball.c
