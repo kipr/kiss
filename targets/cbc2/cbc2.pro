@@ -84,7 +84,7 @@ target_lib.files = ../../libraries/cbc2_sim/libcbc2_sim.a
 target_include.path = ../../$${INSTALL_BASE}/targets/cbc2/include
 target_lib.path = ../../$${INSTALL_BASE}/targets/cbc2/lib
 
-target.path = ../../$${INSTALL_BASE}/targets/cbc
+target.path = ../../$${INSTALL_BASE}/targets/cbc2
 
 target_manual.files = manual/cbcmanual.html \
                       manual/image002.gif \
