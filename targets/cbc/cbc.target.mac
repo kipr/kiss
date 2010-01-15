@@ -8,7 +8,7 @@ template=targets/cbc/template.c
 port_dialog=true
 
 [Target]
-cflags=-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc -Wimplicit -include stdio.h -include stdlib.h -include cbc-sim.h -include kiss-graphics.h -include kiss-compat.h -include kiss-serial.h -include kiss-input.h -include string.h -include math.h -include time.h
+cflags=-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc -Wimplicit -include stdio.h -include stdlib.h -include cbc-sim.h -include kiss-graphics.h -include kiss-compat.h -include kiss-serial.h -include kiss-input.h -include string.h -include math.h -include time.h
 include_dirs=targets/gcc/include targets/cbc/include
-lflags=-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc -lcbc_sim -lGLee -lkiss -lpthread -lm -lglfw -framework AGL -framework OpenGL -framework Carbon
+lflags=-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc -lcbc_sim -lGLee -lkiss -lpthread -lm -lglfw -framework AGL -framework OpenGL -framework Carbon -Wl,-w
 lib_dirs=targets/gcc/lib targets/cbc/lib

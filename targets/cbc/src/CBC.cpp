@@ -35,6 +35,8 @@ CBC::CBC()
 {
 #ifdef Q_OS_WIN32
 	m_gccPath = QDir::currentPath() + "/targets/gcc/mingw/bin/gcc.exe";
+#elif defined(Q_OS_MAC)
+  m_gccPath="/usr/bin/gcc-4.0";
 #else
 	m_gccPath="/usr/bin/gcc";
 #endif
