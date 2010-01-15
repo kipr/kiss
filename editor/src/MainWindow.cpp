@@ -194,6 +194,7 @@ void MainWindow::on_actionClose_triggered(bool)
 	}
 	/* Close the current editor tab */
 	m_currentSourceFile = 0;
+  m_target.setCurrentFile(0);
 	deleteTab(ui_tabWidget->currentIndex());
 	ui_errorView->hide();
 }
