@@ -3,8 +3,8 @@ include(../../config.pri)
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(cbc_plugin)
-DEPENDPATH += ../cbc2/src
-INCLUDEPATH += ../cbc2/src ../../editor/src ../../libraries/extraGUI/src
+DEPENDPATH += ../cbc/src
+INCLUDEPATH += ../cbc/src ../../editor/src ../../libraries/extraGUI/src
 DESTDIR = .
 
 win32:CONFIG -= embed_manifest_dll
