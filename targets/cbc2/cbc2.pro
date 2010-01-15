@@ -3,8 +3,8 @@ include(../../config.pri)
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(cbc_plugin)
-DEPENDPATH += ../cbc/src
-INCLUDEPATH += ../cbc/src ../../editor/src ../../libraries/extraGUI/src
+DEPENDPATH += ../cbc2/src
+INCLUDEPATH += ../cbc2/src ../../editor/src ../../libraries/extraGUI/src
 DESTDIR = .
 
 win32:CONFIG -= embed_manifest_dll
@@ -63,12 +63,12 @@ QMAKE_CLEAN += cbc.target
 # Install Directives #
 ######################
 
-unix: CBC_TARGET_FILE_INSTALL = ../../$${INSTALL_BASE}/targets/cbc/cbc.target
-!unix: CBC_TARGET_FILE_INSTALL = ..\\..\\$${INSTALL_BASE}\\targets\\cbc\\cbc.target
+unix: CBC_TARGET_FILE_INSTALL = ../../$${INSTALL_BASE}/targets/cbc2/cbc.target
+!unix: CBC_TARGET_FILE_INSTALL = ..\\..\\$${INSTALL_BASE}\\targets\\cbc2\\cbc.target
 
 target_base.files = cbc.api \
 					template.c
-target_base.path = ../../$${INSTALL_BASE}/targets/cbc
+target_base.path = ../../$${INSTALL_BASE}/targets/cbc2
 target_base.extra = $${COPY} cbc.target $${CBC_TARGET_FILE_INSTALL}
 
 exists(../../trademarks) {
@@ -81,8 +81,8 @@ target_include.files = ../../libraries/cbc2_sim/include/cbc2-sim.h include/botba
 target_lib.files = ../../libraries/cbc2_sim/libcbc2_sim.a
 }
 
-target_include.path = ../../$${INSTALL_BASE}/targets/cbc/include
-target_lib.path = ../../$${INSTALL_BASE}/targets/cbc/lib
+target_include.path = ../../$${INSTALL_BASE}/targets/cbc2/include
+target_lib.path = ../../$${INSTALL_BASE}/targets/cbc2/lib
 
 target.path = ../../$${INSTALL_BASE}/targets/cbc
 
@@ -96,7 +96,7 @@ target_manual.files = manual/cbcmanual.html \
                       manual/image010.gif \
                       manual/image012.gif \
                       manual/sonar.jpg
-target_manual.path = ../../$${INSTALL_BASE}/targets/cbc/manual
+target_manual.path = ../../$${INSTALL_BASE}/targets/cbc2/manual
                       
 
 INSTALLS += target target_base target_include target_lib target_manual
@@ -170,7 +170,7 @@ QMAKE_CLEAN += $${CBC2_SIM_LIB_DEST} \
 #############################
 
 macx:{
-install_lib_names.extra = sh ../../scripts/osx_install_names.sh ../../$${INSTALL_BASE}/targets/cbc/libcbc_plugin.dylib QtCore QtGui
+install_lib_names.extra = sh ../../scripts/osx_install_names.sh ../../$${INSTALL_BASE}/targets/cbc2/libcbc_plugin.dylib QtCore QtGui
 install_lib_names.path = ../../$${INSTALL_BASE}
 
 INSTALLS += install_lib_names
