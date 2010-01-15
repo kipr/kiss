@@ -3,7 +3,7 @@ description=CBC Botball Controller
 display_name=CBC 2
 extensions=C Sources (*.c *.h)
 manual=targets/cbc2/manual/cbcmanual.html
-name=cbc
+name=cbc2
 template=targets/cbc2/template.c
 port_dialog=true
 
