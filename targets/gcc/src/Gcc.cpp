@@ -253,6 +253,11 @@ void Gcc::refreshSettings()
 
 	m_cflags << settings.value("Target/cflags").toString().split(' ', QString::SkipEmptyParts);
 	m_lflags << settings.value("Target/lflags").toString().split(' ', QString::SkipEmptyParts);
+	
+	if(QSysInfo::MacintoshVersion == QSysInfo::MV_TIGER) {
+    m_cflags << "-isysroot" << "/Developer/SDKs/MacOSX10.4u.sdk";
+    m_lflags << "-isysroot" << "/Developer/SDKs/MacOSX10.4u.sdk";
+	}
 }
 
 void Gcc::setLexerSpecs()
