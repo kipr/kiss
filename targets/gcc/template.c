@@ -17,7 +17,8 @@
 
 /*Function prototypes below*/
 
-int main()\n{\n");
+int main()
+{
     //All variable declarations go here.\n\n");
     //This is your main function.\n\n\n");
 }

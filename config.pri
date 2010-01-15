@@ -3,7 +3,8 @@ CONFIG -= debug release_and_debug
 CONFIG += release
 
 mac:CONFIG += x86 ppc
-mac:CONFIG -= gnu-libiconv
+QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5.sdk
+#mac:CONFIG -= gnu-libiconv
 unix:QMAKE_DEL_FILE=rm -rf
 
 OBJECTS_DIR = build/obj

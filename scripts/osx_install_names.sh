@@ -20,7 +20,7 @@ install_framework_paths()
 
         for i in ${FRAMEWORK_LIST}
         do
-                install_name_tool -change ${i}.framework/Versions/4/${i} @executable_path/../Frameworks/${i} ${TARGET}
+                install_name_tool -change ${i} @executable_path/../Frameworks/${i} ${TARGET}
         done
 
 }

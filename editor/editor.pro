@@ -65,8 +65,8 @@ target.path += ../$${INSTALL_BASE}
 INSTALLS += target changelog
 
 macx:{
-install_libs.extra = sh ../scripts/osx_install_dylibs.sh ../$${INSTALL_BASE}/KISS.app QtCore QtGui
+install_libs.extra = macdeployqt ../$${INSTALL_BASE}/KISS.app
 install_libs.path = ../$${INSTALL_BASE}
-
+ 
 INSTALLS += install_libs
 }

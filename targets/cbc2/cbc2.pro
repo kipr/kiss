@@ -162,15 +162,14 @@ QMAKE_EXTRA_TARGETS += cbc2_sim cbc2_sim-lib cbc2_sim-headers cbc2_sim-header
 
 POST_TARGETDEPS += cbc2_sim
 
-QMAKE_CLEAN += $${CBC2_SIM_LIB_DEST} \
-				$${CBC2_SIM_HEADER_DEST}
+QMAKE_CLEAN += $${CBC2_SIM_LIB_DEST} $${CBC2_SIM_HEADER_DEST}
 
 #############################
 # OS X Specific dylib stuff #
 #############################
 
 macx:{
-install_lib_names.extra = sh ../../scripts/osx_install_names.sh ../../$${INSTALL_BASE}/targets/cbc2/libcbc_plugin.dylib QtCore QtGui
+install_lib_names.extra = sh ../../scripts/osx_install_names.sh ../../$${INSTALL_BASE}/targets/cbc2/libcbc2_plugin.dylib QtCore.framework/Versions/4/QtCore QtGui.framework/Versions/4/QtGui libqscintilla2.5.1.0.dylib
 install_lib_names.path = ../../$${INSTALL_BASE}
 
 INSTALLS += install_lib_names

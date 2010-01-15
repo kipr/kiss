@@ -7,7 +7,7 @@ name=gcc
 template=targets/gcc/template.c
 
 [Target]
-cflags=-Wimplicit
+cflags=-arch i386 -arch ppc -Wimplicit
 include_dirs=targets/gcc/include
-lflags=-lGLee -lkiss -lpthread -lm -lglfw -framework AGL -framework OpenGL -framework Carbon
+lflags=-arch i386 -arch ppc -lGLee -lkiss -lpthread -lm -lglfw -framework AGL -framework OpenGL -framework Carbon
 lib_dirs=targets/gcc/lib
