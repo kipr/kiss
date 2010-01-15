@@ -272,7 +272,7 @@ INSTALLS += target target_base target_include target_gl target_lib
 
 win32: {
 mingw.path = ../../$${INSTALL_BASE}/targets/gcc
-mingw.extra = xcopy /e /i mingw ..\\..\\$${INSTALL_BASE}\\targets\\gcc\\mingw
+mingw.extra = xcopy /d /e /i mingw ..\\..\\$${INSTALL_BASE}\\targets\\gcc\\mingw
 
 INSTALLS += mingw
 }
