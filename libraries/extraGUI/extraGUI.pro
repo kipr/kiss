@@ -4,7 +4,8 @@ TEMPLATE = lib
 TARGET = 
 DEPENDPATH += src
 INCLUDEPATH += ../../external/include ../../editor/src
-CONFIG += qt staticlib
+CONFIG -= debug debug_and_release
+CONFIG += qt staticlib release
 
 win32 { 
     INCLUDEPATH += QSci \
