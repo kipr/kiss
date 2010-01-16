@@ -72,12 +72,12 @@ target_base.path = ../../$${INSTALL_BASE}/targets/cbc2
 target_base.extra = $${COPY} cbc2.target $${CBC_TARGET_FILE_INSTALL}
 
 exists(../../trademarks) {
-target_include.files = ../../trademarks/simulator/cbc2_sim/include/cbc2-sim.h include/botball.c
+target_include.files = ../../trademarks/simulator/cbc2_sim/include/cbc2-sim.h ../../trademarks/simulator/cbc2_sim/src/botball.c
 
 target_lib.files = ../../trademarks/simulator/cbc2_sim/libcbc2_sim.a
 }
 !exists(../../trademarks) {
-target_include.files = ../../libraries/cbc2_sim/include/cbc2-sim.h include/botball.c
+target_include.files = ../../libraries/cbc2_sim/include/cbc2-sim.h ../../libraries/cbc2_sim/src/botball.c
 target_lib.files = ../../libraries/cbc2_sim/libcbc2_sim.a
 }
 
