@@ -2092,18 +2092,6 @@ process, and then destroying it one second later:
       </td>
     </tr>
     <tr>
-       <td><a name="kissSim_init"></a> </td>
-      <td><font class="CFunction">kissSim_init</font>
-
-&nbsp;&nbsp;&nbsp;[Category: Simulator]<br/>
-      <dl>
-        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">kissSim_init</font>(<font class="CVariable">int</font> world, <font class="CVariable">int</font> x, <font class="CVariable">int</font> y, <font class="CVariable">int</font> theta);<br/>
-Initiates the graphics CBC/Create simulator with the robot in the specified world, at the initial x and y position and at a heading of theta radians.</dd>
-          <dt></dt>
-      </dl>
-      </td>
-    </tr>
-    <tr>
        <td><a name="kissSimEnablePause"></a> </td>
       <td><font class="CFunction">kissSimEnablePause</font>
 
@@ -2345,6 +2333,20 @@ Reads the value (0 or 1) of the move right button.</dd>
       </dl>
       </td>
     </tr>
+    
+    <tr>
+    <td><a name="run_for"></a> </td>
+    <td><font class="CFunction">run_for</font>&nbsp;&nbsp;&nbsp;[Category: Processes] 
+        <dl>
+            <dd>Format: <font class="CVariable">void</font> <font class="CFunction">run_for</font>(<font class="CVariable">float</font> sec, <font class="CVariable">void</font> &lt;function_name&gt;);<br/>
+            This function takes a function and runs it for a certain amount of time in seconds.  
+            <font class="CFunction">run_for</font> will return within 1 second of your function exiting, if it exits before the specified time. 
+            The variable sec denotes how many seconds to run the given function. 
+            </dd>
+        </dl>
+    </td>
+    </tr>
+    
     <tr>
        <td><a name="seconds"></a> </td>
       <td><font class="CFunction">seconds</font>
@@ -2355,6 +2357,29 @@ number. Resolution is one millisecond.</dd>
               <dt></dt>
       </dl>
       </td>
+    </tr>
+    
+    <tr>
+    <td><a name="set_analog_floats"></a></td>
+    <td><font class="CFunction">set_analog_floats</font>&nbsp;&nbsp;&nbsp;[Category: Sensors]
+        <dl>
+            <dd>Format: <font class="CVariable">void</font> <font class="CFunction">set_analog_floats</font>(<font class="CVariable">int</font> mask);<br/>
+            This function uses a number between 0 and 255 to set which port are to be set floating.
+            </dd>
+        </dl>
+    </td>
+    </tr>
+    
+    <tr>
+    <td><a name="set_each_analog_state"></a></td>
+    <td><font class="CFunction">set_each_analog_state</font>&nbsp;&nbsp;&nbsp;[Category: Sensors] 
+    <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">set_each_analog_state</font>(<font class="CVariable">int</font> a0, <font class="CVariable">int</font> a1, <font class="CVariable">int</font> a2, <font class="CVariable">int</font> a3, <font class="CVariable">int</font> a4, <font class="CVariable">int</font> a5, <font class="CVariable">int</font> a6, <font class="CVariable">int</font> a7);<br/>
+        This function is used to set weather or not the analog ports are set to floating points or to pullup resistors. Passing a 1 sets the corresponding port to floating.
+        Please note that all sensor ports are set to non-floating when the CBC is rebooted or when a program exits.
+        </dd>
+    </dl>
+    </td>
     </tr>
     <tr>
        <td><a name="set_pid_gains"></a> </td>
@@ -2368,6 +2393,7 @@ This function is used to adjust the weights of the PID control for the motors. T
 </dd>
               <dt></dt>
       </dl>
+      </td>
     </tr>
     <tr>
        <td><a name="set_servo_position"></a> </td>
@@ -3075,7 +3101,7 @@ the goal has been reached.</p>
 
 <div class="indent">
 
-<a name="CategoryBotball">
+<a name="CategoryBotball"></a>
 <h4>Botball</h4>
 
 <table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">shut_down_in</font>(<font class="CVariable">float</font> delay)</li>        <li><font class="CVariable">void</font> <font class="CFunction">wait_for_light</font>(<font class="CVariable">int</font> light_port_)</li>    </ul>    </td>    </tr></tbody></table>
@@ -3089,18 +3115,18 @@ the goal has been reached.</p>
 <table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">beep</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">cbc_display_clear</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">cbc_printf</font>(<font class="CVariable">int</font> col, <font class="CVariable">int</font> row, <font class="CVariable">char</font> s[], . . .);</li>        <li><font class="CVariable">void</font> <font class="CFunction">printf</font>(<font class="CVariable">char</font> s[], . . .);</li>        <li><font class="CVariable">void</font> <font class="CFunction">tone</font> (<font class="CVariable">float</font> frequency, <font class="CVariable">float</font> length);</li>    </ul>    </td>    </tr></tbody></table>
 <a name="CategoryProcesses"></a><h4>Processes</h4>
 
-<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">defer</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">kill_process</font>(<font class="CVariable">int</font> pid);</li>        <li><font class="CVariable">int</font> <font class="CFunction">start_process</font>(&lt;function name&gt;);</li>    </ul>    </td>    </tr></tbody></table>
+<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">defer</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">kill_process</font>(<font class="CVariable">int</font> pid);</li>        <li><font class="CVariable">int</font> <font class="CFunction">start_process</font>(&lt;function name&gt;);</li>        <li><font class="CVariable">void</font> <font class="CFunction">run_for</font>(<font class="CVariable">float</font> sec, <font class="CVariable">void</font> &lt;function_name&gt;);</li>    </ul>    </td>    </tr></tbody></table>
 
 <a name="CategorySensors"></a>
 <h4>Sensors</h4>
 
-<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">int</font> <font class="CFunction">a_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">analog</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">analog10</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">b_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">black_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">digital</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">down_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">left_button</font>();</li>        <li><font class="CVariable">float</font> <font class="CFunction">power_level</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">r_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">right_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">sonar</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">up_button</font>();</li>    </ul>    </td>    </tr></tbody></table>
+<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">int</font> <font class="CFunction">a_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">analog</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">analog10</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">b_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">black_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">digital</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">down_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">left_button</font>();</li>        <li><font class="CVariable">float</font> <font class="CFunction">power_level</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">r_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">right_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">sonar</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">up_button</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">set_each_analog_state</font>(<font class="CVariable">int</font> a0, <font class="CVariable">int</font> a1, <font class="CVariable">int</font> a2, <font class="CVariable">int</font> a3, <font class="CVariable">int</font> a4, <font class="CVariable">int</font> a5, <font class="CVariable">int</font> a6, <font class="CVariable">int</font> a7);</li>        <li><font class="CVariable">void</font> <font class="CFunction">set_analog_floats</font>(<font class="CVariable">int</font> mask);</li>    </ul>    </td>    </tr></tbody></table>
 
 <a name="CategoryServos"></a>
 <h4>Servos</h4>
 
 <table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">disable_servos</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">enable_servos</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">get_servo_position</font>(<font class="CVariable">int</font> srv);</li>        <li><font class="CVariable">int</font> <font class="CFunction">set_servo_position</font>(<font class="CVariable">int</font> srv, <font class="CVariable">int</font> pos);</li>    </ul>    </td>    </tr></tbody></table>
-<a name="CategorySimulator"></a><h4>Simulator</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">kissSim_init</font>(<font class="CVariable">int</font> world, <font class="CVariable">int</font> x, <font class="CVariable">int</font> y, <font class="CVariable">int</font> theta);</li>        <li><font class="CVariable">void</font> <font class="CFunction">kissSimEnablePause</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">kissSimPause</font>();</li>    </ul>    </td>    </tr></tbody></table><a name="CategoryTime"></a><h4>Time</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">msleep</font>(<font class="CVariable">int</font> msec);</li>        <li><font class="CVariable">float</font> <font class="CFunction">seconds</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">sleep</font>(<font class="CVariable">float</font> sec);</li>    </ul>    </td>    </tr></tbody></table><a name="CategoryVision"></a><h4>Vision</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">int</font> <font class="CFunction">track_is_new_data_available</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">track_update</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_get_frame</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_count</font>(<font class="CVariable">int</font> ch);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_size</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_x</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_y</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_confidence</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_left</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_right</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_top</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_bottom</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_width</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_height</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_angle</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_major_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_minor_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>    </ul>    </td>    </tr></tbody></table>
+<a name="CategorySimulator"></a><h4>Simulator</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">kissSimEnablePause</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">kissSimPause</font>();</li>    </ul>    </td>    </tr></tbody></table><a name="CategoryTime"></a><h4>Time</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">msleep</font>(<font class="CVariable">int</font> msec);</li>        <li><font class="CVariable">float</font> <font class="CFunction">seconds</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">sleep</font>(<font class="CVariable">float</font> sec);</li>    </ul>    </td>    </tr></tbody></table><a name="CategoryVision"></a><h4>Vision</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">int</font> <font class="CFunction">track_is_new_data_available</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">track_update</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_get_frame</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_count</font>(<font class="CVariable">int</font> ch);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_size</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_x</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_y</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_confidence</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_left</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_right</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_top</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_bottom</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_width</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_height</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_angle</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_major_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_minor_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>    </ul>    </td>    </tr></tbody></table>
 </div>
 
 <!--Processes-->
@@ -3150,6 +3176,11 @@ when needed.</p>
 <a name="sensors"></a>
 <h3>Sensors</h3>
 
+<p>The image below is the front of the CBC where all the sensor, motor, and servo ports can be found.
+</p>
+
+<img src="Images/CBC_front_ports.jpg" width="100%">
+
 <table border="1" cellpadding="5" cellspacing="0">
   <tbody>
     <tr>
@@ -3158,19 +3189,19 @@ when needed.</p>
       <br/>
       <br/>
       <b>Light Sensor</b><br/>
-      </a> (analog)</font> </td>
+      </a> (analog) </td>
       <td align="center" valign="center"> <a href="#top_hat_sensor"> <img border="0" src="Images/image003.gif"><br/>
       <b>Infrared "Top Hat" Reflectance Sensor</b><br/>
       </a> (analog)</font> </td>
       <td align="center" valign="center"> <a href="#et_sensor"> <img border="0" src="Images/image004.gif"><br/>
       <b> Infrared "E.T." Distance Sensor</b><br/>
-      </a> (high-impedance analog)</font> </td>
+      </a> (high-impedance analog) </td>
     </tr>
     <tr>
       <td align="center" valign="center" colspan="2">
       <a href="#touch_sensors"> <img border="0" src="Images/image005.gif"><br/>
       <b>Touch Sensors</b><br/>
-      </a> (digital)</font> </td>
+      </a> (digital) </td>
       <td align="center" valign="center"> <a href="#break_beam_sensor"> <img border="0" src="Images/image006.gif"><br/>
       <b> Infrared "Break Beam" Sensor</b><br/>
       </a> (digital)</font> </td>

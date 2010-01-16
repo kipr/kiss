@@ -86,20 +86,31 @@ target_lib.path = ../../$${INSTALL_BASE}/targets/cbc2/lib
 
 target.path = ../../$${INSTALL_BASE}/targets/cbc2
 
-target_manual.files = manual/cbcmanual.html \
-                      manual/image002.gif \
-                      manual/image003.gif \
-                      manual/image004.gif \
-                      manual/image005.gif \
-                      manual/image006.gif \
-                      manual/image009.gif \
-                      manual/image010.gif \
-                      manual/image012.gif \
-                      manual/sonar.jpg
+target_manual.files = manual/CBCCSS.css \
+											manual/CBCCSS_NOSCRIPT.css \
+											manual/cbcmanual.html \
+											manual/fdl-1.3.txt \
+											manual/KISSCBCManualBody.htm \
+											manual/KISSCBCManualTable.htm 
+											
 target_manual.path = ../../$${INSTALL_BASE}/targets/cbc2/manual
-                      
 
-INSTALLS += target target_base target_include target_lib target_manual
+target_manual_images.files = manual/Images/box-minus.bmp \
+														 manual/Images/box-null.GIF \
+														 manual/Images/box-plus.bmp \
+														 manual/Images/CBC_front_ports.jpg \
+														 manual/Images/image002.gif \
+														 manual/Images/image003.gif \
+														 manual/Images/image004.gif \
+														 manual/Images/image005.gif \
+														 manual/Images/image006.gif \
+														 manual/Images/image010.gif \
+														 manual/Images/sonar.jpg
+
+target_manual_images.path = ../../$${INSTALL_BASE}/targets/cbc2/manual/Images
+
+
+INSTALLS += target target_base target_include target_lib target_manual target_manual_images
 
 #################
 # cbc2_sim stuff #
