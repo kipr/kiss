@@ -4,7 +4,7 @@ Kipr's Instructional Software System
 Building this software is very simple, make sure you have the following pieces of software installed:
 
 * GCC
-* Qt 4.4 Dev
+* Qt 4.5 Dev
 * QScintilla Dev
 
 Once those are set, run the following commands:
