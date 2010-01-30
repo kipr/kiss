@@ -72,12 +72,12 @@ target_base.path = ../../$${INSTALL_BASE}/targets/cbc2
 target_base.extra = $${COPY} cbc2.target $${CBC_TARGET_FILE_INSTALL}
 
 exists(../../trademarks) {
-target_include.files = ../../trademarks/simulator/cbc2_sim/include/cbc2-sim.h include/botball.c
+target_include.files = ../../trademarks/simulator/cbc2_sim/include/cbc2-sim.h ../../trademarks/simulator/cbc2_sim/src/botball.c
 
 target_lib.files = ../../trademarks/simulator/cbc2_sim/libcbc2_sim.a
 }
 !exists(../../trademarks) {
-target_include.files = ../../libraries/cbc2_sim/include/cbc2-sim.h include/botball.c
+target_include.files = ../../libraries/cbc2_sim/include/cbc2-sim.h ../../libraries/cbc2_sim/src/botball.c
 target_lib.files = ../../libraries/cbc2_sim/libcbc2_sim.a
 }
 
@@ -86,20 +86,31 @@ target_lib.path = ../../$${INSTALL_BASE}/targets/cbc2/lib
 
 target.path = ../../$${INSTALL_BASE}/targets/cbc2
 
-target_manual.files = manual/cbcmanual.html \
-                      manual/image002.gif \
-                      manual/image003.gif \
-                      manual/image004.gif \
-                      manual/image005.gif \
-                      manual/image006.gif \
-                      manual/image009.gif \
-                      manual/image010.gif \
-                      manual/image012.gif \
-                      manual/sonar.jpg
+target_manual.files = manual/CBCCSS.css \
+											manual/CBCCSS_NOSCRIPT.css \
+											manual/cbcmanual.html \
+											manual/fdl-1.3.txt \
+											manual/KISSCBCManualBody.htm \
+											manual/KISSCBCManualTable.htm 
+											
 target_manual.path = ../../$${INSTALL_BASE}/targets/cbc2/manual
-                      
 
-INSTALLS += target target_base target_include target_lib target_manual
+target_manual_images.files = manual/Images/box-minus.bmp \
+														 manual/Images/box-null.GIF \
+														 manual/Images/box-plus.bmp \
+														 manual/Images/CBC_front_ports.jpg \
+														 manual/Images/image002.gif \
+														 manual/Images/image003.gif \
+														 manual/Images/image004.gif \
+														 manual/Images/image005.gif \
+														 manual/Images/image006.gif \
+														 manual/Images/image010.gif \
+														 manual/Images/sonar.jpg
+
+target_manual_images.path = ../../$${INSTALL_BASE}/targets/cbc2/manual/Images
+
+
+INSTALLS += target target_base target_include target_lib target_manual target_manual_images
 
 #################
 # cbc2_sim stuff #
@@ -169,7 +180,7 @@ QMAKE_CLEAN += $${CBC2_SIM_LIB_DEST} $${CBC2_SIM_HEADER_DEST}
 #############################
 
 macx:{
-install_lib_names.extra = sh ../../scripts/osx_install_names.sh ../../$${INSTALL_BASE}/targets/cbc2/libcbc2_plugin.dylib QtCore.framework/Versions/4/QtCore QtGui.framework/Versions/4/QtGui libqscintilla2.5.1.0.dylib
+install_lib_names.extra = sh ../../scripts/osx_install_names.sh ../../$${INSTALL_BASE}/targets/cbc2/libcbc2_plugin.dylib QtCore.framework/Versions/4/QtCore QtGui.framework/Versions/4/QtGui
 install_lib_names.path = ../../$${INSTALL_BASE}
 
 INSTALLS += install_lib_names

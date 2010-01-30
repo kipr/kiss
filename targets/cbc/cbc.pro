@@ -72,12 +72,12 @@ target_base.path = ../../$${INSTALL_BASE}/targets/cbc
 target_base.extra = $${COPY} cbc.target $${CBC_TARGET_FILE_INSTALL}
 
 exists(../../trademarks) {
-target_include.files = ../../trademarks/simulator/cbc_sim/include/cbc-sim.h include/botball.c
+target_include.files = ../../trademarks/simulator/cbc_sim/include/cbc-sim.h ../../trademarks/simulator/cbc_sim/src/botball.c
 
 target_lib.files = ../../trademarks/simulator/cbc_sim/libcbc_sim.a
 }
 !exists(../../trademarks) {
-target_include.files = ../../libraries/cbc_sim/include/cbc-sim.h include/botball.c
+target_include.files = ../../libraries/cbc_sim/include/cbc-sim.h ../../libraries/cbc_sim/src/botball.c
 target_lib.files = ../../libraries/cbc_sim/libcbc_sim.a
 }
 
@@ -170,7 +170,7 @@ QMAKE_CLEAN += $${CBC_SIM_LIB_DEST} \
 #############################
 
 macx:{
-install_lib_names.extra = sh ../../scripts/osx_install_names.sh ../../$${INSTALL_BASE}/targets/cbc/libcbc_plugin.dylib QtCore.framework/Versions/4/QtCore QtGui.framework/Versions/4/QtGui libqscintilla2.5.1.0.dylib
+install_lib_names.extra = sh ../../scripts/osx_install_names.sh ../../$${INSTALL_BASE}/targets/cbc/libcbc_plugin.dylib QtCore.framework/Versions/4/QtCore QtGui.framework/Versions/4/QtGui
 install_lib_names.path = ../../$${INSTALL_BASE}
 
 INSTALLS += install_lib_names

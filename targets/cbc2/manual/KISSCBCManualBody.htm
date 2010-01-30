@@ -1,0 +1,3332 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head><link rel="icon" href="images/botball.ico" type="image/x-icon"/> 
+<link rel="shortcut icon" href="images/botball.ico" type="image/x-icon"/><style type="text/css">
+    @import "CBCCSS.css";
+</style>
+<title>KISS-C Programmers Manual</title>
+<!-- 9-03-2009 -->
+
+<!-- 1-05-2010 
+- Modified content, added css sheet formating, split index into it's own html document, reformated and relocated content. 
+----------------->
+
+</head>
+
+<body>
+<h1>KISS-C Programmers Manual for the CBC Botball Controller</h1>
+<br/>
+
+<!--Introduction-->
+
+<a name="Introduction"></a>
+<h2>Introduction</h2>
+
+<p>KIPR's Instructional Software System-C (KISS-C for short) is a development environment for the C language consisting of an editor, a
+compiler and a set of libraries and simulator for the CBC Botball Controller.
+KISS-C implements the full ANSI C specification. For information about the C programing language, including history and basic syntax, see the 
+Wikipedia article <a href="http://en.wikipedia.org/wiki/C_(programming_language)" target="_blank">C (programming language)</a>.  
+For a more complete tutorial and guide for C Programming visit <a href="http://www.cprogramming.com/" target="_blank">CPrograming</a>. The 
+<a href="http://community.botball.org" target="_blank">Botball community website</a> 
+also has several articles about programming and a user forum where questions can be posted to the botball community.</p>
+
+<p>The primary purpose of this manual is to describe the CBC Botball Controller libraries and simulator, which are extensions to the C programming 
+language. This file also provides a basic introduction to programming in C. To learn more about programming in C, consult one
+of the many books or websites that provide C references and tutorials. </p>
+
+<!--KISS-C Interface-->
+
+<a name="KISS-C_Interface"></a>
+<h2>KISS-C Interface</h2> 
+
+<p>Both new (unsaved) and saved files can be opened for editing in KISS-C. A row 
+of tabs lists the files that have been opened. Clicking a file's tab activates 
+it for editing.</p>
+
+<p>The File menu has standard entries for New, Open, Save, Save As, Print, Close
+and Exit.</p>
+
+<p>To simulate the active file, simply click the Simulate button. The active file 
+will also be saved, unless it is new, in which case the user is prompted for 
+a &quot;save as&quot; file name. The active file must contain or #include the 
+main function, in order to be simulated.</p>
+
+<p>To download the active file, click on the Download button. If the serial port connecting 
+the CBC to your pc has not already been specified, a dialog will appear to set 
+it.</p>
+
+<p>The interface provides additional capabilities for program entry/edit, minor 
+adjustment to the display (font size), auto-completion and auto-indentation. If there is a syntax 
+error in the program, an error window will appear at the bottom of the KISS 
+C screen with the error message and the file and line number where the error 
+was detected. If the error occurred in the active file, then clicking on the 
+error message will move to that line. The edit menu provides a Go to line option.</p>
+
+<p>C programs are automatically formatted and indented. Keywords, comments, and 
+text strings are highlighted with color unless this feature is turned off. 
+Most CBC-specific library functions will have pop-help when they are entered 
+into the input window.</p>
+
+<p>KISS-C does parenthesis-balance-highlighting when the cursor is placed to the 
+right of any right parenthesis, bracket, or brace.</p>
+
+<!--A_Quick_C_Tutorial-->
+
+<a name="A_Quick_C_Tutorial"></a>
+<h2>A Quick C Tutorial</h2>
+
+<p>Most C programs consist of function definitions and data structures.
+Here is a simple C program that defines a single function, called <b>main</b>.</p>
+
+<pre><code><font class="Comment">/* Simple example: C Programmer's Manual */</font>
+
+<font class="CVariable">int</font> main()
+{
+    <font class="CFunction">printf</font>(<font class="Quote">&quot;Hello, world!/n&quot;</font>);<font class="Comment">// simple example</font>
+}
+</code></pre><br/>
+
+<p>The Expression <br/><br/>
+/* &lt;text&gt; */<br/><br/>
+forms a multi-line or bracketed comment. In contrast, text that 
+starts with <br/><br/>//<br/><br/> forms a single line comment, 
+which continues only to the end of the line. Comments are ignored by KISS-C when the 
+program is compiled.  </p>
+
+<p>All functions must have a return type. While main 
+does not return a value to another function, it does return an integer to the 
+operating system, and so is of type <font class="CVariable">int</font>. 
+Other types include no return value (<font class="CVariable">void</font>) and 
+floating point numbers (<font class="CVariable">float</font>). 
+This function declaration information must precede each function definition. </p>
+
+<p>Immediately following the function declaration is the function's
+name (in this case,<b>main</b>). Next, in parentheses, are any arguments
+(or inputs) to the function. <b>main</b> has none, but an empty set of
+parentheses is still required. </p>
+
+<p>After the function arguments is an open curly-brace {. This signifies the start of the
+actual function code. Curly-braces signify program blocks, or chunks of code. </p>
+
+<p>Next comes a series of C statements. Statements demand that some action be taken.
+Our demonstration program has a single statement, a <font class="CFunction">printf</font>
+("Hello, world!/n"). This will print the message <b>"Hello, world!"</b> to the LCD display. The <b>\n</b>
+indicates end-of-line. The <font class="CFunction">printf</font> statement ends
+with a semicolon (;). All C statements must be ended by a semicolon. Beginning C 
+programmers commonly make the error of omitting the semicolon that is required to end each statement. </p>
+
+<p>The <b>main</b> function is ended by the close curly-brace }.</p>
+
+<p>Let's look at another example to learn some more features of C.
+The following code
+defines the function square, which returns the mathematical
+square of a number.</p>
+
+<pre><code><font class="CVariable">int</font> square(<font class="CVariable">int</font> n)
+{
+    <font class="CVariable">return</font>(n * n);
+}</code></pre><br/>
+
+<p>The function is declared as type <font class="CVariable">int</font>,
+which means that it will return an integer value.</p>
+
+<p>Next comes the function named <b>square</b>, followed by its
+argument list in parentheses.
+    Square has one argument, <b>n</b>, which is an integer. Notice how
+declaring the type of the
+argument is done similarly to declaring the type of the function.</p>
+
+<p>When a function has arguments declared, those argument variables are
+valid within the
+"scope" of the function (i.e., they only have meaning within the
+function's own code).
+Other functions may use the same variable names independently.</p>
+
+<p>The code, or &quot;scope&quot;, for <b>square</b> is
+contained within the set of curly braces. In fact, it consists of a
+single statement: the <font class="CVariable">return</font>
+statement. The
+<font class="CVariable">return</font> statement exits the
+function and
+returns the value of the C expression that follows it (in this
+case "<b>n * n</b>").</p>
+
+<p>Except where grouped by parentheses, expressions are evaluated
+according to a set of
+precedence rules associated with the various operations within the
+expression. In this
+case, there is only one operation (multiplication), signified by the "<b>*</b>",
+so precedence is
+not an issue.</p>
+
+<p>Let's look at an example of a function that performs a function call
+to the square program.</p>
+
+<pre><code><font class="CVariable">float</font> hypotenuse(<font class="CVariable">int</font> a, <font class="CVariable">int</font> b)
+{
+    <font class="CVariable">float</font> h;
+    h = <font class="CFunction">sqrt</font>((<font class="CVariable">float</font>)(square(a) + square(b)));
+    <font class="CVariable">return</font>(h);
+}</code></pre><br/>
+
+<p>This code demonstrates several more features of C. First, notice that
+the floating point
+variable <b>h</b> is defined at the beginning of the <b>hypotenuse</b>
+function. In general, whenever
+a new program block (indicated by a set of curly braces) is begun, new
+local variables
+may be defined.</p>
+
+<p>The value of <b>h</b> is set to the result of a call to the <font class="CFunction">sqrt</font>
+function. It turns out that <font class="Cfunction">sqrt</font> is a
+built-in KISS-C function that takes a floating point number as its
+argument.</p>
+
+<p>We want to use the <font class="CFunction">square</font> function we defined earlier, which
+returns its result as an
+integer. But the sqrt function requires a floating point argument. We
+get around this
+type incompatibility by coercing the integer sum (<font class="CFunction">square</font>(a) +
+<font class="CFunction">square</font>(b)) into a
+float by preceding it with the desired type, in parentheses. Thus, the
+integer sum is
+made into a floating point number and passed along to <font class="CFunction">sqrt</font>.</p>
+
+<p>The <b>hypotenuse</b> function finishes by returning the value of <b>h</b>. </p>
+
+<p>Note that the functions square and hypotenuse are functions, not a program. 
+If they are in the same file as the main function written above, they will never 
+be called. If main was modified to be:</p>
+
+<pre><code><font class="Comment">/* Simple example: C Programmer's Manual */</font>
+
+<font class="CVariable">int</font> main()
+{
+    <font class="CFunction">printf</font>(<font class="Quote">"Hypotenuse of 3,4 is %d\n"</font>,hypotenuse(3,4)); <font class="Comment">// call a function</font>
+}</code></pre><br/>
+
+<p>then the program (which always starts execution with <strong>main</strong>) 
+would calculate and print out the hypotenuse of a triangle with side lengths 
+of 3 &amp; 4. However, <strong>C</strong> requires that functions bedefined 
+before they are first called. Since hypotenuse is called in main, either the 
+functions need to be defined earlier in the file, or they can be prototyped 
+at the begining of the file. A <em>prototype</em> of a <strong>C</strong> function 
+is simply a <strong>C</strong> statement that includes the return type, function 
+name and types of the parameters. For example the prototypes of the functions 
+<strong>square</strong> and <strong>hypotenuse</strong> would be:</p>
+  
+<pre><code><font class="CVariable">int</font> square(<font class="CVariable">int</font> n);
+<font class="CVariable">float</font> hypotenuse(<font class="CVariable">int</font> a, <font class="CVariable">int</font> b);</code></pre><br/>
+
+<p>The order in which function protypes appear does not matter as long as they 
+come before the definitions that call that function.</p>
+
+<p>This concludes the brief C tutorial. </p>
+
+<!--Data_Objects-->
+
+<a name="Data_Objects"></a>
+<h2>Data Objects</h2>
+
+<p>Variables and constants are the basic data objects in a C program.
+Declarations list the
+variables to be used, state what type they are, and may set their
+initial value.</p>
+
+<!--Variables-->
+
+<a name="Variables"></a>
+<h3>Variables</h3>
+
+<p>Variable names are case-sensitive. The underscore character is
+allowed and is often used
+to enhance the readability of long variable names. C keywords like <font class="CVariable">if</font>,
+<font class="CVariable">while</font>, etc. may
+not be used as variable names.</p>
+
+<p>Functions and global variables may not have the same name. In
+addition, if a local
+variable is named the same as a function or a global variable, the
+local use takes
+precedence; ie., use of the function or global variable is prevented
+within the scope of the
+local variable.</p>
+
+<!--Declaration-->
+
+<a name="Declaration"></a>
+<div class="Indent">
+
+<h4>Declaration</h4>
+
+<p>In C, variables can be declared at the top level (outside of any
+curly braces) or at the start
+of each block (a functional unit of code surrounded by curly braces).
+In general, a variable declaration is of the form:</p>
+
+<div class="indent">
+<table>
+    <tr>
+    <td>&lt;type&gt;&nbsp;&nbsp;&lt;variable-name&gt;; or </font></td>
+    </tr>
+    <tr>
+    <td>&lt;type&gt;&nbsp;&nbsp;&lt;variable-name&gt;=&lt;initialization-data&gt;;</font></td>
+    </tr>
+</table> <br/>
+</div>
+
+In KISS-C, &lt;<a href="KISSCBCManualBody.htm#Data_Types" target="ManualFrame">type</a>&gt; can be 
+<font class="CVariable">int</font>, <font class="CVariable">float</font>,
+<font class="CVariable">char</font>, or <font class="CVariable">struct</font>
+&lt;struct-name&gt;,
+and determines the primary type of the variable declared. This form
+changes somewhat when
+dealing with pointer and array declarations, which are explained in a
+later section, but in
+general this is the way you declare variables.
+
+<!--Local_and_Global_Scopes-->
+
+<a name="Local_and_Global_Scopes"></a>
+<h4>Local and Global Scopes</h4>
+   
+<p>If a variable is declared within a function, or as an argument
+to a function, its binding is
+local, meaning that the variable has existence only within
+that function definition.
+If a variable is declared outside of a function, it is a global
+variable. It is defined for all
+functions, including functions which are defined in files other than
+the one in which the
+global variable was declared.</p>
+
+<!--Variable_Initialization-->
+
+<a name="Variable_Initialization"></a>
+<h4>Variable Initialization</h4>
+    
+<p>Local and global variables can be initialized to a value when
+they are declared. If no
+initialization value is given, their value is indeterminate.</p>
+
+<p>All global variable declarations must be initialized to constant
+values. Local variables
+may be initialized to the value of arbitrary expressions including any
+global variables,
+function calls, function arguments, or local variables which have
+already been initialized.</p>
+    
+<p>Here is a small example of how initialized declarations are
+used.</p>
+    
+<pre><code><font class="CVariable">int</font> i=50; <font class="Comment">/* declare i as global integer; initial value 50 */</font>
+<font class="CVariable">float</font> j=100.123; <font class="Comment">/* declare j as global float; initial value 100.123 */</font>
+<font class="CVariable">int</font> foo()
+{
+    <font class="CVariable">int</font> x; <font class="Comment">/* declare x as local integer; initial value 0 */</font>
+    <font class="CVariable">float</font> y=j; <font class="Comment">/* declare y as local float; initial value j */</font>
+}</code></pre><br/>
+
+<p>Local variables are initialized whenever the function containing them
+is executed.
+Global variables are initialized whenever a reset condition occurs.
+Reset conditions occur
+when:</p>
+
+<ol>
+    <li>Code is downloaded;</li>
+    <li>The <b>main()</b> procedure is run;</li>
+    <li>System hardware reset occurs</li>
+</ol>
+</div>
+
+<!--Constants-->
+
+<a name="Constants"></a>
+<h3>Constants</h3>
+
+<div class="indent">
+<a name="Integer_Constants"></a>
+<h4>Integer Constants</h4>
+    
+<p>Integers constants may be defined in decimal integer format
+(e.g., <b>4053</b> or <b>-1</b>) or
+hexadecimal format using the "<b>0x</b>" prefix (e.g., <b>0x1fffffff</b>).</p>
+
+<!--Floating_Point_Constants-->
+
+<a name="Floating_Point_Constants"></a>
+<h4>Floating Point</font> constants</h4>
+
+<p>Floating point numbers may use exponential notation (e.g., "<b>10e3</b>"
+or "<b>10E3</b>") or may
+contain a decimal period. For example, the floating point zero can be
+given as "<b>0.</b>",
+"<b>0.0</b>", or "<b>0E1</b>", but not as just "<b>0</b>". Since
+the board has no floating point hardware,
+floating point operations are much slower than integer operations, and
+should be used
+sparingly.</p>
+
+<!--Characters_and_String_Constants-->
+
+<a name="Characters_and_String_Constants"></a>
+<h4>Characters and String Constants</h4>
+
+<p>Quoted characters return their ASCII value (e.g., '<b>x</b>').</p>
+
+<p>Character string constants are defined with quotation marks,
+e.g.,
+<font class="Quote">"This is a character string."</font>.</p>
+
+<!--NULL-->
+
+<a name="NULL"></a>
+<h4>NULL</h4>
+    
+<p>The special constant <b>NULL</b> has the value of zero and can
+be assigned to and compared to
+pointer or array variables (which will be described in later sections).
+In general, you
+cannot convert other constants to be of a pointer type, so there are
+many times when
+<b>NULL</b> can be useful.</p>
+
+<p>For example, in order to check if a pointer has been initialized
+you could compare its
+value to <b>NULL</b> and not try to access its contents if it was <b>NULL</b>.
+Also, if you had a defined
+a linked list type consisting of a value and a pointer to the next
+element, you could look
+for the end of the list by comparing the next pointer to <b>NULL</b>.</p>
+</div>
+
+<!--Data_Types-->
+
+<a name="Data_Types"></a>
+<h3>Data Types</h3>
+
+<p>KISS-C supports the following data types:</p>
+
+<!--32-bit_Integers-->
+
+<div class="indent">
+
+<a name="32-bit_Integers"></a>
+<h4>32-bit Integers</h4>
+
+<p>32-bit integers are signified by the type indicator 
+<font class="CVariable">int</font>. They are signed integers, and
+may be valued from -2,147,483,648 to +2,147,483,647 decimal.</p>
+
+<!--32-bit_Floating_Point_Numbers-->
+
+<a name="32-bit_Floating_Point_Numbers"></a>
+<h4>32-bit Floating Point Numbers</h4>
+
+<p>Floating point numbers are signified by the type indicator 
+<font class="CVariable">float</font>. They have
+approximately seven decimal digits of precision and are valued from
+about 10^-38 to
+10^38.</p>
+
+<!--8-bit_Characters-->
+
+<a name="8-bit_Characters"></a>
+<h4>8-bit Characters</h4>
+
+<p>Characters are an 8-bit number signified by the type indicator 
+<font class="CVariable">char</font>. A character's value
+typically represents a printable symbol using the standard ASCII
+character code, but this
+is not necessary; characters can be used to refer to arbitrary 8-bit
+numbers.</p>
+
+<!--Pointers-->
+
+<a name="Pointers"></a>
+<h4>Pointers</h4>
+
+<p>KISS-C pointers are 32-bit numbers which represent locations in memory.
+Values in memory
+can be manipulated by calculating, passing and dereferencing
+pointers representing the
+location where the information is stored.</p>
+
+<a name="Arrays1"></a>
+<h4>Arrays</h4>
+
+<p>Arrays are used to store homogenous lists of data (meaning that all the
+elements of an
+array have the same type). Every array has a length which is determined
+at the time the
+array is declared. The data stored in the elements of an array can be
+set and retrieved in
+the same manner as for other variables.</p>
+
+<a name="Structures1"></a>
+<h4>Structures</h4>
+
+<p>Structures are used to store non-homogenous but related sets of
+data. Elements of a
+structure are referenced by name instead of number and may be of any
+supported type.</p>
+
+<p>Structures are useful for organizing related data into a
+coherent format, reducing the
+number of arguments passed to functions, increasing the effective
+number of values
+which can be returned by functions, and creating complex data
+representations such as
+directed graphs and linked lists.</p>
+
+</div>
+
+<!--Pointers-->
+
+<a name="PointersM"></a>
+<h3>Pointers</h3>
+
+<p>The address where a value is stored in memory is known as the
+pointer to that value. It is
+often useful to deal with pointers to objects, but great care must be
+taken to insure that the
+pointers used at any point in your code really do point to valid
+objects in memory.</p>
+
+<p>For additional information on programming with C pointers, please refer to a C programming book or website.</p>
+
+<!--Arrays-->
+
+<a name="Arrays"></a>
+<h3>Arrays</h3>
+
+<p>KISS-C supports arrays of characters, integers,
+floating-point numbers,
+structures, pointers, and array pointers (multi-dimensional arrays).
+The main reasons
+that arrays are useful are that they allow you to allocate space for
+many instances of a
+given type, send an arbitrary number of values to functions, and
+provide the means for
+iterating over a set of values.</p>
+
+<!--Declaring_and_Initializing_Arrays-->
+
+<a name="Declaring_and_Initializing_Arrays"></a>
+<div class="Indent">
+<h4>Declaring and Initializing Arrays</h4>
+
+<p>Arrays are declared using square brackets. The following statement
+declares an array of
+ten integers:</p>
+
+<pre><code><font class="CVariable">int</font> foo[10];
+</code></pre><br/>
+
+<p> this array, elements are numbered from 0 to 9. Elements are accessed
+by enclosing the
+index number within square brackets: <b>foo[4]</b> denotes the fifth
+element of the array foo
+(since counting begins at zero).</p>
+
+<p>Arrays not initialized at declaration contain indeterminate values. Arrays
+may be initialized
+at declaration by specifying the array elements, separated by commas,
+within curly
+braces. If no size value is specified within the square brackets when
+the array is declared
+but initialization information is given, the size of the array is
+determined by the number
+of elements given in the declaration. For example,</p>
+
+<pre><code><font class="CVariable">int</font> foo[]= {0, 4, 5, -8,  17, 301};
+</code></pre></br>
+
+<p>creates an array of six integers, with <b>foo[0]</b> equaling <b>0</b>,
+<b>foo[1]</b> equaling <b>4</b>, etc.</p>
+
+<p>If a size is specified and initialization data is given, the length
+of the initialization data
+may not exceed the specified length of the array or an error results.
+If, on the other hand,
+you specify the size and provide fewer initialization elements than the
+total length of the
+array, the remaining elements contain indeterminate values.</p>
+
+<p>Character arrays are typically text strings. There is a special
+syntax for initializing arrays
+of characters. The character values of the array are enclosed in
+quotation marks:</p>
+
+<pre><code><font class="CVariable">char</font> string[]= <font class="Quote">"Hello there"</font>;
+</code></pre><br/>
+
+<p>This form creates a character array called <b>string</b> with the
+ASCII values of the specified
+characters. In addition, the character array is terminated by a zero.
+Because of this zero-termination, the character array can be treated as
+a string for purposes of printing (for
+example). Character arrays can be initialized using the curly braces
+syntax, but they will
+not be automatically null-terminated in that case. In general, printing
+of character arrays
+that are not null-terminated will cause problems.</p>
+
+<!--Passing_Arrays_as_Arguments-->
+
+<a name="Passing_Arrays_as_Arguments"></a>
+<h4>Passing Arrays as Arguments</h4>
+
+<p>When an array is passed to a function as an argument, the array's
+pointer is actually
+passed, rather than the elements of the array. If the function modifies
+the array values, the
+array will be modified, since there is only one copy of the array in
+memory.</p>
+
+<p>There are two ways of declaring an array argument: as
+an array or as a
+pointer to the type of the array's elements.</p>
+
+<p>As an example, the following function takes an index and an array,
+and returns the array
+element specified by the index:</p>
+
+<pre><code><font class="CVariable">int</font> retrieve_element(<font class="CVariable">int</font> index, <font class="CVariable">int</font> array[])
+{
+    <font class="CVariable">return</font> array[index];
+}</code></pre><br/>
+
+<p>Notice the use of the square brackets to declare the argument array as
+a pointer to an
+array of integers.</p>
+
+<p>When passing an array variable to a function, you are actually
+passing the value of the
+array pointer itself and not one of its elements, so no square brackets
+are used.</p>
+
+<pre><code><font class="CVariable">void</font> foo()
+{
+    <font class="CVariable">int</font> array[10];
+    retrieve_element(3, array);
+}</code></pre><br/>
+
+<!--Multi-dimensional_Arrays-->
+
+<a name="Multi-dimensional_Arrays"></a>
+<h4>Multi-dimensional Arrays</h4>
+
+<p>A two-dimensional array is just like a single dimensional array
+whose elements are one-dimensional arrays. Declaration of a two-dimensional array is as
+follows:</p>
+
+<pre><code><font class="CVariable">int</font> k[2][3];
+</code></pre><br/>
+
+<p>The number in the first set of brackets is the number of 1-D arrays of 
+<font class="CVariable">int</font>. The number in
+the second set of brackets is the length of each of the 1-D arrays of 
+<font class="CVariable">int</font>. In this example,
+<b>k</b> is an array containing two 1-D arrays; <b>k[0]</b> is a 1-D
+array of <font face="Courier" color=blue>int</font> of length 3;
+<b>k[0][1]</b> is an <font face="Courier" color=blue>int</font>.
+Arrays of with any number of dimensions can be generalized from
+this example by adding more brackets in the declaration.</p>
+
+</div>
+
+<!--Structures-->
+
+<a name="Structures"></a>
+<h3>Structures</h3>
+
+<p>Structures are used to store non-homogenous but related sets of
+data. Elements of a
+structure are referenced by name instead of number and may be of any
+supported type.
+Structures are useful for organizing related data into a coherent
+format, reducing the
+number of arguments passed to functions, increasing the effective
+number of values
+which can be returned by functions, and creating complex data
+representations such as
+directed graphs and linked lists.</p>
+
+<p>The following example shows how to define a structure, declare a
+variable of structure
+type, and access its elements.</p>
+
+<pre><code><font class="CVariable">struct</font> foo
+{
+    <font class="CVariable">int</font> i;
+    <font class="CVariable">int</font> j;
+};
+<font class="CVariable">struct</font> foo f1;
+<font class="CVariable">void</font> set_f1(<font class="CVariable">int</font> i,<font class="CVariable">int</font> j)
+{
+    f1.i=i;
+    f1.j=j;
+}
+<font class="CVariable">void</font> get_f1(<font class="CVariable">int</font> *i,<font class="CVariable">int</font> *j)
+{
+    *i=f1.i;
+    *j=f1.j;
+}</code></pre><br/>
+
+<p>The first part is the structure definition. It consists of the keyword
+<font class="CVariable">struct</font>, followed by
+the name of the structure (which can be any valid identifier), followed
+by a list of named
+elements in curly braces. This definition specifies the structure of
+the type <font class="CVariable">struct</font> <b>foo</b>.
+Once there is a definition of this form, you can use the type 
+<font class="CVariable">struct</font> <b>foo</b> just like any
+other type. The line</p>
+
+<pre><code><font class="CVariable">struct</font> foo f1;
+</code></pre><br/>
+
+<p>is a global variable declaration which declares the variable <b>f1</b>
+to be of type <font class="CVariable">struct</font>
+<b>foo</b>.</p>
+
+<p>The dot operator is used to access the elements of a variable of
+structure type. In this
+case, <b>f1.i</b> and <b>f1.j</b> refer to the two elements of <b>f1</b>.
+You can treat the quantities <b>f1.i</b>
+and <b>f1.j</b> just as you would treat any variables of type 
+<font class="CVariable">int</font> (the type of the elements was
+defined in the structure declaration at the top to be 
+<font class="CVariable">int</font>).</p>
+ 
+<p>Pointers to structure types can also be used, just like pointers to
+any other type. However,
+with structures, there is a special short-cut for referring to the
+elements of the structure
+pointed to.</p>
+
+<pre><code><font class="CVariable">struct</font> foo *fptr;
+<font class="CVariable">void</font> main()
+{
+    fptr=&amp;f1;
+    fptr-&gt;i=10;
+    fptr-&gt;j=20;
+}</code></pre><br/>
+
+<p> this example, <b>fptr</b> is declared to be a pointer to type 
+<font class="CVariable">struct</font> <b>foo</b>. In main, it is
+set to point to the global <b>f1</b> defined above. Then the elements of the
+structure pointed to by <b>fptr</b>
+(in this case these are the same as the elements of <b>f1</b>), are
+set. The arrow operator is used
+instead of the dot operator because fptr is a pointer to a variable of
+type <font class="CVariable">struct</font> <b>foo</b>. Note
+that <b>(*fptr).i</b> would have worked just as well as 
+<b>fptr-&gt;</font>i</b>, but it would have been
+clumsier.</p>
+
+<p>Note that only pointers to structures, not the structures
+themselves, can be passed to or
+returned from functions.</p>
+
+<!--Complex_Initialization_examples-->
+
+<a name="Complex_Initialization_examples"></a>
+<h3>Complex Initialization examples</h3>
+
+<p>Complex types -- arrays and structures -- may be initialized upon
+declaration with a
+sequence of constant values contained within curly braces and separated
+by commas.</p>
+
+<p>Arrays of character may also be initialized with a quoted string of
+characters.</p>
+
+<p>For initialized declarations of single dimensional arrays, the
+length can be left blank and
+a suitable length based on the initialization data will be assigned to
+it. Multi-dimensional
+arrays must have the size of all dimensions specified when the array is
+declared. If a
+length is specified, the initialization data may not overflow that
+length in any dimension
+or an error will result. However, the initialization data may be
+shorter than the specified
+size and the remaining entries will be initialized to 0.</p>
+
+<p>Following is an example of legal global and local variable
+initializations:</p>
+
+<pre><code><font class="Comment">/* declare many globals of various types */</font>
+<font class="CVariable">int</font> i=50;
+<font class="CVariable">int</font> *ptr=NULL;
+<font class="CVariable">float</font> farr[3]={ 1.2, 3.6, 7.4 };
+<font class="CVariable">int</font> tarr[2][4]={ { 1, 2, 3, 4 }, { 2, 4, 6, 8} };
+<font class="CVariable">char</font> c[]=<font class="Quote">"Hi there how are you?"</font>;
+<font class="CVariable">char</font> carr[5][10]={<font class="Quote">"Hi"</font>,<font class="Quote">"there"</font>,<font class="Quote">"how"</font>,<font class="Quote">"are"</font>,<font class="Quote">"you"</font>};
+<font class="CVariable">struct</font> bar
+{
+    <font class="CVariable">int</font> i;
+    <font class="CVariable">int</font> *p;
+    <font class="CVariable">float</font> j;
+} b={5, NULL, 10.5};
+<font class="CVariable">struct</font> bar barr[2] = { { 1, NULL, 2.5 }, { 3 } };
+<font class="Comment">/* declare locals of various types */</font>
+<font class="CVariable">int</font> foo()
+{
+    <font class="CVariable">int</font> x; <font class="Comment">/* local variable x with initial value 0 */</font>
+    <font class="CVariable">int</font> y= tarr[0][2]; <font class="Comment">/* local variable y with initial value 3 */</font>
+    <font class="CVariable">int</font> *iptr=&amp;i; <font class="Comment">/* local pointer to integer
+                                which points to the global i */</font>
+    <font class="CVariable">int</font> larr[2]={10,20};  <font class="Comment">/* local array larr
+                                   with elements 10 and 20 */</font>
+    <font class="CVariable">struct</font> bar lb={5,NULL,10.5}; <font class="Comment">/* local variable of type
+                                          struct bar with i=5 and j=10.5 */</font>
+    <font class="CVariable">char</font> lc[]=carr[2];    <font class="Comment">/* local string lc with
+                                   initial value "how" */</font>
+    ...
+}</code></pre><br/>
+
+<!--Statements_and_Expressions-->
+
+<a name="Statements_and_Expressions"></a>
+<h2>Statements and Expressions</h2>
+
+<p>Operators act upon objects of a certain type or types and specify
+what is to be done to
+them. Expressions combine variables and constants to create new values.
+Statements are
+expressions, assignments, function calls, or control flow statements
+which make up C
+programs.</p>
+
+<!--Operators-->
+
+<a name="Operators"></a>
+<h3>Operators</h3>
+
+<p>Each of the data types has its own set of operators that determine
+which operations may
+be performed on them.</p>
+
+<!--Integer_Operations-->
+
+<a name="Integer_Operations"></a>
+<div class="indent">
+<h4>Integer Operations</h4>
+
+<p>The following operations are supported on integers:</p>
+
+<ul>
+  <li><b>Arithmetic</b>. addition +</font>,
+subtraction -</font>, multiplication <font
+ face="Courier">*</font>, division /</font>. </li>
+  <li><b>Comparison</b>. greater-than &gt;</font>,
+less-than &lt;</font>, equality <font
+ face="Courier">==</font>, greater-than-equal &gt;=</font>,
+less-than-equal &lt;=</font>. </li>
+  <li><b>Bitwise Arithmetic</b>. bitwise-OR |</font>,
+bitwise-AND &amp;</font>, bitwise-exclusive-OR <font
+ face="Courier">^</font>, bitwise-NOT ~</font>. </li>
+  <li><b>Boolean Arithmetic</b>. logical-OR ||</font>,
+logical-AND &amp;&amp;</font>, logical-NOT <font
+ face="Courier">!</font>. <br/>
+When a C statement uses a boolean value (for example, <font
+ face="Courier" class="CVariable">if</font>), it takes the integer zero as
+meaning false, and any integer other than zero as meaning true. The
+boolean operators return zero for false and one for true. Boolean
+operators &amp;&amp;</font> and <font
+ face="Courier">||</font> will stop executing as soon as the truth of
+the final expression is determined. For example, in the expression <font
+ face="Courier">a &amp;&amp; b</font>, if a</font>
+is false, then b</font> does not need to be
+evaluated because the result must be false. The &amp;&amp;</font>
+operator therefore will not evaluate b</font>.</li>
+</ul>
+
+<!--Floating_Point_Numbers-->
+
+<a name="Floating_Point_Numbers"></a>
+<h4>Floating Point Numbers</h4>
+
+<p>KISS-C uses a package of floatingpoint routines. This
+package includes arithmetic, trigonometric, and logarithmic functions.
+Since floating
+point operations are implemented in software, they are much slower than
+the integer
+operations; we recommend against using floating point if you are
+concerned about
+performance.</p>
+
+<p>The following operations are supported on floating point numbers:</p>
+<table>
+  <tbody>
+    <tr>
+      <td>
+      <ul>
+        <li><b>Arithmetic</b>. addition +</font>,
+subtraction -</font>, multiplication <font
+ face="Courier">*</font>, division /</font>.
+        </li>
+        <li><b>Comparison</b>. greater-than &gt;</font>,
+less-than &lt;</font>, equality <font
+ face="Courier">==</font>, greater-than-equal &gt;=</font>,
+less-than-equal &lt;=</font>.
+        </li>
+        <li><b>Built-in Math Functions</b>. A set of trigonometric,
+logarithmic, and exponential
+functions is supported. For details, go to the
+          <a href="#Library%20Function%20Descriptions">Library Function
+Descriptions</a>.
+These functions are included among those itemized as "Math" functions.</li>
+      </ul>
+      </font></td>
+    </tr>
+  </tbody>
+</table>
+
+<!--Characters-->
+
+<a name="Characters"></a>
+<h4>Characters</h4>
+
+<p>Characters are only allowed in character arrays. When a cell of the
+array is referenced, it
+is automatically coerced into a integer representation for manipulation
+by the integer
+operations. When a value is stored into a character array, it is
+coerced from a standard 16-
+bit integer into an 8-bit character (by truncating the upper eight
+bits).</p>
+
+</div>
+
+<!--Assignment_Operators_and_Expressions-->
+
+<a name="Assignment_Operators_and_Expressions"></a>
+<h2>Assignment Operators and Expressions</h2>
+
+<p>The basic assignment operator is =</font>. The
+following statement adds 2 to the value of a</font>.</p>
+
+<pre><code>a = a + 2;</code></pre><br/>
+
+<p>The abbreviated form</p>
+
+<pre><code>a += 2;</code></pre><br/>
+
+<p>could also be used to perform the same operation.
+All of the following binary operators can be used in this fashion:</p>
+
+<pre><code>+   -   *   /   %   &lt;&lt;   &gt;&gt;   &amp;   ^   |</code></pre><br/>
+
+<!--Increment_and_Decrement_Operators-->
+
+<a name="Increment_and_Decrement_Operators"></a>
+<h2>Increment and Decrement Operators</h2>
+
+<p>The increment operator "++</font>" increments
+the named variable. For example, the
+construction "a++</font>" is equivalent to "
+a= a+1</font>" or "a+= 1</font>".
+A statement that uses an increment operator has a value. For example,
+the statement</p>
+
+<pre><code>a = 3; <font class="CFunction">printf</font>(<font class="Quote">"a=%d a+1=%d\n"</font>, a, ++a);
+</code></pre><br/>
+
+<p>will display the text "a=3 a+1=4</font>".
+If the increment operator comes after the named variable, then the
+value of the statement
+is calculated after the increment occurs. So the statement</p>
+
+<pre><code>a = 3; <font class="CFunction">printf</font>(<font class="Quote">"a=%d a+1=%d\n"</font>, a, a++);
+</code></pre><br/>
+
+<p>would display "a=3 a+1=3</font>" but would finish
+with a set to 4.
+The decrement operator "--</font>" is used in the
+same fashion as the increment operator.</p>
+
+<!--Data_Access_Operators-->
+<a name="Data_Access_Operators"></a>
+<h2>Data Access Operators</h2>
+
+<b>&amp;</font></b>
+<table>
+  <tbody>
+    <tr>
+      <td>&nbsp;</font>
+      <dl>
+        <dd>A single ampersand preceding a variable,
+an array reference, or a structure element
+reference returns a pointer to the location in memory where that
+information is being
+stored. This should not be used on arbitrary expressions as they do not
+have a stable
+place in memory where they are being stored.</font></dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<b>*</font></b>
+<table>
+  <tbody>
+    <tr>
+      <td>&nbsp;</font>
+      <dl>
+        <dd>A single * preceeding an expression
+which evaluates to a pointer returns the value
+which is stored at that address. This process of accessing the value
+stored within a
+pointer is known as dereferencing.</font></dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<b>[</b>&lt;</font>expr&gt;<b>]</b></font>
+<table>
+  <tbody>
+    <tr>
+      <td>&nbsp;</font>
+      <dl>
+        <dd>An expression in square braces following
+an expression which evaluates to an array
+(an array variable, the result of a function which returns an array
+pointer, etc.) checks
+that the value of the expression falls within the bounds of the array
+and references
+that element.</font></dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<b>.</font></b>
+<table>
+  <tbody>
+    <tr>
+      <td>&nbsp;</font>
+      <dl>
+        <dd>A dot between a structure variable and
+the name of one of its fields returns the value
+stored in that field.</font></dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<b>-&gt;</font></b>
+<table>
+  <tbody>
+    <tr>
+      <td>&nbsp;</font>
+      <dl>
+        <dd>An arrow between a pointer to a
+structure and the name of one of its fields in that
+structure acts the same as a dot does, except it acts on the structure
+pointed at by its
+left hand side. Where <b>f</b> is a structure of a type with <b>i</b>
+as an element name, the two
+expressions f.i</font> and (&amp;f)-&gt;i</font>
+are equivalent.</font></dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!--Precedence_and_Order_of_Evaluation-->
+
+<a name="Precedence_and_Order_of_Evaluation"></a>
+<h2>Precedence and Order of Evaluation</h2></font>
+
+<p>The following table summarizes the rules for precedence and
+associativity for the C operators.
+Operators listed earlier in the table have higher precedence; operators
+on the same line of the table
+have equal precedence.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+      <dl>
+        <dd>
+          <table border="1">
+            <tbody>
+              <tr>
+                <td align="center"><b>Operator</b></font></td>
+                <td>&nbsp; <b>Associativity</font></b><font
+ face="Times"> &nbsp;</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; () []</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; ! ~ ++ -- - (&lt;</font>type<font
+ face="Courier">&gt;) &nbsp;</font></td>
+                <td align="center">right to left</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; * / %</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; + -</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; &lt;&lt; &gt;&gt;</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; &lt; &lt;= &gt; &gt;=</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; == !=</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; &amp;</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; ^</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; |</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; &amp;&amp;</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; ||</font></td>
+                <td align="center">right to left</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; = += -=</font> etc.</td>
+                <td align="center">right to left</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; ,</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+            </tbody>
+          </table>
+        </dd>
+      </dl>
+      </td>
+      <td><br/>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!--Control_Flow-->
+
+<a name="Control_Flow"></a>
+<h2>Control Flow</h2>
+
+<p>KISS-C supports all of the standard C control structures.</p>
+
+<!--Statements_and_Blocks-->
+
+<a name="Statements_and_Blocks"></a>
+<h2>Statements and Blocks</h2>
+
+<p>A single C statement is ended by a semicolon. A series of statements
+may be grouped
+together into a block using curly braces. Inside a block, local
+variables may be defined. Blocks may be
+used in place of statements in the control flow constructs.</p>
+
+<!--If-Else-->
+
+<a name="If-Else"></a>
+<h3>If-Else</h3>
+
+<p>The <font class="CVariable">if else</font> statement is
+used to make decisions. The syntax is:</p>
+
+<pre><code><font class="CVariable">if</font> (&lt;expression</font>&gt;)
+    &lt;statement-1</font>&gt;
+<font class="CVariable">else</font>
+    &lt;statement-2</font>&gt;
+</code></pre><br/>
+
+<p>&lt;expression&gt; is evaluated; if it is not equal to zero
+(e.g., logic true), then
+&lt;statement-1&gt; is executed.</p>
+
+<p>The <font class="CVariable">else</font> clause is
+optional. If the
+<font class="CVariable">if</font> part of the statement did
+not execute, and the
+<font class="CVariable">else</font> is present, then &lt;statement-2&gt;
+executes.</p>
+
+<!--While-->
+
+<a name="While"></a>
+<h3>While</h3>
+
+<p>The syntax of a <font class="CVariable">while</font> loop
+is the following:</p>
+
+<pre><code><font class="CVariable">while</font> (&lt;expression</font>&gt;)
+    &lt;statement</font>&gt;
+</code></pre><br/>
+
+<p><font class="CVariable">while</font> begins by evaluating &lt;expression&gt;.
+If it is false, then
+&lt;statement&gt; is skipped. If it
+is true, then &lt;statement&gt; is evaluated. Then the
+expression is evaluated again, and the
+same check is performed. The loop exits when &lt;expression&gt;
+becomes zero.</p>
+
+<p>One can easily create an infinite loop in C using the <font
+face="Courier" class="CVariable">while</font> statement:</p>
+ 
+<pre><code><font class="CVariable">while</font> (1)
+    &lt;statement</font>&gt;
+</code></pre><br/>
+
+<!--Do-While-->
+
+<a name="Do-While"></a>
+<h3>Do-While</h3>
+<p>The syntax of a <font class="CVariable">do</font>-<font class="CVariable">while</font> loop
+is the following:</p>
+
+<pre><code><font class="CVariable">do</font>
+    &lt;statement</font>&gt;
+<font class="CVariable">while</font> (&lt;expression</font>&gt;);
+</code></pre><br/>
+
+<p>The equivalent <font class="CVariable">while</font> loop would be the following:</p>
+
+<pre><code>&lt;statement</font>&gt;
+<font class="CVariable">while</font> (&lt;expression</font>&gt;)
+    &lt;statement</font>&gt;
+</code></pre><br/>
+
+<!--For-->
+<a name="For"></a>
+<h3>For</h3>
+
+<p>The syntax of a <font class="CVariable">for</font> loop
+is the following:</p>
+
+<pre><code><font class="CVariable">for</font> (&lt;expr-1</font>&gt;;&lt;expr-2</font>&gt;;&lt;expr-3</font>&gt;)
+    &lt;statement</font>&gt;
+</code></pre>
+
+<p>The <font class="CVariable">for</font> construct is
+equivalent to
+the following construct using <font class="CVariable">while</font>:</p>
+
+<pre><code>&lt;expr-1</font>&gt;;
+<font class="CVariable">while</font> (&lt;expr-2</font>&gt;)
+{
+    &lt;statement</font>&gt;
+    &lt;expr-3</font>&gt;;
+}</code></pre><br/>
+
+<p>Typically, &lt;expr-1&gt; is an assignment, &lt;expr-2&gt;
+is a relational expression, and &lt;expr-3&gt;
+is an increment or decrement of some manner. For example, the following
+code counts
+from 0 to 99, printing each number along the way:</p>
+
+<pre><code><font class="CVariable">int</font> i;
+<font class="CVariable">for</font> (i = 0; i &lt; 100; i++)
+    <font class="CFunction">printf</font>("%d\n", i);
+</code></pre><br/>
+
+<!--Switch-->
+
+<a name="Switch"></a>
+<h3>Switch</h3>
+
+<p>The syntax of a <font class="CVariable">switch</font> block is as follows:</p>
+
+<pre><code><font class="CVariable">switch</font> (<font class="CVariable">int</font>)
+{
+    <font class="CVariable">case</font> const1</font>:
+        &lt;statement list1</font>&gt;
+    <font class="CVariable">break</font>;
+    <font class="CVariable">case</font> const2</font>:
+        &lt;statement list2</font>&gt;
+    <font class="CVariable">break</font>;
+    <font class="CVariable">default</font>:
+        &lt;statement list3</font>&gt;
+}</code></pre><br/>
+
+<p>The <font class="CVariable">switch</font> construct takes an integer variable as input, and compares it to each 
+<font class="CVariable">case</font> listed.  The first matching <font color="Times">const</font> is selected, and
+execution begins there.  The <font class="CVariable">break</font> is optional, and if no break is found then execution
+continues through each following statement.  Also note that each <font class="CVariable">case</font> has a 
+list of single statements, as opposed to a block enclosed in curly braces.</p>
+
+<p>Here's an example of how a <font class="CVariable">switch</font> might be used:</p>
+
+<pre><code><font class="CVariable">int</font> i = 1;
+<font class="CVariable">switch</font>(i)
+{
+    <font class="CVariable">case</font> 0:
+        <font class="CFunction">printf</font>(<font class="Quote">"Case 0\n"</font>);
+        <font class="CVariable">break</font>;
+    <font class="CVariable">case</font> 1:
+        <font class="CFunction">printf</font>(<font class="Quote">"Case 1\n"</font>);
+        <font class="CVariable">break</font>;
+    <font class="CVariable">default</font>:
+        <font class="CFunction">printf</font>(<font class="Quote">"Default\n"</font>);
+}</code></pre><br/>
+
+<p>Since i</font> is equal to 1, the text "Case 1" will be printed to the screen.  If 
+i</font> were equal to 0, "Case 0" would be printed.  If i</font> 
+were any number besides 0 or 1, "Default" would be printed.</p>
+
+<!--Break-->
+
+<a name="Break"></a>
+<h3>Break</h3>
+
+<p>Use of the <font class="CVariable">break</font> statement
+provides an early exit from a
+<font class="CVariable">while</font>, <font class="CVariable">do</font>-<font class="CVariable">while</font> or 
+<font class="CVariable">for</font> loop.  The break statement can also provide an exit from a 
+<font class="CVariable">switch</font> block.</p>
+
+<!--LCD_Screen_Printing-->
+
+<a name="LCD_Screen_Printing"></a>
+<h2>LCD Screen Printing</h2>
+
+<p>KISS-C has a version of the C function 
+<font class="CFunction">printf</font> for formatted printing to the LCD screen.
+KISS-C Also has a CBC specific print</font> command, <font class="CFunction">cbc_printf</font>, 
+that allows limited cursor control.</p>
+
+<p>The syntax of <font class="CFunction">printf</font> is the following:</p>
+
+<pre><code><font class="CFunction">printf</font>(&lt;format-string</font>&gt;, &lt;arg-1</font>&gt; , ... , &lt;arg-N</font>&gt;);
+</code></pre><br/>
+
+This is best illustrated by some examples.
+
+<!--Printing_Examples-->
+
+<a name="Printing_Examples"></a>
+<h3>Printing Examples</h3>
+
+<!--Printing_a_message-->
+
+<div class="indent">
+
+<a name="Printing_a_message"></a>
+<h4>Example 1: Printing a message</h4>
+
+<p>The following statement prints a text string to the screen.</p>
+
+<pre><code><font class="CFunction">printf</font>(<font class="Quote">"Hello, world!\n"</font>);</code></pre><br/>
+
+<p>In this example, the format string is simply printed to the screen.
+The character <b>\n</b></font> at the end of the
+string signifies end-of-line. When an end-of-line
+character is printed, the LCD screen will be cleared when a subsequent
+character is printed. Thus, most <font class="CFunction">printf</font>
+statements are terminated by a
+<b>\n</b></font>.</p>
+
+<!--Printing_a_number-->
+
+<a name="Printing_a_number"></a>
+<h4>Example 2: Printing a number</h4>
+
+<p>The following statement prints the value of the integer variable x
+with a brief message.</p>
+
+<pre><code><font class="CFunction">printf</font>(<font class="Quote">"Value is %d\n"</font>, x);</code></pre><br/>
+
+<p>The special form <b>%d</b></font> is used to
+format the printing of an integer in decimal format.</p>
+
+<!--Printing_a_number_in_binary-->
+
+<a name="Printing_a_number_in_binary"></a>
+<h4>Example 3: Printing a number in binary</h4>
+
+<p>The following statement prints the value of the integer variable x
+as a binary number.</p>
+
+<pre><code><font class="CFunction">printf</font>(<font class="Quote">"Value is %b\n"</font>, x);</code></pre><br/>
+
+<p>The special form <b>%b</b></font> is used to
+format the printing of an integer in binary format. Only the
+low byte of the number is printed.</p>
+
+<!--Printing_a_floating_point_number-->
+
+<a name="Printing_a_floating_point_number"></a>
+<h4>Example 4: Printing a floating point number</h4>
+
+<p>The following statement prints the value of the floating point
+variable n</font> as a floating
+point number.</p>
+
+<pre><code><font class="CFunction">printf</font>(<font class="Quote">"Value is %f\n"</font>, n);</code></pre><br/>
+
+<p>The special form <b>%f</b></font> is used to
+format the printing of floating point number.</p>
+
+<!--Printing_two_numbers_in_hexadecimal_format-->
+
+<a name="Printing_two_numbers_in_hexadecimal_format"></a>
+<h4>Example 5: Printing two numbers in hexadecimal format</h4>
+
+<pre><code><font class="CFunction">printf</font>(<font class="Quote">"A=%x  B=%x\n"</font>, a, b);</code></pre><br/>
+
+<p>The form <b>%x</b></font> formats an integer to
+print in hexadecimal.</p>
+
+<!--Printing_using_cbc_printf-->
+
+<a name="Printing_using_cbc_printf"></a>
+<h4>Example 6: Printing using cbc_printf</h4>
+
+<pre><code><font class="CFunction">cbc_printf</font>(0,2,<font class="Quote">"A=%d  B=%d"</font>, a, b);</code></pre><br/>
+
+<p>The function <font class="CFunction"><b>cbc_printf</b></font> is like the statndard <font class="CFunction"><b>printf</b></font> 
+function except the first two arguments specify the column and row (zero indexed) to start printing.  Note that 
+<font class="CFunction"><b>cbc_printf</b></font> will not wrap, it will truncate
+strings that go beyond the end of the line.</p>
+
+</div>
+
+<!--Formatting_Command_Summary-->
+
+<a name="Formatting_Command_Summary"></a>
+<h3>Formatting Command Summary</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+      <dl>
+        <dd>
+          <table border="1">
+            <tbody>
+              <tr>
+                <td align="center"><b>&nbsp;Format
+Command&nbsp;</b></font></td>
+                <td align="center"><b>Data Type</b></font></td>
+                <td align="center"><b>Description</b></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %d </font></td>
+                <td><font class="CVariable">&nbsp; int </font></td>
+                <td>&nbsp; decimal number </font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %x </font></td>
+                <td><font class="CVariable">&nbsp; int </font></td>
+                <td>&nbsp; hexadecimal number </font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %b </font></td>
+                <td><font class="CVariable">&nbsp; int </font></td>
+                <td>&nbsp; low byte as binary number
+                </font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %c </font></td>
+                <td><font class="CVariable">&nbsp; int </font></td>
+                <td>&nbsp; low byte as ASCII
+character &nbsp;</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %f </font></td>
+                <td><font class="CVariable">&nbsp; float </font></td>
+                <td>&nbsp; floating point number </font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %s </font></td>
+                <td><font class="CVariable">&nbsp; char</font>
+                array</font> &nbsp;</font></td>
+                <td>&nbsp; char array (string) </font></td>
+              </tr>
+            </tbody>
+          </table>
+        </dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!--Preprocessor-->
+
+<a name="Preprocessor"></a>
+<h2>Preprocessor</h2>
+
+<p>The preprocessor processes a file before it is sent to the compiler.
+The KISS-C preprocessor
+allows definition of macros, and conditional compilation of sections of
+code. Using
+preprocessor macros for constants and function macros can make KISS-C code
+more efficient
+as well as easier to read. Using <font class="CVariable">#if</font>
+to conditionally compile code can be very useful, for
+instance, for debugging purposes.</p>
+
+<p>The special preprocessor command <font class="CVariable">#include</font>
+has been included to allow programs to cause a
+program to download to initiate the download of stored programs that
+are not in the KISS-C
+library. For example, suppose you have a set of stored programs in a
+file named
+"mylib.ic</font>", some of which you need for your
+current program to work.</p>
+
+<pre><code><font class="Comment">/* load my library */</font>
+<font class="CVariable">#include</font> <font class="Quote">"mylib.ic"</font>
+
+<font class="CVariable">void</font> main()
+{
+    <font class="CVariable">char</font> s[32] = <font class="Quote">"text string wrapping badly\n"</font>;
+    fix(s);<font class="Comment">/* apply my fix function to s and print it */</font>
+    <font class="CFunction">printf</font>(s);
+}</code></pre><br/>
+
+<!--Preprocessor_Macros-->
+
+<a name="Preprocessor_Macros"></a>
+<h3>Preprocessor Macros</h3>
+
+<p>Preprocessor macros are defined by using the <font class="CVariable">#define</font> 
+preprocessor directive at the start of a line. A macro is local to the file in which 
+it is defined. The following example shows how to define preprocessor macros.</p>
+
+<pre><code><font class="CVariable">#define</font> RIGHT_MOTOR 0
+<font class="CVariable">#define</font> LEFT_MOTOR  1
+<font class="CVariable">#define</font> GO_RIGHT(power) (<font class="CFunction">motor</font>(RIGHT_MOTOR,(power)))
+<font class="CVariable">#define</font> GO_LEFT(power)  (<font class="CFunction">motor</font>(LEFT_MOTOR,(power)))
+<font class="CVariable">#define</font> GO(left,right) {GO_LEFT(left); GO_RIGHT(right);}
+<font class="CVariable">void</font> main()
+{
+    GO(0,0);
+}</code></pre><br/>
+
+<p>Preprocessor macro definitions start with the <font class="CVariable">#define</font> 
+directive at the start of a line, and continue to the end of the line. After 
+<font class="CVariable">#define</font> is the name of the macro, such as
+<b>RIGHT_MOTOR</b>. If there is a parenthesis directly after the name
+of the macro, such as the <b>GO_RIGHT</b> macro has above, then the macro has arguments. 
+The <b>GO_RIGHT</b> and <b>GO_LEFT</b> macros each take one argument. The GO macro takes two
+arguments. After the name and the optional argument list is the body of the macro.</p>
+
+<p>Each time a macro is invoked, it is replaced with its body. If the
+macro has arguments,
+then each place the argument appears in the body is replaced with the
+actual argument
+provided.</p>
+
+<p>Invocations of macros without arguments look like global variable
+references.
+Invocations of macros with arguments look like calls to functions. To
+an extent, this is
+how they act. However, macro replacement happens before compilation,
+whereas global
+references and function calls happen at run time. Also, function calls
+evaluate their
+arguments before they are called, whereas macros simply perform text
+replacement. For
+example, if the actual argument given to a macro contains a function
+call, and the macro
+instantiates its argument more than once in its body, then the function
+would be called
+multiple times, whereas it would only be called once if it were being
+passed as a function
+argument instead.</p>
+
+<p>Appropriate use of macros can make KISS-C programs and easier to read.
+It allows constants
+to be given symbolic names without requiring storage and access time as
+a global would.
+It also allows macros with arguments to be used in cases when a
+function call is desirable
+for abstraction, without the performance penalty of calling a function.</p>
+
+<!--Conditional_compilation-->
+
+<a name="Conditional_compilation"></a>
+<h3>Conditional compilation</h3>
+
+<p>It is sometimes desirable to conditionally compile code. The primary
+example of this is
+that you may want to perform debugging output sometimes, and disable it
+at other times.
+The KISS-C preprocessor provides a convenient way of doing this by using
+the <font class="CVariable">#ifdef</font>
+directive.</p>
+
+<pre><code><font class="CVariable">void</font> go_left(<font class="CVariable">int</font> power)
+{
+    GO_LEFT(power);
+    <font class="CVariable">#ifdef</font> DEBUG
+    <font class="CFunction">printf</font>(<font class="Quote">"Going Left\n"</font>);
+    <font class="CFunction">beep</font>();
+    <font class="CVariable">#endif</font>
+}</code></pre><br/>
+
+<p>In this example, when the macro <b>DEBUG</b> is defined, the debugging
+message "Going Left"
+will be printed and the board will beep each time <b>go_left</b> is
+called. If the macro is not
+defined, the message and beep will not happen. Each 
+<font class="CVariable">#ifdef</font> must be follwed by an
+<font class="CVariable">#endif</font> at the end of the code
+which is being conditionally compiled. The macro to be
+checked can be anything, and <font class="CVariable">#ifdef</font>
+blocks may be nested.</p>
+
+<p>Unlike regular C preprocessors, macros cannot be conditionally
+defined. If a macro
+definition occurs inside an <font class="CVariable">#ifdef</font>
+block, it will be defined regardless of whether the
+<font class="CVariable">#ifdef</font> evaluates to true or
+false. The compiler will generate a warning if macro
+definitions occur within an <font class="CVariable">#ifdef</font>
+block.</p>
+
+<p>The <font class="CVariable">#if</font>, <font class="CVariable">#else</font>, and 
+<font class="CVariable">#elif</font> directives are also available, but are
+outside the scope of
+this document. Refer to a C reference manual for how to use them.</p>
+
+<!--The_CBC_Library_File-->
+
+<a name="The_CBC_Library_File"></a>
+<h2>The CBC Library File</h2>
+
+<p>Library files provide standard C functions for interfacing with
+hardware on the robot
+controller board. These functions are written either in C or as
+assembly language drivers.
+Library files provide functions to do things like control motors, make
+tones, and input
+sensors values.</p>
+
+<p>KISS-C automatically loads the library file every time it is invoked.</p>
+
+<p>For convenience, a description of some of the more commonly used
+library functions follows.</p>
+
+<!--Commonly_Used_CBC_Library_Functions-->
+
+<a name="Commonly_Used_CBC_Library_Functions"></a>
+<h3>Commonly Used CBC Library Functions</h3>
+
+<pre><code><a name="digitalx"></a><font class="CFunction">digital</font>(&lt;port#&gt);
+    <font class="Comment">/* returns 0 if the switch attached to the port is open and
+       returns 1 if the switch is closed.  Digital ports are numbered
+       8-15.  Typically used for bumpers or limit switches. */</font>
+
+<a name="analogx"></a><font class="CFunction">analog</font>(&lt;port#&gt);
+    <font class="Comment">/* returns the analog value of the port (a value in the range 0-255).
+       Analog ports are numbered 0-7. Light sensors and range sensors are
+       examples of sensors you would use in analog ports. */</font>
+
+<a name="sleepx"></a><font class="CFunction">sleep</font>(&lt;float_secs&gt;);
+    <font class="Comment">  /* waits specified number of seconds */</font>
+
+<a name="beepx"></a><font class="CFunction">beep</font>();
+    <font class="Comment">/* causes a beep sound */</font>
+
+<a name="tonex"></a><font class="CFunction">tone</font>(&lt;int_frequency&gt;, &lt;int_secs&gt;)
+    <font class="Comment">/* plays at specified frequency for specified time (seconds) */</font>
+
+<a name="printfx"></a><font class="CFunction">printf</font>(&lt;string&gt;, &lt;arg1&gt;, &lt;arg2&gt;, ... );
+    <font class="Comment">/* prints &lt;string&gt;.  If the string contains % codes then the &lt;args&gt;
+       after the string will be printed in place of the % codes in the
+       format specified by the code. %d prints a decimal number. %f
+       prints a floating point number. %c prints a character, %b prints
+       an integer in binary, %x prints an integer in hexadecimal. */</font>
+
+<a name="motorx"></a><font class="CFunction">motor</font>(&lt;motor_#&gt;, &lt;speed&gt;)
+    <font class="Comment">/* controls the motors. &lt;motor_#&gt; is an integer between 0 and 3.
+       &lt;speed&gt; is an integer between -100 and 100 where 0
+       means the motor is off and negative numbers run the motor in the
+       reverse direction */</font>
+
+<a name="fdx"></a><font class="CFunction">fd</font>(&lt;motor_#&gt;);
+    <font class="Comment">/* turns on the motor specified (direction is determined by plug
+       orientation */</font>
+
+<a name="bkx"></a><font class="CFunction">bk</font>(&lt;motor_#&gt;);
+    <font class="Comment">/* turns on the motor specified in the opposite direction from fd */</font>
+
+<a name="offx"></a><font class="CFunction">off</font>(&lt;motor_#&gt;);
+    <font class="Comment">/* turns off the motor specified */</font>
+
+<a name="aox"></a><font class="CFunction">ao</font>();
+    <font class="Comment">/* turns all motor ports off */</font>
+</code></pre><br/>
+
+<!--Functions-->
+
+<a name="Functions"></a>
+<h3>CBC Library Functions</h3>
+
+<p>(alphabetic order)</p> 
+
+<table class="CFunctions">
+  <tbody>
+    <tr>
+      <td><a name="a_button"></a></td>
+      <td><font class="CFunction">a_button</font> &nbsp;&nbsp;&nbsp;[Category: Sensors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">a_button</font>();<br/>
+            Reads the value (0 or 1) of the A button.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="alloff"></a> </td>
+      <td><font class="CFunction">alloff</font>&nbsp;&nbsp;&nbsp;[Category: Motors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font>&nbsp;&nbsp;<font class="CFunction">alloff</font>();<br/>
+Turns off all motors. <font class="CFunction">ao</font> is
+a short form for <font class="CFunction">alloff</font>.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="analog"></a> </td>
+      <td><font class="CFunction">analog</font>
+&nbsp;&nbsp;&nbsp;[Category: Sensors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">analog</font>(<font class="CVariable">int</font> p);<br/>
+Returns the value of the sensor installed at the port numbered p. The
+result is an integer between 0 and 255. The function can be used with
+analog ports 0 through 7. <!--Ports 13 through 15 are
+floating (used for sensors such as an optical range finder). Since ports 13-15 are
+floating, the value cannot be predicted without a sensor inserted.--></dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="analog10"></a> </td>
+      <td><font class="CFunction">analog10</font>
+&nbsp;&nbsp;&nbsp;[Category: Sensors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">analog10</font>(<font class="CVariable">int</font> p);<br/>
+10-bit version of the <font class="CFunction">analog</font>
+function. The returned value is in the range 0 to 1023 rather than 0 to
+255.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="ao"></a> </td>
+      <td><font class="CFunction">ao</font>
+&nbsp;&nbsp;&nbsp;[Category: Motors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">ao</font>();<br/>
+Turns off all motors.</dd>
+                        <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="atan"></a> </td>
+      <td><font class="CFunction">atan</font>
+&nbsp;&nbsp;&nbsp;[Category: Math]<dl>
+        <dd>Format: <font class="CVariable">float</font> <font class="CFunction">atan</font>(<font class="CVariable">float</font> angle);<br/>
+Returns the arc tangent of the angle. Angle is specified in radians;
+the result is in radians.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="b_button"></a> </td>
+      <td><font class="CFunction">b_button</font>
+&nbsp;&nbsp;&nbsp;[Category: Sensors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">b_button</font>();<br/>
+Reads the value (0 or 1) of the B button.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="beep"></a> </td>
+      <td><font class="CFunction">beep</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Output]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">beep</font>();<br/>
+Produces a tone. Returns when
+the tone is finished.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="bk"></a> </td>
+      <td><font class="CFunction">bk</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Motors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">bk</font>(<font class="CVariable">int</font> m);<br/>
+Turns motor m on full speed in the
+backward direction.<br/>
+Example: <br/>
+         <pre><code><font class="CFunction">bk</font>(1);</code></pre>
+          </dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="black_button"></a> </td>
+      <td><font class="CFunction">black_button</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Sensors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">black_button</font>();<br/>
+Reads the value (0 or 1) of the Black button on the CBC (or a period on the simulator).</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+      <td><br/>
+      </td>
+      <td><font class="CFunction">block_motor_done</font>
+
+&nbsp; [Category: Motors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">block_motor_done</font>(<font class="CVariable">int</font> m);<br/>
+Function does not return until specified motor completes any executing
+speed or position control moves.<br/>
+Example: <br/>
+
+<pre><code><font class="CFunction">mrp</font>(0,500,20000L);
+<font class="CFunction">block_motor_done</font>(1);</code></pre>
+</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+      <td><br/>
+      </td>
+      <td><font class="CFunction">bmd</font> &nbsp;
+[Category: Motors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">bmd</font>(<font class="CVariable">int</font> m);<br/>
+Function does not return until specified motor completes any executing
+speed or position control moves.<br/>
+Example: <br/>
+
+<pre><code><font class="CFunction">mrp</font>(0,500,20000L);
+<font class="CFunction">bmd</font>(1);</code></pre>
+</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="cbc_display_clear"></a> </td>
+      <td><font class="CFunction">cbc_display_clear</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Output]<br/>
+      <dl><dd>Format: <font class="CVariable">void</font> <font class="CFunction">cbc_display_clear</font>();<br/>
+Clear the CBC display.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="cbc_printf"></a> </td>
+      <td><font class="CFunction">cbc_printf</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Output]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">cbc_printf</font>(<font class="CVariable">int</font> col, <font class="CVariable">int</font> row, <font class="CVariable">char</font> s[], . . .);<br/>
+Perform a standard printf starting at screen location col, row.</dd>
+          <dd></dd>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="clear_motor_position_counter"></a> </td>
+      <td><font class="CFunction">clear_motor_position_counter</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Motors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">clear_motor_position_counter</font>(<font class="CVariable">int</font> motor_nbr);<br/>
+        Reset the position counter for the motor specified to 0.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="cos"></a> </td>
+      <td><font class="CFunction">cos</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Math]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">float</font> <font class="CFunction">cos</font>(<font class="CVariable">float</font> angle);<br/>
+Returns cosine of angle. Angle is specified in radians; result is in
+radians.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="defer"></a> </td>
+      <td><font class="CFunction">defer</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Processes]<br/>
+      
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">defer</font>();<br/>
+Makes a process swap out immediately after the function is called.
+Useful if a process knows that it will not need to do any work until
+the next time around the scheduler loop. <font class="CFunction">defer</font>() is implemented as a C built-in
+function.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="digital"></a> </td>
+      <td><font class="CFunction">digital</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Sensors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">digital</font>(<font class="CVariable">int</font> p);<br/>
+Returns the value of the sensor in sensor port p, as a true/false value
+(1 for true and 0 for false). Sensors are expected to be active low,
+meaning that they are valued at zero volts in the active, or true,
+state. Thus the library function returns the inverse of the actual
+reading from the digital hardware: if the reading is zero volts or
+logic zero, the <font class="CFunction">digital</font>()
+function will return true. Valid for digital ports 8-15.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="disable_servos"></a> </td>
+      <td><font class="CFunction">disable_servos</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Servos]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">disable_servos</font>();<br/>
+Disables the servo motor ports (powers down all servo motors).</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="down_button"></a> </td>
+      <td><font class="CFunction">down_button</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Sensors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">down_button</font>();<br/>
+Reads the value (0 or 1) of the move down button.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="enable_servos"></a> </td>
+      <td><font class="CFunction">enable_servos</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Servos]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">enable_servos</font>();<br/>
+Enables all servo motor ports.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="exp10"></a> </td>
+      <td><font class="CFunction">exp10</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Math]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">float</font> <font class="CFunction">exp10</font>(<font class="CVariable">float</font> num);<br/>
+Returns 10 to the num power.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="exp"></a> </td>
+      <td><font class="CFunction">exp</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Math]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">float</font> <font class="CFunction">exp</font>(<font class="CVariable">float</font> num);<br/>
+Returns e to the num power.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="fd"></a> </td>
+      <td><font class="CFunction">fd</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Motors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">fd</font>(<font class="CVariable">int</font> m);<br/>
+Turns motor m on full in the forward direction.<br/>
+Example:<br/>
+          
+<pre><code><font class="CFunction">fd</font>(3);</code></pre>
+          </dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="freeze"></a> </td>
+      <td><font class="CFunction">freeze</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Motors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">freeze</font>(<font class="CVariable">int</font> m);<br/>
+Freezes motor m (prevents continued motor rotation, in contrast to <font class="CFunction">off</font>, which allows the motor to
+"coast").</dd>
+          <dd><br/>
+          </dd>
+      </dl>
+      </td>
+      </tr>
+    <tr>
+       <td><a name="get_motor_done"></a> </td>
+      <td><font class="CFunction">get_motor_done</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Motors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">get_motor_done</font>(<font class="CVariable">int</font> m);<br/>
+Returns whether the motor has finished a move with specified position.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="get_motor_position_counter"></a> </td>
+      <td><font class="CFunction">get_motor_position_counter</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Motors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">get_motor_position_counter</font>(<font class="CVariable">int</font> m);<br/>
+Returns the current motor position value for motor m
+(a value which is continually being updated for each motor using back
+EMF; a typical discrimination for a given motor is on the order of 1100
+position "ticks" per rotation)</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="get_servo_position"></a> </td>
+      <td><font class="CFunction">get_servo_position</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Servos]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">get_servo_position</font>(<font class="CVariable">int</font> srv);<br/>
+Returns the position value of the servo in port srv.
+The value is in the range 0 to 2047. There are 4 servo ports (0, 1, 2,
+3).</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="kill_process"></a> </td>
+      <td><font class="CFunction">kill_process</font>
+&nbsp;&nbsp;&nbsp;[Category: Processes]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">kill_process</font>(<font class="CVariable">int</font> pid);<br/>
+The <font class="CFunction">kill_process</font> function
+is used to destroy processes. Processes are destroyed by passing their
+process ID number to <font class="CFunction">kill_process</font>.
+If the return value is 0, then the process was destroyed. If the return
+value is 1, then the process was not found. The following code shows
+the main process creating a check_sensor
+process, and then destroying it one second later:
+<br/>
+
+<pre><code><font class="CVariable">int</font> main()
+{
+    <font class="CVariable">int</font> pid;
+    pid = <font class="CFunction">start_process</font>(check_sensor);
+    <font class="CFunction">sleep</font>(1.0);
+    <font class="CFunction">kill_process</font>(pid);
+}</code></pre><br/>
+          </dd>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="kissSimEnablePause"></a> </td>
+      <td><font class="CFunction">kissSimEnablePause</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Simulator]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">kissSimEnablePause</font>();<br/>
+Will pause the simulation if the space bar is pressed when this is called.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="kissSimPause"></a> </td>
+      <td><font class="CFunction">kissSimPause</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Simulator]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">kissSimPause</font>();<br/>
+Will pause the simulation when this is called. Press the space bar to resume.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="left_button"></a> </td>
+      <td><font class="CFunction">left_button</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Sensors]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">int</font> <font class="CFunction">left_button</font>();<br/>
+Reads the value (0 or 1) of the move left button.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="log10"></a> </td>
+      <td><font class="CFunction">log10</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Math]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">float</font> <font class="CFunction">log10</font>(<font class="CVariable">float</font> num);<br/>
+Returns the logarithm of num to the base
+10.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="log"></a> </td>
+      <td><font class="CFunction">log</font>
+
+&nbsp;&nbsp;&nbsp;[Category: Math]<br/>
+      <dl>
+        <dd>Format: <font class="CVariable">float</font> <font class="CFunction">log</font>(<font
+ class="CVariable">float</font> num);<br/>
+Returns the natural logarithm of num.</dd>
+          <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+      <td><br/>
+      </td>
+      <td><font class="CFunction">mav</font>
+
+&nbsp;&nbsp; [Category: Motors] <dl>
+
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">mav</font>(<font
+ class="CVariable">int</font> m, <font class="CVariable">int</font> vel)</font>;<br/>
+This function is the same as move_at_velocity </dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="motor"></a> </td>
+      <td><font class="CFunction">motor</font>
+&nbsp;&nbsp;&nbsp;[Category: Motors] &nbsp;&nbsp;<dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">motor</font>(<font
+ class="CVariable">int</font> m, <font class="CVariable">int</font> p);<br/>
+Turns on motor m at scaled PWM duty cycle
+percentage&nbsp; p. Power levels range
+from 100 for full on forward to -100 for full on backward. 
+</dd>
+              <dd> <br/>
+</dd>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" class="style1"><a name="move_at_velocity"></a> </td>
+      <td class="style1"><font class="CFunction">move_at_velocity</font>
+&nbsp;&nbsp;&nbsp;[Category: Motors] <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">move_at_velocity</font>(<font
+ class="CVariable">int</font> m, <font class="CVariable">int</font> vel);<br/>
+Moves motor m at velocity vel indefinitely. The velocity range is -1000 to
+1000 ticks per second. 
+          </dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="move_relative_position"></a> </td>
+      <td><font class="CFunction">move_relative_position</font>
+&nbsp;&nbsp;&nbsp;[Category: Motors]<dl>
+        <dd>Format:  <font class="CVariable">void</font> <font class="CFunction">move_relative_position</font>(<font
+ class="CVariable">int</font> m, <font class="CVariable">int</font> speed, <font
+ class="CVariable">int</font> pos);<br/>
+Moves motor m at velocity vel from its current position curr_pos to curr_pos + pos.
+The speed range is 0 to 1000 ticks per second.</dd>
+          <dd>Example: <br/>
+          <pre><code><font class="CFunction">move_relative_position</font>(1,275,-1100L);</code></pre>
+                        </dd>
+                        <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="move_to_position"></a> </td>
+      <td><font class="CFunction">move_to_position</font>
+&nbsp;&nbsp;&nbsp;[Category: Motors] <dl>
+        <dd>Format:  <font class="CVariable">void</font> <font class="CFunction">move_to_position</font>(<font
+ class="CVariable">int</font> m, <font class="CVariable">int</font> speed, <font
+ class="CVariable">int</font> pos);<br/>
+Moves motor m at velocity vel from its current position curr_pos to pos.
+The speed range is 0 to 1000. Note that if the motor is already at pos, the motor doesn't move.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="mrp"></a> </td>
+      <td><font class="CFunction">mrp</font>
+&nbsp;&nbsp;&nbsp;[Category: Motors] <dl>
+        <dd>Format:  <font class="CVariable">void</font> <font class="CFunction">mrp</font>(<font
+ class="CVariable">int</font> m, <font class="CVariable">int</font> vel, <font
+ class="CVariable">int</font> pos);<br/>
+This function is the same as move_relative_position.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+      <td><br/>
+      </td>
+      <td><font class="CFunction">mtp</font>
+&nbsp; [Category: Motors] &nbsp;&nbsp;<dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">mtp</font>(<font
+ class="CVariable">int</font> m, <font class="CVariable">int</font> vel, <font
+ class="CVariable">int</font> pos);<br/>
+This function is the same as move_to_position.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="msleep"></a> </td>
+      <td><font class="CFunction">msleep</font>
+&nbsp;&nbsp;&nbsp;[Category: Time] <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">msleep</font>(<font
+ class="CVariable">int</font> msec);<br/>
+Waits for an amount of time equal to or greater than msec milliseconds. <br/>
+Example:<br/>
+          <pre><code><font class="Comment">/*wait for 1.5 seconds */</font><font class="CFunction"> msleep</font>(1500);</code></pre>
+              </dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="off"></a> </td>
+      <td><font class="CFunction">off</font>
+&nbsp;&nbsp;&nbsp;[Category: Motors] <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">off</font>(<font
+ class="CVariable">int</font> m);<br/>
+Turns off motor m. <br/>
+Example: <br/>
+        <pre><code><font class="CFunction">off</font>(1);</code></pre>
+              </dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="power_level"></a> </td>
+      <td><font class="CFunction">power_level</font>
+&nbsp;&nbsp;&nbsp;[Category: Sensor] <dl>
+        <dd>Format: <font class="CVariable">float</font> <font class="CFunction">power_level</font>();<br/>
+Returns the current power level in volts.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="printf"></a> </td>
+      <td><font class="CFunction">printf</font>
+&nbsp;&nbsp;&nbsp;[Category: Output] <dl>
+        <dd>Format:  <font class="CVariable">void</font> <font class="CFunction">printf</font>(<font
+ class="CVariable">char</font> s[], . . .);<br/>
+Prints the contents of the string referenced by s to the cursor position on the screen.<br/>
+See the <A href="#LCD_Screen_Printing">manual</A> above for more details.
+          
+        </dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+
+    <tr>
+       <td><a name="r_button"></a> </td>
+      <td><font class="CFunction">r_button</font>
+&nbsp;&nbsp;&nbsp;[Category: Sensors] <dl>
+        <dd>Format:  <font class="CVariable">int</font> <font class="CFunction">r_button</font>();<br/>
+Reads the value (0 or 1) of the R (shoulder) button.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="random"></a> </td>
+      <td><font class="CFunction">random</font>
+&nbsp;&nbsp;&nbsp;[Category: Math] <dl>
+        <dd>Format:  <font class="CVariable">int</font> <font class="CFunction">random</font>(<font
+ class="CVariable">int</font> m);<br/>
+Returns a random integer between 0 and some very large number.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="right_button"></a> </td>
+      <td><font class="CFunction">right_button</font>
+&nbsp;&nbsp;&nbsp;[Category: Sensors] <dl>
+        <dd>Format:  <font class="CVariable">int</font> <font class="CFunction">right_button</font>();<br/>
+Reads the value (0 or 1) of the move right button.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    
+    <tr>
+    <td><a name="run_for"></a> </td>
+    <td><font class="CFunction">run_for</font>&nbsp;&nbsp;&nbsp;[Category: Processes] 
+        <dl>
+            <dd>Format: <font class="CVariable">void</font> <font class="CFunction">run_for</font>(<font class="CVariable">float</font> sec, <font class="CVariable">void</font> &lt;function_name&gt;);<br/>
+            This function takes a function and runs it for a certain amount of time in seconds.  
+            <font class="CFunction">run_for</font> will return within 1 second of your function exiting, if it exits before the specified time. 
+            The variable sec denotes how many seconds to run the given function. 
+            </dd>
+        </dl>
+    </td>
+    </tr>
+    
+    <tr>
+       <td><a name="seconds"></a> </td>
+      <td><font class="CFunction">seconds</font>
+&nbsp;&nbsp;&nbsp;[Category: Time] <dl>
+        <dd>Format:  <font class="CVariable">float</font> <font class="CFunction">seconds</font>();<br/>
+Returns the count of system time in seconds, as a floating point
+number. Resolution is one millisecond.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    
+    <tr>
+    <td><a name="set_analog_floats"></a></td>
+    <td><font class="CFunction">set_analog_floats</font>&nbsp;&nbsp;&nbsp;[Category: Sensors]
+        <dl>
+            <dd>Format: <font class="CVariable">void</font> <font class="CFunction">set_analog_floats</font>(<font class="CVariable">int</font> mask);<br/>
+            This function uses a number between 0 and 255 to set which port are to be set floating.
+            </dd>
+        </dl>
+    </td>
+    </tr>
+    
+    <tr>
+    <td><a name="set_each_analog_state"></a></td>
+    <td><font class="CFunction">set_each_analog_state</font>&nbsp;&nbsp;&nbsp;[Category: Sensors] 
+    <dl>
+        <dd>Format: <font class="CVariable">void</font> <font class="CFunction">set_each_analog_state</font>(<font class="CVariable">int</font> a0, <font class="CVariable">int</font> a1, <font class="CVariable">int</font> a2, <font class="CVariable">int</font> a3, <font class="CVariable">int</font> a4, <font class="CVariable">int</font> a5, <font class="CVariable">int</font> a6, <font class="CVariable">int</font> a7);<br/>
+        This function is used to set weather or not the analog ports are set to floating points or to pullup resistors. Passing a 1 sets the corresponding port to floating.
+        Please note that all sensor ports are set to non-floating when the CBC is rebooted or when a program exits.
+        </dd>
+    </dl>
+    </td>
+    </tr>
+    <tr>
+       <td><a name="set_pid_gains"></a> </td>
+      <td><font class="CFunction">set_pid_gains</font>
+&nbsp;&nbsp;&nbsp;[Category: Motors] <dl>
+        <dd>Format:  <font class="CVariable">int</font> <font class="CFunction">set_pid_gains</font>(<font
+ class="CVariable">int</font> motor, <font class="CVariable">int</font> p, <font class="CVariable">int
+</font> i, <font class="CVariable">int</font> d, <font class="CVariable">int</font> pd, <font
+ class="CVariable">int</font> id, <font class="CVariable">int</font> dd);<br/>
+This function is used to adjust the weights of the PID control for the motors. The p, i and d parameters are the numerators for the p, i and d coefficients.  The pd, id and dd parameters are their respective denominators.  Thus all of the parameters are integers, but the actual coefficients can be floats.  If a motor is jerky, the p and d terms should be reduced in size.  If a motor lags far behind, they should be increased. The default values are 30,0,-30,70,1,51.</font>
+</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="set_servo_position"></a> </td>
+      <td><font class="CFunction">set_servo_position</font>
+&nbsp;&nbsp;&nbsp;[Category: Servos] <dl>
+        <dd>Format:  <font class="CVariable">int</font> <font class="CFunction">set_servo_position</font>(<font
+ class="CVariable">int</font> srv, <font class="CVariable">int</font> pos);<br/>
+Sets the position value of the servo in port srv.
+The value of pos must be in the range 0 to
+2047. There are 4 servo ports (0, 1, 2, 3).</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+      <td><br/>
+      </td>
+      <td><font class="CFunction">setpwm</font>
+&nbsp;&nbsp; [Category: Motors] <dl>
+        <dd>Format:  <font class="CVariable">int</font> <font class="CFunction">setpwm</font>(<font
+ class="CVariable">int </font>m, <font class="CVariable">int</font>
+          dutycycle);<br/>
+          Runs motor m at duty cycle dutycycle (values
+-100 to 100)</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="sin"></a> </td>
+      <td><font class="CFunction">sin</font>
+&nbsp;&nbsp;&nbsp;[Category: Math] <dl>
+        <dd>Format:  <font class="CVariable">float</font> <font class="CFunction">sin</font>(<font
+ class="CVariable">float</font> angle);<br/>
+Returns the sine of angle. angle is specified in radians; result is in
+radians.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="sleep"></a> </td>
+      <td><font class="CFunction">sleep</font>
+&nbsp;&nbsp;&nbsp;[Category: Time] <dl>
+        <dd>Format:  <font class="CVariable">void</font> <font class="CFunction">sleep</font>(<font
+ class="CVariable">float</font> sec);<br/>
+Waits for an amount of time equal to or slightly greater than sec seconds. sec is
+a float. Example:<br/>
+          <pre><code><font class="Comment">/*wait for 2 seconds */</font><font class="CFunction"> sleep</font>(2.0);</code></pre>
+              </dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="sonar"></a> </td>
+      <td><font class="CFunction">sonar</font>
+&nbsp;&nbsp;&nbsp;[Category: Sensors] <dl>
+        <dd>Format:  <font class="CVariable">int</font> <font class="CFunction">sonar</font>();<br/>
+Returns the approximate distance in mm.</dd>
+              <dt></dt>
+                        <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="sqrt"></a> </td>
+      <td><font class="CFunction">sqrt</font>
+&nbsp;&nbsp;&nbsp;[Category: Math] <dl>
+        <dd>Format:  <font class="CVariable">float</font> <font class="CFunction">sqrt</font>(<font
+ class="CVariable">float</font> num);<br/>
+Returns the square root of num.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="start_process"></a> </td>
+      <td><font class="CFunction">start_process</font>
+&nbsp;&nbsp;&nbsp;[Category: Processes] <dl>
+        <dd>Format:  <font class="CVariable">int</font> <font class="CFunction">start_process</font>(&lt;function name&gt;);<br/>
+The <font class="CFunction">start_process</font> function
+is used to start a process, which then runs in parallel with other
+active processes. The system keeps track of each running process by
+assigning a process ID number to it. <font class="CFunction">start_process</font> returns the process ID number for
+each process it starts. The process runs until it finishes or until it
+is terminated by <font class="CFunction"><a href="#kill_process">kill_process</a></font>. The following code shows the main process creating a check_sensor() process, and then destroying it one
+second later:
+<pre><code><font class="CVariable">int</font> main()
+{
+     <font class="CVariable">int</font> pid;<br/>
+     pid=<font class="CFunction">start_process</font>(check_sensor());
+     <font class="CFunction">sleep</font>(1.0);
+     <font class="CFunction">kill_process</font>(pid);
+}</code></pre>
+          </dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="tan"></a> </td>
+      <td><font class="CFunction">tan</font>
+&nbsp;&nbsp;&nbsp;[Category: Math] <dl>
+        <dd>Format: <font class="CVariable">float</font> <font class="CFunction">tan</font>(<font class="CVariable">float</font> angle);<br/>
+Returns the tangent of angle</font>. angle is specified in radians; result is in
+radians.</dd><dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="tone"></a> </td>
+      <td><font class="CFunction">tone</font>
+&nbsp;&nbsp;&nbsp;[Category: Output] <dl>
+        <dd>Format:  <font class="CVariable">void</font> <font class="CFunction">tone</font> (<font
+ class="CVariable">float</font> frequency, <font class="CVariable">float</font>
+length);<br/>
+Produces a tone at pitch frequency
+(measured in Hertz) for length seconds.
+Returns when the tone is finished. Both frequency and length are floats.</dd>
+              <dt></dt>
+      </dl>
+      </td>
+    </tr>
+    <tr>
+       <td><a name="up_button"></a> </td>
+      <td><font class="CFunction">up_button</font>
+&nbsp;&nbsp;&nbsp;[Category: Sensors] <dl>
+        <dd>Format:  <font class="CVariable">int</font> <font class="CFunction">up_button</font>();<br/>
+Reads the value (0 or 1) of the move up button.</dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!--Create Function Library-->
+
+<a name="Create"></a>
+<h3>Create Library Functions</h3>
+
+<p>The Create library is automatically loaded 
+whenever CBC is chosen as the target. The functions which update 
+sensor data, and the connection functions all return 0 if they are successful 
+and return a negative number if there is some error. The functions update 
+global variables all of which start with the prefic gc_. The movment function, 
+with the exception of the script and block functions are all non-blocking. 
+The movements will continue until a different movment command is given. 
+The script commands will execute without blocking and will finish when 
+the goal is reached. The blocking spin function will not return until 
+the goal has been reached.</p>
+
+<table class="CFunctions">
+<tbody>
+<tr>
+  <td><font class="CFunction">create_connect </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_connect</font>();<br/>
+          First step for connecting CBC to Create. Returns 
+          0 if sucessful and a negative number if not. This function puts the Create in the create_safe mode.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_disconnect </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void </font> <font class="CFunction">create_disconnect</font>();<br/>
+          Returns Create to proper state and resets XBC baud rate to KISS-C rate</p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_start </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void </font> <font class="CFunction">create_start</font>();<br/>
+          Puts Create into active mode (with motors)</p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_passive </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void </font> <font class="CFunction">create_passive</font>();<br/>
+          Puts Create into passive mode (no motors)</p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_safe </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_safe</font>();<br/>
+           Create will execute all commands, but will disconnect and stop if 
+           drop or cliff sensors fire.</p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_full </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void </font> <font class="CFunction">create_full</font>();<br/>
+           Create will move however you tell it -- even if that is a bad thing. In particular,
+            the Create will not stop and disconnect, even if it is picked up or the cliff sensors fire.</p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_spot </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void </font> <font class="CFunction">create_spot</font>();<br/>
+           Simulates a Roomba doing a spot clean</p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_cover </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void </font> <font class="CFunction">create_cover</font>(); <br/>
+           Simulates a Roomba covering a room</p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_demo </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void </font> <font class="CFunction">create_demo</font>(<font class="CVariable">int </font> d);<br/>
+          Runs built in demos (see Create OI)</p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_cover_dock </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_cover_dock</font>();<br/>
+          Create roams around until it sees an IR dock and then attmpts to dock</p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_mode </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_mode</font>();<br/>
+          Returns the Create's mode (0 off; 1 passive; 2 safe; 3 full).</p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_sensor_update </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_sensor_update</font>();<br/>
+          Calls all of the sensor functions below, updating all Create global variables
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_wall </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_wall</font>();<br/>
+          gc_wall: 1 if wall detected; gc_wall_amt: strength of signal; gc_wall_hb: home base seen or not
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_buttons </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_buttons</font>();<br/>
+          updates gc_advance_button, gc_play_button: 1 if pressed 0 if not.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_bumpdrop </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_bumpdrop</font>();<br/>
+          updates gc_lbump, gc_rbump, gc_fdrop, gc_ldrop and gc_rdrop
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_cliffs </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_cliffs</font>();<br/>
+          updates IR cliff detectors from left to right: gc_lcliff, gc_lcliff_amt, 
+    gc_lfcliff, gc_lfcliff_amt, gc_rfcliff, gc_rfcliff_amt, gc_rcliff, 
+    and gc_rcliff_amt: ending in cliff are 1 if a cliff is detected; ending 
+    in _amt gives the strength of signal.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_angle </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_angle</font>();<br/>
+          updates gc_angle which is an int between 0 and 360, and gc_total_angle 
+    which can be of whatever size and sign. Left turns (CCW) are positive 
+    and right turns (CW) negative 
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_distance </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_distance</font>();<br/>
+          updates gc_distance which is the distance in mm traveled by center 
+    of robot. Going backwards reduces this number.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_velocity </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_velocity</font>();<br/>
+          updates gc_vel, gc_lvel, gc_rvel which are the current velocity 
+    of the vehicle and left and right wheels in mm/s
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_read_IR </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_read_IR</font>();<br/>
+          updates gc_IR: 255 means no byte is being received, otherwise it 
+    has the code from the remote
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_overcurrents </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_overcurrents</font>();<br/>
+          updates gc_overcurrents where 16's bit indicates overcurrent in 
+    left wheel; 8's bit in right wheel, 4's bit is LD2, 2's bit is LD0 
+    and 1's bit is LD1.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_battery_charge </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_battery_charge</font>();<br/>
+          updates gc_batt_voltage in mV, gc_current_flow in mA, gc_batt_charge 
+    and gc_batt_capacity in mAhr.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_cargo_bay_inputs </font> &nbsp;&nbsp;&nbsp;[Category: Create Sensor Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">create_cargo_bay_inputs</font>();<br/>
+          updates gc_digital_in 16'bit for pin 15, 8's bit for pin 6, 4's 
+    bit for pin 18, 2's bit for pin 5 and 1's bit for pin 17. gc_analog 
+    is 10 bit resoltion.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_stop </font> &nbsp;&nbsp;&nbsp;[Category: Create Movement Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_stop</font>();<br/>
+          Stops the drive wheels
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_drive </font> &nbsp;&nbsp;&nbsp;[Category: Create Movement Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_drive</font>(<font class="CVariable">int</font> speed, <font class="CVariable">int</font> radius);<br/>
+          Drives in an arc (see below for point turns and straight). Speed 
+    range for all commands is 20-500mm/s
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_drive_straight </font> &nbsp;&nbsp;&nbsp;[Category: Create Movement Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_drive_straight</font>(<font class="CVariable">int</font> speed);<br/>
+          Drives straight at speed in mm/s
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_spin_CW </font> &nbsp;&nbsp;&nbsp;[Category: Create Movement Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_spin_CW</font>(<font class="CVariable">int</font> speed);<br/>
+          spins Clockwise with edge speed of speed in mm/s
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_spin_CCW </font> &nbsp;&nbsp;&nbsp;[Category: Create Movement Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_spin_CCW</font>(<font class="CVariable">int</font> speed);<br/>
+          spins Counterclockwise with edge speed of speed in mm/s
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_drive_direct </font> &nbsp;&nbsp;&nbsp;[Category: Create Movement Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_drive_direct</font>(<font class="CVariable">int</font> r_speed, <font class="CVariable">int</font> l_speed);<br/>
+          Specifies individual left and right speeds in mm/s
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_advance_led </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_advance_led</font>(<font class="CVariable">int</font> on);<br/>
+          Pass 1 to turn on light and 0 to turn it off
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_play_led </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_play_led</font>(<font class="CVariable">int</font> on);<br/>
+          Pass 1 to turn on light and 0 to turn it off
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_power_led </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_power_led</font>(<font class="CVariable">int</font> color, int brightness);<br/>
+          color 0 is red and 255 green; brightness 0 is off and 255 is full brightness
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_load_song </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_load_song</font>(<font class="CVariable">int</font> num);<br/>
+          Picks a song from gc_song_array[16][33]. Each row is a song. First 
+    column of each song is number of notes (max is 16). Remaining columns 
+    alternate between pitch and duration. See Create OI for details.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">create_play_song </font> &nbsp;&nbsp;&nbsp;[Category: Create Function]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font> <font class="CFunction">create_play_song</font>(<font class="CVariable">int</font> num);<br/>
+          Plays any of the songs that have been loaded
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+</tbody>
+</table>
+
+<!--Vision API-->
+
+<a name="vision"></A>
+<h3>CBC Vision Library Functions</h3>
+
+<table class="CFunctions">
+<tbody>
+<tr>
+  <td><font class="CFunction">track_is_new_data_available</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_is_new_data_available</font>();<br/>
+          Returns 1 if new data is available since the last call of track_update(), 0 if no new data is available.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_update</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">void</font>&nbsp;<font class="CFunction">track_update</font>();<br/>
+          Processes tracking data for a new frame and makes it available for retrieval by the track_<em>property</em>() calls bellow.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_get_frame</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_get_frame</font>();<br/>
+          Returns the frame number used to generate the tracking data.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_count</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_count</font>(<font class="CVariable">int</font> ch);<br/>
+          Returns the number of blobs available for the channel ch, which is a color channel numbered 0 through 3.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_size</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_size</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the size of blob from channel ch (range 0-3), index i (range 0 to track_count(ch)-1) in pixels. 
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_x</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_x</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the pixel x coordinate of the centroid for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). 
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_y</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_y</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the pixel y coordinate of the centroid for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). 
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_confidence</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_confidence</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the confidence for seeing the blob as a percentage of the blob pixel area/bounding
+          box area (range 0-100, low numbers bad, high numbers good) for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1).
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_bbox_left</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_bbox_left</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the pixel x coordinate of the leftmost pixel for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). 
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_bbox_right</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_bbox_right</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the pixel x coordinate of the rightmost pixel for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). 
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_bbox_top</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_bbox_top</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the pixel y coordinate of the topmost pixel for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). 
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_bbox_bottom</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_bbox_bottom</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the pixel y coordinate of the bottommost pixel for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). 
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_bbox_width</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_bbox_width</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the pixel x width of the bounding box for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). This is equivalent to <font class="CFunction">track_bbox_right</font> - <font class="CFunction">track_bbox_left</font>.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_bbox_height</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_bbox_height</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the pixel y height of the bounding box for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). This is equivalent to <font class="CFunction">track_bbox_bottom</font> - <font class="CFunction">track_bbox_top</font>.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_angle</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_angle</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the angle in radians of the major axis for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). Zero is horizontal and when the left end is higher than the right end the angle will be positive.
+           The range is -PI/2 to +PI/2.
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_major_axis</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_major_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the length in pixels of the major axis of the bounding ellipse for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). 
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+<tr>
+  <td><font class="CFunction">track_minor_axis</font> &nbsp;&nbsp;&nbsp;[Category: Vision API]<br/>
+    <dl>
+      <dd><p>Format: <font class="CVariable">int</font> <font class="CFunction">track_minor_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);<br/>
+          Returns the length in pixels of the minor axis of the bounding ellipse for the blob from channel ch (range 0-3), index i
+          (range 0 to track_count(ch)-1). 
+          </p>
+      </dd>
+    </dl>
+  </td>
+</tr>
+</tbody>
+</table>
+
+<!--Functions Categorized-->
+
+<a name="FunctionsCategorized"></a>
+<h3>Categorized Function List</h3>
+
+<div class="indent">
+
+<a name="CategoryBotball"></a>
+<h4>Botball</h4>
+
+<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">shut_down_in</font>(<font class="CVariable">float</font> delay)</li>        <li><font class="CVariable">void</font> <font class="CFunction">wait_for_light</font>(<font class="CVariable">int</font> light_port_)</li>    </ul>    </td>    </tr></tbody></table>
+
+<a name="CategoryCreate"></a><h4>Create</h4><table><tbody>    <tr>    <td>        <ul>        <li><font class="CVariable">int</font> <font class="CFunction">create_connect</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_disconnect</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_start</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_passive</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_safe</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_full</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_spot</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_cover</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_demo</font>(<font class="CVariable">int </font> d);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_cover_dock</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_mode</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_sensor_update</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_wall</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_buttons</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_bumpdrop</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_cliffs</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_angle</font>();</li>        </ul>    </td>    <td>        <ul>        <li><font class="CVariable">int</font> <font class="CFunction">create_distance</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_velocity</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_read_IR</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_overcurrents</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_battery_charge</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_cargo_bay_inputs</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_stop</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_drive</font>(<font class="CVariable">int</font> speed, <font class="CVariable">int</font> radius);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_drive_straight</font>(<font class="CVariable">int</font> speed);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_spin_CW</font>(<font class="CVariable">int</font> speed);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_spin_CCW</font>(<font class="CVariable">int</font> speed);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_drive_direct</font>(<font class="CVariable">int</font> r_speed, <font class="CVariable">int</font> l_speed);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_advance_led</font>(<font class="CVariable">int</font> on);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_play_led</font>(<font class="CVariable">int</font> on);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_power_led</font>(<font class="CVariable">int</font> color, int brightness);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_load_song</font>(<font class="CVariable">int</font> num);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_play_song</font>(<font class="CVariable">int</font> num);</li>        </ul>    </td>    </tr></tbody></table><a name="CategoryMath"></a><h4>Math</h4>
+
+<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">float</font> <font class="CFunction">atan</font>(<font class="CVariable">float</font> angle);</li>        <li><font class="CVariable">float</font> <font class="CFunction">cos</font>(<font class="CVariable">float</font> angle);</li>        <li><font class="CVariable">float</font> <font class="CFunction">exp10</font>(<font class="CVariable">float</font> num);</li>        <li><font class="CVariable">float</font> <font class="CFunction">exp</font>(<font class="CVariable">float</font> num);</li>        <li><font class="CVariable">int</font> <font class="CFunction">log10</font>(<font class="CVariable">float</font> num);</li>        <li><font class="CVariable">float</font> <font class="CFunction">log</font>(<font class="CVariable">float</font> num);</li>        <li><font class="CVariable">int</font> <font class="CFunction">random</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">float</font> <font class="CFunction">sin</font>(<font class="CVariable">float</font> angle);</li>        <li><font class="CVariable">float</font> <font class="CFunction">sqrt</font>(<font class="CVariable">float</font> num);</li>        <li><font class="CVariable">float</font> <font class="CFunction">tan</font>(<font class="CVariable">float</font> angle);</li>    </ul>    </td>    </tr></tbody></table>
+
+<a name="CategoryMotors"></a><h4>Motors</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">alloff</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">ao</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">bk</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">void</font> <font class="CFunction">block_motor_done</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">void</font> <font class="CFunction">bmd</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">void</font> <font class="CFunction">clear_motor_position_counter</font>(<font class="CVariable">int</font> motor_nbr);</li>        <li><font class="CVariable">void</font> <font class="CFunction">fd</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">void</font> <font class="CFunction">freeze</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">int</font> <font class="CFunction">get_motor_done</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">int</font> <font class="CFunction">get_motor_position_counter</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">void</font> <font class="CFunction">mav</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel);</li>        <li><font class="CVariable">void</font> <font class="CFunction">motor</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> p);</li>        <li><font class="CVariable">void</font> <font class="CFunction">move_at_velocity</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel);</li>        <li><font class="CVariable">void</font> <font class="CFunction">move_relative_position</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> speed, <font class="CVariable">int</font> pos);</li>        <li><font class="CVariable">void</font> <font class="CFunction">move_to_position</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> speed, <font class="CVariable">int</font> pos);</li>        <li><font class="CVariable">void</font> <font class="CFunction">mrp</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel, <font class="CVariable">int</font> pos);</li>        <li><font class="CVariable">void</font> <font class="CFunction">mtp</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel, <font class="CVariable">int</font> pos);</li>        <li><font class="CVariable">void</font> <font class="CFunction">off</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">int</font> <font class="CFunction">set_pid_gains</font>(<font class="CVariable">int</font> motor, <font class="CVariable">int</font> p, <font class="CVariable">int</font> i, <font class="CVariable">int</font> d, <font class="CVariable">int</font> pd, <font class="CVariable">int</font> id, <font class="CVariable">int</font> dd);</li>        <li><font class="CVariable">int</font> <font class="CFunction">setpwm</font>(<font class="CVariable">int </font>m, <font class="CVariable">int</font> dutycycle);</li>    </ul>    </td>    </tr></tbody></table><a name="CategoryOutput"></a><h4>Output</h4>
+
+<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">beep</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">cbc_display_clear</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">cbc_printf</font>(<font class="CVariable">int</font> col, <font class="CVariable">int</font> row, <font class="CVariable">char</font> s[], . . .);</li>        <li><font class="CVariable">void</font> <font class="CFunction">printf</font>(<font class="CVariable">char</font> s[], . . .);</li>        <li><font class="CVariable">void</font> <font class="CFunction">tone</font> (<font class="CVariable">float</font> frequency, <font class="CVariable">float</font> length);</li>    </ul>    </td>    </tr></tbody></table>
+<a name="CategoryProcesses"></a><h4>Processes</h4>
+
+<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">defer</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">kill_process</font>(<font class="CVariable">int</font> pid);</li>        <li><font class="CVariable">int</font> <font class="CFunction">start_process</font>(&lt;function name&gt;);</li>        <li><font class="CVariable">void</font> <font class="CFunction">run_for</font>(<font class="CVariable">float</font> sec, <font class="CVariable">void</font> &lt;function_name&gt;);</li>    </ul>    </td>    </tr></tbody></table>
+
+<a name="CategorySensors"></a>
+<h4>Sensors</h4>
+
+<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">int</font> <font class="CFunction">a_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">analog</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">analog10</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">b_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">black_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">digital</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">down_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">left_button</font>();</li>        <li><font class="CVariable">float</font> <font class="CFunction">power_level</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">r_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">right_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">sonar</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">up_button</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">set_each_analog_state</font>(<font class="CVariable">int</font> a0, <font class="CVariable">int</font> a1, <font class="CVariable">int</font> a2, <font class="CVariable">int</font> a3, <font class="CVariable">int</font> a4, <font class="CVariable">int</font> a5, <font class="CVariable">int</font> a6, <font class="CVariable">int</font> a7);</li>        <li><font class="CVariable">void</font> <font class="CFunction">set_analog_floats</font>(<font class="CVariable">int</font> mask);</li>    </ul>    </td>    </tr></tbody></table>
+
+<a name="CategoryServos"></a>
+<h4>Servos</h4>
+
+<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">disable_servos</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">enable_servos</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">get_servo_position</font>(<font class="CVariable">int</font> srv);</li>        <li><font class="CVariable">int</font> <font class="CFunction">set_servo_position</font>(<font class="CVariable">int</font> srv, <font class="CVariable">int</font> pos);</li>    </ul>    </td>    </tr></tbody></table>
+<a name="CategorySimulator"></a><h4>Simulator</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">kissSimEnablePause</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">kissSimPause</font>();</li>    </ul>    </td>    </tr></tbody></table><a name="CategoryTime"></a><h4>Time</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">msleep</font>(<font class="CVariable">int</font> msec);</li>        <li><font class="CVariable">float</font> <font class="CFunction">seconds</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">sleep</font>(<font class="CVariable">float</font> sec);</li>    </ul>    </td>    </tr></tbody></table><a name="CategoryVision"></a><h4>Vision</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">int</font> <font class="CFunction">track_is_new_data_available</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">track_update</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_get_frame</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_count</font>(<font class="CVariable">int</font> ch);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_size</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_x</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_y</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_confidence</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_left</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_right</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_top</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_bottom</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_width</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_height</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_angle</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_major_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_minor_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>    </ul>    </td>    </tr></tbody></table>
+</div>
+
+<!--Processes-->
+
+<a name="Processes"></a>
+<h3>Processes</h3>
+
+<p>Processes work in parallel. Each process, once it is started, will
+continue until it finishes
+or until it is killed by another process using the 
+<font class="CFunction">kill_process</font>(&lt;process_id)&gt;);
+statement. Each process that is active gets a small amount of time.
+Then the process is
+paused temporarily and the next process gets its share of time. This
+continues until all
+the active process have gotten a slice of time, then it all repeats
+again. From the user's
+standpoint it appears that all the active processes are running in
+parallel.</p>
+
+<p>Processes can communicate with one another by reading and modifying
+global variables.
+The globals can be used as semaphores so that one process can signal
+another. Process
+IDs may also be stored in globals so that one process can kill another
+when needed.</p>
+
+<p>The library functions for controlling processes are:</p>
+
+<pre><code><a name="start_processx"></a><font class="CFunction">start_process</font>(&lt;function_name</font>&gt;);
+    <font class="Comment">/* start_process returns an integer that is the &lt;process_id&gt;
+       and starts the function &lt;function_name&gt; as a separate
+       process */</font>
+       
+<a name="deferx"></a><font class="CFunction">defer</font>();
+    <font class="Comment">/* when placed in a function that is used as a process this
+       will cause that process to give up the remainder of its time
+       slice whenever defer is called */</font>
+
+<a name="kill_processx"></a><font class="CFunction">kill_process</font>(&lt;process_id</font>&gt;);
+    <font class="Comment">/* this will terminate the process specified by the
+       &lt;process_id&gt; */</font>
+</code></pre><br/>
+
+<!--sensors-->
+
+<a name="sensors"></a>
+<h3>Sensors</h3>
+
+<p>The image below is the front of the CBC where all the sensor, motor, and servo ports can be found.
+</p>
+
+<img src="Images/CBC_front_ports.jpg" width="100%">
+
+<table border="1" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td align="center" valign="center"> <a href="#light_sensor"> <br/>
+      <img border="0" src="Images/image002.gif"/><br/>
+      <br/>
+      <br/>
+      <b>Light Sensor</b><br/>
+      </a> (analog) </td>
+      <td align="center" valign="center"> <a href="#top_hat_sensor"> <img border="0" src="Images/image003.gif"><br/>
+      <b>Infrared "Top Hat" Reflectance Sensor</b><br/>
+      </a> (analog)</font> </td>
+      <td align="center" valign="center"> <a href="#et_sensor"> <img border="0" src="Images/image004.gif"><br/>
+      <b> Infrared "E.T." Distance Sensor</b><br/>
+      </a> (high-impedance analog) </td>
+    </tr>
+    <tr>
+      <td align="center" valign="center" colspan="2">
+      <a href="#touch_sensors"> <img border="0" src="Images/image005.gif"><br/>
+      <b>Touch Sensors</b><br/>
+      </a> (digital) </td>
+      <td align="center" valign="center"> <a href="#break_beam_sensor"> <img border="0" src="Images/image006.gif"><br/>
+      <b> Infrared "Break Beam" Sensor</b><br/>
+      </a> (digital)</font> </td>
+    </tr>
+    <tr>
+      <td align="center" valign="center"> <a href="#sonar_sensor"> <img border="0" height="120" width="60" src="Images/SONAR.jpg"><br/>
+      <b>Sonar<br/>
+(Ultrasonic Rangefinder)</b> </a> </font></td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+<!--light_sensor-->
+
+<div class="Indent">
+<a name="light_sensor"></a>
+<h4>Light Sensor (analog)</h4>
+
+<img border="0" src="Images/image002.gif">
+<br/>
+<ul>
+  <li>Analog sensor</li>
+  <li>Connect to ports 0-7</li>
+  <li>Access with function <font class="CFunction"><a href="#analog">analog</a></font>(&lt;port#&gt;) </li>
+  <li>Low values indicate bright light</li>
+  <li>High values indicate low light</li>
+  <li>Sensor is somewhat directional and can be made more so using
+    black paper or tape or an opaque straw or lego to shade extraneous
+    light.&nbsp; Sensor can be attenuated by placing paper in front.</li>
+</ul>
+
+<!--top_hat_sensor-->
+
+<a name="top_hat_sensor"></a>
+<h4>Infrared "Top Hat" Reflectance Sensor (analog)</h4>
+
+<img border="0" src="Images/image003.gif">
+<br/>
+<ul>
+  <li>Analog sensor</li>
+  <li>Connect to ports 0-7</li>
+  <li>Access with function <font class="CFunction"><a href="#analog">analog</a></font>(&lt;port#&gt;);</li>
+  <li>Low values indicate bright light, light color, or close proximity</li>
+  <li>High values indicate low light, dark color, or distance of several inches</li>
+  <li>Sensor has a reflectance range of about 3 inches</li>
+</ul>
+
+<!--ET_sensor-->
+<a name="ET_sensor"></a>
+<h4>Infrared "E.T." Distance Sensor (high-impedance analog)</h4>
+
+<img border="0" src="Images/image004.gif">
+<br/>
+<ul>
+  <li>Floating analog sensor</li>
+  <li>Connect to port 0-7</li>
+  <li>Access with function <font class="CFunction"><a href="#analog">analog</a></font>(&lt;port#&gt;);</li>
+  <li>Low values indicate large distance</li>
+  <li>High values indicate distance approaching ~4 inches</li>
+  <li>Range is 4-30 inches.&nbsp; Result is approximately 1/(d)^2. Objects
+    closer than 4 inches will appear to be far away.</li>
+  <li>Sharp Electronics part number GP2D12</li>
+  <li>Sensor shines a narrow infrared beam, and measures the angle of
+    the beam return using a&nbsp; position-sensitive detector (PSD):</li>
+  <!--img border="0" src="Images/image009.gif"-->
+</ul>
+
+<!--touch_sensor-->
+
+<a name="touch_sensors"></a>
+<h4>Touch Sensors (digital)</h4>
+
+<img border="0" src="Images/image005.gif">
+<br/>
+<ul>
+  <li>Digital sensors</li>
+  <li>Connect to ports 8-15</li>
+  <li>Access with function <font class="CFunction"><a href="#digital">digital</a></font>(&lt;port#&gt;);</li>
+  <li>1 indicates switch is closed</li>
+  <li>0 indicates switch is open</li>
+  <li>These make good bumpers and can be used for limit switches on an
+    actuator</li>
+</ul>
+
+<!--break_beam_sensor-->
+
+<a name="break_beam_sensor"></a>
+<h4>Infrared "Break Beam" Sensor (digital)</h4>
+
+<img border="0" src="Images/image010.gif">
+<br/>
+<ul>
+  <li>Digital sensor</li>
+  <li>Connect to ports 8-15</li>
+  <li>Access with function <font class="CFunction"><a href="#digital">digital</a></font>(&lt;port#&gt;) </li>
+  <li>1 indicates slot is empty</li>
+  <li>0 indicates slot is blocked</li>
+  <li>These can be used much like touch sensors (if the object being
+    touched fits in the slot);</li>
+  <li>Special abilities when used as encoders - 
+    This can be useful for the slot sensor in conjunction
+    with a wheel, which allows measuring rotational rate and total angle.</li>
+</ul>
+
+<!--sonar_sensor-->
+
+<a name="sonar_sensor"></a>
+<h4>Sonar (Ultrasonic Rangefinder)</h4>
+
+<img border="0" height="180" width="90" src="Images/SONAR.jpg">
+<br/>
+
+<ul>
+  <li>Timed analog sensor.&nbsp; Sends a "ping" of high-pitched sound and listens for an echo</li>
+  <li>Connect to ports 0-7</li>
+  <li>Access with function <font class="CFunction"><a href="#sonar">sonar</a></font>() </li>
+  <li>Returned value is distance in mm to closest object in field of view</li>
+  <li>Range is approximately 150-2000+mm</li>
+  <li>Speed of sound is ~300mm/ms</li>
+  <li>sonar() times the echo, divides by two and multiplies by speed of sound</li>
+  <li>The sonar field of view is an approximately 30 degree teardrop:</li>
+</ul>
+
+</div>
+
+</body>
+</html>

@@ -282,7 +282,7 @@ INSTALLS += mingw
 #############################
 
 macx:{
-install_lib_names.extra = sh ../../scripts/osx_install_names.sh ../../$${INSTALL_BASE}/targets/gcc/libgcc_plugin.dylib QtCore.framework/Versions/4/QtCore QtGui.framework/Versions/4/QtGui libqscintilla2.5.1.0.dylib
+install_lib_names.extra = sh ../../scripts/osx_install_names.sh ../../$${INSTALL_BASE}/targets/gcc/libgcc_plugin.dylib QtCore.framework/Versions/4/QtCore QtGui.framework/Versions/4/QtGui
 install_lib_names.path = ../../$${INSTALL_BASE}
 
 INSTALLS += install_lib_names

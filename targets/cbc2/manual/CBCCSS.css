@@ -1,0 +1,116 @@
+﻿.CLMenu
+{
+	list-style-type: decimal;
+}
+
+.CLMenu ul 
+{
+	list-style-type: square;
+	display: none;
+}
+
+.CLMenu ul ul
+{
+	list-style-type: circle;
+	display: none;
+}
+
+img.CLButton
+{
+	cursor: pointer;
+	width: 11;
+	height: 11;
+	border: none;
+	margin: none;
+}
+
+#Title
+{
+	text-align: center;
+}
+
+h1
+{
+	text-align: center;
+	font-size: 42;
+}
+
+h2
+{
+	text-align: left;
+	font-size: 32;
+}
+
+h3
+{
+	text-align: left;
+	font-size: 24;
+}
+
+h4
+{
+	text-align: left;
+	font-size: 18;
+}
+
+p.Code div.codeblock
+{
+	text-indent: 50;
+}
+
+font.Comment
+{
+	font-family: Monospace; 
+	font-style: italic;
+	color: darkgreen;
+}
+
+font.CVariable
+{
+	font-family: Monospace; 
+	color: Blue;
+}
+
+font.CFunction
+{
+	font-family: Monospace; 
+	//color: Purple;
+}
+
+font.Quote
+{
+	color: Red;
+	font-family: Monospace; 
+}
+
+pre 
+{
+	font-size: 12px;
+	padding: 0;
+	margin: 0;
+	background: #f0f0f0;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-top: 1px solid #ccc;
+	line-height: 20px; /*--Height of each line of code--*/
+	width: auto;
+	overflow: auto; /*--If the Code exceeds the width, a scrolling is available--*/
+	overflow-Y: hidden;  /*--Hides vertical scroll created by IE--*/
+}
+pre code 
+{
+	margin: 0 0 0 20px;  /*--Left Margin--*/
+	padding: 10px 0;
+	display: block;
+}
+
+div.indent
+{
+	padding-left: 30px;
+}
+
+table.CFunctions
+{
+	border-spacing: 5px;
+}

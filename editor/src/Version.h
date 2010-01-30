@@ -19,5 +19,5 @@
  **************************************************************************/
 
 #define KISS_C_VERSION_MAJOR 2
-#define KISS_C_VERSION_MINOR 0
-#define KISS_C_VERSION_BUILD 5
+#define KISS_C_VERSION_MINOR 1
+#define KISS_C_VERSION_BUILD 1
