@@ -38,3 +38,5 @@ libraries/extraGUI/libextraGUI.a
 libraries/extraGUI/build/
 deploy/
 trademarks/
+targets/cbc2/cbc2.target
+targets/cbc2/libcbc2_plugin.so
