@@ -241,7 +241,6 @@ unix: GCC_TARGET_FILE_INSTALL = ../../$${INSTALL_BASE}/targets/gcc/gcc.target
 !unix: GCC_TARGET_FILE_INSTALL = ..\\..\\$${INSTALL_BASE}\\targets\\gcc\\gcc.target
 
 target_base.files = gcc.api \
-					manual.html \
 					template.c
 target_base.path = ../../$${INSTALL_BASE}/targets/gcc
 target_base.extra = $${COPY} gcc.target $${GCC_TARGET_FILE_INSTALL}
@@ -263,6 +262,29 @@ target_lib.files = ../../external/lib/libglfw.a \
 target_lib.path = ../../$${INSTALL_BASE}/targets/gcc/lib
 
 target.path = ../../$${INSTALL_BASE}/targets/gcc
+
+target_manual.files = manual/CBCCSS.css \
+											manual/CBCCSS_NOSCRIPT.css \
+											manual/cbcmanual.html \
+											manual/fdl-1.3.txt \
+											manual/KISSCManualBody.htm \
+											manual/KISSCManualTable.htm 
+											
+target_manual.path = ../../$${INSTALL_BASE}/targets/cbc2/manual
+
+target_manual_images.files = manual/Images/box-minus.bmp \
+														 manual/Images/box-null.GIF \
+														 manual/Images/box-plus.bmp \
+														 manual/Images/CBC_front_ports.jpg \
+														 manual/Images/image002.gif \
+														 manual/Images/image003.gif \
+														 manual/Images/image004.gif \
+														 manual/Images/image005.gif \
+														 manual/Images/image006.gif \
+														 manual/Images/image010.gif \
+														 manual/Images/sonar.jpg
+
+target_manual_images.path = ../../$${INSTALL_BASE}/targets/cbc2/manual/Images
 
 INSTALLS += target target_base target_include target_gl target_lib
 

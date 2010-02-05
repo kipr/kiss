@@ -1,5 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head><link rel="icon" href="images/botball.ico" type="image/x-icon"/> 
-<link rel="shortcut icon" href="images/botball.ico" type="image/x-icon"/><style type="text/css">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="icon" href="images/botball.ico" type="image/x-icon"/> 
+<link rel="shortcut icon" href="images/botball.ico" type="image/x-icon"/>
+<style type="text/css">
     @import "CBCCSS.css";
 </style>
 <title>KISS-C Programmers Manual</title>
@@ -1663,9 +1667,9 @@ library functions follows.</p>
        prints a floating point number. %c prints a character, %b prints
        an integer in binary, %x prints an integer in hexadecimal. */</font>
 
-<a name="motorx"></a><font class="CFunction">motor</font>(&lt;motor_#&gt;, &lt;speed&gt;)
+<a name="mavx"></a><font class="CFunction">mav</font>(&lt;motor_#&gt;, &lt;vel&gt;)
     <font class="Comment">/* controls the motors. &lt;motor_#&gt; is an integer between 0 and 3.
-       &lt;speed&gt; is an integer between -100 and 100 where 0
+       &lt;vel&gt; is an integer between -1000 and 1000 where 0
        means the motor is off and negative numbers run the motor in the
        reverse direction */</font>
 
@@ -3104,29 +3108,277 @@ the goal has been reached.</p>
 <a name="CategoryBotball"></a>
 <h4>Botball</h4>
 
-<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">shut_down_in</font>(<font class="CVariable">float</font> delay)</li>        <li><font class="CVariable">void</font> <font class="CFunction">wait_for_light</font>(<font class="CVariable">int</font> light_port_)</li>    </ul>    </td>    </tr></tbody></table>
+<table>
+<tbody>
+    <tr>
+    <td>
+    <ul>
+        <li><font class="CVariable">void</font> <font class="CFunction">shut_down_in</font>(<font class="CVariable">float</font> delay)</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">wait_for_light</font>(<font class="CVariable">int</font> light_port_)</li>
+    </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
 
-<a name="CategoryCreate"></a><h4>Create</h4><table><tbody>    <tr>    <td>        <ul>        <li><font class="CVariable">int</font> <font class="CFunction">create_connect</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_disconnect</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_start</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_passive</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_safe</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_full</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_spot</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_cover</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_demo</font>(<font class="CVariable">int </font> d);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_cover_dock</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_mode</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_sensor_update</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_wall</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_buttons</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_bumpdrop</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_cliffs</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_angle</font>();</li>        </ul>    </td>    <td>        <ul>        <li><font class="CVariable">int</font> <font class="CFunction">create_distance</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_velocity</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_read_IR</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_overcurrents</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_battery_charge</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">create_cargo_bay_inputs</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_stop</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_drive</font>(<font class="CVariable">int</font> speed, <font class="CVariable">int</font> radius);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_drive_straight</font>(<font class="CVariable">int</font> speed);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_spin_CW</font>(<font class="CVariable">int</font> speed);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_spin_CCW</font>(<font class="CVariable">int</font> speed);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_drive_direct</font>(<font class="CVariable">int</font> r_speed, <font class="CVariable">int</font> l_speed);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_advance_led</font>(<font class="CVariable">int</font> on);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_play_led</font>(<font class="CVariable">int</font> on);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_power_led</font>(<font class="CVariable">int</font> color, int brightness);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_load_song</font>(<font class="CVariable">int</font> num);</li>        <li><font class="CVariable">void</font> <font class="CFunction">create_play_song</font>(<font class="CVariable">int</font> num);</li>        </ul>    </td>    </tr></tbody></table><a name="CategoryMath"></a><h4>Math</h4>
+<a name="CategoryCreate"></a>
+<h4>Create</h4>
 
-<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">float</font> <font class="CFunction">atan</font>(<font class="CVariable">float</font> angle);</li>        <li><font class="CVariable">float</font> <font class="CFunction">cos</font>(<font class="CVariable">float</font> angle);</li>        <li><font class="CVariable">float</font> <font class="CFunction">exp10</font>(<font class="CVariable">float</font> num);</li>        <li><font class="CVariable">float</font> <font class="CFunction">exp</font>(<font class="CVariable">float</font> num);</li>        <li><font class="CVariable">int</font> <font class="CFunction">log10</font>(<font class="CVariable">float</font> num);</li>        <li><font class="CVariable">float</font> <font class="CFunction">log</font>(<font class="CVariable">float</font> num);</li>        <li><font class="CVariable">int</font> <font class="CFunction">random</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">float</font> <font class="CFunction">sin</font>(<font class="CVariable">float</font> angle);</li>        <li><font class="CVariable">float</font> <font class="CFunction">sqrt</font>(<font class="CVariable">float</font> num);</li>        <li><font class="CVariable">float</font> <font class="CFunction">tan</font>(<font class="CVariable">float</font> angle);</li>    </ul>    </td>    </tr></tbody></table>
+<table>
+<tbody>
+    <tr>
+    <td>
+        <ul>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_connect</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_disconnect</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_start</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_passive</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_safe</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_full</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_spot</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_cover</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_demo</font>(<font class="CVariable">int </font> d);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_cover_dock</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_mode</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_sensor_update</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_wall</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_buttons</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_bumpdrop</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_cliffs</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_angle</font>();</li>
+        </ul>
+    </td>
+    <td>
+        <ul>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_distance</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_velocity</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_read_IR</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_overcurrents</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_battery_charge</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">create_cargo_bay_inputs</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_stop</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_drive</font>(<font class="CVariable">int</font> speed, <font class="CVariable">int</font> radius);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_drive_straight</font>(<font class="CVariable">int</font> speed);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_spin_CW</font>(<font class="CVariable">int</font> speed);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_spin_CCW</font>(<font class="CVariable">int</font> speed);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_drive_direct</font>(<font class="CVariable">int</font> r_speed, <font class="CVariable">int</font> l_speed);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_advance_led</font>(<font class="CVariable">int</font> on);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_play_led</font>(<font class="CVariable">int</font> on);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_power_led</font>(<font class="CVariable">int</font> color, int brightness);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_load_song</font>(<font class="CVariable">int</font> num);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">create_play_song</font>(<font class="CVariable">int</font> num);</li>
+        </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
 
-<a name="CategoryMotors"></a><h4>Motors</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">alloff</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">ao</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">bk</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">void</font> <font class="CFunction">block_motor_done</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">void</font> <font class="CFunction">bmd</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">void</font> <font class="CFunction">clear_motor_position_counter</font>(<font class="CVariable">int</font> motor_nbr);</li>        <li><font class="CVariable">void</font> <font class="CFunction">fd</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">void</font> <font class="CFunction">freeze</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">int</font> <font class="CFunction">get_motor_done</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">int</font> <font class="CFunction">get_motor_position_counter</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">void</font> <font class="CFunction">mav</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel);</li>        <li><font class="CVariable">void</font> <font class="CFunction">motor</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> p);</li>        <li><font class="CVariable">void</font> <font class="CFunction">move_at_velocity</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel);</li>        <li><font class="CVariable">void</font> <font class="CFunction">move_relative_position</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> speed, <font class="CVariable">int</font> pos);</li>        <li><font class="CVariable">void</font> <font class="CFunction">move_to_position</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> speed, <font class="CVariable">int</font> pos);</li>        <li><font class="CVariable">void</font> <font class="CFunction">mrp</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel, <font class="CVariable">int</font> pos);</li>        <li><font class="CVariable">void</font> <font class="CFunction">mtp</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel, <font class="CVariable">int</font> pos);</li>        <li><font class="CVariable">void</font> <font class="CFunction">off</font>(<font class="CVariable">int</font> m);</li>        <li><font class="CVariable">int</font> <font class="CFunction">set_pid_gains</font>(<font class="CVariable">int</font> motor, <font class="CVariable">int</font> p, <font class="CVariable">int</font> i, <font class="CVariable">int</font> d, <font class="CVariable">int</font> pd, <font class="CVariable">int</font> id, <font class="CVariable">int</font> dd);</li>        <li><font class="CVariable">int</font> <font class="CFunction">setpwm</font>(<font class="CVariable">int </font>m, <font class="CVariable">int</font> dutycycle);</li>    </ul>    </td>    </tr></tbody></table><a name="CategoryOutput"></a><h4>Output</h4>
+<a name="CategoryMath"></a>
+<h4>Math</h4>
 
-<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">beep</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">cbc_display_clear</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">cbc_printf</font>(<font class="CVariable">int</font> col, <font class="CVariable">int</font> row, <font class="CVariable">char</font> s[], . . .);</li>        <li><font class="CVariable">void</font> <font class="CFunction">printf</font>(<font class="CVariable">char</font> s[], . . .);</li>        <li><font class="CVariable">void</font> <font class="CFunction">tone</font> (<font class="CVariable">float</font> frequency, <font class="CVariable">float</font> length);</li>    </ul>    </td>    </tr></tbody></table>
-<a name="CategoryProcesses"></a><h4>Processes</h4>
+<table>
+<tbody>
+    <tr>
+    <td>
+    <ul>
+        <li><font class="CVariable">float</font> <font class="CFunction">atan</font>(<font class="CVariable">float</font> angle);</li>
+        <li><font class="CVariable">float</font> <font class="CFunction">cos</font>(<font class="CVariable">float</font> angle);</li>
+        <li><font class="CVariable">float</font> <font class="CFunction">exp10</font>(<font class="CVariable">float</font> num);</li>
+        <li><font class="CVariable">float</font> <font class="CFunction">exp</font>(<font class="CVariable">float</font> num);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">log10</font>(<font class="CVariable">float</font> num);</li>
+        <li><font class="CVariable">float</font> <font class="CFunction">log</font>(<font class="CVariable">float</font> num);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">random</font>(<font class="CVariable">int</font> m);</li>
+        <li><font class="CVariable">float</font> <font class="CFunction">sin</font>(<font class="CVariable">float</font> angle);</li>
+        <li><font class="CVariable">float</font> <font class="CFunction">sqrt</font>(<font class="CVariable">float</font> num);</li>
+        <li><font class="CVariable">float</font> <font class="CFunction">tan</font>(<font class="CVariable">float</font> angle);</li>
+    </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
 
-<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">defer</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">kill_process</font>(<font class="CVariable">int</font> pid);</li>        <li><font class="CVariable">int</font> <font class="CFunction">start_process</font>(&lt;function name&gt;);</li>        <li><font class="CVariable">void</font> <font class="CFunction">run_for</font>(<font class="CVariable">float</font> sec, <font class="CVariable">void</font> &lt;function_name&gt;);</li>    </ul>    </td>    </tr></tbody></table>
+<a name="CategoryMotors"></a>
+<h4>Motors</h4>
+
+<table>
+<tbody>
+    <tr>
+    <td>
+    <ul>
+        <li><font class="CVariable">void</font> <font class="CFunction">alloff</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">ao</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">bk</font>(<font class="CVariable">int</font> m);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">block_motor_done</font>(<font class="CVariable">int</font> m);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">bmd</font>(<font class="CVariable">int</font> m);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">clear_motor_position_counter</font>(<font class="CVariable">int</font> motor_nbr);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">fd</font>(<font class="CVariable">int</font> m);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">freeze</font>(<font class="CVariable">int</font> m);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">get_motor_done</font>(<font class="CVariable">int</font> m);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">get_motor_position_counter</font>(<font class="CVariable">int</font> m);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">mav</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">motor</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> p);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">move_at_velocity</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">move_relative_position</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> speed, <font class="CVariable">int</font> pos);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">move_to_position</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> speed, <font class="CVariable">int</font> pos);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">mrp</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel, <font class="CVariable">int</font> pos);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">mtp</font>(<font class="CVariable">int</font> m, <font class="CVariable">int</font> vel, <font class="CVariable">int</font> pos);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">off</font>(<font class="CVariable">int</font> m);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">set_pid_gains</font>(<font class="CVariable">int</font> motor, <font class="CVariable">int</font> p, <font class="CVariable">int</font> i, <font class="CVariable">int</font> d, <font class="CVariable">int</font> pd, <font class="CVariable">int</font> id, <font class="CVariable">int</font> dd);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">setpwm</font>(<font class="CVariable">int </font>m, <font class="CVariable">int</font> dutycycle);</li>
+    </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
+
+<a name="CategoryOutput"></a>
+<h4>Output</h4>
+
+<table>
+<tbody>
+    <tr>
+    <td>
+    <ul>
+        <li><font class="CVariable">void</font> <font class="CFunction">beep</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">cbc_display_clear</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">cbc_printf</font>(<font class="CVariable">int</font> col, <font class="CVariable">int</font> row, <font class="CVariable">char</font> s[], . . .);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">printf</font>(<font class="CVariable">char</font> s[], . . .);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">tone</font> (<font class="CVariable">float</font> frequency, <font class="CVariable">float</font> length);</li>
+    </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
+
+<a name="CategoryProcesses"></a>
+<h4>Processes</h4>
+
+<table>
+<tbody>
+    <tr>
+    <td>
+    <ul>
+        <li><font class="CVariable">void</font> <font class="CFunction">defer</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">kill_process</font>(<font class="CVariable">int</font> pid);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">start_process</font>(&lt;function name&gt;);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">run_for</font>(<font class="CVariable">float</font> sec, <font class="CVariable">void</font> &lt;function_name&gt;);</li>
+    </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
 
 <a name="CategorySensors"></a>
 <h4>Sensors</h4>
 
-<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">int</font> <font class="CFunction">a_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">analog</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">analog10</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">b_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">black_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">digital</font>(<font class="CVariable">int</font> p);</li>        <li><font class="CVariable">int</font> <font class="CFunction">down_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">left_button</font>();</li>        <li><font class="CVariable">float</font> <font class="CFunction">power_level</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">r_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">right_button</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">sonar</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">up_button</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">set_each_analog_state</font>(<font class="CVariable">int</font> a0, <font class="CVariable">int</font> a1, <font class="CVariable">int</font> a2, <font class="CVariable">int</font> a3, <font class="CVariable">int</font> a4, <font class="CVariable">int</font> a5, <font class="CVariable">int</font> a6, <font class="CVariable">int</font> a7);</li>        <li><font class="CVariable">void</font> <font class="CFunction">set_analog_floats</font>(<font class="CVariable">int</font> mask);</li>    </ul>    </td>    </tr></tbody></table>
+<table>
+<tbody>
+    <tr>
+    <td>
+    <ul>
+        <li><font class="CVariable">int</font> <font class="CFunction">a_button</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">analog</font>(<font class="CVariable">int</font> p);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">analog10</font>(<font class="CVariable">int</font> p);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">b_button</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">black_button</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">digital</font>(<font class="CVariable">int</font> p);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">down_button</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">left_button</font>();</li>
+        <li><font class="CVariable">float</font> <font class="CFunction">power_level</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">r_button</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">right_button</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">sonar</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">up_button</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">set_each_analog_state</font>(<font class="CVariable">int</font> a0, <font class="CVariable">int</font> a1, <font class="CVariable">int</font> a2, <font class="CVariable">int</font> a3, <font class="CVariable">int</font> a4, <font class="CVariable">int</font> a5, <font class="CVariable">int</font> a6, <font class="CVariable">int</font> a7);</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">set_analog_floats</font>(<font class="CVariable">int</font> mask);</li>
+    </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
 
 <a name="CategoryServos"></a>
 <h4>Servos</h4>
 
-<table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">disable_servos</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">enable_servos</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">get_servo_position</font>(<font class="CVariable">int</font> srv);</li>        <li><font class="CVariable">int</font> <font class="CFunction">set_servo_position</font>(<font class="CVariable">int</font> srv, <font class="CVariable">int</font> pos);</li>    </ul>    </td>    </tr></tbody></table>
-<a name="CategorySimulator"></a><h4>Simulator</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">kissSimEnablePause</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">kissSimPause</font>();</li>    </ul>    </td>    </tr></tbody></table><a name="CategoryTime"></a><h4>Time</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">void</font> <font class="CFunction">msleep</font>(<font class="CVariable">int</font> msec);</li>        <li><font class="CVariable">float</font> <font class="CFunction">seconds</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">sleep</font>(<font class="CVariable">float</font> sec);</li>    </ul>    </td>    </tr></tbody></table><a name="CategoryVision"></a><h4>Vision</h4><table><tbody>    <tr>    <td>    <ul>        <li><font class="CVariable">int</font> <font class="CFunction">track_is_new_data_available</font>();</li>        <li><font class="CVariable">void</font> <font class="CFunction">track_update</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_get_frame</font>();</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_count</font>(<font class="CVariable">int</font> ch);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_size</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_x</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_y</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_confidence</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_left</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_right</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_top</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_bottom</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_width</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_height</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_angle</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_major_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>        <li><font class="CVariable">int</font> <font class="CFunction">track_minor_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>    </ul>    </td>    </tr></tbody></table>
+<table>
+<tbody>
+    <tr>
+    <td>
+    <ul>
+        <li><font class="CVariable">void</font> <font class="CFunction">disable_servos</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">enable_servos</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">get_servo_position</font>(<font class="CVariable">int</font> srv);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">set_servo_position</font>(<font class="CVariable">int</font> srv, <font class="CVariable">int</font> pos);</li>
+    </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
+
+<a name="CategorySimulator"></a>
+<h4>Simulator</h4>
+
+<table>
+<tbody>
+    <tr>
+    <td>
+    <ul>
+        <li><font class="CVariable">void</font> <font class="CFunction">kissSimEnablePause</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">kissSimPause</font>();</li>
+    </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
+
+<a name="CategoryTime"></a>
+<h4>Time</h4>
+
+<table>
+<tbody>
+    <tr>
+    <td>
+    <ul>
+        <li><font class="CVariable">void</font> <font class="CFunction">msleep</font>(<font class="CVariable">int</font> msec);</li>
+        <li><font class="CVariable">float</font> <font class="CFunction">seconds</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">sleep</font>(<font class="CVariable">float</font> sec);</li>
+    </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
+
+<a name="CategoryVision"></a>
+<h4>Vision</h4>
+
+<table>
+<tbody>
+    <tr>
+    <td>
+    <ul>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_is_new_data_available</font>();</li>
+        <li><font class="CVariable">void</font> <font class="CFunction">track_update</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_get_frame</font>();</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_count</font>(<font class="CVariable">int</font> ch);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_size</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_x</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_y</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_confidence</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_left</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_right</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_top</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_bottom</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_width</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_bbox_height</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_angle</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_major_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+        <li><font class="CVariable">int</font> <font class="CFunction">track_minor_axis</font>(<font class="CVariable">int</font> ch, <font class="CVariable">int</font> i);</li>
+    </ul>
+    </td>
+    </tr>
+</tbody>
+</table>
+
 </div>
 
 <!--Processes-->
