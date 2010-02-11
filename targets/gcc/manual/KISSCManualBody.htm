@@ -1,0 +1,1605 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="icon" href="images/botball.ico" type="image/x-icon"/> 
+<link rel="shortcut icon" href="images/botball.ico" type="image/x-icon"/>
+<style type="text/css">
+    @import "gccCSS.css";
+</style>
+<title>KISS-C Programmers Manual</title>
+<!-- 9-03-2009 -->
+
+<!-- 1-05-2010 
+- Modified content, added css sheet formating, split index into it's own html document, reformated and relocated content. 
+----------------->
+
+</head>
+
+<body>
+<h1>KISS-C Programmers Manual </h1>
+<br/>
+
+<!--Introduction-->
+
+<a name="Introduction"></a>
+<h2>Introduction</h2>
+
+<p>KIPR's Instructional Software System-C (KISS-C for short) is a development environment for the C language consisting of an editor, a
+compiler and a set of libraries.
+KISS-C implements the full ANSI C specification. For information about the C programing language, including history and basic syntax, see the 
+Wikipedia article <a href="http://en.wikipedia.org/wiki/C_(programming_language)" target="_blank">C (programming language)</a>.  
+For a more complete tutorial and guide for C Programming visit <a href="http://www.cprogramming.com/" target="_blank">CPrograming</a>. The 
+<a href="http://community.botball.org" target="_blank">Botball community website</a> 
+also has several articles about programming and a user forum where questions can be posted to the botball community.</p>
+
+<p>This file provides a basic introduction to programming in C. To learn more about programming in C, consult one
+of the many books or websites that provide C references and tutorials. </p>
+
+<!--KISS-C Interface-->
+
+<a name="KISS-C_Interface"></a>
+<h2>KISS-C Interface</h2> 
+
+<p>Both new (unsaved) and saved files can be opened for editing in KISS-C. A row 
+of tabs lists the files that have been opened. Clicking a file's tab activates 
+it for editing.</p>
+
+<p>The File menu has standard entries for New, Open, Save, Save As, Print, Close
+and Exit.</p>
+
+<p>To simulate the active file, simply click the Simulate button. The active file 
+will also be saved, unless it is new, in which case the user is prompted for 
+a &quot;save as&quot; file name. The active file must contain or #include the 
+main function, in order to be simulated.</p>
+
+
+<p>The interface provides additional capabilities for program entry/edit, minor 
+adjustment to the display (font size), auto-completion and auto-indentation. If there is a syntax 
+error in the program, an error window will appear at the bottom of the KISS 
+C screen with the error message and the file and line number where the error 
+was detected. If the error occurred in the active file, then clicking on the 
+error message will move to that line. The edit menu provides a Go to line option.</p>
+
+<p>C programs are automatically formatted and indented. Keywords, comments, and 
+  text strings are highlighted with color unless this feature is turned off. </p>
+
+<p>KISS-C does parenthesis-balance-highlighting when the cursor is placed to the 
+right of any right parenthesis, bracket, or brace.</p>
+
+<!--A_Quick_C_Tutorial-->
+
+<a name="A_Quick_C_Tutorial"></a>
+<h2>A Quick C Tutorial</h2>
+
+<p>Most C programs consist of function definitions and data structures.
+Here is a simple C program that defines a single function, called <b>main</b>.</p>
+
+<pre><code><font class="Comment">/* Simple example: C Programmer's Manual */</font>
+
+<font class="CVariable">int</font> main()
+{
+    <font class="CFunction">printf</font>(<font class="Quote">&quot;Hello, world!/n&quot;</font>);<font class="Comment">// simple example</font>
+}
+</code></pre><br/>
+
+<p>The Expression <br/><br/>
+/* &lt;text&gt; */<br/><br/>
+forms a multi-line or bracketed comment. In contrast, text that 
+starts with <br/><br/>//<br/><br/> forms a single line comment, 
+which continues only to the end of the line. Comments are ignored by KISS-C when the 
+program is compiled.  </p>
+
+<p>All functions must have a return type. While main 
+does not return a value to another function, it does return an integer to the 
+operating system, and so is of type <font class="CVariable">int</font>. 
+Other types include no return value (<font class="CVariable">void</font>) and 
+floating point numbers (<font class="CVariable">float</font>). 
+This function declaration information must precede each function definition. </p>
+
+<p>Immediately following the function declaration is the function's
+name (in this case,<b>main</b>). Next, in parentheses, are any arguments
+(or inputs) to the function. <b>main</b> has none, but an empty set of
+parentheses is still required. </p>
+
+<p>After the function arguments is an open curly-brace {. This signifies the start of the
+actual function code. Curly-braces signify program blocks, or chunks of code. </p>
+
+<p>Next comes a series of C statements. Statements demand that some action be 
+  taken. Our demonstration program has a single statement, a <font class="CFunction">printf</font> 
+  ("Hello, world!/n"). This will print the message <b>"Hello, world!"</b> to the 
+  display. The <b>\n</b> indicates end-of-line. The <font class="CFunction">printf</font> 
+  statement ends with a semicolon (;). All C statements must be ended by a semicolon. 
+  Beginning C programmers commonly make the error of omitting the semicolon that 
+  is required to end each statement. </p>
+
+<p>The <b>main</b> function is ended by the close curly-brace }.</p>
+
+<p>Let's look at another example to learn some more features of C.
+The following code
+defines the function square, which returns the mathematical
+square of a number.</p>
+
+<pre><code><font class="CVariable">int</font> square(<font class="CVariable">int</font> n)
+{
+    <font class="CVariable">return</font>(n * n);
+}</code></pre><br/>
+
+<p>The function is declared as type <font class="CVariable">int</font>,
+which means that it will return an integer value.</p>
+
+<p>Next comes the function named <b>square</b>, followed by its
+argument list in parentheses.
+    Square has one argument, <b>n</b>, which is an integer. Notice how
+declaring the type of the
+argument is done similarly to declaring the type of the function.</p>
+
+<p>When a function has arguments declared, those argument variables are
+valid within the
+"scope" of the function (i.e., they only have meaning within the
+function's own code).
+Other functions may use the same variable names independently.</p>
+
+<p>The code, or &quot;scope&quot;, for <b>square</b> is
+contained within the set of curly braces. In fact, it consists of a
+single statement: the <font class="CVariable">return</font>
+statement. The
+<font class="CVariable">return</font> statement exits the
+function and
+returns the value of the C expression that follows it (in this
+case "<b>n * n</b>").</p>
+
+<p>Except where grouped by parentheses, expressions are evaluated
+according to a set of
+precedence rules associated with the various operations within the
+expression. In this
+case, there is only one operation (multiplication), signified by the "<b>*</b>",
+so precedence is
+not an issue.</p>
+
+<p>Let's look at an example of a function that performs a function call
+to the square program.</p>
+
+<pre><code><font class="CVariable">float</font> hypotenuse(<font class="CVariable">int</font> a, <font class="CVariable">int</font> b)
+{
+    <font class="CVariable">float</font> h;
+    h = <font class="CFunction">sqrt</font>((<font class="CVariable">float</font>)(square(a) + square(b)));
+    <font class="CVariable">return</font>(h);
+}</code></pre><br/>
+
+<p>This code demonstrates several more features of C. First, notice that
+the floating point
+variable <b>h</b> is defined at the beginning of the <b>hypotenuse</b>
+function. In general, whenever
+a new program block (indicated by a set of curly braces) is begun, new
+local variables
+may be defined.</p>
+
+<p>The value of <b>h</b> is set to the result of a call to the <font class="CFunction">sqrt</font>
+function. It turns out that <font class="Cfunction">sqrt</font> is a
+built-in KISS-C function that takes a floating point number as its
+argument.</p>
+
+<p>We want to use the <font class="CFunction">square</font> function we defined earlier, which
+returns its result as an
+integer. But the sqrt function requires a floating point argument. We
+get around this
+type incompatibility by coercing the integer sum (<font class="CFunction">square</font>(a) +
+<font class="CFunction">square</font>(b)) into a
+float by preceding it with the desired type, in parentheses. Thus, the
+integer sum is
+made into a floating point number and passed along to <font class="CFunction">sqrt</font>.</p>
+
+<p>The <b>hypotenuse</b> function finishes by returning the value of <b>h</b>. </p>
+
+<p>Note that the functions square and hypotenuse are functions, not a program. 
+If they are in the same file as the main function written above, they will never 
+be called. If main was modified to be:</p>
+
+<pre><code><font class="Comment">/* Simple example: C Programmer's Manual */</font>
+
+<font class="CVariable">int</font> main()
+{
+    <font class="CFunction">printf</font>(<font class="Quote">"Hypotenuse of 3,4 is %d\n"</font>,hypotenuse(3,4)); <font class="Comment">// call a function</font>
+}</code></pre><br/>
+
+<p>then the program (which always starts execution with <strong>main</strong>) 
+would calculate and print out the hypotenuse of a triangle with side lengths 
+of 3 &amp; 4. However, <strong>C</strong> requires that functions bedefined 
+before they are first called. Since hypotenuse is called in main, either the 
+functions need to be defined earlier in the file, or they can be prototyped 
+at the begining of the file. A <em>prototype</em> of a <strong>C</strong> function 
+is simply a <strong>C</strong> statement that includes the return type, function 
+name and types of the parameters. For example the prototypes of the functions 
+<strong>square</strong> and <strong>hypotenuse</strong> would be:</p>
+  
+<pre><code><font class="CVariable">int</font> square(<font class="CVariable">int</font> n);
+<font class="CVariable">float</font> hypotenuse(<font class="CVariable">int</font> a, <font class="CVariable">int</font> b);</code></pre><br/>
+
+<p>The order in which function protypes appear does not matter as long as they 
+come before the definitions that call that function.</p>
+
+<p>This concludes the brief C tutorial. </p>
+
+<!--Data_Objects-->
+
+<a name="Data_Objects"></a>
+<h2>Data Objects</h2>
+
+<p>Variables and constants are the basic data objects in a C program.
+Declarations list the
+variables to be used, state what type they are, and may set their
+initial value.</p>
+
+<!--Variables-->
+
+<a name="Variables"></a>
+<h3>Variables</h3>
+
+<p>Variable names are case-sensitive. The underscore character is
+allowed and is often used
+to enhance the readability of long variable names. C keywords like <font class="CVariable">if</font>,
+<font class="CVariable">while</font>, etc. may
+not be used as variable names.</p>
+
+<p>Functions and global variables may not have the same name. In
+addition, if a local
+variable is named the same as a function or a global variable, the
+local use takes
+precedence; ie., use of the function or global variable is prevented
+within the scope of the
+local variable.</p>
+
+<!--Declaration-->
+
+<a name="Declaration"></a>
+<div class="Indent">
+
+<h4>Declaration</h4>
+
+<p>In C, variables can be declared at the top level (outside of any
+curly braces) or at the start
+of each block (a functional unit of code surrounded by curly braces).
+In general, a variable declaration is of the form:</p>
+
+<div class="indent">
+<table>
+    <tr>
+    <td>&lt;type&gt;&nbsp;&nbsp;&lt;variable-name&gt;; or </font></td>
+    </tr>
+    <tr>
+    <td>&lt;type&gt;&nbsp;&nbsp;&lt;variable-name&gt;=&lt;initialization-data&gt;;</font></td>
+    </tr>
+</table> <br/>
+</div>
+
+In KISS-C, &lt;<a href="KISSCManualBody.htm#Data_Types" target="ManualFrame">type</a>&gt; can be 
+<font class="CVariable">int</font>, <font class="CVariable">float</font>,
+<font class="CVariable">char</font>, or <font class="CVariable">struct</font>
+&lt;struct-name&gt;,
+and determines the primary type of the variable declared. This form
+changes somewhat when
+dealing with pointer and array declarations, which are explained in a
+later section, but in
+general this is the way you declare variables.
+
+<!--Local_and_Global_Scopes-->
+
+<a name="Local_and_Global_Scopes"></a>
+<h4>Local and Global Scopes</h4>
+   
+<p>If a variable is declared within a function, or as an argument
+to a function, its binding is
+local, meaning that the variable has existence only within
+that function definition.
+If a variable is declared outside of a function, it is a global
+variable. It is defined for all
+functions, including functions which are defined in files other than
+the one in which the
+global variable was declared.</p>
+
+<!--Variable_Initialization-->
+
+<a name="Variable_Initialization"></a>
+<h4>Variable Initialization</h4>
+    
+<p>Local and global variables can be initialized to a value when
+they are declared. If no
+initialization value is given, their value is indeterminate.</p>
+
+<p>All global variable declarations must be initialized to constant
+values. Local variables
+may be initialized to the value of arbitrary expressions including any
+global variables,
+function calls, function arguments, or local variables which have
+already been initialized.</p>
+    
+<p>Here is a small example of how initialized declarations are
+used.</p>
+    
+<pre><code><font class="CVariable">int</font> i=50; <font class="Comment">/* declare i as global integer; initial value 50 */</font>
+<font class="CVariable">float</font> j=100.123; <font class="Comment">/* declare j as global float; initial value 100.123 */</font>
+<font class="CVariable">int</font> foo()
+{
+    <font class="CVariable">int</font> x; <font class="Comment">/* declare x as local integer; initial value 0 */</font>
+    <font class="CVariable">float</font> y=j; <font class="Comment">/* declare y as local float; initial value j */</font>
+}</code></pre><br/>
+
+<p>Local variables are initialized whenever the function containing them
+is executed.
+Global variables are initialized whenever a reset condition occurs.
+Reset conditions occur
+when:</p>
+
+<ol>
+    <li>Code is downloaded;</li>
+    <li>The <b>main()</b> procedure is run;</li>
+    <li>System hardware reset occurs</li>
+</ol>
+</div>
+
+<!--Constants-->
+
+<a name="Constants"></a>
+<h3>Constants</h3>
+
+<div class="indent">
+<a name="Integer_Constants"></a>
+<h4>Integer Constants</h4>
+    
+<p>Integers constants may be defined in decimal integer format
+(e.g., <b>4053</b> or <b>-1</b>) or
+hexadecimal format using the "<b>0x</b>" prefix (e.g., <b>0x1fffffff</b>).</p>
+
+<!--Floating_Point_Constants-->
+
+<a name="Floating_Point_Constants"></a>
+<h4>Floating Point</font> constants</h4>
+
+<p>Floating point numbers may use exponential notation (e.g., "<b>10e3</b>"
+or "<b>10E3</b>") or may
+contain a decimal period. For example, the floating point zero can be
+given as "<b>0.</b>",
+"<b>0.0</b>", or "<b>0E1</b>", but not as just "<b>0</b>". Since
+the board has no floating point hardware,
+floating point operations are much slower than integer operations, and
+should be used
+sparingly.</p>
+
+<!--Characters_and_String_Constants-->
+
+<a name="Characters_and_String_Constants"></a>
+<h4>Characters and String Constants</h4>
+
+<p>Quoted characters return their ASCII value (e.g., '<b>x</b>').</p>
+
+<p>Character string constants are defined with quotation marks,
+e.g.,
+<font class="Quote">"This is a character string."</font>.</p>
+
+<!--NULL-->
+
+<a name="NULL"></a>
+<h4>NULL</h4>
+    
+<p>The special constant <b>NULL</b> has the value of zero and can
+be assigned to and compared to
+pointer or array variables (which will be described in later sections).
+In general, you
+cannot convert other constants to be of a pointer type, so there are
+many times when
+<b>NULL</b> can be useful.</p>
+
+<p>For example, in order to check if a pointer has been initialized
+you could compare its
+value to <b>NULL</b> and not try to access its contents if it was <b>NULL</b>.
+Also, if you had a defined
+a linked list type consisting of a value and a pointer to the next
+element, you could look
+for the end of the list by comparing the next pointer to <b>NULL</b>.</p>
+</div>
+
+<!--Data_Types-->
+
+<a name="Data_Types"></a>
+<h3>Data Types</h3>
+
+<p>KISS-C supports the following data types:</p>
+
+<!--32-bit_Integers-->
+
+<div class="indent">
+
+<a name="32-bit_Integers"></a>
+<h4>32-bit Integers</h4>
+
+<p>32-bit integers are signified by the type indicator 
+<font class="CVariable">int</font>. They are signed integers, and
+may be valued from -2,147,483,648 to +2,147,483,647 decimal.</p>
+
+<!--32-bit_Floating_Point_Numbers-->
+
+<a name="32-bit_Floating_Point_Numbers"></a>
+<h4>32-bit Floating Point Numbers</h4>
+
+<p>Floating point numbers are signified by the type indicator 
+<font class="CVariable">float</font>. They have
+approximately seven decimal digits of precision and are valued from
+about 10^-38 to
+10^38.</p>
+
+<!--8-bit_Characters-->
+
+<a name="8-bit_Characters"></a>
+<h4>8-bit Characters</h4>
+
+<p>Characters are an 8-bit number signified by the type indicator 
+<font class="CVariable">char</font>. A character's value
+typically represents a printable symbol using the standard ASCII
+character code, but this
+is not necessary; characters can be used to refer to arbitrary 8-bit
+numbers.</p>
+
+<!--Pointers-->
+
+<a name="Pointers"></a>
+<h4>Pointers</h4>
+
+<p>KISS-C pointers are 32-bit numbers which represent locations in memory.
+Values in memory
+can be manipulated by calculating, passing and dereferencing
+pointers representing the
+location where the information is stored.</p>
+
+<a name="Arrays1"></a>
+<h4>Arrays</h4>
+
+<p>Arrays are used to store homogenous lists of data (meaning that all the
+elements of an
+array have the same type). Every array has a length which is determined
+at the time the
+array is declared. The data stored in the elements of an array can be
+set and retrieved in
+the same manner as for other variables.</p>
+
+<a name="Structures1"></a>
+<h4>Structures</h4>
+
+<p>Structures are used to store non-homogenous but related sets of
+data. Elements of a
+structure are referenced by name instead of number and may be of any
+supported type.</p>
+
+<p>Structures are useful for organizing related data into a
+coherent format, reducing the
+number of arguments passed to functions, increasing the effective
+number of values
+which can be returned by functions, and creating complex data
+representations such as
+directed graphs and linked lists.</p>
+
+</div>
+
+<!--Pointers-->
+
+<a name="PointersM"></a>
+<h3>Pointers</h3>
+
+<p>The address where a value is stored in memory is known as the
+pointer to that value. It is
+often useful to deal with pointers to objects, but great care must be
+taken to insure that the
+pointers used at any point in your code really do point to valid
+objects in memory.</p>
+
+<p>For additional information on programming with C pointers, please refer to a C programming book or website.</p>
+
+<!--Arrays-->
+
+<a name="Arrays"></a>
+<h3>Arrays</h3>
+
+<p>KISS-C supports arrays of characters, integers,
+floating-point numbers,
+structures, pointers, and array pointers (multi-dimensional arrays).
+The main reasons
+that arrays are useful are that they allow you to allocate space for
+many instances of a
+given type, send an arbitrary number of values to functions, and
+provide the means for
+iterating over a set of values.</p>
+
+<!--Declaring_and_Initializing_Arrays-->
+
+<a name="Declaring_and_Initializing_Arrays"></a>
+<div class="Indent">
+<h4>Declaring and Initializing Arrays</h4>
+
+<p>Arrays are declared using square brackets. The following statement
+declares an array of
+ten integers:</p>
+
+<pre><code><font class="CVariable">int</font> foo[10];
+</code></pre><br/>
+
+<p> this array, elements are numbered from 0 to 9. Elements are accessed
+by enclosing the
+index number within square brackets: <b>foo[4]</b> denotes the fifth
+element of the array foo
+(since counting begins at zero).</p>
+
+<p>Arrays not initialized at declaration contain indeterminate values. Arrays
+may be initialized
+at declaration by specifying the array elements, separated by commas,
+within curly
+braces. If no size value is specified within the square brackets when
+the array is declared
+but initialization information is given, the size of the array is
+determined by the number
+of elements given in the declaration. For example,</p>
+
+<pre><code><font class="CVariable">int</font> foo[]= {0, 4, 5, -8,  17, 301};
+</code></pre></br>
+
+<p>creates an array of six integers, with <b>foo[0]</b> equaling <b>0</b>,
+<b>foo[1]</b> equaling <b>4</b>, etc.</p>
+
+<p>If a size is specified and initialization data is given, the length
+of the initialization data
+may not exceed the specified length of the array or an error results.
+If, on the other hand,
+you specify the size and provide fewer initialization elements than the
+total length of the
+array, the remaining elements contain indeterminate values.</p>
+
+<p>Character arrays are typically text strings. There is a special
+syntax for initializing arrays
+of characters. The character values of the array are enclosed in
+quotation marks:</p>
+
+<pre><code><font class="CVariable">char</font> string[]= <font class="Quote">"Hello there"</font>;
+</code></pre><br/>
+
+<p>This form creates a character array called <b>string</b> with the
+ASCII values of the specified
+characters. In addition, the character array is terminated by a zero.
+Because of this zero-termination, the character array can be treated as
+a string for purposes of printing (for
+example). Character arrays can be initialized using the curly braces
+syntax, but they will
+not be automatically null-terminated in that case. In general, printing
+of character arrays
+that are not null-terminated will cause problems.</p>
+
+<!--Passing_Arrays_as_Arguments-->
+
+<a name="Passing_Arrays_as_Arguments"></a>
+<h4>Passing Arrays as Arguments</h4>
+
+<p>When an array is passed to a function as an argument, the array's
+pointer is actually
+passed, rather than the elements of the array. If the function modifies
+the array values, the
+array will be modified, since there is only one copy of the array in
+memory.</p>
+
+<p>There are two ways of declaring an array argument: as
+an array or as a
+pointer to the type of the array's elements.</p>
+
+<p>As an example, the following function takes an index and an array,
+and returns the array
+element specified by the index:</p>
+
+<pre><code><font class="CVariable">int</font> retrieve_element(<font class="CVariable">int</font> index, <font class="CVariable">int</font> array[])
+{
+    <font class="CVariable">return</font> array[index];
+}</code></pre><br/>
+
+<p>Notice the use of the square brackets to declare the argument array as
+a pointer to an
+array of integers.</p>
+
+<p>When passing an array variable to a function, you are actually
+passing the value of the
+array pointer itself and not one of its elements, so no square brackets
+are used.</p>
+
+<pre><code><font class="CVariable">void</font> foo()
+{
+    <font class="CVariable">int</font> array[10];
+    retrieve_element(3, array);
+}</code></pre><br/>
+
+<!--Multi-dimensional_Arrays-->
+
+<a name="Multi-dimensional_Arrays"></a>
+<h4>Multi-dimensional Arrays</h4>
+
+<p>A two-dimensional array is just like a single dimensional array
+whose elements are one-dimensional arrays. Declaration of a two-dimensional array is as
+follows:</p>
+
+<pre><code><font class="CVariable">int</font> k[2][3];
+</code></pre><br/>
+
+<p>The number in the first set of brackets is the number of 1-D arrays of 
+<font class="CVariable">int</font>. The number in
+the second set of brackets is the length of each of the 1-D arrays of 
+<font class="CVariable">int</font>. In this example,
+<b>k</b> is an array containing two 1-D arrays; <b>k[0]</b> is a 1-D
+array of <font face="Courier" color=blue>int</font> of length 3;
+<b>k[0][1]</b> is an <font face="Courier" color=blue>int</font>.
+Arrays of with any number of dimensions can be generalized from
+this example by adding more brackets in the declaration.</p>
+
+</div>
+
+<!--Structures-->
+
+<a name="Structures"></a>
+<h3>Structures</h3>
+
+<p>Structures are used to store non-homogenous but related sets of
+data. Elements of a
+structure are referenced by name instead of number and may be of any
+supported type.
+Structures are useful for organizing related data into a coherent
+format, reducing the
+number of arguments passed to functions, increasing the effective
+number of values
+which can be returned by functions, and creating complex data
+representations such as
+directed graphs and linked lists.</p>
+
+<p>The following example shows how to define a structure, declare a
+variable of structure
+type, and access its elements.</p>
+
+<pre><code><font class="CVariable">struct</font> foo
+{
+    <font class="CVariable">int</font> i;
+    <font class="CVariable">int</font> j;
+};
+<font class="CVariable">struct</font> foo f1;
+<font class="CVariable">void</font> set_f1(<font class="CVariable">int</font> i,<font class="CVariable">int</font> j)
+{
+    f1.i=i;
+    f1.j=j;
+}
+<font class="CVariable">void</font> get_f1(<font class="CVariable">int</font> *i,<font class="CVariable">int</font> *j)
+{
+    *i=f1.i;
+    *j=f1.j;
+}</code></pre><br/>
+
+<p>The first part is the structure definition. It consists of the keyword
+<font class="CVariable">struct</font>, followed by
+the name of the structure (which can be any valid identifier), followed
+by a list of named
+elements in curly braces. This definition specifies the structure of
+the type <font class="CVariable">struct</font> <b>foo</b>.
+Once there is a definition of this form, you can use the type 
+<font class="CVariable">struct</font> <b>foo</b> just like any
+other type. The line</p>
+
+<pre><code><font class="CVariable">struct</font> foo f1;
+</code></pre><br/>
+
+<p>is a global variable declaration which declares the variable <b>f1</b>
+to be of type <font class="CVariable">struct</font>
+<b>foo</b>.</p>
+
+<p>The dot operator is used to access the elements of a variable of
+structure type. In this
+case, <b>f1.i</b> and <b>f1.j</b> refer to the two elements of <b>f1</b>.
+You can treat the quantities <b>f1.i</b>
+and <b>f1.j</b> just as you would treat any variables of type 
+<font class="CVariable">int</font> (the type of the elements was
+defined in the structure declaration at the top to be 
+<font class="CVariable">int</font>).</p>
+ 
+<p>Pointers to structure types can also be used, just like pointers to
+any other type. However,
+with structures, there is a special short-cut for referring to the
+elements of the structure
+pointed to.</p>
+
+<pre><code><font class="CVariable">struct</font> foo *fptr;
+<font class="CVariable">void</font> main()
+{
+    fptr=&amp;f1;
+    fptr-&gt;i=10;
+    fptr-&gt;j=20;
+}</code></pre><br/>
+
+<p> this example, <b>fptr</b> is declared to be a pointer to type 
+<font class="CVariable">struct</font> <b>foo</b>. In main, it is
+set to point to the global <b>f1</b> defined above. Then the elements of the
+structure pointed to by <b>fptr</b>
+(in this case these are the same as the elements of <b>f1</b>), are
+set. The arrow operator is used
+instead of the dot operator because fptr is a pointer to a variable of
+type <font class="CVariable">struct</font> <b>foo</b>. Note
+that <b>(*fptr).i</b> would have worked just as well as 
+<b>fptr-&gt;</font>i</b>, but it would have been
+clumsier.</p>
+
+<p>Note that only pointers to structures, not the structures
+themselves, can be passed to or
+returned from functions.</p>
+
+<!--Complex_Initialization_examples-->
+
+<a name="Complex_Initialization_examples"></a>
+<h3>Complex Initialization examples</h3>
+
+<p>Complex types -- arrays and structures -- may be initialized upon
+declaration with a
+sequence of constant values contained within curly braces and separated
+by commas.</p>
+
+<p>Arrays of character may also be initialized with a quoted string of
+characters.</p>
+
+<p>For initialized declarations of single dimensional arrays, the
+length can be left blank and
+a suitable length based on the initialization data will be assigned to
+it. Multi-dimensional
+arrays must have the size of all dimensions specified when the array is
+declared. If a
+length is specified, the initialization data may not overflow that
+length in any dimension
+or an error will result. However, the initialization data may be
+shorter than the specified
+size and the remaining entries will be initialized to 0.</p>
+
+<p>Following is an example of legal global and local variable
+initializations:</p>
+
+<pre><code><font class="Comment">/* declare many globals of various types */</font>
+<font class="CVariable">int</font> i=50;
+<font class="CVariable">int</font> *ptr=NULL;
+<font class="CVariable">float</font> farr[3]={ 1.2, 3.6, 7.4 };
+<font class="CVariable">int</font> tarr[2][4]={ { 1, 2, 3, 4 }, { 2, 4, 6, 8} };
+<font class="CVariable">char</font> c[]=<font class="Quote">"Hi there how are you?"</font>;
+<font class="CVariable">char</font> carr[5][10]={<font class="Quote">"Hi"</font>,<font class="Quote">"there"</font>,<font class="Quote">"how"</font>,<font class="Quote">"are"</font>,<font class="Quote">"you"</font>};
+<font class="CVariable">struct</font> bar
+{
+    <font class="CVariable">int</font> i;
+    <font class="CVariable">int</font> *p;
+    <font class="CVariable">float</font> j;
+} b={5, NULL, 10.5};
+<font class="CVariable">struct</font> bar barr[2] = { { 1, NULL, 2.5 }, { 3 } };
+<font class="Comment">/* declare locals of various types */</font>
+<font class="CVariable">int</font> foo()
+{
+    <font class="CVariable">int</font> x; <font class="Comment">/* local variable x with initial value 0 */</font>
+    <font class="CVariable">int</font> y= tarr[0][2]; <font class="Comment">/* local variable y with initial value 3 */</font>
+    <font class="CVariable">int</font> *iptr=&amp;i; <font class="Comment">/* local pointer to integer
+                                which points to the global i */</font>
+    <font class="CVariable">int</font> larr[2]={10,20};  <font class="Comment">/* local array larr
+                                   with elements 10 and 20 */</font>
+    <font class="CVariable">struct</font> bar lb={5,NULL,10.5}; <font class="Comment">/* local variable of type
+                                          struct bar with i=5 and j=10.5 */</font>
+    <font class="CVariable">char</font> lc[]=carr[2];    <font class="Comment">/* local string lc with
+                                   initial value "how" */</font>
+    ...
+}</code></pre><br/>
+
+<!--Statements_and_Expressions-->
+
+<a name="Statements_and_Expressions"></a>
+<h2>Statements and Expressions</h2>
+
+<p>Operators act upon objects of a certain type or types and specify
+what is to be done to
+them. Expressions combine variables and constants to create new values.
+Statements are
+expressions, assignments, function calls, or control flow statements
+which make up C
+programs.</p>
+
+<!--Operators-->
+
+<a name="Operators"></a>
+<h3>Operators</h3>
+
+<p>Each of the data types has its own set of operators that determine
+which operations may
+be performed on them.</p>
+
+<!--Integer_Operations-->
+
+<a name="Integer_Operations"></a>
+<div class="indent">
+<h4>Integer Operations</h4>
+
+<p>The following operations are supported on integers:</p>
+
+<ul>
+  <li><b>Arithmetic</b>. addition +</font>,
+subtraction -</font>, multiplication <font
+ face="Courier">*</font>, division /</font>. </li>
+  <li><b>Comparison</b>. greater-than &gt;</font>,
+less-than &lt;</font>, equality <font
+ face="Courier">==</font>, greater-than-equal &gt;=</font>,
+less-than-equal &lt;=</font>. </li>
+  <li><b>Bitwise Arithmetic</b>. bitwise-OR |</font>,
+bitwise-AND &amp;</font>, bitwise-exclusive-OR <font
+ face="Courier">^</font>, bitwise-NOT ~</font>. </li>
+  <li><b>Boolean Arithmetic</b>. logical-OR ||</font>,
+logical-AND &amp;&amp;</font>, logical-NOT <font
+ face="Courier">!</font>. <br/>
+When a C statement uses a boolean value (for example, <font
+ face="Courier" class="CVariable">if</font>), it takes the integer zero as
+meaning false, and any integer other than zero as meaning true. The
+boolean operators return zero for false and one for true. Boolean
+operators &amp;&amp;</font> and <font
+ face="Courier">||</font> will stop executing as soon as the truth of
+the final expression is determined. For example, in the expression <font
+ face="Courier">a &amp;&amp; b</font>, if a</font>
+is false, then b</font> does not need to be
+evaluated because the result must be false. The &amp;&amp;</font>
+operator therefore will not evaluate b</font>.</li>
+</ul>
+
+<!--Floating_Point_Numbers-->
+
+<a name="Floating_Point_Numbers"></a>
+<h4>Floating Point Numbers</h4>
+
+<p>KISS-C uses a package of floatingpoint routines. This
+package includes arithmetic, trigonometric, and logarithmic functions.
+Since floating
+point operations are implemented in software, they are much slower than
+the integer
+operations; we recommend against using floating point if you are
+concerned about
+performance.</p>
+
+<p>The following operations are supported on floating point numbers:</p>
+<table>
+  <tbody>
+    <tr>
+      <td>
+      <ul>
+        <li><b>Arithmetic</b>. addition +</font>,
+subtraction -</font>, multiplication <font
+ face="Courier">*</font>, division /</font>.
+        </li>
+        <li><b>Comparison</b>. greater-than &gt;</font>,
+less-than &lt;</font>, equality <font
+ face="Courier">==</font>, greater-than-equal &gt;=</font>,
+less-than-equal &lt;=</font>.
+        </li>
+        <li><b>Built-in Math Functions</b>. A set of trigonometric,
+logarithmic, and exponential
+functions is supported. For details, go to the
+          <a href="#Library%20Function%20Descriptions">Library Function
+Descriptions</a>.
+These functions are included among those itemized as "Math" functions.</li>
+      </ul>
+      </font></td>
+    </tr>
+  </tbody>
+</table>
+
+<!--Characters-->
+
+<a name="Characters"></a>
+<h4>Characters</h4>
+
+<p>Characters are only allowed in character arrays. When a cell of the
+array is referenced, it
+is automatically coerced into a integer representation for manipulation
+by the integer
+operations. When a value is stored into a character array, it is
+coerced from a standard 16-
+bit integer into an 8-bit character (by truncating the upper eight
+bits).</p>
+
+</div>
+
+<!--Assignment_Operators_and_Expressions-->
+
+<a name="Assignment_Operators_and_Expressions"></a>
+<h2>Assignment Operators and Expressions</h2>
+
+<p>The basic assignment operator is =</font>. The
+following statement adds 2 to the value of a</font>.</p>
+
+<pre><code>a = a + 2;</code></pre><br/>
+
+<p>The abbreviated form</p>
+
+<pre><code>a += 2;</code></pre><br/>
+
+<p>could also be used to perform the same operation.
+All of the following binary operators can be used in this fashion:</p>
+
+<pre><code>+   -   *   /   %   &lt;&lt;   &gt;&gt;   &amp;   ^   |</code></pre><br/>
+
+<!--Increment_and_Decrement_Operators-->
+
+<a name="Increment_and_Decrement_Operators"></a>
+<h2>Increment and Decrement Operators</h2>
+
+<p>The increment operator "++</font>" increments
+the named variable. For example, the
+construction "a++</font>" is equivalent to "
+a= a+1</font>" or "a+= 1</font>".
+A statement that uses an increment operator has a value. For example,
+the statement</p>
+
+<pre><code>a = 3; <font class="CFunction">printf</font>(<font class="Quote">"a=%d a+1=%d\n"</font>, a, ++a);
+</code></pre><br/>
+
+<p>will display the text "a=3 a+1=4</font>".
+If the increment operator comes after the named variable, then the
+value of the statement
+is calculated after the increment occurs. So the statement</p>
+
+<pre><code>a = 3; <font class="CFunction">printf</font>(<font class="Quote">"a=%d a+1=%d\n"</font>, a, a++);
+</code></pre><br/>
+
+<p>would display "a=3 a+1=3</font>" but would finish
+with a set to 4.
+The decrement operator "--</font>" is used in the
+same fashion as the increment operator.</p>
+
+<!--Data_Access_Operators-->
+<a name="Data_Access_Operators"></a>
+<h2>Data Access Operators</h2>
+
+<b>&amp;</font></b>
+<table>
+  <tbody>
+    <tr>
+      <td>&nbsp;</font>
+      <dl>
+        <dd>A single ampersand preceding a variable,
+an array reference, or a structure element
+reference returns a pointer to the location in memory where that
+information is being
+stored. This should not be used on arbitrary expressions as they do not
+have a stable
+place in memory where they are being stored.</font></dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<b>*</font></b>
+<table>
+  <tbody>
+    <tr>
+      <td>&nbsp;</font>
+      <dl>
+        <dd>A single * preceeding an expression
+which evaluates to a pointer returns the value
+which is stored at that address. This process of accessing the value
+stored within a
+pointer is known as dereferencing.</font></dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<b>[</b>&lt;</font>expr&gt;<b>]</b></font>
+<table>
+  <tbody>
+    <tr>
+      <td>&nbsp;</font>
+      <dl>
+        <dd>An expression in square braces following
+an expression which evaluates to an array
+(an array variable, the result of a function which returns an array
+pointer, etc.) checks
+that the value of the expression falls within the bounds of the array
+and references
+that element.</font></dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<b>.</font></b>
+<table>
+  <tbody>
+    <tr>
+      <td>&nbsp;</font>
+      <dl>
+        <dd>A dot between a structure variable and
+the name of one of its fields returns the value
+stored in that field.</font></dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<b>-&gt;</font></b>
+<table>
+  <tbody>
+    <tr>
+      <td>&nbsp;</font>
+      <dl>
+        <dd>An arrow between a pointer to a
+structure and the name of one of its fields in that
+structure acts the same as a dot does, except it acts on the structure
+pointed at by its
+left hand side. Where <b>f</b> is a structure of a type with <b>i</b>
+as an element name, the two
+expressions f.i</font> and (&amp;f)-&gt;i</font>
+are equivalent.</font></dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!--Precedence_and_Order_of_Evaluation-->
+
+<a name="Precedence_and_Order_of_Evaluation"></a>
+<h2>Precedence and Order of Evaluation</h2></font>
+
+<p>The following table summarizes the rules for precedence and
+associativity for the C operators.
+Operators listed earlier in the table have higher precedence; operators
+on the same line of the table
+have equal precedence.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+      <dl>
+        <dd>
+          <table border="1">
+            <tbody>
+              <tr>
+                <td align="center"><b>Operator</b></font></td>
+                <td>&nbsp; <b>Associativity</font></b><font
+ face="Times"> &nbsp;</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; () []</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; ! ~ ++ -- - (&lt;</font>type<font
+ face="Courier">&gt;) &nbsp;</font></td>
+                <td align="center">right to left</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; * / %</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; + -</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; &lt;&lt; &gt;&gt;</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; &lt; &lt;= &gt; &gt;=</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; == !=</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; &amp;</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; ^</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; |</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; &amp;&amp;</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; ||</font></td>
+                <td align="center">right to left</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; = += -=</font> etc.</td>
+                <td align="center">right to left</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; ,</font></td>
+                <td align="center">left to right</font></td>
+              </tr>
+            </tbody>
+          </table>
+        </dd>
+      </dl>
+      </td>
+      <td><br/>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!--Control_Flow-->
+
+<a name="Control_Flow"></a>
+<h2>Control Flow</h2>
+
+<p>KISS-C supports all of the standard C control structures.</p>
+
+<!--Statements_and_Blocks-->
+
+<a name="Statements_and_Blocks"></a>
+<h2>Statements and Blocks</h2>
+
+<p>A single C statement is ended by a semicolon. A series of statements
+may be grouped
+together into a block using curly braces. Inside a block, local
+variables may be defined. Blocks may be
+used in place of statements in the control flow constructs.</p>
+
+<!--If-Else-->
+
+<a name="If-Else"></a>
+<h3>If-Else</h3>
+
+<p>The <font class="CVariable">if else</font> statement is
+used to make decisions. The syntax is:</p>
+
+<pre><code><font class="CVariable">if</font> (&lt;expression</font>&gt;)
+    &lt;statement-1</font>&gt;
+<font class="CVariable">else</font>
+    &lt;statement-2</font>&gt;
+</code></pre><br/>
+
+<p>&lt;expression&gt; is evaluated; if it is not equal to zero
+(e.g., logic true), then
+&lt;statement-1&gt; is executed.</p>
+
+<p>The <font class="CVariable">else</font> clause is
+optional. If the
+<font class="CVariable">if</font> part of the statement did
+not execute, and the
+<font class="CVariable">else</font> is present, then &lt;statement-2&gt;
+executes.</p>
+
+<!--While-->
+
+<a name="While"></a>
+<h3>While</h3>
+
+<p>The syntax of a <font class="CVariable">while</font> loop
+is the following:</p>
+
+<pre><code><font class="CVariable">while</font> (&lt;expression</font>&gt;)
+    &lt;statement</font>&gt;
+</code></pre><br/>
+
+<p><font class="CVariable">while</font> begins by evaluating &lt;expression&gt;.
+If it is false, then
+&lt;statement&gt; is skipped. If it
+is true, then &lt;statement&gt; is evaluated. Then the
+expression is evaluated again, and the
+same check is performed. The loop exits when &lt;expression&gt;
+becomes zero.</p>
+
+<p>One can easily create an infinite loop in C using the <font
+face="Courier" class="CVariable">while</font> statement:</p>
+ 
+<pre><code><font class="CVariable">while</font> (1)
+    &lt;statement</font>&gt;
+</code></pre><br/>
+
+<!--Do-While-->
+
+<a name="Do-While"></a>
+<h3>Do-While</h3>
+<p>The syntax of a <font class="CVariable">do</font>-<font class="CVariable">while</font> loop
+is the following:</p>
+
+<pre><code><font class="CVariable">do</font>
+    &lt;statement</font>&gt;
+<font class="CVariable">while</font> (&lt;expression</font>&gt;);
+</code></pre><br/>
+
+<p>The equivalent <font class="CVariable">while</font> loop would be the following:</p>
+
+<pre><code>&lt;statement</font>&gt;
+<font class="CVariable">while</font> (&lt;expression</font>&gt;)
+    &lt;statement</font>&gt;
+</code></pre><br/>
+
+<!--For-->
+<a name="For"></a>
+<h3>For</h3>
+
+<p>The syntax of a <font class="CVariable">for</font> loop
+is the following:</p>
+
+<pre><code><font class="CVariable">for</font> (&lt;expr-1</font>&gt;;&lt;expr-2</font>&gt;;&lt;expr-3</font>&gt;)
+    &lt;statement</font>&gt;
+</code></pre>
+
+<p>The <font class="CVariable">for</font> construct is
+equivalent to
+the following construct using <font class="CVariable">while</font>:</p>
+
+<pre><code>&lt;expr-1</font>&gt;;
+<font class="CVariable">while</font> (&lt;expr-2</font>&gt;)
+{
+    &lt;statement</font>&gt;
+    &lt;expr-3</font>&gt;;
+}</code></pre><br/>
+
+<p>Typically, &lt;expr-1&gt; is an assignment, &lt;expr-2&gt;
+is a relational expression, and &lt;expr-3&gt;
+is an increment or decrement of some manner. For example, the following
+code counts
+from 0 to 99, printing each number along the way:</p>
+
+<pre><code><font class="CVariable">int</font> i;
+<font class="CVariable">for</font> (i = 0; i &lt; 100; i++)
+    <font class="CFunction">printf</font>("%d\n", i);
+</code></pre><br/>
+
+<!--Switch-->
+
+<a name="Switch"></a>
+<h3>Switch</h3>
+
+<p>The syntax of a <font class="CVariable">switch</font> block is as follows:</p>
+
+<pre><code><font class="CVariable">switch</font> (<font class="CVariable">int</font>)
+{
+    <font class="CVariable">case</font> const1</font>:
+        &lt;statement list1</font>&gt;
+    <font class="CVariable">break</font>;
+    <font class="CVariable">case</font> const2</font>:
+        &lt;statement list2</font>&gt;
+    <font class="CVariable">break</font>;
+    <font class="CVariable">default</font>:
+        &lt;statement list3</font>&gt;
+}</code></pre><br/>
+
+<p>The <font class="CVariable">switch</font> construct takes an integer variable as input, and compares it to each 
+<font class="CVariable">case</font> listed.  The first matching <font color="Times">const</font> is selected, and
+execution begins there.  The <font class="CVariable">break</font> is optional, and if no break is found then execution
+continues through each following statement.  Also note that each <font class="CVariable">case</font> has a 
+list of single statements, as opposed to a block enclosed in curly braces.</p>
+
+<p>Here's an example of how a <font class="CVariable">switch</font> might be used:</p>
+
+<pre><code><font class="CVariable">int</font> i = 1;
+<font class="CVariable">switch</font>(i)
+{
+    <font class="CVariable">case</font> 0:
+        <font class="CFunction">printf</font>(<font class="Quote">"Case 0\n"</font>);
+        <font class="CVariable">break</font>;
+    <font class="CVariable">case</font> 1:
+        <font class="CFunction">printf</font>(<font class="Quote">"Case 1\n"</font>);
+        <font class="CVariable">break</font>;
+    <font class="CVariable">default</font>:
+        <font class="CFunction">printf</font>(<font class="Quote">"Default\n"</font>);
+}</code></pre><br/>
+
+<p>Since i</font> is equal to 1, the text "Case 1" will be printed to the screen.  If 
+i</font> were equal to 0, "Case 0" would be printed.  If i</font> 
+were any number besides 0 or 1, "Default" would be printed.</p>
+
+<!--Break-->
+
+<a name="Break"></a>
+<h3>Break</h3>
+
+<p>Use of the <font class="CVariable">break</font> statement
+provides an early exit from a
+<font class="CVariable">while</font>, <font class="CVariable">do</font>-<font class="CVariable">while</font> or 
+<font class="CVariable">for</font> loop.  The break statement can also provide an exit from a 
+<font class="CVariable">switch</font> block.</p>
+
+<!--LCD_Screen_Printing-->
+
+<a name="LCD_Screen_Printing"></a>
+<h2> Printing</h2>
+
+<p>KISS-C has the C function <font class="CFunction">printf</font> for formatted 
+  printing</p>
+
+<p>The syntax of <font class="CFunction">printf</font> is the following:</p>
+
+<pre><code><font class="CFunction">printf</font>(&lt;format-string</font>&gt;, &lt;arg-1</font>&gt; , ... , &lt;arg-N</font>&gt;);
+</code></pre><br/>
+
+This is best illustrated by some examples.
+
+<!--Printing_Examples-->
+
+<a name="Printing_Examples"></a>
+<h3>Printing Examples</h3>
+
+<!--Printing_a_message-->
+
+<div class="indent">
+
+<a name="Printing_a_message"></a>
+<h4>Example 1: Printing a message</h4>
+
+<p>The following statement prints a text string to the screen.</p>
+
+<pre><code><font class="CFunction">printf</font>(<font class="Quote">"Hello, world!\n"</font>);</code></pre><br/>
+
+  <p>In this example, the format string is simply printed to the screen. The character 
+    <b>\n</b></font> at the end of the string signifies end-of-line. .</p>
+
+<!--Printing_a_number-->
+
+<a name="Printing_a_number"></a>
+<h4>Example 2: Printing a number</h4>
+
+<p>The following statement prints the value of the integer variable x
+with a brief message.</p>
+
+<pre><code><font class="CFunction">printf</font>(<font class="Quote">"Value is %d\n"</font>, x);</code></pre><br/>
+
+<p>The special form <b>%d</b></font> is used to
+format the printing of an integer in decimal format.</p>
+
+<!--Printing_a_number_in_binary-->
+
+<a name="Printing_a_number_in_binary"></a>
+<h4>Example 3: Printing a number in binary</h4>
+
+<p>The following statement prints the value of the integer variable x
+as a binary number.</p>
+
+<pre><code><font class="CFunction">printf</font>(<font class="Quote">"Value is %b\n"</font>, x);</code></pre><br/>
+
+<p>The special form <b>%b</b></font> is used to
+format the printing of an integer in binary format. Only the
+low byte of the number is printed.</p>
+
+<!--Printing_a_floating_point_number-->
+
+<a name="Printing_a_floating_point_number"></a>
+<h4>Example 4: Printing a floating point number</h4>
+
+<p>The following statement prints the value of the floating point
+variable n</font> as a floating
+point number.</p>
+
+<pre><code><font class="CFunction">printf</font>(<font class="Quote">"Value is %f\n"</font>, n);</code></pre><br/>
+
+<p>The special form <b>%f</b></font> is used to
+format the printing of floating point number.</p>
+
+<!--Printing_two_numbers_in_hexadecimal_format-->
+
+<a name="Printing_two_numbers_in_hexadecimal_format"></a>
+<h4>Example 5: Printing two numbers in hexadecimal format</h4>
+
+<pre><code><font class="CFunction">printf</font>(<font class="Quote">"A=%x  B=%x\n"</font>, a, b);</code></pre><br/>
+
+<p>The form <b>%x</b></font> formats an integer to
+print in hexadecimal.</p>
+
+  <p>&nbsp;</p>
+
+</div>
+
+<!--Formatting_Command_Summary-->
+
+<a name="Formatting_Command_Summary"></a>
+<h3>Formatting Command Summary</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+      <dl>
+        <dd>
+          <table border="1">
+            <tbody>
+              <tr>
+                <td align="center"><b>&nbsp;Format
+Command&nbsp;</b></font></td>
+                <td align="center"><b>Data Type</b></font></td>
+                <td align="center"><b>Description</b></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %d </font></td>
+                <td><font class="CVariable">&nbsp; int </font></td>
+                <td>&nbsp; decimal number </font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %x </font></td>
+                <td><font class="CVariable">&nbsp; int </font></td>
+                <td>&nbsp; hexadecimal number </font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %b </font></td>
+                <td><font class="CVariable">&nbsp; int </font></td>
+                <td>&nbsp; low byte as binary number
+                </font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %c </font></td>
+                <td><font class="CVariable">&nbsp; int </font></td>
+                <td>&nbsp; low byte as ASCII
+character &nbsp;</font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %f </font></td>
+                <td><font class="CVariable">&nbsp; float </font></td>
+                <td>&nbsp; floating point number </font></td>
+              </tr>
+              <tr>
+                <td>&nbsp; %s </font></td>
+                <td><font class="CVariable">&nbsp; char</font>
+                array</font> &nbsp;</font></td>
+                <td>&nbsp; char array (string) </font></td>
+              </tr>
+            </tbody>
+          </table>
+        </dd>
+      </dl>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!--Preprocessor-->
+
+<a name="Preprocessor"></a>
+<h2>Preprocessor</h2>
+
+<p>The preprocessor processes a file before it is sent to the compiler.
+The KISS-C preprocessor
+allows definition of macros, and conditional compilation of sections of
+code. Using
+preprocessor macros for constants and function macros can make KISS-C code
+more efficient
+as well as easier to read. Using <font class="CVariable">#if</font>
+to conditionally compile code can be very useful, for
+instance, for debugging purposes.</p>
+
+<p>The special preprocessor command <font class="CVariable">#include</font>
+has been included to allow programs to cause a
+program to download to initiate the download of stored programs that
+are not in the KISS-C
+library. For example, suppose you have a set of stored programs in a
+file named
+"mylib.ic</font>", some of which you need for your
+current program to work.</p>
+
+<pre><code><font class="Comment">/* load my library */</font>
+<font class="CVariable">#include</font> <font class="Quote">"mylib.ic"</font>
+
+<font class="CVariable">void</font> main()
+{
+    <font class="CVariable">char</font> s[32] = <font class="Quote">"text string wrapping badly\n"</font>;
+    fix(s);<font class="Comment">/* apply my fix function to s and print it */</font>
+    <font class="CFunction">printf</font>(s);
+}</code></pre><br/>
+
+<!--Preprocessor_Macros-->
+
+<a name="Preprocessor_Macros"></a>
+<h3>Preprocessor Macros</h3>
+
+<p>Preprocessor macros are defined by using the <font class="CVariable">#define</font> 
+preprocessor directive at the start of a line. A macro is local to the file in which 
+it is defined. The following example shows how to define preprocessor macros.</p>
+
+<pre><code><font class="CVariable">#define</font> RIGHT_MOTOR 0
+<font class="CVariable">#define</font> LEFT_MOTOR  1
+<font class="CVariable">#define</font> GO_RIGHT(power) (<font class="CFunction">motor</font>(RIGHT_MOTOR,(power)))
+<font class="CVariable">#define</font> GO_LEFT(power)  (<font class="CFunction">motor</font>(LEFT_MOTOR,(power)))
+<font class="CVariable">#define</font> GO(left,right) {GO_LEFT(left); GO_RIGHT(right);}
+<font class="CVariable">void</font> main()
+{
+    GO(0,0);
+}</code></pre><br/>
+
+<p>Preprocessor macro definitions start with the <font class="CVariable">#define</font> 
+directive at the start of a line, and continue to the end of the line. After 
+<font class="CVariable">#define</font> is the name of the macro, such as
+<b>RIGHT_MOTOR</b>. If there is a parenthesis directly after the name
+of the macro, such as the <b>GO_RIGHT</b> macro has above, then the macro has arguments. 
+The <b>GO_RIGHT</b> and <b>GO_LEFT</b> macros each take one argument. The GO macro takes two
+arguments. After the name and the optional argument list is the body of the macro.</p>
+
+<p>Each time a macro is invoked, it is replaced with its body. If the
+macro has arguments,
+then each place the argument appears in the body is replaced with the
+actual argument
+provided.</p>
+
+<p>Invocations of macros without arguments look like global variable
+references.
+Invocations of macros with arguments look like calls to functions. To
+an extent, this is
+how they act. However, macro replacement happens before compilation,
+whereas global
+references and function calls happen at run time. Also, function calls
+evaluate their
+arguments before they are called, whereas macros simply perform text
+replacement. For
+example, if the actual argument given to a macro contains a function
+call, and the macro
+instantiates its argument more than once in its body, then the function
+would be called
+multiple times, whereas it would only be called once if it were being
+passed as a function
+argument instead.</p>
+
+<p>Appropriate use of macros can make KISS-C programs and easier to read.
+It allows constants
+to be given symbolic names without requiring storage and access time as
+a global would.
+It also allows macros with arguments to be used in cases when a
+function call is desirable
+for abstraction, without the performance penalty of calling a function.</p>
+
+<!--Conditional_compilation-->
+
+<a name="Conditional_compilation"></a>
+<h3>Conditional compilation</h3>
+
+<p>It is sometimes desirable to conditionally compile code. The primary
+example of this is
+that you may want to perform debugging output sometimes, and disable it
+at other times.
+The KISS-C preprocessor provides a convenient way of doing this by using
+the <font class="CVariable">#ifdef</font>
+directive.</p>
+
+<pre><code><font class="CVariable">void</font> go_left(<font class="CVariable">int</font> power)
+{
+    GO_LEFT(power);
+    <font class="CVariable">#ifdef</font> DEBUG
+    <font class="CFunction">printf</font>(<font class="Quote">"Going Left\n"</font>);
+    <font class="CFunction">beep</font>();
+    <font class="CVariable">#endif</font>
+}</code></pre><br/>
+
+<p>In this example, when the macro <b>DEBUG</b> is defined, the debugging
+message "Going Left"
+will be printed and the board will beep each time <b>go_left</b> is
+called. If the macro is not
+defined, the message and beep will not happen. Each 
+<font class="CVariable">#ifdef</font> must be follwed by an
+<font class="CVariable">#endif</font> at the end of the code
+which is being conditionally compiled. The macro to be
+checked can be anything, and <font class="CVariable">#ifdef</font>
+blocks may be nested.</p>
+
+<p>Unlike regular C preprocessors, macros cannot be conditionally
+defined. If a macro
+definition occurs inside an <font class="CVariable">#ifdef</font>
+block, it will be defined regardless of whether the
+<font class="CVariable">#ifdef</font> evaluates to true or
+false. The compiler will generate a warning if macro
+definitions occur within an <font class="CVariable">#ifdef</font>
+block.</p>
+
+<p>The <font class="CVariable">#if</font>, <font class="CVariable">#else</font>, 
+  and <font class="CVariable">#elif</font> directives are also available, but 
+  are outside the scope of this document. Refer to a C reference manual for how 
+  to use them.</p>
+<p>The <a href="http://www.acm.uiuc.edu/webmonkeys/book/c_guide/">C Library Reference 
+  Guide</a> and the official <a href="http://cm.bell-labs.com/cm/cs/who/dmr/cman.pdf">C 
+  reference manual</a> are available online.</p>
+
+<div class="Indent"></div>
+
+</body>
+</html>

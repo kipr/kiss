@@ -1,0 +1,246 @@
+<html>
+<head>
+    <title>KISS-C Programmers Index</title>
+    
+    <link rel="icon" href="images/botball.ico" type="image/x-icon"/> 
+    <link rel="shortcut icon" href="images/botball.ico" type="image/x-icon"/>
+    
+    <style type="text/css">
+    @import "gccCSS_NOSCRIPT.css";
+    </style>
+    
+    <script type="text/javascript">
+    
+    document.write('<link href="gccCSS.css" type="text/css" rel="stylesheet">'); 
+    
+    function toggleDisplay(ID)
+    {
+        if(document.getElementById(ID).style.display == 'block')
+            document.getElementById(ID).style.display = 'none';
+        else
+            document.getElementById(ID).style.display = 'block';
+    }
+    
+    function toggleButtonImg(menuID,buttonID)
+    {
+        if(document.getElementById(menuID).style.display == 'none')
+            document.getElementById(buttonID).src = 'Images/box-plus.bmp';
+        else document.getElementById(buttonID).src = 'Images/box-minus.bmp';
+    }
+    
+    function toggleMenu(menuID,buttonID)
+    {
+        toggleDisplay(menuID);
+        toggleButtonImg(menuID,buttonID);
+    }
+    </script>
+</head>
+
+<body>
+
+<h1>Programmers Manual Index</h1>
+
+<noscript>
+<p>Javascript is required to use the collapsable menu. Please enable javascript 
+on your computer to get the full functionality of this collapsable menu.</p>
+</noscript>
+
+<ol class="CLMenu">
+  <li><img alt="X" class="NLButton" src="Images/box-null.gif" id="IntroductionButtonID"/> 
+    <a href="KISSCManualBody.htm#Introduction" target="ManualFrame"> Introduction</a></li>
+  <li><img alt="X" class="NLButton" src="Images/box-null.gif" id="InterfaceButtonID"/> 
+    <a href="KISSCManualBody.htm#KISS-C_Interface" target="ManualFrame"> KISS-C 
+    Interface</a></li>
+  <li><img alt="X" class="NLButton" src="Images/box-null.gif" id="CTutorialButtonID"/> 
+    <a href="KISSCManualBody.htm#A_Quick_C_Tutorial" target="ManualFrame"> A 
+    Quick C Tutorial</a><br/>
+  </li>
+  <li><img alt="+/-" class="CLButton" src="Images/box-plus.bmp" id="DataObjectsButtonID" onclick="toggleMenu('DataObjectsSubmenuID','DataObjectsButtonID')"/> 
+    <a href="KISSCManualBody.htm#Data_Objects" target="ManualFrame"> Data Objects</a><br/>
+    <ul id="DataObjectsSubmenuID">
+      <li><img alt="+/-" class="CLButton" src="Images/box-plus.bmp"  id="VariablesButtonID" onclick="toggleMenu('VariablesSubmenuID','VariablesButtonID')"/> 
+        <a href="KISSCManualBody.htm#Variables" target="ManualFrame">Variables</a> 
+        <ul id="VariablesSubmenuID">
+          <li><a href="KISSCManualBody.htm#Declaration" target="ManualFrame">Declaration</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Local_and_Global_Scopes" target="ManualFrame">Local 
+            and Global Scopes</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Variable_Initialization" target="ManualFrame">Variable 
+            Initialization</a><br/>
+          </li>
+        </ul>
+      </li>
+      <li><img alt="+/-" class="CLButton" src="Images/box-plus.bmp" id="ConstantsButtonID" onclick="toggleMenu('ConstantsSubmenuID','ConstantsButtonID')"/> 
+        <a onclick="toggleDisplay('ConstantsSubmenuId')" href="KISSCManualBody.htm#Constants" target="ManualFrame">Constants</a><br/>
+        <ul id="ConstantsSubmenuID">
+          <li><a href="KISSCManualBody.htm#Integer_Constants" target="ManualFrame">Integer 
+            Constants</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Floating_Point_Constants" target="ManualFrame">Floating 
+            Point Constants</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Characters_and_String_Constants" target="ManualFrame">Characters 
+            and String Constants</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#NULL" target="ManualFrame">NULL</a><br/>
+          </li>
+        </ul>
+      </li>
+      <li><img alt="+/-" class="CLButton" src="Images/box-plus.bmp" id="DataTypesButtonID" onclick="toggleMenu('DataTypesSubmenuID','DataTypesButtonID')"/> 
+        <a onclick="toggleDisplay('DataTypesSubmenuId')" href="KISSCManualBody.htm#Data_Types" target="ManualFrame">Data 
+        Types</a><br/>
+        <ul id="DataTypesSubmenuID">
+          <li><a href="KISSCManualBody.htm#32-bit_Integers" target="ManualFrame">32-bit 
+            Integers</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#32-bit_Floating_Point_Numbers" target="ManualFrame">32-bit 
+            Floating Point Numbers</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#8-bit_Characters" target="ManualFrame">8-bit 
+            Characters</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Pointers" target="ManualFrame">Pointers</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Arrays1" target="ManualFrame">Arrays</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Structures1" target="ManualFrame">Structures</a><br/>
+          </li>
+        </ul>
+      </li>
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="PointersButtonID"/> 
+        <a href="KISSCManualBody.htm#PointersM" target="ManualFrame">Pointers</a><br/>
+      </li>
+      <li> <img alt="+/-" class="CLButton" src="Images/box-plus.bmp" id="ArraysButtonID" onclick="toggleMenu('ArraysSubmenuID','ArraysButtonID')"/> 
+        <a href="KISSCManualBody.htm#Arrays" target="ManualFrame">Arrays</a><br/>
+        <ul id="ArraysSubmenuID">
+          <li><a href="KISSCManualBody.htm#Declaring_and_Initializing_Arrays" target="ManualFrame">Declaring 
+            and Initializing Arrays</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Passing_Arrays_as_Arguments" target="ManualFrame">Passing 
+            Arrays as Arguments</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Multi-dimensional_Arrays" target="ManualFrame">Multi-dimensional 
+            Arrays</a><br/>
+          </li>
+        </ul>
+      </li>
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="StructuresButtonID"/> 
+        <a href="KISSCManualBody.htm#Structures" target="ManualFrame">Structures</a><br/>
+      </li>
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="ComplexInitExButtonID"/> 
+        <a href="KISSCManualBody.htm#Complex_Initialization_examples" target="ManualFrame">Complex 
+        Initialization examples</a><br/>
+      </li>
+    </ul>
+  </li>
+  <li><img alt="+/-" class="CLButton" src="Images/box-plus.bmp" id="StatementsExpressionsButtonID" onclick="toggleMenu('StatementsExpressionsSubmenuID','StatementsExpressionsButtonID')"/> 
+    <a href="KISSCManualBody.htm#Statements_and_Expressions" target="ManualFrame">Statements 
+    and Expressions</a><br/>
+    <ul id="StatementsExpressionsSubmenuID">
+      <li><img alt="+/-" class="CLButton" src="Images/box-plus.bmp" id="OperatorsButtonID" onclick="toggleMenu('OperatorsSubmenuID','OperatorsButtonID')"/> 
+        <a href="KISSCManualBody.htm#Operators" target="ManualFrame">Operators</a><br/>
+        <ul id="OperatorsSubmenuID">
+          <li><a href="KISSCManualBody.htm#Integer_Operations" target="ManualFrame">Integer 
+            Operations</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Floating_Point_Numbers" target="ManualFrame">Floating 
+            Point Numbers</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Characters" target="ManualFrame">Characters</a><br/>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="AssignmentOpExpButtonID"/> 
+    <a href="KISSCManualBody.htm#Assignment_Operators_and_Expressions" target="ManualFrame">Assignment 
+    Operators and Expressions</a><br/>
+  </li>
+  <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="IncrementDecExpButtonID"/> 
+    <a href="KISSCManualBody.htm#Increment_and_Decrement_Operators" target="ManualFrame">Increment 
+    and Decrement Operators</a><br/>
+  </li>
+  <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="DataAccessOpButtonID"/> 
+    <a href="KISSCManualBody.htm#Data_Access_Operators" target="ManualFrame">Data 
+    Access Operators</a><br/>
+  </li>
+  <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="PrecedenceOrderEvalButtonID"/> 
+    <a href="KISSCManualBody.htm#Precedence_and_Order_of_Evaluation" target="ManualFrame">Precedence 
+    and Order of Evaluation</a><br/>
+  </li>
+  <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="ControlFlowButtonID"/> 
+    <a href="KISSCManualBody.htm#Control_Flow" target="ManualFrame">Control 
+    Flow</a><br/>
+  </li>
+  <li><img alt="+/-" class="CLButton" src="Images/box-plus.bmp" id="StatementsBlocksButtonID" onclick="toggleMenu('StatementsBlocksSubmenuID','StatementsBlocksButtonID')"/> 
+    <a href="KISSCManualBody.htm#Statements_and_Blocks" target="ManualFrame">Statements 
+    and Blocks</a><br/>
+    <ul id="StatementsBlocksSubmenuID">
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="IfElseButtonID"/> 
+        <a href="KISSCManualBody.htm#If-Else" target="ManualFrame">If-Else</a><br/>
+      </li>
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="WhileButtonID"/> 
+        <a href="KISSCManualBody.htm#While" target="ManualFrame">While</a><br/>
+      </li>
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="DoWhileButtonID"/> 
+        <a href="KISSCManualBody.htm#Do-While" target="ManualFrame">Do-While</a><br/>
+      </li>
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="ForButtonID"/> 
+        <a href="KISSCManualBody.htm#For" target="ManualFrame">For</a><br/>
+      </li>
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="SwitchButtonID"/> 
+        <a href="KISSCManualBody.htm#Switch" target="ManualFrame">Switch</a><br/>
+      </li>
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="BreakButtonID"/> 
+        <a href="KISSCManualBody.htm#Break" target="ManualFrame">Break</a><br/>
+      </li>
+    </ul>
+  </li>
+  <li><img alt="+/-" class="CLButton" src="Images/box-plus.bmp" id="LCDScreenPrintingButtonID" onclick="toggleMenu('LCDScreenPrintingSubmenuID','LCDScreenPrintingButtonID')"/> 
+    <a href="KISSCManualBody.htm#LCD_Screen_Printing" target="ManualFrame">Printing</a><br/>
+    <ul id="LCDScreenPrintingSubmenuID">
+      <li><img alt="+/-" class="CLButton" src="Images/box-plus.bmp" id="PrintingExamplesButtonID" onclick="toggleMenu('PrintingExamplesSubmenuID','PrintingExamplesButtonID')"/> 
+        <a href="KISSCManualBody.htm#Printing_Examples" target="ManualFrame">Printing 
+        Examples</a><br/>
+        <ul id="PrintingExamplesSubmenuID">
+          <li><a href="KISSCManualBody.htm#Printing_a_message" target="ManualFrame">Printing 
+            a message</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Printing_a_number" target="ManualFrame">Printing 
+            a number</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Printing_a_number_in_binary" target="ManualFrame">Printing 
+            a number in binary</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Printing_a_floating_point_number" target="ManualFrame">Printing 
+            a floating point number</a><br/>
+          </li>
+          <li><a href="KISSCManualBody.htm#Printing_two_numbers_in_hexadecimal_format" target="ManualFrame">Printing 
+            two numbers in hexadecimal format</a><br/>
+          </li>
+        </ul>
+      </li>
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="FormattingCommandSumButtonID" /> 
+        <a href="KISSCManualBody.htm#Formatting_Command_Summary" target="ManualFrame">Formatting 
+        Command Summary</a><br/>
+      </li>
+    </ul>
+  </li>
+  <li><img alt="+/-" class="CLButton" src="Images/box-plus.bmp" id="PreprocessorButtonID" onclick="toggleMenu('PreprocessorSubmenuID','PreprocessorButtonID')"/> 
+    <a href="KISSCManualBody.htm#Preprocessor" target="ManualFrame">Preprocessor</a><br/>
+    <ul id="PreprocessorSubmenuID">
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="PreprocessorMacrosButtonID"/> 
+        <a href="KISSCManualBody.htm#Preprocessor_Macros" target="ManualFrame">Preprocessor 
+        Macros</a><br/>
+      </li>
+      <li><img alt="X" class="NLButton" src="Images/box-null.gif"id="ConditionalCompilationButtonID"/> 
+        <a href="KISSCManualBody.htm#Conditional_compilation" target="ManualFrame">Conditional 
+        Compilation</a><br/>
+      </li>
+    </ul>
+  </li>
+</ol>
+</body>
+
+</html>
