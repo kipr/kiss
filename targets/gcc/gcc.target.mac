@@ -2,7 +2,7 @@
 description=Calls a native GCC compiler
 display_name=This Machine
 extensions=C Sources (*.c *.h)
-manual=targets/gcc/manual.html
+manual=targets/gcc/manual/gccmanual.html
 name=gcc
 template=targets/gcc/template.c
 
