@@ -343,4 +343,11 @@ void SourceFile::zoomOut()
 	updateMargins();
 	QsciScintilla::zoomOut();
 }
+/*ADDED BY NB*///2/10/2010-dpm
+void SourceFile::dropEvent(QDropEvent *event)
+{
+    /*Emit signal that can be connected to any slot(s) desired*/
+   emit handleDrop(event);
+
+}
 
