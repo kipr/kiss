@@ -61,6 +61,8 @@ private:
 	QString m_statusMessage;
 	bool m_isNewFile;
 	int m_zoomLevel;
+        /*ADDED BY NB*/
+        void dropEvent(QDropEvent *event);
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
@@ -73,6 +75,10 @@ public slots:
 	
 	void zoomIn();
 	void zoomOut();
+	
+/*ADDED BY NB*/
+signals:
+        void handleDrop(QDropEvent *event);
 };
 
 #endif
