@@ -1,36 +1,24 @@
-/***************************************************************************/
-/*********     This comment should be filled with a description    *********/
-/*********         of your program and what it does.               *********/
-/*********       This template is for Botball programs.            *********/
-/*********    Make sure you have selected the CBC target.          *********/
-/***************************************************************************/
+/***************************************************************************
+*********  This comment area should be filled with a description  
+*********         of your program and what it does.               
+***************************************************************************/
+/* Libraries used in Botball are automatically included, but list any additional includes below */
+/* #defines and constants go below.*/
 
-/* Libraries used in Botball are automatically included, but list any additional includes here */
-
-/* #defines and constants go here.*/
-
-/*Global variables go here (if you absolutely need them).*/
+/* Global variables go below (if you absolutely need them).*/
 
 /*Function prototypes below*/
 
 int main()
 {
-    //All variable declarations go here.
-    
-    //This is your main function.
-    
-    //Wait for starting light with light sensor in the_port_number
-        wait_for_light(the_port_number);
-        
-    //Run your_code for the amount_of_time
-        run_for(amount_of_time, your_code);
-        
-    //Make sure your motors are stopped
-        ao();
-        create_stop();
-        
-    //Put anything below you want your robot to do after the game (e.g. play victory song).
-    
+	set_each_analog_state(0,0,0,0,0,0,0,0);// This line sets analog ports to be pullup (0) or floating (1)
+	//variable declarations go here.
+	
+	// uncomment the line below to have the rest of the program wait for the starting light to turn on
+	//wait_for_light(port_number);//replace "port_number" with the analog port number into which the light sensor is connected
+	
+	// uncomment the line below to have a function run for a specified amount of seconds
+	//run_for(num_secs, function_name);//replace num_secs with the amount of time to run and function_name with your function's name
 }
 
-/*Declare functions here as needed.*/
+/*Function definitions go below.*/
