@@ -265,12 +265,12 @@ target.path = ../../$${INSTALL_BASE}/targets/gcc
 
 target_manual.files = manual/CBCCSS.css \
 											manual/CBCCSS_NOSCRIPT.css \
-											manual/cbcmanual.html \
+											manual/gccmanual.html \
 											manual/fdl-1.3.txt \
 											manual/KISSCManualBody.htm \
 											manual/KISSCManualTable.htm 
 											
-target_manual.path = ../../$${INSTALL_BASE}/targets/cbc2/manual
+target_manual.path = ../../$${INSTALL_BASE}/targets/gcc/manual
 
 target_manual_images.files = manual/Images/box-minus.bmp \
 														 manual/Images/box-null.GIF \
@@ -284,7 +284,7 @@ target_manual_images.files = manual/Images/box-minus.bmp \
 														 manual/Images/image010.gif \
 														 manual/Images/sonar.jpg
 
-target_manual_images.path = ../../$${INSTALL_BASE}/targets/cbc2/manual/Images
+target_manual_images.path = ../../$${INSTALL_BASE}/targets/gcc/manual/Images
 
 INSTALLS += target target_base target_include target_gl target_lib
 

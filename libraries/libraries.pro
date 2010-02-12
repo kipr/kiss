@@ -7,6 +7,7 @@ exists(../trademarks) {
 }
 !exists(../trademarks) {
 SUBDIRS = kiss \
-          kiss_sim \
+          cbc_sim \
+	  cbc2_sim \
 	  extraGUI
 }
