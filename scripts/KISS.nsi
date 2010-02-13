@@ -2,9 +2,9 @@
 
 ; Define your application name
 !define APPNAME "KISS-C"
-!define APPMAJORVERSION "1"
-!define APPMINORVERSION "4"
-!define BUILDNUMBER "7"
+!define APPMAJORVERSION "2"
+!define APPMINORVERSION "1"
+!define BUILDNUMBER "1"
 
 !define VERSION "${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER}"
 !define INSTALL_FILENAME "KISS-${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER}"
@@ -50,8 +50,8 @@ Section "${APPNAMEANDVERSION}" Section1
 	SetOutPath "$INSTDIR\"
 
 	; Copy Essential Libraries
-	File "\Qt\4.3.4\bin\QtCore4.dll"
-	File "\Qt\4.3.4\bin\QtGui4.dll"
+	File "\Qt\4.4.3\bin\QtCore4.dll"
+	File "\Qt\4.4.3\bin\QtGui4.dll"
 	File "\mingw\bin\mingwm10.dll"
 
 	; Set the dlls and frameworks to hidden
@@ -61,7 +61,7 @@ Section "${APPNAMEANDVERSION}" Section1
 	
 	; The Binary :)
 	File "..\kiss.exe"
-	File "..\doc\ChangeLog.txt"s
+	File "..\doc\ChangeLog.txt"
 
 	; Shortcuts
 	CreateShortCut "$DESKTOP\${APPNAMEANDVERSION}.lnk" "$INSTDIR\kiss.exe"
@@ -100,6 +100,48 @@ Section "${APPNAMEANDVERSION}" Section1
 	File "..\deploy\targets\gcc\lib\libGLee.a"
 	File "..\deploy\targets\gcc\lib\libglfw.a"
 	File "..\deploy\targets\gcc\lib\libkiss.a"
+
+	; Stuff for the CBC Target
+
+	; Copy the basic target stuff over
+	SetOutPath "$INSTDIR\targets\cbc\"
+	File "..\deploy\targets\cbc\cbc.target"
+	File "..\deploy\targets\cbc\cbc.api"
+	File "..\deploy\targets\cbc\template.c"
+	File "..\deploy\targets\cbc\libcbc_plugin.dll"
+	SetFileAttributes "$INSTDIR\targets\cbc\libcbc_plugin.dll" FILE_ATTRIBUTE_HIDDEN
+
+	File /r "..\deploy\targets\cbc\manual"
+	
+	; Includes
+	SetOutPath "$INSTDIR\targets\cbc\include\"
+	File "..\deploy\targets\cbc\include\cbc-sim.h"
+	file "..\deploy\targets\cbc\include\botball.c"
+
+	; Libs
+	SetOutPath "$INSTDIR\targets\cbc\lib"
+	File "..\deploy\targets\cbc\lib\libcbc_sim.a"
+
+	; Stuff for the CBC 2 Target
+
+	; Copy the basic target stuff over
+	SetOutPath "$INSTDIR\targets\cbc2\"
+	File "..\deploy\targets\cbc2\cbc2.target"
+	File "..\deploy\targets\cbc2\cbc2.api"
+	File "..\deploy\targets\cbc2\template.c"
+	File "..\deploy\targets\cbc2\libcbc2_plugin.dll"
+	SetFileAttributes "$INSTDIR\targets\cbc2\libcbc2_plugin.dll" FILE_ATTRIBUTE_HIDDEN
+
+	File /r "..\deploy\targets\cbc2\manual"
+	
+	; Includes
+	SetOutPath "$INSTDIR\targets\cbc2\include\"
+	File "..\deploy\targets\cbc2\include\cbc2-sim.h"
+	file "..\deploy\targets\cbc2\include\botball.c"
+
+	; Libs
+	SetOutPath "$INSTDIR\targets\cbc2\lib"
+	File "..\deploy\targets\cbc2\lib\libcbc2_sim.a"
 
 SectionEnd
 
@@ -143,27 +185,27 @@ Section Uninstall
 	
 	; Clean up the Gcc target
 
-	Delete "$INSTDIR\gcc.target"
-	Delete "$INSTDIR\gcc.api"
-	Delete "$INSTDIR\manual.html"
-	Delete "$INSTDIR\template.c"
-	Delete "$INSTDIR\libgcc_plugin.dll"
+	Delete "$INSTDIR\targets\gcc\gcc.target"
+	Delete "$INSTDIR\targets\gcc\gcc.api"
+	Delete "$INSTDIR\targets\gcc\manual.html"
+	Delete "$INSTDIR\targets\gcc\template.c"
+	Delete "$INSTDIR\targets\gcc\libgcc_plugin.dll"
 
-	; Copy over mingw gcc
+	; clean up mingw gcc
 	RMDir /r "$INSTDIR\mingw"
 	
-	Delete "$INSTDIR\include\kiss-serial.h"
-	Delete "$INSTDIR\include\kiss-graphics.h"
-	Delete "$INSTDIR\include\kiss-input.h"
-	Delete "$INSTDIR\include\kiss-compat.h"
-	Delete "$INSTDIR\include\kiss-create.h"
-	Delete "$INSTDIR\include\GL\GLee.h"
-	Delete "$INSTDIR\include\GL\glfw.h"
+	Delete "$INSTDIR\targets\gcc\include\kiss-serial.h"
+	Delete "$INSTDIR\targets\gcc\include\kiss-graphics.h"
+	Delete "$INSTDIR\targets\gcc\include\kiss-input.h"
+	Delete "$INSTDIR\targets\gcc\include\kiss-compat.h"
+	Delete "$INSTDIR\targets\gcc\include\kiss-create.h"
+	Delete "$INSTDIR\targets\gcc\include\GL\GLee.h"
+	Delete "$INSTDIR\targets\gcc\include\GL\glfw.h"
 
 	; Libs
-	Delete "$INSTDIR\lib\libGLee.a"
-	Delete "$INSTDIR\lib\libglfw.a"
-	Delete "$INSTDIR\lib\libkiss.a"
+	Delete "$INSTDIR\targets\gcc\lib\libGLee.a"
+	Delete "$INSTDIR\targets\gcc\lib\libglfw.a"
+	Delete "$INSTDIR\targets\gcc\lib\libkiss.a"
 	
 	RMDir "$INSTDIR\include\GL"
 	RMDir "$INSTDIR\include"
