@@ -26,7 +26,9 @@ void kissSim_init(int world, int rx, int ry, float rt) {}
 void tone(int frequency, int duration) {} 
 void beep() {} 
 int digital(int port) {} 
-int set_digital_output_value(int port, int value) {} 
+void set_digital_port_direction(int mask) {}
+int get_digital_port_direction() {}
+void set_digital_output_value(int port, int value) {}
 void set_pid_gains(int motor, int p, int i, int d, int pd, int id, int dd) {} 
 int analog10(int port) {} 
 int analog(int port) {} 
