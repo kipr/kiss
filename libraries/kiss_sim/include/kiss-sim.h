@@ -39,6 +39,12 @@ void kissSimEnablePause();
 void kissSim_init(int world, int rx, int ry, float rt);
 void tone(int frequency, int duration); /* makes a sound at frequency for duration ms */
 void beep(); /* make a beep */
+void play_sound(const char* filename); /* plays a sound file wav,mp3,raw,etc... in sound/ folder of USB */
+int playing_sound(); /* returns 1 if a sound is playing 0 if not, currently doesn't updata */
+void stop_sound(); /* stops playing a sound or mp3 */
+void start_recording(const char* filename, int length); /* records from mic for a number of seconds */
+int recording_sound(); /* returns 1 if recording, 0 when recording has finished */
+void stop_recording(); /* stops recording if called before set time length */
 int digital(int port); /* returns a 1 or 0 reflecting the state of port (0 to 7) */
 int set_digital_output_value(int port, int value); /*sets port (0 to 7)to value (0 or 1) */
 void set_pid_gains(int motor, int p, int i, int d, int pd, int id, int dd); /* sets the PID gains for a specific motor */

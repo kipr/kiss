@@ -25,6 +25,12 @@ void kissSimEnablePause() {}
 void kissSim_init(int world, int rx, int ry, float rt) {}
 void tone(int frequency, int duration) {} 
 void beep() {} 
+void play_sound(const char* filename) {}
+int playing_sound() {}
+void stop_sound() {}
+void start_recording(const char* filename, int length) {}
+int recording_sound() {}
+void stop_recording() {}
 int digital(int port) {} 
 void set_digital_port_direction(int mask) {}
 int get_digital_port_direction() {}
