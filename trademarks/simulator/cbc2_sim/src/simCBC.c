@@ -6,6 +6,8 @@
 //#include <kiss-create.h>
 //#include <kiss-input.h>
 
+#ifndef __simCBC_
+#define __simCBC_
 
 #define __CSTATMINH 500
 #define __CSTATW 200
@@ -353,6 +355,6 @@ void kissSimComputerTone(int *r, int *g, int *b)
 	}
 }
 
-
+#endif
 
 

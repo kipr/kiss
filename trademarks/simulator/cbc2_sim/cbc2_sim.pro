@@ -24,7 +24,7 @@ SOURCES += bb2010arena.c \
            simBot.c \
            simCBC.c \
            simCreate.c \
-           simcreatelib.c \
+           simCreateLibFuncs.c \
            simVision.c \
            simWorlds.c \
            vg-library.c

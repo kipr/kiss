@@ -18,16 +18,8 @@
 // CBC Function prototypes
 void tone(int frequency, int duration); /* makes a sound at frequency for duration ms */
 void beep(); /* make a beep */
-void play_sound(const char* filename); /* plays a sound file wav,mp3,raw,etc... in sound/ folder of USB */
-int playing_sound(); /* returns 1 if a sound is playing 0 if not, currently doesn't updata */
-void stop_sound(); /* stops playing a sound or mp3 */
-void start_recording(const char* filename, int length); /* records from mic for a number of seconds */
-int recording_sound(); /* returns 1 if recording, 0 when recording has finished */
-void stop_recording(); /* stops recording if called before set time length */
 int digital(int port); /* returns a 1 or 0 reflecting the state of port (8 to 15) */
-void set_digital_port_direction(int mask); /* 8-bit mask, 1 is output 0 is input */
-int get_digital_port_direction();
-void set_digital_output_value(int port, int value); /*sets port (8 to 15)to value (0 or 1) */
+int set_digital_output_value(int port, int value); /*sets port (8 to 15)to value (0 or 1) */
 int analog10(int port); /* returns 10-bit value from analog port (ports 0 to 7) */
 int analog(int port); /* returns 8-bit value from analog port (ports 0 to 7) */
 
@@ -97,13 +89,6 @@ void beep()
 	tone(440, 100);
 }
 
-void play_sound(const char* filename){} /* plays a sound file wav,mp3,raw,etc... in sound/ folder of USB */
-int playing_sound(){} /* returns 1 if a sound is playing 0 if not, currently doesn't updata */
-void stop_sound(){} /* stops playing a sound or mp3 */
-void start_recording(const char* filename, int length){} /* records from mic for a number of seconds */
-int recording_sound(){} /* returns 1 if recording, 0 when recording has finished */
-void stop_recording(){} /* stops recording if called before set time length */
-
 /////////////////////////////////////////////////////////////
 // Sensor Functions
 
@@ -119,20 +104,13 @@ int digital(int port)
 	return -1;
 }
 
-void set_digital_port_direction(int mask)
-{
-	_bob.enable_digital_outputs = mask;
-}
-int get_digital_port_direction()
-{
-	return _bob.enable_digital_outputs;
-}
-void set_digital_output_value(int port, int value)
+
+int set_digital_output_value(int port, int value)
 {
 	if(port < 16 && port >= 8) {
-		// if output enable bit is set
-		if(_bob.enable_digital_outputs & (1 << (port-8)))
-		// set the output value
+		// first set the output enable bit
+		_bob.enable_digital_outputs = (1 << (port-8)) | _bob.enable_digital_outputs;
+		// now set the output value
 		_bob.digital_output_values = ((!(!value)) << (port-8)) | _bob.digital_output_values;
 		return (0);
 	}

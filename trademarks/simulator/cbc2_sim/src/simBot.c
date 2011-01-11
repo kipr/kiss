@@ -13,6 +13,11 @@ void kissSimCreateUpdateState(struct __kissSimBot *b, struct __world *wo );
 void kissSimCBCBotUpdateState(struct __kissSimBot *b, struct __world *wo );
 void _setAPort7(int s, struct vg_object *o);
 void _cliffs(int s, struct vg_object *o);
+float _line_length(struct point p1,struct point p2);
+float _triangle_area(struct point p1, struct point p2, struct point p3);
+float _point_in_triangle(struct point p1, struct point p2, struct point p3, struct point p);
+
+
 
 void createBot()
 {
@@ -178,21 +183,21 @@ void kissSimChooseBot(struct __kissSimBot *theBot)//displays robots, and click o
 		lcliff->numSensors=4;
 		lcliff->next=lfcliff;
 		lcliff->x=13;
-		lcliff->y=-7;
+		lcliff->y=7;
 		lcliff->setValue = (*_cliffs);
 		lfcliff->numSensors=3;
 		lfcliff->next=rfcliff;
 		lfcliff->x=15;
-		lfcliff->y=-4;
+		lfcliff->y=4;
 		lfcliff->setValue = (*_cliffs);
 		rfcliff->numSensors=2;
 		rfcliff->next=rcliff;
 		rfcliff->x=15;
-		rfcliff->y=4;
+		rfcliff->y=-4;
 		rfcliff->setValue = (*_cliffs);
 		rcliff->numSensors=1;
 		rcliff->x=13;
-		rcliff->y=7;
+		rcliff->y=-7;
 		rcliff->setValue = (*_cliffs);
 		theBot->reflectanceSensors = lcliff;
 		theBot->bot = DB2;
@@ -227,6 +232,7 @@ void kissSimCreateUpdateState(struct __kissSimBot *b, struct __world *wo )
 	int i,j,offset,obst,partCount,sCount;
 	struct vg_object *part;//pointer to point to selected objects
 	struct __reflectSensor *sensor=b->reflectanceSensors;
+	struct point p;
 	if(!glfwGetWindowParam(GLFW_OPENED)) return; // exit if no graphics window
 	ctime=seconds();
 	if(_world.simPaused)robot.t_update=ctime;
@@ -264,7 +270,7 @@ void kissSimCreateUpdateState(struct __kissSimBot *b, struct __world *wo )
 	sCount=sensor->numSensors;
 	for(j=sCount;j>0;j--){
 		part = wo->markings->part;
-//			printf("i%d j%d\n",i,j);
+		//			printf("i%d j%d\n",i,j);
 		partCount=wo->markings->numParts;
 		for(i=0;i<wo->markings->numParts;i++){
 			if(part->type==CIRCLEFILL){
@@ -275,12 +281,24 @@ void kissSimCreateUpdateState(struct __kissSimBot *b, struct __world *wo )
 				dist=sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 				if(dist<=part->radius)sensor->setValue(j-1, part);
 				else partCount--;
-//				printf("s:(%f,%f) p:(%f,%f) distance: %f radius %f\n",x1,y1,x2,y2,dist,part->radius);
+				//				printf("s:(%f,%f) p:(%f,%f) distance: %f radius %f\n",x1,y1,x2,y2,dist,part->radius);
 			}
-			else partCount--;
-			if(partCount<=0){
-				sensor->setValue(j- 1,NULL);
-				break;
+			else {
+				if(part->type==TRIANGLEFILL){
+					p.x=b->bot->x + cos(b->bot->theta)*sensor->x + sin(b->bot->theta)*sensor->y - wo->markings->x;
+					p.y=b->bot->y + cos(b->bot->theta)*sensor->y + sin(b->bot->theta)*sensor->x - wo->markings->y;
+					//next line keeps from doing expensive triangle test in most cases
+					if((p.x>part->ap1.x && p.x>part->ap2.x && p.x>part->ap3.x) || (p.x<part->ap1.x && p.x<part->ap2.x && p.x<part->ap3.x) || (p.y>part->ap1.y && p.y>part->ap2.y && p.y>part->ap3.y) || (p.y<part->ap1.y && p.x<part->ap2.y && p.y<part->ap3.y)) partCount--;
+					else{
+						if(_point_in_triangle(part->ap1,part->ap2,part->ap3,p))sensor->setValue(j-1, part);
+						else partCount--;
+					}
+				}
+				else partCount--;
+				if(partCount<=0){
+					sensor->setValue(j-1, NULL);
+					break;
+				}
 			}
 			part = part->next;
 		}
@@ -295,6 +313,7 @@ void kissSimCBCBotUpdateState(struct __kissSimBot *b, struct __world *wo )
 	float tdiff, ldist, rdist, x_inc, y_inc, theta_inc, dist;
 	int i,j,offset,obst,partCount;
 	struct vg_object *part;//pointer to point to selected objects
+	struct point p;
 	if(!glfwGetWindowParam(GLFW_OPENED)) return; // exit if no graphics window
 	ctime=seconds();
 	if(_world.simPaused)_bob.t_update=ctime;
@@ -331,36 +350,72 @@ void kissSimCBCBotUpdateState(struct __kissSimBot *b, struct __world *wo )
 			dist=sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 			if(dist<=part->radius)b->reflectanceSensors->setValue(7,part);
 			else partCount--;
-//			printf("s:(%f,%f) p:(%f,%f) distance: %f radius %f\n",x1,y1,x2,y2,dist,part->radius);
+			//			printf("s:(%f,%f) p:(%f,%f) distance: %f radius %f\n",x1,y1,x2,y2,dist,part->radius);
 		}
-		else partCount--;
-		if(partCount<=0){
-			b->reflectanceSensors->setValue(7,NULL);
-			break;
+		else {
+			if(part->type==TRIANGLEFILL){
+				p.x=b->bot->x + cos(b->bot->theta)*b->reflectanceSensors->x + sin(b->bot->theta)*b->reflectanceSensors->y-wo->markings->x;
+				p.y=b->bot->y + cos(b->bot->theta)*b->reflectanceSensors->y + sin(b->bot->theta)*b->reflectanceSensors->x-wo->markings->y;
+				//next line keeps from doing expensive triangle test in most cases
+				if((p.x>part->ap1.x && p.x>part->ap2.x && p.x>part->ap3.x) || (p.x<part->ap1.x && p.x<part->ap2.x && p.x<part->ap3.x) || (p.y>part->ap1.y && p.y>part->ap2.y && p.y>part->ap3.y) || (p.y<part->ap1.y && p.x<part->ap2.y && p.y<part->ap3.y)) partCount--;
+				else{
+					if(_point_in_triangle(part->ap1,part->ap2,part->ap3,p))b->reflectanceSensors->setValue(7,part);
+					else partCount--;
+				}
+			}
+			else partCount--;
+			if(partCount<=0){
+				b->reflectanceSensors->setValue(7,NULL);
+				break;
+			}
 		}
 		part = part->next;
-	}
-}
-
-void _setAPort7(int s, struct vg_object *o)
-{
-	int a7=0;
-	if(o==NULL)_bob.analogs[s]=0;
-	else{
+		}
+		}
+		
+		void _setAPort7(int s, struct vg_object *o)
+		{
+		int a7=0;
+		if(o==NULL)_bob.analogs[s]=0;
+		else{
 		a7= 4*(o->r+o->g+o->b);
 		if(a7>1023)a7=1023;
 		_bob.analogs[s]=1023-a7;
-	}
-}
-
-void _cliffs(int s, struct vg_object *o)
-{
-	int a=0;
-	if(o==NULL)robot.cliffs[s]=1023;
-	else{
+		}
+		}
+		
+		void _cliffs(int s, struct vg_object *o)
+		{
+		int a=0;
+		if(o==NULL)robot.cliffs[s]=1023;
+		else{
 		a= 16*(o->r+o->g+o->b);
 		if(a>1023)a=1023;
 		robot.cliffs[s]=a;
-//	printf("oil %d index %d\n",a,s);
-	}
-}
+		//	printf("oil %d index %d\n",a,s);
+		}
+		}
+		
+		float _line_length(struct point p1,struct point p2){
+		return sqrt((p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y));
+		}
+		
+		float _triangle_area(struct point p1, struct point p2, struct point p3){
+		float a=_line_length(p1,p2);
+		float b=_line_length(p1,p3);
+		float c=_line_length(p3,p2);
+		float semiPerim = (a+b+c)/2.0;
+		return sqrt(semiPerim*(semiPerim-a)*(semiPerim-b)*(semiPerim-c));
+		}
+		
+		float _point_in_triangle(struct point p1, struct point p2, struct point p3, struct point p){
+		float a12=_triangle_area(p1,p2,p);
+		float a13=_triangle_area(p1,p3,p);
+		float a23=_triangle_area(p3,p2,p);
+		float a123=_triangle_area(p1,p2,p3);
+		//	printf("p %f,%f p1 %f,%f p2 %f,%f p3 %f,%f sum =%f\n",p.x,p.y,p1.x,p1.y,p2.x,p2.y,p3.x,p3.y,a123,a12+a13+a23);
+		//	msleep(10);
+		if((a123+0.01) > (a12+a13+a23) && (a123-0.01) < (a12+a13+a23)) return 1;
+		else return 0;
+		}
+	

@@ -381,8 +381,6 @@ void kissSimPrintInstructions1()
 	while(!kiss_get_key(' '));while(kiss_get_key(' '));//pause until space bar is hit
 }
 
-
-
 void kissSim_init()
 {
 	int i,splash=1;

@@ -66,7 +66,7 @@ struct _robot{
 } robot;
 
 
-#include "simcreatelib.c"
+#include "simCreateLibFuncs.c"
 
 void kissSimRobotDim(int *w, int *h)
 {
@@ -116,12 +116,14 @@ void kissSimRobotUpdate()
 	kissSimRobotProcessButtons();
 	}
 	
+
+	
 	void kissSimRobotInit()
 	{
 	kissSimRobotInitButtons(0,ksWindow.simHeight);
 	robot.lenc=robot.renc=_kissSimBot.pen=_kissSimBot.pixelCount=0;
-	robot.lcbump=robot.rcbump=gc_play_button=gc_advance_button=0;
-	create_sensor_update();
+	robot.lcbump=robot.rcbump=0;
+//	create_sensor_update();
 	kissSimRobotUpdate();
 	kissSimRobotDraw();
 	//	kissSimDrawRobot(robot.x, robot.y, robot.theta);
@@ -149,8 +151,8 @@ void kissSimRobotUpdate()
 	{
 	int i;
 	if(!_kissSimBot.useCreate)return;//this robot has no create
-	if(gc_play_button == 0)robot.buttons[0].ltr='0'; else robot.buttons[0].ltr='1';
-	if(gc_advance_button == 0)robot.buttons[1].ltr='0'; else robot.buttons[1].ltr='1';
+	if(get_create_play_button(.01) == 0)robot.buttons[0].ltr='0'; else robot.buttons[0].ltr='1';
+	if(get_create_advance_button(.01) == 0)robot.buttons[1].ltr='0'; else robot.buttons[1].ltr='1';
 	if(robot.lbump || kiss_get_key('L')) robot.lcbump=1 ;else robot.lcbump=0;
 	if(robot.rbump || kiss_get_key('R')) robot.rcbump=1 ;else robot.rcbump=0;
 	for(i=0;i<2;i++){

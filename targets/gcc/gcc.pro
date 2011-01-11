@@ -212,12 +212,12 @@ QMAKE_CLEAN += $${KISS_LIB_DEST} \
 ##############
 
 unix:{
-CREATE_HEADER = ../../libraries/create/kiss-create.h
-CREATE_HEADER_DEST = include/kiss-create.h
+CREATE_HEADER = ../../libraries/create/kiss-create-2011.h
+CREATE_HEADER_DEST = include/kiss-create-2011.h
 }
 !unix:{
-CREATE_HEADER = ..\\..\\libraries\\create\\kiss-create.h
-CREATE_HEADER_DEST = include\\kiss-create.h
+CREATE_HEADER = ..\\..\\libraries\\create\\kiss-create-2011.h
+CREATE_HEADER_DEST = include\\kiss-create-2011.h
 }
 
 create.target = create
@@ -249,7 +249,7 @@ target_include.files = ../../libraries/kiss/include/kiss-compat.h \
 					   ../../libraries/kiss/include/kiss-input.h \
 					   ../../libraries/kiss/include/kiss-graphics.h \
 					   ../../libraries/kiss/include/kiss-serial.h \
-					   ../../libraries/create/kiss-create.h
+					   ../../libraries/create/kiss-create-2011.h
 target_include.path = ../../$${INSTALL_BASE}/targets/gcc/include
 
 target_gl.files = ../../external/include/GL/glfw.h \
