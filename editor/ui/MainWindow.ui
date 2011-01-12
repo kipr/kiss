@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Kipr's Instructional Software System</string>
+   <string>KIPR's Instructional Software System</string>
   </property>
   <widget class="QWidget" name="ui_centralwidget" >
    <layout class="QVBoxLayout" >
