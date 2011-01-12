@@ -526,8 +526,8 @@ int get_create_incremental_angle(float lag) {
 		s_write_byte(142);
 		s_write_byte(20);//buttons
 		CREATE_WAITFORBUFFER(1,100020)
-		stateOfCreate.angle.data=(int)(robot.ctheta-stateOfCreate.oldCtheta);
-		stateOfCreate.oldCtheta=robot.ctheta;		
+		stateOfCreate.angle.data=(int)(360.0*robot.ctheta/twopi-stateOfCreate.oldCtheta);
+		stateOfCreate.oldCtheta=360.0*robot.ctheta/twopi;		
 		stateOfCreate.angle.lastUpdate=seconds();
 		CREATE_FREE;
 		stateOfCreate.totalAngle=stateOfCreate.totalAngle+stateOfCreate.angle.data;
