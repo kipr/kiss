@@ -169,7 +169,12 @@ int get_create_incremental_angle(float lag);
 void set_create_normalized_angle(int a);// sets the value of the Create distance traveled, as of this, call to the value dist.
 void set_create_total_angle(int a);// sets the value of the Create distance traveled, as of this, call to the value dist.
 
-int _get_create_battery_charge(float lag);//sub function not inteded for general use
+int get_create_battery_charging_state(float lag);//0-not charging; 1-recondition charging; 2-full charging; 3-trickle charging; 4-waiting; 5-charge fault.
+int get_create_battery_voltage(float lag);// returns voltage in mV
+int get_create_battery_current(float lag);// returns current flow in mA
+int get_create_battery_temp(float lag);// returns temperature in degrees C
+int get_create_battery_charge(float lag);// returns charge in mAh
+int get_create_battery_capacity(float lag);// returns battery capacity in mAh
 
 int get_create_wall_amt(float lag);// returns value (0-255) of wall sensor.  Data has been gathered within lag seconds
 int get_create_lcliff_amt(float lag);// returns value (0-255) of left cliff sensor.  Data has been gathered within lag seconds
@@ -521,7 +526,7 @@ int get_create_incremental_distance(float lag) {
 }
 
 int get_create_distance(float lag) {get_create_incremental_distance(lag); return stateOfCreate.accumulatedDistance;}
-void set_create_distance(int d) {stateOfCreate.distance.lastUpdate=seconds(); stateOfCreate.accumulatedDistance=d;}
+void set_create_distance(int d) {get_create_incremental_distance(0.002); stateOfCreate.accumulatedDistance=d;}
 
 // these functions updates angle which stores a normalized angle between 0 and 359 degrees
 // and the global gc_total_angle which is not normalized and can be larger than 360 and less than 0.
@@ -550,9 +555,9 @@ int get_create_incremental_angle(float lag) {
 
 int get_create_total_angle(float lag) {get_create_incremental_angle(lag); return stateOfCreate.totalAngle;}
 int get_create_normalized_angle(float lag) {get_create_incremental_angle(lag); return stateOfCreate.normalizedAngle;}
-void set_create_total_angle(int a) {stateOfCreate.angle.lastUpdate=seconds(); stateOfCreate.totalAngle=a;}
+void set_create_total_angle(int a) {get_create_incremental_angle(.002); stateOfCreate.totalAngle=a;}
 void set_create_normalized_angle(int a) {
-	stateOfCreate.angle.lastUpdate=seconds(); 
+	get_create_incremental_angle(.002); 
 	stateOfCreate.normalizedAngle=a;
 	if(a>359)set_create_normalized_angle(a-360);
 	if(a<0)set_create_normalized_angle(a+360);
