@@ -394,9 +394,9 @@ void MainWindow::on_actionAbout_triggered(bool)
 	aboutString += "KISS Version " + QString::number(KISS_C_VERSION_MAJOR) + "." + 
 									   QString::number(KISS_C_VERSION_MINOR) + "." +
 									   QString::number(KISS_C_VERSION_BUILD) + "\n\n";
-	aboutString += "Copyright (C) 2007-2009 KISS Institute for Practical Robotics\n\n";
+	aboutString += "Copyright (C) 2007-2011 KISS Institute for Practical Robotics\n\n";
 	aboutString += "http://www.kipr.org/\nhttp://www.botball.org/\n\n";
-	aboutString += "KISS Written by Jorge Villatoro";
+	aboutString += "KISS-C is a project of the KISS Institute for Practical Robotics. ";
 	QMessageBox::about(this, "KIPR's Instructional Software System", aboutString);
 }
 
