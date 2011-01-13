@@ -25,18 +25,48 @@ create_cover(); /* does Roomba room clean script */
 create_demo(int d) ; /* executes Create demo script d, see the Create documentation*/
 create_cover_dock(); /* will search for charging dock */
 create_mode(); /* updates global gc_mode with mode value*/
-create_sensor_update(); /* updates all gc_ globals */
-create_wall(); /* updates gc_wall, gc_wall_hb & gc_wall_amt */
-create_buttons() ; /* updates gc_play_button & gc_advance_button */
-create_bumpdrop(); /* updates gc_frdrop, gc_ldrop, gc_rdrop, gc_lbump, gc_rbump*/
-create_cliffs() ; /* updates gc_lcliff,gc_lfcliff, gc_rfcliff,gc_rcliff, gc_lcliff_amt,gc_lfcliff_amt, gc_rfcliff_amt,gc_rcliff_amt */
-create_angle() ; /*updates gc_total_angle & gc_angle */
-create_distance();/*updates gc_distance */
-create_velocity();/* updates gc_vel, gc_radius, gc_lvel & gc_rvel */
-int create_read_IR();/*updates gc_IR */
-create_overcurrents();/* updates gc_overcurrents */
-create_battery_charge();/*updates gc_charge_state, gc_batt_voltage, gc_current_flow, gc_batt_charge, gc_batt_capacity */
-create_cargo_bay_inputs();/*updates gc_digital_in & gc_analog_in */
+get_create_mode(float lag); /* returns the Create's mode (0 off; 1 passive; 2 safe; 3 full). Data updated within lag seconds */
+get_create_lbump(float lag); /* returns 1 if left bumper is pressed, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_rbump(float lag); /* returns 1 if right bumper is pressed, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_lwdrop(float lag); /* returns 1 if left wheel has dropped, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_cwdrop(float lag); /* returns 1 if caster wheel has dropped, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_rwdrop(float lag); /* returns 1 if right wheel has dropped, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_wall(float lag); /* returns 1 if wall is seen by right facing sensor, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_lcliff(float lag); /* returns 1 if left cliff sensor gets no reflection, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_lfcliff(float lag); /* returns 1 if left front cliff sensor gets no reflection, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_rfcliff(float lag); /* returns 1 if right front cliff sensor gets no reflection, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_rcliff(float lag); /* returns 1 if right cliff sensor gets no reflection, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_wall(float lag); /* returns 1 if virtual wall beacon isdetected, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_overcurrents(float lag); /* returns the overcurrent status byte where 16's bit indicates overcurrent in left wheel; 8's bit in right wheel, 4's bit is LD2, 2's bit is LD0 and 1's bit is LD1.*/
+get_create_infrared(float lag); /* returns the byte detected from the remote control, 255 if no byte has been detected. */
+get_create_advance_button(float lag); /* returns 1 if advance button is being pressed, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_advance_play(float lag); /* returns 1 if play button is being pressed, 0 otherwise. Data has been gathered within lag seconds.*/
+get_create_distance(float lag); /*returns the accumulated distance the Create has traveled since it was turned on or the distance was set.*/
+set_create_distance(int dist); /*Sets the current value that will be returned by get_create_distance to the value dist.*/
+get_create_normalized_angle(float lag); /* returns the accumulated angle the Create has turned since it was turned on or the distance was set -- normalized to the range 0 to 359 degrees. Turning CCW increases this value and CW decreases the value.*/
+get_create_total_angle(float lag);/*returns the accumulated angle the Create has turned since it was turned on or the distance was set. Turning CCW increases this value and CW decreases the value.*/
+set_create_normalized_angle(int angle);/*Sets the current value that will be returned by get_create_normalized_angle to the value angle.*/
+set_create_total_angle(int angle); /* Sets the current value that will be returned by get_create_total_angle to the value angle.*/
+get_create_charging_state(float lag); /* returns 0-not charging; 1-recondition charging; 2-full charging; 3-trickle charging; 4-waiting; 5-charge fault.*/
+get_create_battery_voltage(float lag); /*returns the battery voltage in mV. Data has been gathered within lag seconds.*/
+get_create_battery_vurrent(float lag); /*returns the battery current in mA. Data has been gathered within lag seconds.*/
+get_create_battery_temp(float lag); /*returns the battery temperature in degrees C. Data has been gathered within lag seconds.*/
+get_create_battery_capacity(float lag); /*returns the battery capacity in mAh. Data has been gathered within lag seconds.*/
+get_create_battery_charge(float lag); /*returns the battery charge in mAh. Data has been gathered within lag seconds.*/
+get_create_wall_amt(float lag); /* eturns 12 bit analog value from wall sensor. Data has been gathered within lag seconds.*/
+get_create_lcliff_amt(float lag); /* eturns 12 bit analog value from left cliff sensor. Data has been gathered within lag seconds.*/
+get_create_lfcliff_amt(float lag); /* eturns 12 bit analog value from left front cliff sensor. Data has been gathered within lag seconds.*/
+get_create_rfcliff_amt(float lag); /* eturns 12 bit analog value from right front cliff sensor. Data has been gathered within lag seconds.*/
+get_create_rcliff_amt(float lag); /* eturns 12 bit analog value from right cliff sensor. Data has been gathered within lag seconds.*/
+get_create_bay_DI(float lag); /* returns byte containing all digital sensors from the cargo bay: 16'bit for pin 15, 8's bit for pin 6, 4's bit for pin 18, 2's bit for pin 5 and 1's bit for pin 17.*/
+get_create_bay_AI(float lag); /* returns 10 bit analog value on pin 4 from the cargo bay.*/
+get_create_song_number(float lag); /* returns currently selected song 0-15. Data has been gathered within lag seconds.*/
+get_create_song_playing(float lag); /* returns 1 if song is playing, 0 otherwise. Data has been gathered within lag seconds. */
+get_create_number_of_stream_packets(float lag); /* if data streaming is being used, it returns the size of the stream. */
+get_create_requested_velocity(float lag); /* asks Create how fast it was told to be moving -500 to 500mm/s and returns that value. */
+get_create_requested_radius(float lag); /* asks Create the size of the commanded turning radius and returns that value. */
+get_create_requested_right_velocity(float lag); /* asks Create how fast it was told to be moving right wheel and returns that value. */
+get_create_requested_left_velocity(float lag); /* asks Create how fast it was told to be moving left wheel and returns that value. */
 create_stop();/* turns off the create's motors */
 create_drive (int speed, int radius);/* moves create at speed around a circle with radius */
 create_drive_straight (int speed);/* moves Create at speed mm/s*/
@@ -64,20 +94,20 @@ kissSimEnablePause();/* will pause simulation if space bar is pressed when this 
 kissSimPause();/* will pause simulation when this is called -- press space bar to resume */
 tone(int frequency, int duration); /* makes a sound at frequency for duration ms */
 beep(); /* make a beep */
-digital(int port); /* returns a 1 or 0 reflecting the state of port (0 to 7) */
-set_digital_output_value(int port, int value); /*sets port (0 to 7)to value (0 or 1) */
-analog10(int port); /* returns 10-bit value from analog port (ports 8 to 15) */
-analog(int port); /* returns 8-bit value from analog port (ports 8 to 15) */
-accel_x(); /* returns x accelleration (-2047 to 2047, +/- 1.5 gee) */
-accel_y(); /* returns y accelleration (-2047 to 2047, +/- 1.5 gee) */
-accel_z(); /* returns z accelleration (-2047 to 2047, +/- 1.5 gee) */
-sonar(int port); /* returns range in mm for sonar plugged into port (13-15)*/
-sonar_inches(int port); /* returns range in whole inches for sonar plugged into port (13-15)*/
+digital(int port); /* returns a 1 or 0 reflecting the state of port (8 to 15) */
+set_digital_output_value(int port, int value); /*sets port (8 to 15)to value (0 or 1) */
+analog10(int port); /* returns 10-bit value from analog port (ports 0 to 7) */
+analog(int port); /* returns 8-bit value from analog port (ports 0 to 7) */
+accel_x(); /* returns x accelleration (-127 to 127, +/- 2 gee) */
+accel_y(); /* returns y accelleration (-127 to 127, +/- 2 gee) */
+accel_z(); /* returns z accelleration (-127 to 127, +/- 2 gee) */
+sonar(int port); /* function does not work on CBC2 use analog function! */
+sonar_inches(int port); /* function does not work on CBC2 use analog function! */
 power_level(); /* returns a float battery voltage */
 enable_servos(); /* powers up the servos */
 disable_servos(); /* powers down the servos */
-set_servo_position(int servo, int pos); /* sets servo (1 to 4) to pos (0 to 2047) */
-get_servo_position(int servo); /* returns int of last setting for servo (1 to 4) */
+set_servo_position(int servo, int pos); /* sets servo (0 to 3) to pos (0 to 2047) */
+get_servo_position(int servo); /* returns int of last setting for servo (0 to 3) */
 get_motor_position_counter(int motor); /* returns int of motor (0 to 3) position +/-2147483647 */
 clear_motor_position_counter(int motor); /* sets motor (0 to 3) counter to 0 */
 move_at_velocity(int motor, int velocity); /* PID control of motor (0 to 3) at velocity tick per second */
