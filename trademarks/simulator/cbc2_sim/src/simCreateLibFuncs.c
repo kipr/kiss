@@ -531,7 +531,7 @@ int get_create_incremental_angle(float lag) {
 		stateOfCreate.angle.lastUpdate=seconds();
 		CREATE_FREE;
 		stateOfCreate.totalAngle=stateOfCreate.totalAngle+stateOfCreate.angle.data;
-		stateOfCreate.normalizedAngle=stateOfCreate.normalizedAngle+stateOfCreate.angle.data;
+		stateOfCreate.normalizedAngle=(stateOfCreate.normalizedAngle+stateOfCreate.angle.data)%360;
 		if(stateOfCreate.normalizedAngle>359)stateOfCreate.normalizedAngle=stateOfCreate.normalizedAngle-360;
 		if(stateOfCreate.normalizedAngle<0)stateOfCreate.normalizedAngle=stateOfCreate.normalizedAngle+360;
 		

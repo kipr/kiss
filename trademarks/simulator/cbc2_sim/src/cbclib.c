@@ -217,12 +217,12 @@ int set_servo_position(int servo, int pos)
 
 int get_servo_position(int servo)
 {
-	if(servo < 1 || servo > 4)
+	if(servo < 0 || servo > 3)
 	{
 		printf("Servo index must be between 1 and 4\n");
 		return -1;
 	}
-	return (_bob.servo_targets[servo-1]);
+	return (_bob.servo_targets[servo]);
 }
 
 /////////////////////////////////////////////////////////////
