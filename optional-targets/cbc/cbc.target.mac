@@ -1,0 +1,14 @@
+[General]
+description=CBC Botball Controller
+display_name=CBC
+extensions=C Sources (*.c *.h)
+manual=targets/cbc/manual/cbcmanual.html
+name=cbc
+template=targets/cbc/template.c
+port_dialog=true
+
+[Target]
+cflags=-arch i386 -arch ppc -Wimplicit -include stdio.h -include stdlib.h -include cbc-sim.h -include kiss-graphics.h -include kiss-compat.h -include kiss-serial.h -include kiss-input.h -include string.h -include math.h -include time.h
+include_dirs=targets/gcc/include targets/cbc/include
+lflags=-arch i386 -arch ppc -lcbc_sim -lGLee -lkiss -lpthread -lm -lglfw -framework AGL -framework OpenGL -framework Carbon
+lib_dirs=targets/gcc/lib targets/cbc/lib

@@ -1,2 +1,2 @@
 TEMPLATE=subdirs
-SUBDIRS=gcc cbc cbc2
+SUBDIRS=gcc cbc2
