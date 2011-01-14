@@ -228,6 +228,7 @@ struct __kissSimBot{
 void kissSimCreateUpdateState(struct __kissSimBot *b, struct __world *wo )
 {
 	float ctime,ca[2],x1,x2,y1,y2;
+	float epsilon=0.1;//number of radians to the right of center that the left bumper on create will activate and vice versa
 	float tdiff, lenc, renc, ldist, rdist, x_inc, y_inc, theta_inc, dist;
 	int i,j,offset,obst,partCount,sCount;
 	struct vg_object *part;//pointer to point to selected objects
@@ -254,6 +255,8 @@ void kissSimCreateUpdateState(struct __kissSimBot *b, struct __world *wo )
 	if(obst){
 		if(ca[0]>=0.0 && ca[0]<(PI/2.0))robot.lbump=1;
 		if(obst==2 && ca[0]>=0.0 && ca[0]<(PI/2.0))robot.lbump=1;
+		if(ca[0]>= PI2-epsilon)robot.lbump=1;//overlap with right bumper
+		if(ca[0]<= epsilon)robot.rbump=1;//overlap with left bumper
 		if(ca[0]>= PI1_5)robot.rbump=1;
 		if(obst==2 && ca[0]>= PI1_5)robot.rbump=1;
 	}
@@ -371,52 +374,53 @@ void kissSimCBCBotUpdateState(struct __kissSimBot *b, struct __world *wo )
 			}
 		}
 		part = part->next;
-		}
-		}
-		
-		void _setAPort7(int s, struct vg_object *o)
-		{
-		int a7=0;
-		if(o==NULL)_bob.analogs[s]=0;
-		else{
+	}
+}
+
+void _setAPort7(int s, struct vg_object *o)
+{
+	int a7=0;
+	if(o==NULL)_bob.analogs[s]=0;
+	else{
 		a7= 4*(o->r+o->g+o->b);
 		if(a7>1023)a7=1023;
 		_bob.analogs[s]=1023-a7;
-		}
-		}
-		
-		void _cliffs(int s, struct vg_object *o)
-		{
-		int a=0;
-		if(o==NULL)robot.cliffs[s]=1023;
-		else{
+	}
+}
+
+void _cliffs(int s, struct vg_object *o)
+{
+	int a=0;
+	if(o==NULL)robot.cliffs[s]=1023;
+	else{
 		a= 16*(o->r+o->g+o->b);
 		if(a>1023)a=1023;
 		robot.cliffs[s]=a;
 		//	printf("oil %d index %d\n",a,s);
-		}
-		}
-		
-		float _line_length(struct point p1,struct point p2){
-		return sqrt((p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y));
-		}
-		
-		float _triangle_area(struct point p1, struct point p2, struct point p3){
-		float a=_line_length(p1,p2);
-		float b=_line_length(p1,p3);
-		float c=_line_length(p3,p2);
-		float semiPerim = (a+b+c)/2.0;
-		return sqrt(semiPerim*(semiPerim-a)*(semiPerim-b)*(semiPerim-c));
-		}
-		
-		float _point_in_triangle(struct point p1, struct point p2, struct point p3, struct point p){
-		float a12=_triangle_area(p1,p2,p);
-		float a13=_triangle_area(p1,p3,p);
-		float a23=_triangle_area(p3,p2,p);
-		float a123=_triangle_area(p1,p2,p3);
-		//	printf("p %f,%f p1 %f,%f p2 %f,%f p3 %f,%f sum =%f\n",p.x,p.y,p1.x,p1.y,p2.x,p2.y,p3.x,p3.y,a123,a12+a13+a23);
-		//	msleep(10);
-		if((a123+0.01) > (a12+a13+a23) && (a123-0.01) < (a12+a13+a23)) return 1;
-		else return 0;
-		}
-	
+	}
+}
+
+
+// functions below to determine if a line is contained within a triangle.
+float _line_length(struct point p1,struct point p2){
+	return sqrt((p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y));
+}
+
+float _triangle_area(struct point p1, struct point p2, struct point p3){
+	float a=_line_length(p1,p2);
+	float b=_line_length(p1,p3);
+	float c=_line_length(p3,p2);
+	float semiPerim = (a+b+c)/2.0;
+	return sqrt(semiPerim*(semiPerim-a)*(semiPerim-b)*(semiPerim-c));
+}
+
+float _point_in_triangle(struct point p1, struct point p2, struct point p3, struct point p){
+	float a12=_triangle_area(p1,p2,p);
+	float a13=_triangle_area(p1,p3,p);
+	float a23=_triangle_area(p3,p2,p);
+	float a123=_triangle_area(p1,p2,p3);
+	//	printf("p %f,%f p1 %f,%f p2 %f,%f p3 %f,%f sum =%f\n",p.x,p.y,p1.x,p1.y,p2.x,p2.y,p3.x,p3.y,a123,a12+a13+a23);
+	//	msleep(10);
+	if((a123+0.01) > (a12+a13+a23) && (a123-0.01) < (a12+a13+a23)) return 1;
+	else return 0;
+}
