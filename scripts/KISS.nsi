@@ -6,8 +6,8 @@
 ; Define KISS application name and version number
 !define APPNAME "KISS-C"
 !define APPMAJORVERSION "2"
-!define APPMINORVERSION "2"
-!define BUILDNUMBER "1"
+!define APPMINORVERSION "3"
+!define BUILDNUMBER "0"
 
 
 ; Standard Release app name and version
@@ -136,7 +136,7 @@ Section "KISS-C" KISSC
 	File "C:\Projects\kiss\deploy\targets\gcc\template.c"
 	SetOutPath "$INSTDIR\targets\gcc\include\"
 	File "C:\Projects\kiss\deploy\targets\gcc\include\kiss-compat.h"
-	File "C:\Projects\kiss\deploy\targets\gcc\include\kiss-create.h"
+	File "C:\Projects\kiss\deploy\targets\gcc\include\kiss-create-2011.h"
 	File "C:\Projects\kiss\deploy\targets\gcc\include\kiss-graphics.h"
 	File "C:\Projects\kiss\deploy\targets\gcc\include\kiss-input.h"
 	File "C:\Projects\kiss\deploy\targets\gcc\include\kiss-serial.h"
@@ -1013,7 +1013,7 @@ Section Uninstall
 	Delete "$INSTDIR\targets\gcc\libgcc_plugin.dll"
 	Delete "$INSTDIR\targets\gcc\template.c"
 	Delete "$INSTDIR\targets\gcc\include\kiss-compat.h"
-	Delete "$INSTDIR\targets\gcc\include\kiss-create.h"
+	Delete "$INSTDIR\targets\gcc\include\kiss-create-2011.h"
 	Delete "$INSTDIR\targets\gcc\include\kiss-graphics.h"
 	Delete "$INSTDIR\targets\gcc\include\kiss-input.h"
 	Delete "$INSTDIR\targets\gcc\include\kiss-serial.h"
