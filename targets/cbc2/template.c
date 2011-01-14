@@ -11,8 +11,10 @@
 
 int main()
 {
-	set_each_analog_state(0,0,0,0,0,0,0,0);// This line sets analog ports to be pullup (0) or floating (1)
 	//variable declarations go here.
+
+	// uncomment the line below anf put 1s in the appropriate places if using floating sensors (ET and sonar)
+	//set_each_analog_state(0,0,0,0,0,0,0,0);// This line sets analog ports to be pullup (0) or floating (1)
 	
 	// uncomment the line below to have the rest of the program wait for the starting light to turn on
 	//wait_for_light(port_number);//replace "port_number" with the analog port number into which the light sensor is connected
