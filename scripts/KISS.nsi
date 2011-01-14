@@ -7,7 +7,7 @@
 !define APPNAME "KISS-C"
 !define APPMAJORVERSION "2"
 !define APPMINORVERSION "3"
-!define BUILDNUMBER "0"
+!define BUILDNUMBER "1"
 
 
 ; Standard Release app name and version
