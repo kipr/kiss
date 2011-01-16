@@ -249,7 +249,7 @@ void kissSimCreateUpdateState(struct __kissSimBot *b, struct __world *wo )
 	robot.y=b->bot->y = b->bot->y + sin(b->bot->theta)*dist;
 	robot.ctheta = robot.ctheta + (rdist - ldist)/b->wheelSep;
 	robot.theta = b->bot->theta = vg_normalize_angle(b->bot->theta + (ldist - rdist)/b->wheelSep);
-	robot.lcbump=robot.rcbump=0;
+	//robot.lcbump=robot.rcbump=0;
 	robot.lbump=robot.rbump=0;//reset bumpers prior to collision check
 	obst=vg_assembly_collision(b->bot,wo->obstacles,ca);
 	if(obst){
