@@ -145,6 +145,8 @@ track_major_axis(int ch, int i); /*gets the length in pixels of the major  axis 
 track_minor_axis(int ch, int i); /*gets the length in pixels of the minor axis of the bounding ellipse*/
 shut_down_in(float time); /*Turns of motors and freezes servo positions */
 wait_for_light(int port); /* does light calibration for sensor in analog port*/
+run_for(float time, void funcname); /* calls the function funcname and blocks till it finishes or time runs out*/
+target_cha_in_chb(int a, int b, int *x, int *y); /* returns 1 if color a is found in color b and then sets x&y. returns 0 otherwise.
 cbc_display_clear(); /* Clears CBC console display (7 blanks lines in simulator)*/
 cbc_printf(int col, int row, char *t, ...); /*Starts printing at col, row then normal printf control string and args*/                                       
 

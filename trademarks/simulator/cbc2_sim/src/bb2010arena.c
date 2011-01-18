@@ -12,7 +12,7 @@
 struct vg_assembly *kissSimChooseWorld(struct __world *w)// display worlds and click on the one you want
 {
 	int x,y,i=0;
-	char *bb2011Title="Botball 2011", *arenaTitle="2010 Arena", *emptyTitle ="Empty World";
+	char *bb2011Title="Botball 2011", *arenaTitle="2010 Arena", *emptyTitle ="Empty World", *blankTitle = "Blank World";
 	
 	//*****BB2010 Arena World********************
 	struct vg_object *arenaObj00=malloc(sizeof(struct vg_object));
@@ -43,6 +43,15 @@ struct vg_assembly *kissSimChooseWorld(struct __world *w)// display worlds and c
 	struct vg_object *emptyObj02=malloc(sizeof(struct vg_object));
 	struct vg_object *emptyObj03=malloc(sizeof(struct vg_object));
 	struct vg_assembly *empty=malloc(sizeof(struct vg_assembly));
+	
+	//*****Blank World********************
+	struct vg_object *blankObj00=malloc(sizeof(struct vg_object));
+	struct vg_object *blankObj01=malloc(sizeof(struct vg_object));
+	struct vg_object *blankObj02=malloc(sizeof(struct vg_object));
+	struct vg_object *blankObj03=malloc(sizeof(struct vg_object));
+	struct vg_assembly *blank=malloc(sizeof(struct vg_assembly));
+	
+	struct vg_assembly *blankTape=malloc(sizeof(struct vg_assembly));
 	
 	//*****Tape and oil slicks********************
 	struct vg_object *arena2010tapeObj00=malloc(sizeof(struct vg_object));
@@ -178,7 +187,7 @@ struct vg_assembly *kissSimChooseWorld(struct __world *w)// display worlds and c
 	vg_calculate_assembly_collision_parameters(bb2011);
 	bb2011->partsCollision=1;
 	bb2011->x=80;
-	bb2011->y=80;
+	bb2011->y=25;
 	//*****End of Your model code:********************
 	
 	
@@ -227,7 +236,7 @@ struct vg_assembly *kissSimChooseWorld(struct __world *w)// display worlds and c
 	vg_calculate_assembly_collision_parameters(arena);
 	arena->partsCollision=1;
 	arena->x=80;
-	arena->y=80;
+	arena->y=25;
 	
 	
 	//*****Empty World Coordinates********************
@@ -238,11 +247,29 @@ struct vg_assembly *kissSimChooseWorld(struct __world *w)// display worlds and c
 	emptyObj01->next=emptyObj02;
 	vg_make_line(emptyObj03,0.000000,360.000000,360.000000,360.000000,255,255,255,200,200,200);
 	emptyObj02->next=emptyObj03;
-	vg_make_assembly(empty, 20, 0.000000, 0.000000, 0.000000, emptyObj00);
+	vg_make_assembly(empty, 4, 0.000000, 0.000000, 0.000000, emptyObj00);
 	vg_calculate_assembly_collision_parameters(empty);
 	empty->partsCollision=1;
 	empty->x=20;
-	empty->y=80;
+	empty->y=25;
+	
+	//*****blank World Coordinates********************
+	vg_make_line(blankObj00,0.000000,0.000000,180.000000,0.000000,255,255,255,200,200,200);
+	vg_make_line(blankObj01,0.000000,0.000000,0.000000,360.000000,255,255,255,200,200,200);
+	blankObj00->next=blankObj01;
+	vg_make_line(blankObj02,180.000000,0.000000,180.000000,360.000000,255,255,255,200,200,200);
+	blankObj01->next=blankObj02;
+	vg_make_line(blankObj03,0.000000,360.000000,180.000000,360.000000,255,255,255,200,200,200);
+	blankObj02->next=blankObj03;
+	vg_make_assembly(blank, 4, 0.000000, 0.000000, 0.000000, blankObj00);
+	vg_calculate_assembly_collision_parameters(blank);
+	blank->partsCollision=1;
+	blank->x=80;
+	blank->y=25;
+	
+	//****No Tape ***
+	vg_make_assembly(blankTape, 0, 0.000000, 0.000000, 0.000000, blankObj00);
+	
 	
 	//******Coordinates for tape and slicks*******************
 	vg_make_triangle_fill(arena2010tapeObj00,58.000000,0.000000,58.000000,90.000000,62.000000,90.000000,0,255,0,200,200,200);
@@ -280,7 +307,7 @@ struct vg_assembly *kissSimChooseWorld(struct __world *w)// display worlds and c
 	vg_calculate_assembly_collision_parameters(arena2010tape);
 	arena2010tape->partsCollision=1;
 	arena2010tape->x=80;
-	arena2010tape->y=80;
+	arena2010tape->y=25;
 	//*****End of Your model code:********************
 	
 	
@@ -368,7 +395,7 @@ struct vg_assembly *kissSimChooseWorld(struct __world *w)// display worlds and c
 	vg_calculate_assembly_collision_parameters(bb2011Tape);
 	bb2011Tape->partsCollision=1;
 	bb2011Tape->x=80;
-	bb2011Tape->y=80;
+	bb2011Tape->y=25;
 	//*****End of Your model code:********************
 	
 	
@@ -409,39 +436,57 @@ struct vg_assembly *kissSimChooseWorld(struct __world *w)// display worlds and c
 		vg_draw_assembly(empty,ERASE); 
 		while(right_button());
 		graphics_fill(200,200,200);		
-		NOBOLD g_printString("2010 Board: SELECT WORLD WITH MOUSE CLICK, USE RIGHT ARROW KEY TO SWITCH",20, 10,TEAL,1.0);
-		vg_draw_assembly(arena,DRAW);
+		//NOBOLD g_printString(blankTitle,20, +20,TEAL,3.0);
+		vg_draw_assembly(blank,DRAW);
+		NOBOLD g_printString("BLANK WORLD: SELECT WORLD WITH MOUSE CLICK, USE RIGHT ARROW KEY TO SWITCH",20, 10,TEAL,1.0);
 		graphics_update();
 		while(!right_button()){
 			if(kiss_get_mouse_button(0)){
+				w->simPaused =0;
+				w->title=blankTitle;
+				w->obstacles= blank;	
+				w->markings=blankTape;
+				NOBOLD g_printString("BLANK WORLD: SELECT WORLD WITH MOUSE CLICK, USE RIGHT ARROW KEY TO SWITCH",20, 10,200,200,200,1.0);
+				return;
+				}
+				}	
+				vg_draw_assembly(blank,ERASE); 
+				while(right_button());
+				graphics_fill(200,200,200);		
+				NOBOLD g_printString("2010 Board: SELECT WORLD WITH MOUSE CLICK, USE RIGHT ARROW KEY TO SWITCH",20, 10,TEAL,1.0);
+				vg_draw_assembly(arena,DRAW);
+				graphics_update();
+				while(!right_button()){
+				if(kiss_get_mouse_button(0)){
 				w->simPaused = 0;
 				w->title=arenaTitle;
 				w->obstacles= arena;
 				w->markings=arena2010tape;
 				NOBOLD g_printString("2010 BOARD: SELECT WORLD WITH MOUSE CLICK, USE RIGHT ARROW KEY TO SWITCH",5, 10,200,200,200,1.0);
 				return;
-			}
-		}	
-		vg_draw_assembly(arena,ERASE);
-		while(right_button());
-		graphics_fill(200,200,200);		
-		NOBOLD g_printString("Empty with 2010 tape: SELECT WORLD WITH MOUSE CLICK, USE RIGHT ARROW KEY TO SWITCH",20, 10,TEAL,1.0);
-		//graphics_fill(200,200,200);		
-		//NOBOLD g_printString("SELECT WORLD WITH MOUSE CLICK, USE RIGHT ARROW KEY TO SWITCH",20, 10,TEAL,1.0);
-		//NOBOLD g_printString(emptyTitle,20, +20,TEAL,3.0);
-		vg_draw_assembly(empty,DRAW);
-		graphics_update();
-		while(!right_button()){
-			if(kiss_get_mouse_button(0)){
+				}
+				}	
+				vg_draw_assembly(arena,ERASE);
+				while(right_button());
+				graphics_fill(200,200,200);		
+				NOBOLD g_printString("Empty with 2010 tape: SELECT WORLD WITH MOUSE CLICK, USE RIGHT ARROW KEY TO SWITCH",20, 10,TEAL,1.0);
+				//graphics_fill(200,200,200);		
+				//NOBOLD g_printString("SELECT WORLD WITH MOUSE CLICK, USE RIGHT ARROW KEY TO SWITCH",20, 10,TEAL,1.0);
+				//NOBOLD g_printString(emptyTitle,20, +20,TEAL,3.0);
+				vg_draw_assembly(empty,DRAW);
+				graphics_update();
+				while(!right_button()){
+				if(kiss_get_mouse_button(0)){
 				w->simPaused =0;
 				w->title=emptyTitle;
 				w->obstacles= empty;	
 				w->markings=arena2010tape;
 				NOBOLD g_printString("EMPTY WITH 2010 TAPE: SELECT WORLD WITH MOUSE CLICK, USE RIGHT ARROW KEY TO SWITCH",20, 10,200,200,200,1.0);
 				return;
-			}
-		}	
-		vg_draw_assembly(empty,ERASE); 
-		while(right_button());
-	}
-}
+				}
+				}	
+				vg_draw_assembly(empty,ERASE); 
+				while(right_button());
+				}
+				}
+			

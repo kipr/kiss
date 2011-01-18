@@ -8,6 +8,7 @@ void wait_for_light(int light_port_);
 void shut_down_in(float delay);
 void _shut_down_task();
 void run_for( float howLong, void (*funky));
+int target_cha_in_chb(int a, int b, int *x, int *y);
 
 
 // Botball utility routines
@@ -192,4 +193,37 @@ void run_for(float howLong, void (*funky))
 	sleep(howLong);
 	kill_process(pid);
 	return;
+}
+
+
+// This function takes two color channels and a two integer pointers.  If the vision system sees
+// a blob of color a inside of a blob of color b then it will return 1 and put the x and y coordinates
+// of that blob of color a into the x and y pointers.  If no case of a blob of a inside of a blob of b is 
+// found then it returns 0 and the contents pointed to by the x & y pointers are left unchanged
+// example of use: 
+//int x=0,y=0;
+//target_cha_in_chb(0,1,&x,&y);
+//if(target_cha_in_chb(0,1,&x,&y)==1)printf("Target found at (%d,%d)\n",x,y);
+//else printf("No target seen\n");
+
+int target_cha_in_chb(int a, int b, int *x, int *y)
+{
+	int ablob,bblob;
+	if(track_count(a)==0 || track_count(b)==0)return 0;
+	for(ablob=0;ablob<track_count(a);ablob++){// check all color a blobs
+		for(bblob=0;bblob<track_count(b);bblob++){//check all color b blobs
+			if(track_bbox_left(a,ablob)>=track_bbox_left(b,bblob)) {//is left edge of a to the right of left edge of b 
+				if(track_bbox_right(a,ablob)<=track_bbox_right(b,bblob)) {//is right edge of a to the left of right edge of b 
+					if(track_bbox_top(a,ablob)>=track_bbox_top(b,bblob)) {//is top edge of a below top of b 
+						if(track_bbox_bottom(a,ablob)<=track_bbox_bottom(b,bblob)){//is bottom edge of a above bottom of b 
+							*x=track_x(a,ablob);//put the x coordinate of the target in x
+							*y=track_y(a,ablob);//put the y coordinate of the target in y
+							return 1; // then this blob of a is inside the blob of b
+						}
+					}
+				}
+			}
+		}
+	}
+	return(0);	//there is no blob of color a that is inside a blob of color b
 }
