@@ -50,7 +50,7 @@ and implements restraint on serial communications.  This library better reflects
 
 #define twopi 6.28318531
 //CREATE_BUSY keeps any  create commands in other processes from interfering with one another.
-#define CREATE_BUSY while(stateOfCreate.createBusy)msleep(10L); stateOfCreate.createBusy = 1;
+#define CREATE_BUSY if(stateOfCreate.createConnected!=1){ return;} else {while(stateOfCreate.createBusy)msleep(10L); stateOfCreate.createBusy = 1;}
 #define CREATE_FREE stateOfCreate.createBusy = 0;
 
 //checks to make sure create is connected, if not, generates error
@@ -515,7 +515,7 @@ int get_create_incremental_distance(float lag) {
 }
 
 int get_create_distance(float lag) {get_create_incremental_distance(lag); return stateOfCreate.accumulatedDistance;}
-void set_create_distance(int d) {stateOfCreate.distance.lastUpdate=seconds(); stateOfCreate.accumulatedDistance=d;}
+void set_create_distance(int d) {get_create_incremental_distance(.005); stateOfCreate.accumulatedDistance=d;}
 
 // these functions updates angle which stores a normalized angle between 0 and 359 degrees
 // and the global gc_total_angle which is not normalized and can be larger than 360 and less than 0.
@@ -541,9 +541,9 @@ int get_create_incremental_angle(float lag) {
 
 int get_create_total_angle(float lag) {get_create_incremental_angle(lag); return stateOfCreate.totalAngle;}
 int get_create_normalized_angle(float lag) {get_create_incremental_angle(lag); return stateOfCreate.normalizedAngle;}
-void set_create_total_angle(int a) {stateOfCreate.angle.lastUpdate=seconds(); stateOfCreate.totalAngle=a;}
+void set_create_total_angle(int a) {get_create_incremental_angle(.005); stateOfCreate.totalAngle=a;}
 void set_create_normalized_angle(int a) {
-	stateOfCreate.angle.lastUpdate=seconds(); 
+	get_create_incremental_angle(.005); 
 	stateOfCreate.normalizedAngle=a;
 	if(a>359)set_create_normalized_angle(a-360);
 	if(a<0)set_create_normalized_angle(a+360);
