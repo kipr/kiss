@@ -2,6 +2,7 @@ TEMPLATE = subdirs
 SUBDIRS = external \
 	  libraries \
 	  editor \
-	  targets
+	  targets \
+          optional-targets
 
 CONFIG += ordered
