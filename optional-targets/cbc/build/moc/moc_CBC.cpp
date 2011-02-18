@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'CBC.h'
 **
-** Created: Fri Feb 18 14:12:44 2011
+** Created: Fri Feb 18 14:21:31 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.6.2)
 **
 ** WARNING! All changes made in this file will be lost!
