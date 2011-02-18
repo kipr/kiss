@@ -73,6 +73,8 @@ int track_bbox_height(int ch, int i); /*gets the pixel y height of the bounding 
 float track_angle(int ch, int i); /*gets the angle in radians of the major axis of the blob i*/
 int track_major_axis(int ch, int i); /*gets the length in pixels of the major  axis of the bounding ellipse*/
 int track_minor_axis(int ch, int i); /*gets the length in pixels of the minor axis of the bounding ellipse*/
+void track_set_model_hsv(int ch, int h_min, int h_max, int s_min, int v_min);
+void track_get_model_hsv(int ch, int *h_min, int *h_max, int *s_min, int *v_min);
 int track_capture_time(); /*Time since the last frame was captured*/
 int mseconds(); /* returns the time since boot */
 int create_connect();

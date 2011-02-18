@@ -88,6 +88,8 @@ int track_bbox_height(int ch, int i) {}
 float track_angle(int ch, int i) {} 
 int track_major_axis(int ch, int i) {} 
 int track_minor_axis(int ch, int i) {} 
+void track_set_model_hsv(int ch, int h_min, int h_max, int s_min, int v_min) {}
+void track_get_model_hsv(int ch, int *h_min, int *h_max, int *s_min, int *v_min) {}
 int create_connect() {}
 int create_connect_s() {}
 void create_disconnect() ;
