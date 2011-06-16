@@ -28,39 +28,33 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
+#include "TargetManager.h"
 
 // Constructor & Destructor
-Target::Target(QObject *parent) : QObject(parent), m_targetInterface(0), m_plugin(0)
+Target::Target(QObject *parent) : QObject(parent)
 {
 }
 
 Target::~Target()
 {
-	unloadPlugin();
 }
 
 // Sets the target file and loads the associated plugin file
 bool Target::setTargetFile(QString filename)
 {
-	QString pluginName;
-
-	/* Load the settings file */
 	QSettings settings(filename, QSettings::IniFormat);
-
-	unloadPlugin();
 
 	/* Determine the plugin's name */
 	if(settings.value("base_target").toString().length() > 0)
-		pluginName = settings.value("base_target").toString();
+		m_targetName = settings.value("base_target").toString();
 	else
-		pluginName = settings.value("name").toString();
+		m_targetName = settings.value("name").toString();
 
 	/* Load the plugin */
-	if(!loadPlugin(pluginName))
-		return false;
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	if(!targetInterface) return false;
 
-	/* Pass the file name of the target file to our plugin */
-	m_targetInterface->setTargetFile(filename);
+	targetInterface->setTargetFile(filename);
 	m_targetFileName = filename;
 
 	return true;
@@ -70,47 +64,44 @@ bool Target::setTargetFile(QString filename)
 
 QStringList Target::getErrorMessages()
 {
-	if(m_targetInterface)
-		return m_targetInterface->getErrorMessages();
-	else {
-		qWarning("Target::getErrorList: Invalid m_targetInterface");
-		return QStringList();
-	}
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	if(targetInterface) return targetInterface->getErrorMessages();
+	
+	qWarning("Target::getErrorList: Invalid m_targetInterface");
+	return QStringList();
 }
 
 QStringList Target::getWarningMessages()
 {
-	if(m_targetInterface)
-		return m_targetInterface->getWarningMessages();
-	else {
-		qWarning("Target::getWarningList: Invalid m_targetInterface");
-		return QStringList();
-	}
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	if(targetInterface) return targetInterface->getWarningMessages();
+		
+	qWarning("Target::getWarningList: Invalid m_targetInterface");
+	return QStringList();
 }
 
 QStringList Target::getLinkerMessages()
 {
-	if(m_targetInterface)
-		return m_targetInterface->getLinkerMessages();
-	else {
-		qWarning("Target::getLinkErrorList: Invalid m_targetInterface");
-		return QStringList();
-	}
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	if(targetInterface) return targetInterface->getLinkerMessages();
+		
+	qWarning("Target::getLinkErrorList: Invalid m_targetInterface");
+	return QStringList();
 }
 
 QStringList Target::getVerboseMessages()
 {
-	if(m_targetInterface)
-		return m_targetInterface->getVerboseMessages();
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	if(targetInterface) return targetInterface->getVerboseMessages();
 
 	qWarning("Target::getVerboseMessages() Invalid m_targetInterface");
 	return QStringList();
 }
 
-LexerSpec *Target::getLexerSpec()
+LexerSpec* Target::getLexerSpec()
 {
-	if(m_targetInterface)
-		return &m_targetInterface->getLexerSpec();
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	if(targetInterface) return targetInterface->getLexerSpec();
 
 	qWarning("Target::getLexerSpec() Invalid m_targetInterface");
 	return 0;
@@ -118,8 +109,8 @@ LexerSpec *Target::getLexerSpec()
 
 QList<QAction*> Target::getActionList()
 {
-	if(m_targetInterface)
-		return m_targetInterface->getActionList();
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	if(targetInterface) return targetInterface->getActionList();
 	
 	qWarning("Target::getActionList() Invalid m_targetInterface");
 	return QList<QAction*>();
@@ -170,38 +161,32 @@ QString Target::getTargetManualPath()
 
 bool Target::hasDownload()
 {
-	if(m_targetInterface && m_targetInterface->hasDownload())
-		return true;
-	return false;
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	return targetInterface && targetInterface->hasDownload();
 }
 
 bool Target::hasCompile()
 {
-	if(m_targetInterface && m_targetInterface->hasCompile()) {
-		return true;
-	}
-	return false;
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	return targetInterface && targetInterface->hasCompile();
 }
 
 bool Target::hasRun()
 {
-	if(m_targetInterface && m_targetInterface->hasRun())
-		return true;
-	return false;
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	return targetInterface && targetInterface->hasRun();
 }
 
 bool Target::hasStop()
 {
-	if(m_targetInterface && m_targetInterface->hasStop())
-		return true;
-	return false;
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	return targetInterface && targetInterface->hasStop();
 }
 
 bool Target::hasSimulate()
 {
-  if(m_targetInterface && m_targetInterface->hasSimulate())
-    return true;
-  return false;
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	return targetInterface && targetInterface->hasSimulate();
 }
 
 /* End HAS Methods */
@@ -210,37 +195,32 @@ bool Target::hasSimulate()
 
 bool Target::compile(QString filename)
 {
-	if(!hasCompile())
-		return false;
-	return m_targetInterface->compile(filename);
+	if(!hasCompile()) return false;
+	return TargetManager::ref().get(m_targetName)->compile(filename, m_port);
 }
 
 bool Target::download(QString filename)
 {
-	if(!hasDownload())
-		return false;
-	return m_targetInterface->download(filename);
+	if(!hasDownload()) return false;
+	return TargetManager::ref().get(m_targetName)->download(filename, m_port);
 }
 
 bool Target::run(QString filename)
 {
-	if(!hasRun())
-		return false;
-	return m_targetInterface->run(filename);
+	if(!hasRun()) return false;
+	return TargetManager::ref().get(m_targetName)->run(filename, m_port);
 }
 
 void Target::stop()
 {
-	if(!hasStop())
-		return;
-	m_targetInterface->stop();
+	if(!hasStop()) return;
+	TargetManager::ref().get(m_targetName)->stop(m_port);
 }
 
 bool Target::simulate(QString filename)
 {
-  if(!hasSimulate())
-    return false;
-  return m_targetInterface->simulate(filename);
+	if(!hasSimulate()) return false;
+	return TargetManager::ref().get(m_targetName)->simulate(filename, m_port);
 }
 
 /* End action Methods */
@@ -248,88 +228,13 @@ bool Target::simulate(QString filename)
 /* Serial Port set/get routines */
 void Target::setPort(QString port)
 {
-	if(m_targetInterface)
-		m_targetInterface->setPort(port);
-	else	
-		qWarning("Target::setPort() invalid target interface");
+	m_port = port;
 }
 
 QString Target::getPort()
 {
-	if(m_targetInterface)
-		return m_targetInterface->getPort();
-	
-	qWarning("Target::getPort() invalid target interface");
-	return QString();
+	return m_port;
 }
 
-/* End serial port set/get routines */
-
-
-/* These last two load/unload a plugin, determining the file name based on the target name */
-bool Target::loadPlugin(QString targetName)
-{
-	// Create the QPluginLoader and start constructing the file name
-	m_plugin = new QPluginLoader();
-
-	QDir pluginPath(QDir::currentPath()  + "/targets");
-	QString pluginPathString;
-
-	pluginPath.cd(targetName.toLocal8Bit());
-
-	// These conditionals deal with different file names on different platforms
-#ifdef Q_OS_MAC
-	pluginPathString = pluginPath.absoluteFilePath("lib" + targetName + "_plugin.dylib");
-#elif defined(Q_OS_LINUX)
-	pluginPathString = pluginPath.absoluteFilePath("lib" + targetName + "_plugin.so");
-#else
-	pluginPathString = pluginPath.absoluteFilePath("lib" + targetName + "_plugin.dll");
-#endif
-
-	// Attempts to load the plugin
-	m_plugin->setFileName(pluginPathString);
-	if(!m_plugin->load()) {
-		qWarning("Target::loadPlugin: %s", qPrintable(m_plugin->errorString()));
-		return false;
-	}
-	
-	// The plugin was loaded, attempt to cast it
-	m_targetInterface = qobject_cast<TargetInterface *>(m_plugin->instance());
-	if(!m_targetInterface) {
-		m_plugin->unload();
-		delete m_plugin;
-		m_plugin = 0;
-		qWarning("Target::loadPlugin: Plugin for target \"%s\" failed qobject_cast", qPrintable(targetName));
-		return false;
-	}
-	
-	// Check if the plugin is a QObject derivative, if so try to load the requestPort() signal
-	QObject *qoPlugin = qobject_cast<QObject *>(m_plugin->instance());
-	if(qoPlugin)
-		connect(qoPlugin, SIGNAL(requestPort()), this, SIGNAL(requestPort()));
-	
-	// Everything worked!
-	return true;
-}
-
-// Simply delete the plugin and unset everything
-void Target::unloadPlugin()
-{
-	delete m_targetInterface;
-	m_targetInterface = 0;
-	if(m_plugin) {
-		m_plugin->unload();
-		delete m_plugin;
-		m_plugin = 0;
-	}
-}
-
-void Target::setCurrentFile(SourceFile *sourceFile)
-{
-    if(m_targetInterface)
-        m_targetInterface->setCurrentFile(sourceFile);
-    else
-        qWarning("Target::setCurrentFile() invalid target interface");
-}
 
 

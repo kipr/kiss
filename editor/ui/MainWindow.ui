@@ -1,7 +1,11 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow" >
-  <property name="geometry" >
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,68 +13,47 @@
     <height>609</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>KIPR's Instructional Software System</string>
   </property>
-  <widget class="QWidget" name="ui_centralwidget" >
-   <layout class="QVBoxLayout" >
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>false</bool>
+  </property>
+  <widget class="QWidget" name="ui_centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QSplitter" name="ui_splitter" >
-      <property name="orientation" >
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <property name="childrenCollapsible" >
-       <bool>false</bool>
-      </property>
-      <widget class="QTabWidget" name="ui_tabWidget" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+      <widget class="QTabWidget" name="ui_tabWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>1</horstretch>
          <verstretch>1</verstretch>
         </sizepolicy>
        </property>
-       <property name="tabPosition" >
+       <property name="tabPosition">
         <enum>QTabWidget::North</enum>
        </property>
-       <property name="currentIndex" >
+       <property name="currentIndex">
         <number>0</number>
        </property>
-       <property name="elideMode" >
+       <property name="elideMode">
         <enum>Qt::ElideRight</enum>
        </property>
-       <widget class="QWidget" name="tab" >
-        <attribute name="title" >
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
          <string>Tab 1</string>
         </attribute>
        </widget>
       </widget>
-      <widget class="QTabWidget" name="ui_errorView" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-         <horstretch>1</horstretch>
-         <verstretch>1</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize" >
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize" >
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="tabShape" >
-        <enum>QTabWidget::Triangular</enum>
-       </property>
-       <property name="currentIndex" >
+      <widget class="QTabWidget" name="ui_errorView">
+       <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="tab_2" >
-        <attribute name="title" >
+       <widget class="QWidget" name="tab_2">
+        <attribute name="title">
          <string>Tab 1</string>
         </attribute>
        </widget>
@@ -79,624 +62,185 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="ui_statusbar" />
-  <widget class="QToolBar" name="ui_mainToolBar" >
-   <property name="sizePolicy" >
-    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="font" >
-    <font>
-     <family>Sans Serif</family>
-     <pointsize>8</pointsize>
-    </font>
-   </property>
-   <property name="windowTitle" >
-    <string>Editor Tools</string>
-   </property>
-   <property name="movable" >
-    <bool>true</bool>
-   </property>
-   <property name="allowedAreas" >
-    <set>Qt::AllToolBarAreas</set>
-   </property>
-   <property name="iconSize" >
-    <size>
-     <width>16</width>
-     <height>16</height>
-    </size>
-   </property>
-   <property name="toolButtonStyle" >
-    <enum>Qt::ToolButtonTextBesideIcon</enum>
-   </property>
-   <attribute name="toolBarArea" >
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak" >
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionShortcutNew" />
-   <addaction name="actionShortcutOpen" />
-   <addaction name="actionShortcutSave" />
-   <addaction name="separator" />
-   <addaction name="actionShortcutUndo" />
-   <addaction name="actionShortcutRedo" />
-   <addaction name="separator" />
-   <addaction name="actionShortcutCut" />
-   <addaction name="actionShortcutCopy" />
-   <addaction name="actionShortcutPaste" />
-  </widget>
-  <widget class="QToolBar" name="ui_targetToolBar" >
-   <property name="enabled" >
-    <bool>true</bool>
-   </property>
-   <property name="font" >
-    <font>
-     <pointsize>8</pointsize>
-    </font>
-   </property>
-   <property name="windowTitle" >
-    <string>Target Tools</string>
-   </property>
-   <property name="iconSize" >
-    <size>
-     <width>16</width>
-     <height>16</height>
-    </size>
-   </property>
-   <property name="toolButtonStyle" >
-    <enum>Qt::ToolButtonTextBesideIcon</enum>
-   </property>
-   <attribute name="toolBarArea" >
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak" >
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QMenuBar" name="ui_menubar" >
-   <property name="geometry" >
+  <widget class="QStatusBar" name="ui_statusbar"/>
+  <widget class="QMenuBar" name="ui_menubar">
+   <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>996</width>
-     <height>28</height>
+     <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="ui_menuFile" >
-    <property name="title" >
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew" />
-    <addaction name="actionOpen" />
-    <addaction name="actionSave" />
-    <addaction name="actionSave_As" />
-    <addaction name="separator" />
-    <addaction name="actionPrint" />
-    <addaction name="separator" />
-    <addaction name="actionClose" />
-    <addaction name="actionQuit" />
    </widget>
-   <widget class="QMenu" name="ui_menuEdit" >
-    <property name="title" >
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="actionUndo" />
-    <addaction name="actionRedo" />
-    <addaction name="separator" />
-    <addaction name="actionCut" />
-    <addaction name="actionCopy" />
-    <addaction name="actionPaste" />
-    <addaction name="actionSelect_All" />
-    <addaction name="separator" />
-    <addaction name="actionFind" />
-    <addaction name="actionFind_Next" />
-    <addaction name="actionGoto_Line" />
-    <addaction name="actionIndent_All" />
-    <addaction name="separator" />
-    <addaction name="actionZoom_In" />
-    <addaction name="actionZoom_Out" />
    </widget>
-   <widget class="QMenu" name="ui_menuSettings" >
-    <property name="title" >
-     <string>Settings</string>
-    </property>
-    <addaction name="actionChange_Target" />
-    <addaction name="actionChange_Port" />
-    <addaction name="separator" />
-    <addaction name="actionEditor_Settings" />
-    <addaction name="actionTarget_Settings" />
-   </widget>
-   <widget class="QMenu" name="ui_menuHelp" >
-    <property name="title" >
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout" />
-    <addaction name="actionTarget_Manual" />
    </widget>
-   <addaction name="ui_menuFile" />
-   <addaction name="ui_menuEdit" />
-   <addaction name="ui_menuSettings" />
-   <addaction name="ui_menuHelp" />
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuSettings"/>
+   <addaction name="menuHelp"/>
   </widget>
-  <action name="actionNew" >
-   <property name="text" >
-    <string>&amp;New</string>
+  <widget class="QToolBar" name="ui_toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
    </property>
-   <property name="shortcut" >
-    <string>Ctrl+N</string>
+   <property name="iconSize">
+    <size>
+     <width>16</width>
+     <height>16</height>
+    </size>
    </property>
-   <property name="menuRole" >
-    <enum>QAction::TextHeuristicRole</enum>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
    </property>
-  </action>
-  <action name="actionSave" >
-   <property name="text" >
-    <string>&amp;Save</string>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
    </property>
-   <property name="shortcut" >
-    <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="actionOpen" >
-   <property name="text" >
-    <string>&amp;Open</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+O</string>
-   </property>
-  </action>
-  <action name="actionClose" >
-   <property name="text" >
-    <string>&amp;Close</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+W</string>
-   </property>
-  </action>
-  <action name="actionSave_As" >
-   <property name="text" >
-    <string>Save &amp;As</string>
-   </property>
-  </action>
-  <action name="actionPrint" >
-   <property name="text" >
-    <string>&amp;Print</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+P</string>
-   </property>
-  </action>
-  <action name="actionUndo" >
-   <property name="text" >
-    <string>Undo</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+Z</string>
-   </property>
-  </action>
-  <action name="actionRedo" >
-   <property name="text" >
-    <string>Redo</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+Y</string>
-   </property>
-  </action>
-  <action name="actionCut" >
-   <property name="text" >
-    <string>Cut</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+X</string>
-   </property>
-  </action>
-  <action name="actionCopy" >
-   <property name="text" >
-    <string>Copy</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+C</string>
-   </property>
-  </action>
-  <action name="actionPaste" >
-   <property name="text" >
-    <string>Paste</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+V</string>
-   </property>
-  </action>
-  <action name="actionSelect_All" >
-   <property name="text" >
-    <string>Select All</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+A</string>
-   </property>
-  </action>
-  <action name="actionFind" >
-   <property name="text" >
-    <string>Find</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+F</string>
-   </property>
-  </action>
-  <action name="actionFind_Next" >
-   <property name="text" >
-    <string>Find Next</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+G</string>
-   </property>
-  </action>
-  <action name="actionGoto_Line" >
-   <property name="text" >
-    <string>Goto Line</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+L</string>
-   </property>
-  </action>
-  <action name="actionIndent_All" >
-   <property name="text" >
-    <string>Indent All</string>
-   </property>
-   <property name="shortcut" >
-    <string>Ctrl+I</string>
-   </property>
-  </action>
-  <action name="actionQuit" >
-   <property name="text" >
-    <string>&amp;Quit</string>
-   </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Ctrl+Q</string>
    </property>
-   <property name="menuRole" >
+   <property name="menuRole">
     <enum>QAction::QuitRole</enum>
    </property>
   </action>
-  <action name="actionChange_Target" >
-   <property name="text" >
-    <string>Change Target</string>
-   </property>
-  </action>
-  <action name="actionShortcutNew" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/file/icon_set/icons/page_white.png</normaloff>:/shortcuts/file/icon_set/icons/page_white.png</iconset>
-   </property>
-   <property name="text" >
-    <string>New</string>
-   </property>
-  </action>
-  <action name="actionShortcutOpen" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/file/icon_set/icons/folder.png</normaloff>:/shortcuts/file/icon_set/icons/folder.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Open</string>
-   </property>
-  </action>
-  <action name="actionShortcutSave" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/file/icon_set/icons/disk.png</normaloff>:/shortcuts/file/icon_set/icons/disk.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Save</string>
-   </property>
-  </action>
-  <action name="actionShortcutClose" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/file/icon_set/icons/cross.png</normaloff>:/shortcuts/file/icon_set/icons/cross.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Close</string>
-   </property>
-  </action>
-  <action name="actionShortcutUndo" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/edit/icon_set/icons/arrow_undo.png</normaloff>:/shortcuts/edit/icon_set/icons/arrow_undo.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Undo</string>
-   </property>
-  </action>
-  <action name="actionShortcutRedo" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/edit/icon_set/icons/arrow_redo.png</normaloff>:/shortcuts/edit/icon_set/icons/arrow_redo.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Redo</string>
-   </property>
-  </action>
-  <action name="actionShortcutCut" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/edit/icon_set/icons/cut.png</normaloff>:/shortcuts/edit/icon_set/icons/cut.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Cut</string>
-   </property>
-  </action>
-  <action name="actionShortcutCopy" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/edit/icon_set/icons/page_white_copy.png</normaloff>:/shortcuts/edit/icon_set/icons/page_white_copy.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Copy</string>
-   </property>
-  </action>
-  <action name="actionShortcutPaste" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/edit/icon_set/icons/page_white_paste.png</normaloff>:/shortcuts/edit/icon_set/icons/page_white_paste.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Paste</string>
-   </property>
-  </action>
-  <action name="actionCompile" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/target/icon_set/icons/bricks.png</normaloff>:/shortcuts/target/icon_set/icons/bricks.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Compile</string>
-   </property>
-  </action>
-  <action name="actionRun" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Run</string>
-   </property>
-  </action>
-  <action name="actionStop" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/target/icon_set/icons/stop.png</normaloff>:/shortcuts/target/icon_set/icons/stop.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Stop</string>
-   </property>
-  </action>
-  <action name="actionDownload" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
-     <normaloff>:/shortcuts/target/icon_set/icons/ruby_blue.png</normaloff>:/shortcuts/target/icon_set/icons/ruby_blue.png</iconset>
-   </property>
-   <property name="text" >
-    <string>Download</string>
-   </property>
-  </action>
-  <action name="actionAbout" >
-   <property name="text" >
+  <action name="actionAbout">
+   <property name="text">
     <string>About</string>
    </property>
   </action>
-  <action name="actionTarget_Manual" >
-   <property name="text" >
-    <string>Target Manual</string>
-   </property>
-  </action>
-  <action name="actionChange_Font_Size" >
-   <property name="text" >
-    <string>Change Font Size</string>
-   </property>
-  </action>
-  <action name="actionZoom_In" >
-   <property name="text" >
+  <action name="actionZoom_In">
+   <property name="text">
     <string>Zoom In</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Ctrl++</string>
    </property>
   </action>
-  <action name="actionZoom_Out" >
-   <property name="text" >
+  <action name="actionZoom_Out">
+   <property name="text">
     <string>Zoom Out</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Ctrl+-</string>
    </property>
   </action>
-  <action name="actionChange_Port" >
-   <property name="text" >
+  <action name="actionChange_Port">
+   <property name="text">
     <string>Change Port</string>
    </property>
   </action>
-  <action name="actionEditor_Settings" >
-   <property name="text" >
+  <action name="actionEditor_Settings">
+   <property name="text">
     <string>Editor Settings</string>
    </property>
   </action>
-  <action name="actionTarget_Settings" >
-   <property name="text" >
+  <action name="actionTarget_Settings">
+   <property name="text">
     <string>Target Settings</string>
    </property>
   </action>
-  <action name="actionSimulate" >
-   <property name="icon" >
-    <iconset resource="../rc/icons.qrc" >
+  <action name="actionSimulate">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
      <normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</iconset>
    </property>
-   <property name="text" >
+   <property name="text">
     <string>Simulate</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/file/icon_set/icons/cross.png</normaloff>:/shortcuts/file/icon_set/icons/cross.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/file/icon_set/icons/page_white.png</normaloff>:/shortcuts/file/icon_set/icons/page_white.png</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/file/icon_set/icons/folder.png</normaloff>:/shortcuts/file/icon_set/icons/folder.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionNext">
+   <property name="text">
+    <string>Next</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Right</string>
+   </property>
+  </action>
+  <action name="actionPrevious">
+   <property name="text">
+    <string>Previous</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Left</string>
    </property>
   </action>
  </widget>
  <resources>
-  <include location="../rc/icons.qrc" />
+  <include location="../rc/icons.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>actionShortcutNew</sender>
-   <signal>triggered()</signal>
-   <receiver>actionNew</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShortcutOpen</sender>
-   <signal>triggered()</signal>
-   <receiver>actionOpen</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShortcutSave</sender>
-   <signal>triggered()</signal>
-   <receiver>actionSave</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShortcutClose</sender>
-   <signal>triggered()</signal>
-   <receiver>actionClose</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShortcutUndo</sender>
-   <signal>triggered()</signal>
-   <receiver>actionUndo</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShortcutRedo</sender>
-   <signal>triggered()</signal>
-   <receiver>actionRedo</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShortcutCut</sender>
-   <signal>triggered()</signal>
-   <receiver>actionCut</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShortcutCopy</sender>
-   <signal>triggered()</signal>
-   <receiver>actionCopy</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShortcutPaste</sender>
-   <signal>triggered()</signal>
-   <receiver>actionPaste</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>actionQuit</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>close()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>396</x>
      <y>211</y>
     </hint>

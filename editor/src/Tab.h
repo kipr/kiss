@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007,2008,2009 KISS Institute for Practical Robotics        *
+ *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,6 +18,36 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#define KISS_C_VERSION_MAJOR 3
-#define KISS_C_VERSION_MINOR 0
-#define KISS_C_VERSION_BUILD 0 
+#ifndef __TAB_H__
+#define __TAB_H__
+
+class MainWindow;
+class QMenu;
+class QMenuBar;
+class QToolBar;
+
+class Tab
+{
+public:	
+	Tab(MainWindow* mainWindow);
+	
+	// All of these are hooks to add menu items
+	virtual void addActionsFile(QMenu* file) = 0;
+	virtual void addActionsEdit(QMenu* edit) = 0;
+	virtual void addActionsHelp(QMenu* help) = 0;
+	virtual void addOtherActions(QMenuBar* menuBar) = 0;
+	virtual void addToolbarActions(QToolBar* toolbar) = 0;
+	
+	virtual bool beginSetup() = 0;
+	virtual void completeSetup() = 0;
+	
+	virtual bool close() = 0;
+	
+	virtual void refreshSettings() = 0;
+	
+	virtual void moveTo(int line, int pos) = 0;
+protected:
+	MainWindow* m_mainWindow;
+};
+
+#endif

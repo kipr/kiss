@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007,2008,2009 KISS Institute for Practical Robotics        *
+ *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -45,14 +45,12 @@ public:
 	bool setTargetFile(QString filename);
 
 	// These pass straight through to the TargetInterface if it is loaded
-	QStringList getErrorMessages();
-	QStringList getWarningMessages();
-	QStringList getLinkerMessages();
-	QStringList	getVerboseMessages();
-	LexerSpec  *getLexerSpec();
+	QStringList 	getErrorMessages();
+	QStringList 	getWarningMessages();
+	QStringList 	getLinkerMessages();
+	QStringList 	getVerboseMessages();
+	LexerSpec* 	getLexerSpec();
 	QList<QAction*> getActionList();
-	
-	void setCurrentFile(SourceFile *sourceFile);
 	
 	// These two load some settings from the target file
 	QString getSourceExtensions();
@@ -76,18 +74,13 @@ public:
 	// Set/Get the current serial port
 	void setPort(QString port);
 	QString getPort();
-	
-signals:
-	void requestPort();
 
 private:
-	TargetInterface *m_targetInterface;
 	QPluginLoader *m_plugin;
 	QString m_targetFileName;
-
-	bool loadPlugin(QString targetName);
-
-	void unloadPlugin();
+	QString m_targetName;
+	QString m_port;
+	
 };
 
 

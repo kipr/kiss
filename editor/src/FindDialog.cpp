@@ -44,11 +44,11 @@ void FindDialog::on_ui_buttonFind_clicked(bool)
 {
 	bool found;
 	if(isModified()) {
-		found = m_currentSourceFile->findFirst(ui_findInput->text(), false, ui_matchCaseCheckBox->isChecked(), false, true);
+		found = m_currentSourceFile->getEditor()->findFirst(ui_findInput->text(), false, ui_matchCaseCheckBox->isChecked(), false, true);
 		setModified(false);
 	}
 	else
-		found = m_currentSourceFile->findNext();
+		found = m_currentSourceFile->getEditor()->findNext();
 	if(!found)
 		QMessageBox::warning(this, "Not found", "Not Found");
 	else
@@ -58,21 +58,21 @@ void FindDialog::on_ui_buttonFind_clicked(bool)
 // Replaces the currently found text (if any) and then finds again
 void FindDialog::on_ui_buttonReplace_clicked(bool)
 {
-	m_currentSourceFile->replace(ui_replaceInput->text());
+	m_currentSourceFile->getEditor()->replace(ui_replaceInput->text());
 	on_ui_buttonFind_clicked();
 }
 
 // Replaces all instances of the specified find text and replaces them with the specified replace text
 void FindDialog::on_ui_buttonReplace_All_clicked(bool)
 {
-	m_currentSourceFile->setCursorPosition(0, 0);
+	m_currentSourceFile->getEditor()->setCursorPosition(0, 0);
 
-	if(!m_currentSourceFile->findFirst(ui_findInput->text(), false, ui_matchCaseCheckBox->isChecked(), false, false))
+	if(!m_currentSourceFile->getEditor()->findFirst(ui_findInput->text(), false, ui_matchCaseCheckBox->isChecked(), false, false))
 		return;
 	
 	do
-		m_currentSourceFile->replace(ui_replaceInput->text());
-	while(m_currentSourceFile->findNext());
+		m_currentSourceFile->getEditor()->replace(ui_replaceInput->text());
+	while(m_currentSourceFile->getEditor()->findNext());
 }
 
 bool FindDialog::isModified()

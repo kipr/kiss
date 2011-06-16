@@ -30,25 +30,153 @@
 #include <QFont>
 #include <math.h>
 
-SourceFile::SourceFile(QWidget *parent) : QsciScintilla(parent), m_fileHandle("Untitled"), m_isNewFile(true)
+#include "MainWindow.h"
+#include "WebTab.h"
+
+SourceFile::SourceFile(MainWindow* parent) : Tab(parent), m_fileHandle("Untitled"), m_isNewFile(true), m_target(this)
 {
-	setModified(false);
+	setupUi(this);
+	
+	ui_editor->setModified(false);
 	m_fileInfo.setFile(m_fileHandle);
-	m_statusMessage="";
+	m_mainWindow->setStatusMessage("");
+	ui_editor->setEolMode(QsciScintilla::EolUnix);
 	
-	setEolMode(QsciScintilla::EolUnix);
+	connect(actionSave, SIGNAL(triggered()), this, SLOT(fileSave()));
+	connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
+	connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
 	
-	connect(this, SIGNAL(textChanged()), this, SLOT(updateMargins()));
-	
-	refreshSettings();
+	updateMargins();
 }
 
 SourceFile::~SourceFile()
 {
 }
 
+void SourceFile::addActionsFile(QMenu* file) 
+{
+	file->addAction(actionSave);
+	file->addAction(actionSaveAs);
+}
+
+void SourceFile::addActionsEdit(QMenu* edit)
+{
+	edit->addAction(actionCopy);
+	edit->addAction(actionCut);
+	edit->addAction(actionPaste);
+	edit->addSeparator();
+	edit->addAction(actionUndo);
+	edit->addAction(actionRedo);
+}
+
+void SourceFile::addActionsHelp(QMenu* help)
+{
+	Q_UNUSED(help)
+}
+
+void SourceFile::addOtherActions(QMenuBar* menuBar)
+{
+	QMenu* target = menuBar->addMenu("Target");
+	if(m_target.hasCompile()) target->addAction(actionCompile);
+	if(m_target.hasDownload()) target->addAction(actionDownload);
+	if(m_target.hasSimulate()) target->addAction(actionSimulate);
+	if(m_target.hasRun()) target->addAction(actionRun);
+	if(m_target.hasStop()) target->addAction(actionStop);
+	target->addSeparator();
+	QList<QAction*> actionList = m_target.getActionList();
+	for(int i = 0; i < actionList.size(); ++i) target->insertAction(0, actionList[i]);
+	if(actionList.size() > 0) target->addSeparator();
+	target->addAction(actionManual);
+}
+
+void SourceFile::addToolbarActions(QToolBar* toolbar) 
+{
+	toolbar->addAction(actionSave);
+	toolbar->addSeparator();
+	toolbar->addAction(actionCopy);
+	toolbar->addAction(actionCut);
+	toolbar->addAction(actionPaste);
+	toolbar->addSeparator();
+	toolbar->addAction(actionUndo);
+	toolbar->addAction(actionRedo);
+	toolbar->addSeparator();
+	if(m_target.hasCompile()) toolbar->addAction(actionCompile);
+	if(m_target.hasDownload()) toolbar->addAction(actionDownload);
+	if(m_target.hasSimulate()) toolbar->addAction(actionSimulate);
+	if(m_target.hasRun()) toolbar->addAction(actionRun);
+	if(m_target.hasStop()) toolbar->addAction(actionStop);
+}
+
+bool SourceFile::beginSetup()
+{
+	ChooseTargetDialog* tDialog = m_mainWindow->chooseTargetDialog();
+	if(!tDialog->exec()) return false;
+	if(!m_target.setTargetFile(tDialog->getSelectedTargetFilePath())) {
+		QMessageBox::critical(this, "Error", "Error loading target!");
+		return false;
+	}
+	
+	QSettings targetSettings(tDialog->getSelectedTargetFilePath(), QSettings::IniFormat);
+
+	/* Tells the settings dialog which target file to use */
+	m_target.setTargetFile(tDialog->getSelectedTargetFilePath());
+	
+	/* Adds custom buttons to the toolbar */
+	
+	
+	/* Pops up a port select dialog if the target should have a port set */
+	if(targetSettings.value("port_dialog").toBool()) {
+		on_actionChangePort_triggered();
+		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
+	}
+
+	/* Sets up the lexer for the target */
+	m_lexSpec = m_target.getLexerSpec();
+
+	/* Sets the api file for the new target */
+	m_lexAPI = tDialog->getSelectedTargetFilePath().replace(".target",".api");
+	
+	refreshSettings();
+	return true;
+	
+}
+
+void SourceFile::on_actionChangePort_triggered() 
+{
+	ChoosePortDialog* pDialog = m_mainWindow->choosePortDialog();
+	if(pDialog->exec()) {
+		m_target.setPort(pDialog->getSelectedPortName());
+	}
+}
+
+void SourceFile::completeSetup()
+{
+	m_mainWindow->setTabName(this, m_fileInfo.fileName());
+}
+
+bool SourceFile::close()
+{
+	if(ui_editor->isModified()) {
+		QMessageBox::StandardButton ret = QMessageBox::question(this, "Unsaved Changes",
+			"Save Changes to \"" + fileName() + "\" before closing?",
+			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+		if(ret == QMessageBox::Cancel) return false;
+		if(ret == QMessageBox::Yes) {
+			fileSave();
+			if(ui_editor->isModified()) return false;
+		}
+	}
+	
+	return true;
+}
+
 bool SourceFile::fileSave()
 {
+	if(m_isNewFile) {
+		on_actionSaveAs_triggered();
+		return true;
+	}
 	return fileSaveAs(m_fileInfo.filePath());
 }
 
@@ -63,17 +191,18 @@ bool SourceFile::fileSaveAs(QString filePath)
 	if(!m_fileHandle.open(QIODevice::WriteOnly))
 		return false;
 
-	if(text(lines()-1).length() > 0)
-		append("\n");
+	if(ui_editor->text(ui_editor->lines()-1).length() > 0) ui_editor->append("\n");
 		
-	convertEols(QsciScintilla::EolUnix);
+	ui_editor->convertEols(QsciScintilla::EolUnix);
 
 	QTextStream fileStream(&m_fileHandle);
-	fileStream << text();
+	fileStream << ui_editor->text();
 	m_fileHandle.close();
-	setModified(false);
+	ui_editor->setModified(false);
 
 	m_isNewFile = false;
+	
+	m_mainWindow->setTabName(this, m_fileInfo.fileName());
 	
 	return true;
 }
@@ -87,45 +216,47 @@ bool SourceFile::fileOpen(QString filePath)
 		return false;
 
 	QTextStream fileStream(&m_fileHandle);
-	setText(fileStream.readAll());
+	ui_editor->setText(fileStream.readAll());
 	m_fileHandle.close();
 
-	setModified(false);
+	ui_editor->setModified(false);
 
 	m_isNewFile = false;
+
+	m_mainWindow->setTabName(this, m_fileInfo.fileName());
 
 	return true;
 }
 
 void SourceFile::indentAll()
 {
-	if(!lexer())
+	if(!ui_editor->lexer())
 		return;
 
 	int indentLevel = 0;
-	int blockStartStyle; lexer()->blockStart(&blockStartStyle);
-	int blockEndStyle; lexer()->blockEnd(&blockEndStyle);
+	int blockStartStyle; ui_editor->lexer()->blockStart(&blockStartStyle);
+	int blockEndStyle; ui_editor->lexer()->blockEnd(&blockEndStyle);
 	
 	int currentLine;
 	int currentIndex;
 
-	getCursorPosition(&currentLine,&currentIndex);
-	append(" ");
+	ui_editor->getCursorPosition(&currentLine,&currentIndex);
+	ui_editor->append(" ");
 
 	QString outDocument;
 
-	for(int i = 0, pos =0;i < lines();i++) {
+	for(int i = 0, pos =0;i < ui_editor->lines();i++) {
 		// Get the current line of text and iterate through it looking for blockStart/End chars
-		QString line = text(i);
+		QString line = ui_editor->text(i);
 		int blockStartCount = 0, blockEndCount = 0;
 
 		for(int j = 0;j < line.length();j++,pos++) {
-			int style = SendScintilla(SCI_GETSTYLEAT, pos);
+			int style = ui_editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos);
 			//Increase the indentLevel on blockStart
-			if(style == blockStartStyle && line.at(j) == *lexer()->blockStart())
+			if(style == blockStartStyle && line.at(j) == *ui_editor->lexer()->blockStart())
 				blockStartCount++;
 			//Decrease the indentLevel on blockEnd
-			if(style == blockEndStyle && line.at(j) == *lexer()->blockEnd())
+			if(style == blockEndStyle && line.at(j) == *ui_editor->lexer()->blockEnd())
 				blockEndCount++;
 		}
 		//The logic here is confusing, but the idea is either a newline is
@@ -136,8 +267,9 @@ void SourceFile::indentAll()
 			indentLevel -= blockEndCount-blockStartCount;
 			blockEndCount = blockStartCount = 0;
 		}
-		if((SendScintilla(SCI_GETSTYLEAT, pos-1) == lexer()->defaultStyle() ||
-			SendScintilla(SCI_GETSTYLEAT, pos-1) != SendScintilla(SCI_GETSTYLEAT, pos)) || indentLevel)
+		if((ui_editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos-1) == ui_editor->lexer()->defaultStyle() ||
+			ui_editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos-1) 
+				!= ui_editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos)) || indentLevel)
 			outDocument += QString(line).replace(QRegExp("^[ \\t]*"), QString(indentLevel,'\t'));
 		else
 			outDocument += line;
@@ -145,19 +277,9 @@ void SourceFile::indentAll()
 	}
 	
 	outDocument.chop(1);
-	setText(outDocument);
+	ui_editor->setText(outDocument);
 	
-	setCursorPosition(currentLine, currentIndex);
-}
-
-QString SourceFile::statusMessage()
-{
-	return m_statusMessage;
-}
-
-void SourceFile::setStatusMessage(QString message)
-{
-	m_statusMessage = message;
+	ui_editor->setCursorPosition(currentLine, currentIndex);
 }
 
 void SourceFile::keyPressEvent(QKeyEvent *event)
@@ -172,75 +294,70 @@ void SourceFile::keyPressEvent(QKeyEvent *event)
 	
 	if(event->modifiers() & ctrlMod) {
 		int line, index;
-		getCursorPosition(&line, &index);
+		ui_editor->getCursorPosition(&line, &index);
 		
 		switch(event->key()) {
 			case Qt::Key_A:
-				setCursorPosition(line, 0);
+				ui_editor->setCursorPosition(line, 0);
 				break;
 			case Qt::Key_E:
-				if(lines()-1 == line)
-					setCursorPosition(line, lineLength(line));
+				if(ui_editor->lines()-1 == line)
+					ui_editor->setCursorPosition(line, ui_editor->lineLength(line));
 				else
-					setCursorPosition(line, lineLength(line)-1);
+					ui_editor->setCursorPosition(line, ui_editor->lineLength(line)-1);
 				break;
 			case Qt::Key_P:
-				if(lineLength(line-1) < index)
-					setCursorPosition(line-1, lineLength(line-1)-1);
+				if(ui_editor->lineLength(line-1) < index)
+					ui_editor->setCursorPosition(line-1, ui_editor->lineLength(line-1)-1);
 				else
-					setCursorPosition(line-1, index);
+					ui_editor->setCursorPosition(line-1, index);
 				break;
 			case Qt::Key_N:
-				if(lineLength(line+1) < index) {
-					if(lines()-1 == line+1)
-						setCursorPosition(line+1, lineLength(line));
+				if(ui_editor->lineLength(line+1) < index) {
+					if(ui_editor->lines()-1 == line+1)
+						ui_editor->setCursorPosition(line+1, ui_editor->lineLength(line));
 					else
-						setCursorPosition(line+1, lineLength(line+1)-1);
+						ui_editor->setCursorPosition(line+1, ui_editor->lineLength(line+1)-1);
 				}
 				else
-					setCursorPosition(line+1, index);
+					ui_editor->setCursorPosition(line+1, index);
 				break;
 			case Qt::Key_B:
 				if(index-1 < 0)
-					setCursorPosition(line-1, lineLength(line-1)-1);
+					ui_editor->setCursorPosition(line-1, ui_editor->lineLength(line-1)-1);
 				else
-					setCursorPosition(line, index-1);
+					ui_editor->setCursorPosition(line, index-1);
 				break;
 			case Qt::Key_F:
-				if(lineLength(line) < index+1)
-					setCursorPosition(line+1, 0);
+				if(ui_editor->lineLength(line) < index+1)
+					ui_editor->setCursorPosition(line+1, 0);
 				else
-					setCursorPosition(line, index+1);
+					ui_editor->setCursorPosition(line, index+1);
 				break;
 			case Qt::Key_D:
-				setSelection(line, index, line, index+1);
-				removeSelectedText();
+				ui_editor->setSelection(line, index, line, index+1);
+				ui_editor->removeSelectedText();
 				break;
 			case Qt::Key_K:
-				setSelection(line, index, line, lineLength(line)-1);
-				cut();
+				ui_editor->setSelection(line, index, line, ui_editor->lineLength(line)-1);
+				ui_editor->cut();
 				break;
 			case Qt::Key_Y:
-				paste();
+				ui_editor->paste();
 				break;
-			default:
-				QsciScintilla::keyPressEvent(event);
-				return;
 		}
 		event->accept();
 	}
-	else
-		QsciScintilla::keyPressEvent(event);
 }
 
 void SourceFile::refreshSettings()
 {
 	/* Get rid of the old lexer */
-	QsciLexer *lexer = QsciScintilla::lexer();
-	setLexer(0); delete lexer; lexer = 0;
+	QsciLexer *lexer = ui_editor->lexer();
+	ui_editor->setLexer(0); delete lexer; lexer = 0;
 	
 	/* Get a new lexer if a spec is defined */
-	if(Lexer::hasLexerSpec()) lexer = new Lexer();
+	if(m_lexSpec) lexer = new Lexer(m_lexSpec, m_lexAPI);
 	
 	/* Read font, indent, margin, etc. settings */
 	QSettings settings;
@@ -254,50 +371,50 @@ void SourceFile::refreshSettings()
 		lexer->setDefaultFont(defFont);
 	}
 	else
-		setFont(defFont);
+		ui_editor->setFont(defFont);
 
 	/* Set other options from settings */
 	settings.beginGroup("autoindent");
-	setAutoIndent(settings.value("enabled").toBool());
+	ui_editor->setAutoIndent(settings.value("enabled").toBool());
 	if(lexer && settings.value("style").toString() == "Maintain")
-		lexer->setAutoIndentStyle(AiMaintain);
+		lexer->setAutoIndentStyle(QsciScintilla::AiMaintain);
 	else if(lexer && settings.value("style").toString() == "Intelligent")
 		lexer->setAutoIndentStyle(0);  // for some reason 0 is the intelligent style
-	setTabWidth(settings.value("width").toInt());
+	ui_editor->setTabWidth(settings.value("width").toInt());
 	settings.endGroup();
 
 	settings.beginGroup("autocompletion");
-	setAutoCompletionSource(AcsNone);
+	ui_editor->setAutoCompletionSource(QsciScintilla::AcsNone);
 	if(settings.value("enabled").toBool()) {
 		if(settings.value("apisource").toBool())
-			setAutoCompletionSource(AcsAPIs);
+			ui_editor->setAutoCompletionSource(QsciScintilla::AcsAPIs);
 		if(settings.value("docsource").toBool()) {
-			if(autoCompletionSource() == AcsAPIs)
-				setAutoCompletionSource(AcsAll);
+			if(ui_editor->autoCompletionSource() == QsciScintilla::AcsAPIs)
+				ui_editor->setAutoCompletionSource(QsciScintilla::AcsAll);
 			else
-				setAutoCompletionSource(AcsDocument);
+				ui_editor->setAutoCompletionSource(QsciScintilla::AcsDocument);
 		}
 	}
-	setAutoCompletionThreshold(settings.value("threshold").toInt());
+	ui_editor->setAutoCompletionThreshold(settings.value("threshold").toInt());
 	settings.endGroup();
 
 	if(settings.value("linenumbers").toBool()){
-		setMarginLineNumbers(1, true);
+		ui_editor->setMarginLineNumbers(1, true);
 		updateMargins();
 	}
-	else setMarginLineNumbers(1, false);
+	else ui_editor->setMarginLineNumbers(1, false);
 	
 	if(settings.value("bracematching").toBool())
-		 setBraceMatching(QsciScintilla::StrictBraceMatch);
-	else setBraceMatching(QsciScintilla::NoBraceMatch);
+		 ui_editor->setBraceMatching(QsciScintilla::StrictBraceMatch);
+	else ui_editor->setBraceMatching(QsciScintilla::NoBraceMatch);
 	
 	if(settings.value("calltips").toBool())
-		 setCallTipsStyle(CallTipsNoContext);
-	else setCallTipsStyle(CallTipsNone);
+		 ui_editor->setCallTipsStyle(QsciScintilla::CallTipsNoContext);
+	else ui_editor->setCallTipsStyle(QsciScintilla::CallTipsNone);
 
 	settings.endGroup();
 
-	setLexer(lexer);
+	ui_editor->setLexer(lexer);
 }
 
 QString SourceFile::fileName()
@@ -318,36 +435,184 @@ bool SourceFile::isNewFile()
 
 void SourceFile::updateMargins()
 {
-	int charWidth = 5;
-	if(lexer()) {
-		QFont font = lexer()->defaultFont();
+	int charWidth = 6;
+	if(ui_editor->lexer()) {
+		QFont font = ui_editor->lexer()->defaultFont();
 		font.setPointSize(font.pointSize() + getZoom());
 		charWidth = QFontMetrics(font).width("0");
 	}
-	setMarginWidth(1, charWidth/2 + charWidth * (int)ceil(log10(lines()+1)));
+	ui_editor->setMarginWidth(1, charWidth + charWidth/2 + charWidth * (int)ceil(log10(ui_editor->lines()+1)));
 }
 
 int SourceFile::getZoom()
 {
-	return SendScintilla(SCI_GETZOOM);
+	return ui_editor->SendScintilla(QsciScintilla::SCI_GETZOOM);
+}
+
+QsciScintilla* SourceFile::getEditor()
+{
+	return ui_editor;
+}
+
+void SourceFile::moveTo(int line, int pos) 
+{
+	if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos);
 }
 
 void SourceFile::zoomIn()
 {
 	updateMargins();
-	QsciScintilla::zoomIn();
+	ui_editor->zoomIn();
 }
 
 void SourceFile::zoomOut()
 {
 	updateMargins();
-	QsciScintilla::zoomOut();
+	ui_editor->zoomOut();
 }
+
+void SourceFile::on_actionSaveAs_triggered()
+{
+	QSettings settings;
+	QString savePath = settings.value("savepath", QDir::homePath()).toString();
+	QString filePath = QFileDialog::getSaveFileName(m_mainWindow, "Save File", savePath, m_target.getSourceExtensions() + "All Files (*)");
+	if(filePath.isEmpty())
+		return;
+
+	QFileInfo fileInfo(filePath);
+	
+	if(fileInfo.suffix() != "c")
+		fileInfo.setFile(filePath + ".c");
+	
+	settings.setValue("savepath", fileInfo.absolutePath());
+
+	/* Saves the file with the new fileName and updates the tabWidget label */
+	if(fileSaveAs(filePath)) {
+		m_mainWindow->setTabName(this, fileName());
+		m_mainWindow->setStatusMessage("Saved file\"" + fileName() + "\"");
+	} else QMessageBox::critical(m_mainWindow, "Error", "Error: Could not write file " + fileName());
+}
+
+void SourceFile::sourceModified(bool m) {
+	m_mainWindow->setTabName(this, "* " + m_fileInfo.fileName());
+}
+
+void SourceFile::on_actionDownload_triggered()
+{	
+	/* Save the file and hide the error view (in case this is not the first attempt */
+	fileSave();
+	
+	m_mainWindow->setStatusMessage("Downloading...");
+	QApplication::flush();
+	
+	if(!m_target.download(filePath()))
+		m_mainWindow->setStatusMessage("Download Failed");
+	else
+		m_mainWindow->setStatusMessage("Download Succeeded");
+	
+	/* Show any error messages if any */
+	m_mainWindow->setErrors(this,
+				m_target.getErrorMessages(),
+				m_target.getWarningMessages(),
+				m_target.getLinkerMessages(),
+				m_target.getVerboseMessages());
+}
+
+void SourceFile::on_actionCompile_triggered()
+{
+	fileSave();
+	m_mainWindow->hideErrors();
+	
+	if(!m_target.compile(filePath()))
+		m_mainWindow->setStatusMessage("Compile Failed");
+	else
+		m_mainWindow->setStatusMessage("Compile Succeeded");
+
+	/* Show error messages if there are any */
+	m_mainWindow->setErrors(this,
+				m_target.getErrorMessages(),
+				m_target.getWarningMessages(),
+				m_target.getLinkerMessages(),
+				m_target.getVerboseMessages());
+}
+
+void SourceFile::on_actionRun_triggered()
+{	
+	fileSave();
+	m_mainWindow->hideErrors();
+	
+	if(!m_target.run(filePath()))
+		m_mainWindow->setStatusMessage("Run Failed");
+	else
+		m_mainWindow->setStatusMessage("Run Succeeded");
+
+	m_mainWindow->setErrors(this,
+				m_target.getErrorMessages(),
+				m_target.getWarningMessages(),
+				m_target.getLinkerMessages(),
+				m_target.getVerboseMessages());
+}
+
+void SourceFile::on_actionStop_triggered()
+{
+	m_target.stop();
+}
+
+void SourceFile::on_actionSimulate_triggered()
+{	
+	/* Save the file and hide the error view */
+	fileSave();
+	m_mainWindow->hideErrors();
+	
+	if(!m_target.simulate(filePath()))
+		m_mainWindow->setStatusMessage("Simulation Failed");
+	else
+		m_mainWindow->setStatusMessage("Simulation Succeeded");
+
+	m_mainWindow->setErrors(this,
+				m_target.getErrorMessages(),
+				m_target.getWarningMessages(),
+				m_target.getLinkerMessages(),
+				m_target.getVerboseMessages());
+}
+
+
+void SourceFile::on_actionCopy_triggered()
+{
+	ui_editor->copy();
+}
+
+void SourceFile::on_actionCut_triggered()
+{
+	ui_editor->cut();
+}
+
+void SourceFile::on_actionPaste_triggered()
+{
+	ui_editor->paste();
+}
+
+void SourceFile::on_actionUndo_triggered()
+{
+	ui_editor->undo();
+}
+
+void SourceFile::on_actionRedo_triggered()
+{
+	ui_editor->redo();
+}
+
+void SourceFile::on_actionManual_triggered()
+{
+	WebTab* tab = new WebTab(m_mainWindow);
+	m_mainWindow->addTab(tab);
+	tab->load("file://" + m_target.getTargetManualPath());
+}
+
 /*ADDED BY NB*///2/10/2010-dpm
 void SourceFile::dropEvent(QDropEvent *event)
 {
     /*Emit signal that can be connected to any slot(s) desired*/
-   emit handleDrop(event);
+   // emit handleDrop(event);
 
 }
-

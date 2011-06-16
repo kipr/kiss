@@ -22,6 +22,7 @@
 #include <QDir>
 #include <QSplashScreen>
 #include "MainWindow.h"
+#include <QTimer>
 
 int main(int argc, char **argv)
 {

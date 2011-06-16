@@ -36,7 +36,7 @@ CBC::CBC()
 #ifdef Q_OS_WIN32
 	m_gccPath = QDir::currentPath() + "/targets/gcc/mingw/bin/gcc.exe";
 #elif defined(Q_OS_MAC)
-  m_gccPath="/usr/bin/gcc-4.0";
+  m_gccPath="/usr/bin/gcc";
 #else
 	m_gccPath="/usr/bin/gcc";
 #endif
@@ -49,7 +49,7 @@ CBC::CBC()
 
 	setLexerSpecs();
 	
-	m_actionList.push_back(m_toolbar.toolbarAction());
+	// m_actionList.push_back(m_toolbar.toolbarAction());
 
 //FIXME This is ugly
 #ifdef Q_OS_MAC
@@ -65,7 +65,7 @@ CBC::~CBC()
 	m_outputBinary.kill();
 }
 
-bool CBC::compile(QString filename)
+bool CBC::compile(QString filename, QString port)
 {
 	QFileInfo sourceInfo(filename);
 	QStringList args;
@@ -84,8 +84,8 @@ bool CBC::compile(QString filename)
 		return true;
 
 	args = m_cflags;
-	m_defaultPort.replace("\\", "\\\\");
-	args << "-DDEFAULT_SERIAL_PORT=\"" + m_defaultPort + "\"";
+	port.replace("\\", "\\\\");
+	args << "-DDEFAULT_SERIAL_PORT=\"" + port + "\"";
 	args << "-c" << filename << "-o" << objectName;
 	m_gcc.start(m_gccPath, args);
 	m_gcc.waitForFinished();
@@ -130,9 +130,9 @@ QStringList CBC::getPaths(QString string)
    }
 }
 
-bool CBC::download(QString filename)
+bool CBC::download(QString filename, QString port)
 {
-    if(!compile(filename))
+    if(!compile(filename, port))
         return false;
     
     qWarning("Calling gcc...");
@@ -154,19 +154,15 @@ bool CBC::download(QString filename)
     
     qWarning("Calling sendFile");
     
-    if(!QSerialPort(m_defaultPort).open(QIODevice::ReadWrite)) {
-        emit requestPort();
-        if(!QSerialPort(m_defaultPort).open(QIODevice::ReadWrite))
-            return false;
-    }
+    if(!QSerialPort(port).open(QIODevice::ReadWrite)) return false;
     
-    m_serial.setPort(m_defaultPort);
+    m_serial.setPort(port);
     return m_serial.sendFile(filename, deps);
 }
 
-bool CBC::simulate(QString filename)
+bool CBC::simulate(QString filename, QString port)
 {
-	if(!compile(filename))
+	if(!compile(filename, port))
 		return false;
 
 	QString outputString;
@@ -355,11 +351,6 @@ void CBC::setLexerSpecs()
 	m_lexerSpec.defaultColor[LexerCPP::Keyword2] = QColor("darkMagenta"); // for ExtraGUIToolBar
 	m_lexerSpec.defaultFont[LexerCPP::Keyword2] = QFont("", -1, QFont::Bold); // for ExtraGUIToolBar
 	m_lexerSpec.keywords[2] = "boolean_expression  variable a_value starting_value ending_value change_in_variable"; // for ExtraGUIToolBar
-}
-
-void CBC::setCurrentFile(SourceFile *sourceFile)
-{
-	m_toolbar.setCurrentFile(sourceFile);
 }
 
 Q_EXPORT_PLUGIN2(cbc_plugin, CBC);

@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007,2008,2009 KISS Institute for Practical Robotics        *
+ *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,6 +18,47 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#define KISS_C_VERSION_MAJOR 3
-#define KISS_C_VERSION_MINOR 0
-#define KISS_C_VERSION_BUILD 0 
+#ifndef __WEB_TAB_H__
+#define __WEB_TAB_H__
+
+#include "Tab.h"
+#include "ui_WebTab.h"
+
+class MainWindow;
+
+class WebTab : public QWidget, public Tab, private Ui::WebTab
+{
+	Q_OBJECT
+public:
+	WebTab(MainWindow* mainWindow);
+	~WebTab();
+	
+	void addActionsFile(QMenu* file);
+	void addActionsEdit(QMenu* edit);
+	void addActionsHelp(QMenu* help);
+	void addOtherActions(QMenuBar* menuBar);
+	void addToolbarActions(QToolBar* toolbar);
+	
+	bool beginSetup();
+	void completeSetup();
+	
+	bool close();
+	
+	void load(QString url);
+	
+	void moveTo(int line, int pos);
+	
+private slots:
+	void updateTitle(QString title);
+	void updateUrl(QUrl url);
+	
+	void on_actionGo_triggered();
+	void on_actionCopy_triggered();
+	void on_actionCut_triggered();
+	void on_actionPaste_triggered();
+	
+	void refreshSettings();
+private:
+};
+
+#endif

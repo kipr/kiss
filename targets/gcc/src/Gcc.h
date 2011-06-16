@@ -27,8 +27,6 @@
 #include <QSettings>
 
 #include "TargetInterface.h"
-#include "SourceFile.h"
-#include "ExtraGUIToolBar.h"
 #include "LexerSpec.h"
 #include "LexerStyles.h"
 
@@ -41,18 +39,17 @@ public:
 	Gcc();
 	~Gcc();
 
-	bool compile(QString filename);
-	bool run(QString filename);
-	void stop() {}
-	bool download(QString) {return false;}
-	bool simulate(QString) {return false;}
+	bool compile(QString filename, QString port);
+	bool run(QString filename, QString port);
+	void stop(QString) {}
+	bool download(QString,QString) {return false;}
+	bool simulate(QString,QString) {return false;}
 
 	bool hasCompile() { return true; }
 	bool hasRun() { return true; }
 	bool hasDownload() { return false; }
 	bool hasStop() { return false; }
 	bool hasSimulate() {return false; }
-	void setCurrentFile(SourceFile *sourceFile);
 
 private:
 	QProcess m_gcc;
@@ -60,7 +57,6 @@ private:
 	QString m_gccPath;
 	QString m_outputFileName;
 	QStringList m_cflags,m_lflags;
-	ExtraGUIToolBar m_toolbar;
 	
 	void processCompilerOutput();
 	void processLinkerOutput();

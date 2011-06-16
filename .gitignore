@@ -39,3 +39,8 @@ libraries/extraGUI/build/
 deploy/
 targets/cbc2/cbc2.target
 targets/cbc2/libcbc2_plugin.so
+.DS_Store
+targets/cbc2/libcbc2_plugin.dylib
+targets/cbc2/libcbc2_plugin_debug.dylib
+targets/gcc/libgcc_plugin.dylib
+targets/gcc/libgcc_plugin_debug.dylib

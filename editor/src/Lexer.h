@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007,2008,2009 KISS Institute for Practical Robotics        *
+ *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -39,15 +39,13 @@
 
 class Lexer : public QsciLexer
 {
-
 public:
-	
 	// Constructor & Destructor 
-    Lexer(QObject *parent = 0);
-    ~Lexer();
+	Lexer(LexerSpec* spec, QString api);
+	~Lexer();
 
 	// Implementations of the virtuals defined in QsciLexer
-    const char *language() const;
+	const char *language() const;
 	const char *lexer() const;
 	QStringList autoCompletionWordSeparators() const;
 	const char *blockEnd(int *style = 0) const;
@@ -62,33 +60,10 @@ public:
 	const char *keywords(int set) const;
 	QString description(int style) const;
 
-	// These deal with setting the LexerSpec object
-	// And optionally specifying an api file for the lexer
-	static void setLexerSpec(LexerSpec *spec);
-	static void setAPIFile(QString fileName);
-	static bool hasLexerSpec();
-
 private:
-	char *m_language;
-	char *m_lexer;
-	QStringList m_autoCompletionWordSeparators;
-	char *m_blockEnd;
-	int	 m_blockEndStyle;
-	char *m_blockStart;
-	int   m_blockStartStyle;
-	char *m_blockStartKeyword;
-	int   m_blockStartKeywordStyle;
-	int   m_braceStyle;
-	char *m_wordCharacters;
-	QMap<int, QColor> m_defaultColor;
-	QList<int> m_defaultEolFill;
-	QMap<int, QFont> m_defaultFont;
-	QMap<int, QColor> m_defaultPaper;
-	QMap<int, QString> m_keywords;
 	
-	static LexerSpec sm_lexerSpec;
-	static QsciAPIs *sm_apis;
-	static bool sm_hasLexerSpec;
+	LexerSpec* m_lexerSpec;
+	QsciAPIs m_apis;
 };
 
 #endif

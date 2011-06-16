@@ -29,7 +29,6 @@
 
 #include "LexerSpec.h"
 #include "LexerStyles.h"
-#include "SourceFile.h"
 
 class TargetInterface 
 {
@@ -39,11 +38,11 @@ public:
 
 	// These methods will be called when their
 	// respective editor buttons are activated
-	virtual bool compile(QString filename) = 0;	
-	virtual bool run(QString filename) = 0;
-	virtual void stop() = 0;
-	virtual bool download(QString filename) = 0;
-	virtual bool simulate(QString filename) = 0;
+	virtual bool compile(QString filename, QString port) = 0;	
+	virtual bool run(QString filename, QString port) = 0;
+	virtual void stop(QString port) = 0;
+	virtual bool download(QString filename, QString port) = 0;
+	virtual bool simulate(QString filename, QString port) = 0;
 
 	// These should inform the plugin loader of
 	// The features offered by this plugin
@@ -55,35 +54,22 @@ public:
 	
 	/* Builtin Stuff */
 	QList<QAction*> getActionList() {return m_actionList;}
-	QStringList getErrorMessages() {return m_errorMessages;}
-	QStringList getWarningMessages() {return m_warningMessages;}
-	QStringList getLinkerMessages() {return m_linkerMessages;}
-	QStringList	getVerboseMessages() {return m_verboseMessages;}
-	LexerSpec&	getLexerSpec() {return m_lexerSpec;}
-	QString		getPort() {return m_defaultPort;}
+	QStringList 	getErrorMessages() {return m_errorMessages;}
+	QStringList 	getWarningMessages() {return m_warningMessages;}
+	QStringList 	getLinkerMessages() {return m_linkerMessages;}
+	QStringList 	getVerboseMessages() {return m_verboseMessages;}
+	LexerSpec* 	getLexerSpec() {return &m_lexerSpec;}
 	
-	void setPort(QString port) {m_defaultPort=port;}
 	void setTargetFile(QString filename) {m_targetFile=filename;}
-	
-	virtual void setCurrentFile(SourceFile *sourceFile) = 0;
-	
-	/* Also, you have the option of defining a signal
-		named "void requestPort()" in your plugin.  
-		This signal will pop up a port selection dialog
-		when emitted.  The signal itself cannot be defined
-		here because this interface is not a QObject
-signal:
-	void requestPort();								 */
 	
 protected:
 	LexerSpec m_lexerSpec;
-	QString m_defaultPort;
 	QString m_targetFile;
 	QStringList m_warningMessages, m_errorMessages, 
 				m_linkerMessages, m_verboseMessages;
 	QList<QAction*> m_actionList;
 };
 
-Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/2.1");
+Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/2.2");
 
 #endif

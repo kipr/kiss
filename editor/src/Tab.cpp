@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007,2008,2009 KISS Institute for Practical Robotics        *
+ *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,6 +18,7 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#define KISS_C_VERSION_MAJOR 3
-#define KISS_C_VERSION_MINOR 0
-#define KISS_C_VERSION_BUILD 0 
+#include "Tab.h"
+#include "MainWindow.h"
+
+Tab::Tab(MainWindow* mainWindow) : m_mainWindow(mainWindow) {}

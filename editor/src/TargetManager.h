@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007,2008,2009 KISS Institute for Practical Robotics        *
+ *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,6 +18,27 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#define KISS_C_VERSION_MAJOR 3
-#define KISS_C_VERSION_MINOR 0
-#define KISS_C_VERSION_BUILD 0 
+#ifndef __TARGET_MANAGER_H__
+#define __TARGET_MANAGER_H__
+
+#include <QString>
+#include "TargetInterface.h"
+#include <QPluginLoader>
+
+class TargetManager
+{
+public:
+	static TargetManager& ref();
+	TargetInterface* get(QString targetName);
+private:
+	TargetManager();
+	TargetManager(const TargetManager&);
+	~TargetManager();
+	
+	bool loadPlugin(QString targetName);
+	void unloadPlugin(QString targetName);	
+	
+	QMap<QString, QPluginLoader*> m_plugins;
+};
+
+#endif // __TARGET_MANAGER_H__

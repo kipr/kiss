@@ -36,7 +36,7 @@ Gcc::Gcc()
 #ifdef Q_OS_WIN32
 	m_gccPath = QDir::currentPath() + "/targets/gcc/mingw/bin/gcc.exe";
 #elif defined(Q_OS_MAC)
-  m_gccPath="/usr/bin/gcc-4.0";
+  m_gccPath="/usr/bin/gcc";
 #else
 	m_gccPath="/usr/bin/gcc";
 #endif
@@ -54,7 +54,7 @@ Gcc::Gcc()
 	system(("ranlib " + QDir::currentPath() + "/targets/gcc/lib/*.a").toLocal8Bit());
 #endif
 
-	m_actionList.push_back(m_toolbar.toolbarAction());
+	// m_actionList.push_back(m_toolbar.toolbarAction());
 }
 
 Gcc::~Gcc()
@@ -63,7 +63,7 @@ Gcc::~Gcc()
 	m_outputBinary.kill();
 }
 
-bool Gcc::compile(QString filename)
+bool Gcc::compile(QString filename, QString port)
 {
 	QFileInfo sourceInfo(filename);
 	QStringList args;
@@ -82,8 +82,8 @@ bool Gcc::compile(QString filename)
 		return true;
 
 	args = m_cflags;
-	m_defaultPort.replace("\\", "\\\\");
-	args << "-DDEFAULT_SERIAL_PORT=\"" + m_defaultPort + "\"";
+	port.replace("\\", "\\\\");
+	args << "-DDEFAULT_SERIAL_PORT=\"" + port + "\"";
 	args << "-c" << filename << "-o" << objectName;
 	m_gcc.start(m_gccPath, args);
 	m_gcc.waitForFinished();
@@ -108,9 +108,9 @@ bool Gcc::compile(QString filename)
 	return false;
 }
 
-bool Gcc::run(QString filename)
+bool Gcc::run(QString filename, QString port)
 {
-	if(!compile(filename))
+	if(!compile(filename, port))
 		return false;
 
 	QString outputString;
@@ -300,11 +300,6 @@ void Gcc::setLexerSpecs()
 	m_lexerSpec.defaultColor[LexerCPP::Keyword2] = QColor("darkMagenta"); // for ExtraGUIToolBar
 	m_lexerSpec.defaultFont[LexerCPP::Keyword2] = QFont("", -1, QFont::Bold); // for ExtraGUIToolBar
 	m_lexerSpec.keywords[2] = "boolean_expression  variable a_value starting_value ending_value change_in_variable"; // for ExtraGUIToolBar
-}
-
-void Gcc::setCurrentFile(SourceFile *sourceFile)
-{
-	m_toolbar.setCurrentFile(sourceFile);
 }
 
 Q_EXPORT_PLUGIN2(gcc_plugin, Gcc);

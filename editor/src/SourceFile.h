@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007,2008,2009 KISS Institute for Practical Robotics        *
+ *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -32,53 +32,94 @@
 #include <QTabWidget>
 #include <QKeyEvent>
 #include <QObject>
+#include <QMenuBar>
+#include <QToolBar>
 
 #include "Lexer.h"
 #include "LexerSpec.h"
+#include "ChooseTargetDialog.h"
+#include "ChoosePortDialog.h"
+#include "EditorSettingsDialog.h"
+#include "TargetSettingsDialog.h"
+#include "Target.h"
+#include "ui_SourceFile.h"
+#include "Tab.h"
 
-class SourceFile : public QsciScintilla
+class FindDialog;
+class MainWindow;
+
+class SourceFile : public QWidget, public Tab, private Ui::SourceFile
 {
 Q_OBJECT
 public:
-	SourceFile(QWidget *parent = 0);
+	SourceFile(MainWindow* parent);
 	~SourceFile();
-
-	bool fileSave();
+	
+	void addActionsFile(QMenu* file);
+	void addActionsEdit(QMenu* edit);
+	void addActionsHelp(QMenu* help);
+	void addOtherActions(QMenuBar* menuBar);
+	void addToolbarActions(QToolBar* toolbar);
+	
+	bool beginSetup();
+	void completeSetup();
+	
 	bool fileSaveAs(QString filePath);
 	bool fileOpen(QString filePath);
+	
+	bool close();
 
 	QString fileName();
 	QString filePath();
 	bool isNewFile();
 	
-	QString statusMessage();
-	
 	int getZoom();
-
-private:
-	QFile m_fileHandle;
-	QFileInfo m_fileInfo;
-	QString m_statusMessage;
-	bool m_isNewFile;
-	int m_zoomLevel;
-        /*ADDED BY NB*/
-        void dropEvent(QDropEvent *event);
-
-protected:
-	void keyPressEvent(QKeyEvent *event);
+	
+	QsciScintilla* getEditor();
+	
+	void moveTo(int line, int pos);
 
 public slots:
 	void indentAll();
-	void setStatusMessage(QString message);
 	void refreshSettings();
 	void updateMargins();
-	
+
 	void zoomIn();
 	void zoomOut();
+
+	void on_actionChangePort_triggered();
+	void on_actionSaveAs_triggered();
+	bool fileSave();
+
+	void sourceModified(bool m);
 	
-/*ADDED BY NB*/
-signals:
-        void handleDrop(QDropEvent *event);
+	void on_actionDownload_triggered();
+	void on_actionCompile_triggered();
+	void on_actionRun_triggered();
+	void on_actionStop_triggered();
+	void on_actionSimulate_triggered();
+	
+private slots:
+	void on_actionCopy_triggered();
+	void on_actionCut_triggered();
+	void on_actionPaste_triggered();
+	void on_actionUndo_triggered();
+	void on_actionRedo_triggered();
+	
+	void on_actionManual_triggered();
+	
+private:
+	QFile m_fileHandle;
+	QFileInfo m_fileInfo;
+	bool m_isNewFile;
+	int m_zoomLevel;
+        void dropEvent(QDropEvent *event);
+	Target m_target;
+	LexerSpec* m_lexSpec;
+	QString m_lexAPI;
+
+protected:
+	void keyPressEvent(QKeyEvent *event);
 };
 
 #endif
