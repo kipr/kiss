@@ -75,12 +75,13 @@ void WebTab::addToolbarActions(QToolBar* toolbar)
 
 bool WebTab::beginSetup()
 {
+	return true;
 }
 
 void WebTab::completeSetup()
 {
 	updateTitle("");
-	updateUrl(QUrl("about:blank"));
+	updateUrl(QUrl::fromUserInput("about:blank"));
 }
 
 void WebTab::updateTitle(QString title)
@@ -103,7 +104,7 @@ void WebTab::updateUrl(QUrl url)
 
 void WebTab::on_actionGo_triggered()
 {
-	ui_webView->load(QUrl(ui_urlBar->text()));
+	ui_webView->load(QUrl::fromUserInput(ui_urlBar->text()));
 }
 
 void WebTab::on_actionCopy_triggered()
@@ -128,7 +129,7 @@ bool WebTab::close()
 
 void WebTab::load(QString url)
 {
-	ui_webView->load(QUrl(url));
+	ui_webView->load(QUrl::fromUserInput(url));
 }
 
 void WebTab::moveTo(int line, int pos)
