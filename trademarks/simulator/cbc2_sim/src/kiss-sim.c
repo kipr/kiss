@@ -7,8 +7,6 @@
 #include <kiss-input.h>
 #include "vg-library.h"
 
-
-
 /* kissSim is an update of iROBOsim, but for KISS-C, the Create & CBC.
 Written by David Miller & Charles Winton (C) 2009.
 

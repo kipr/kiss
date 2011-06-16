@@ -1,5 +1,8 @@
 /* Includes the Standard IO Library  */
 
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wreturn-type"
+
 int init_camera(){} /*initialize the camera before any other camera functions*/
 int track_update(){} /*tracking data for a new frame and make it available for retrieval by the other vision functions*/
 int track_get_frame(){} /*return value is the frame number used to generate the tracking data.*/
