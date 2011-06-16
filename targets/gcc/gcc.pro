@@ -13,7 +13,7 @@ win32:TARGET = $$qtLibraryTarget(libgcc_plugin)
 CONFIG -= debug debug_and_release
 CONFIG += release
 
-LIBS += -L../../libraries/extraGUI -lextraGUI -lqscintilla2
+LIBS += -lqscintilla2
 
 HEADERS += Gcc.h
 SOURCES += Gcc.cpp

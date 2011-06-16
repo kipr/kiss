@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = cbc_sim cbc2_sim
+SUBDIRS = cbc2_sim
