@@ -130,6 +130,7 @@ bool WebTab::close()
 void WebTab::load(QString url, bool hideUrl)
 {
 	ui_webView->load(QUrl::fromUserInput(url));
+	actionGo->setEnabled(!hideUrl);
 	ui_urlBar->setVisible(!hideUrl);
 	ui_goButton->setVisible(!hideUrl);
 }
