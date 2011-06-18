@@ -29,6 +29,7 @@
 #include <QToolButton>
 #include <QListWidget>
 #include "ChooseTargetDialog.h"
+#include "EditorSettingsDialog.h"
 #include "ChoosePortDialog.h"
 
 class QListWidgetItem;
@@ -58,6 +59,8 @@ public:
 	void hideErrors();
 	
 	void addTab(Tab* tab);
+	
+	QTabWidget* tabWidget();
 public slots:
 	void on_actionNew_triggered();
 	void on_actionOpen_triggered();
@@ -67,17 +70,21 @@ public slots:
 	void on_actionAbout_triggered();
 	void errorViewShowVerbose();
 	void errorViewShowSimple();
+	void on_actionEditor_Settings_triggered();
 	
 private slots:
 	void on_ui_tabWidget_currentChanged(int i);
 	
 	void errorClicked(QListWidgetItem* item);
 	
+	void showContextMenuForError(const QPoint &pos);
+	
 private:
 	Tab* m_currentTab;
 	Tab* m_errorTab;
 	ChooseTargetDialog m_chooseTargetDialog;
 	ChoosePortDialog m_choosePortDialog;
+	EditorSettingsDialog m_editorSettingsDialog;
 	QListWidget m_errorList, m_warningList, m_linkErrorList, m_verboseList;
 
 	void deleteTab(int index);

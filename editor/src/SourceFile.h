@@ -107,7 +107,11 @@ private slots:
 	void on_actionRedo_triggered();
 	
 	void on_actionManual_triggered();
+	void on_actionPrint_triggered();
 	
+	void on_actionZoomIn_triggered();
+	void on_actionZoomOut_triggered();
+	void on_actionResetZoomLevel_triggered();
 private:
 	QFile m_fileHandle;
 	QFileInfo m_fileInfo;

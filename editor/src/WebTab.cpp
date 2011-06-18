@@ -127,9 +127,11 @@ bool WebTab::close()
 	return true;
 }
 
-void WebTab::load(QString url)
+void WebTab::load(QString url, bool hideUrl)
 {
 	ui_webView->load(QUrl::fromUserInput(url));
+	ui_urlBar->setVisible(!hideUrl);
+	ui_goButton->setVisible(!hideUrl);
 }
 
 void WebTab::moveTo(int line, int pos)
@@ -139,4 +141,9 @@ void WebTab::moveTo(int line, int pos)
 
 void WebTab::refreshSettings()
 {
+}
+
+QWebView* WebTab::webView()
+{
+	return ui_webView;
 }

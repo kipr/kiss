@@ -38,6 +38,7 @@
 #include <QList>
 #include <QDebug>
 #include <QPrintDialog>
+#include "WelcomeTab.h"
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -60,23 +61,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 
 	/* Deletes the tab that QTabWidget starts with by default */
 	deleteTab(0);
-	
-	/* This is for OS X, binds the editor settings to preferences */
-#ifdef Q_OS_MAC
-	QAction *action = new QAction(this);
-	action->setMenuRole(QAction::PreferencesRole);
-	connect(action, SIGNAL(triggered(bool)), actionEditor_Settings, SIGNAL(triggered(bool)));
-	menuSettings->addAction(action);
-#endif
 
-	initMenus(0);
-	setUpdatesEnabled(true);
+	QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus);
+
 	ui_errorView->hide();
 	
 	connect(&m_errorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	connect(&m_warningList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	connect(&m_linkErrorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	connect(&m_verboseList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
+	
+	
+	initMenus(0);
+	
+	addTab(new WelcomeTab(this));
+	
+	setUpdatesEnabled(true);
 }
 
 /* Destructor */
@@ -88,7 +88,6 @@ MainWindow::~MainWindow()
 void MainWindow::newFile()
 {
 	addTab(new SourceFile(this));
-	//addTab(new WebTab(this));
 }
 
 bool MainWindow::openFile(QString file)
@@ -144,8 +143,12 @@ void MainWindow::initMenus(Tab* tab)
 	
 	if(tab) {
 		tab->addActionsEdit(menuEdit);
+		menuEdit->addSeparator();
 		tab->addActionsHelp(menuHelp);
+		menuHelp->addSeparator();
 	}
+
+	menuEdit->addAction(actionEditor_Settings);
 	
 	menuHelp->addSeparator();
 	menuHelp->addAction(actionAbout);
@@ -259,6 +262,11 @@ void MainWindow::addTab(Tab* tab)
 	actionClose->setEnabled(ui_tabWidget->count() > 0);
 }
 
+QTabWidget* MainWindow::tabWidget()
+{
+	return ui_tabWidget;
+}
+
 void MainWindow::showErrorMessages(bool verbose)
 {
 	ui_errorView->clear();
@@ -316,6 +324,8 @@ void MainWindow::on_actionPrevious_triggered()
 
 void MainWindow::on_actionClose_triggered()
 {	
+	if(ui_tabWidget->count() == 0) return;
+	
 	if(!dynamic_cast<Tab*>(ui_tabWidget->currentWidget())->close()) return;
 	
 	deleteTab(ui_tabWidget->currentIndex());
@@ -356,6 +366,13 @@ void MainWindow::errorViewShowSimple()
 	showErrorMessages(false);
 }
 
+void MainWindow::on_actionEditor_Settings_triggered()
+{
+	/* opens the editor dialog and emits a settingsUpdated signal if needed */
+	if(m_editorSettingsDialog.exec() == QDialog::Accepted) emit settingsUpdated();
+}
+
+
 
 void MainWindow::on_ui_tabWidget_currentChanged(int i) 
 {
@@ -381,4 +398,10 @@ void MainWindow::errorClicked(QListWidgetItem* item)
 	ui_tabWidget->setCurrentIndex(i);
 	
 	widget->setFocus(Qt::OtherFocusReason); // For some reason this isn't working?
+}
+
+// TODO: Make Error Googlable
+void MainWindow::showContextMenuForError(const QPoint &pos)
+{
+	
 }

@@ -28,6 +28,10 @@
 #include <QDir>
 #include <QSettings>
 #include <QFont>
+#include <Qsci/qsciprinter.h>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QDebug>
 #include <math.h>
 
 #include "MainWindow.h"
@@ -45,8 +49,6 @@ SourceFile::SourceFile(MainWindow* parent) : Tab(parent), m_fileHandle("Untitled
 	connect(actionSave, SIGNAL(triggered()), this, SLOT(fileSave()));
 	connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
 	connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
-	
-	updateMargins();
 }
 
 SourceFile::~SourceFile()
@@ -57,6 +59,8 @@ void SourceFile::addActionsFile(QMenu* file)
 {
 	file->addAction(actionSave);
 	file->addAction(actionSaveAs);
+	file->addSeparator();
+	file->addAction(actionPrint);
 }
 
 void SourceFile::addActionsEdit(QMenu* edit)
@@ -67,6 +71,10 @@ void SourceFile::addActionsEdit(QMenu* edit)
 	edit->addSeparator();
 	edit->addAction(actionUndo);
 	edit->addAction(actionRedo);
+	edit->addSeparator();
+	edit->addAction(actionZoomIn);
+	edit->addAction(actionZoomOut);
+	edit->addAction(actionResetZoomLevel);
 }
 
 void SourceFile::addActionsHelp(QMenu* help)
@@ -92,6 +100,7 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 void SourceFile::addToolbarActions(QToolBar* toolbar) 
 {
 	toolbar->addAction(actionSave);
+	toolbar->addAction(actionPrint);
 	toolbar->addSeparator();
 	toolbar->addAction(actionCopy);
 	toolbar->addAction(actionCut);
@@ -132,6 +141,8 @@ bool SourceFile::beginSetup()
 
 	/* Sets up the lexer for the target */
 	m_lexSpec = m_target.getLexerSpec();
+	
+	if(!m_lexSpec) qWarning() << "Target did not supply a LexerSpec.";
 
 	/* Sets the api file for the new target */
 	m_lexAPI = tDialog->getSelectedTargetFilePath().replace(".target",".api");
@@ -152,6 +163,7 @@ void SourceFile::on_actionChangePort_triggered()
 void SourceFile::completeSetup()
 {
 	m_mainWindow->setTabName(this, m_fileInfo.fileName());
+	updateMargins();
 }
 
 bool SourceFile::close()
@@ -365,6 +377,8 @@ void SourceFile::refreshSettings()
 
 	/* Set the default font from settings */
 	QFont defFont(settings.value("font").toString(), settings.value("fontsize").toInt());
+	
+	if(!lexer) qWarning() << "No lexer!";
 	
 	if(lexer) {
 		lexer->defaultColor(0);
@@ -606,7 +620,33 @@ void SourceFile::on_actionManual_triggered()
 {
 	WebTab* tab = new WebTab(m_mainWindow);
 	m_mainWindow->addTab(tab);
-	tab->load("file://" + m_target.getTargetManualPath());
+	tab->load("file://" + m_target.getTargetManualPath(), true);
+}
+
+void SourceFile::on_actionPrint_triggered()
+{
+	QsciPrinter printer;
+	QPrintDialog printDialog(&printer, this);
+	
+	if(printDialog.exec() == QDialog::Accepted) printer.printRange(ui_editor);
+}
+
+void SourceFile::on_actionZoomIn_triggered()
+{
+	ui_editor->zoomIn();
+	updateMargins();
+}
+
+void SourceFile::on_actionZoomOut_triggered()
+{
+	ui_editor->zoomOut();
+	updateMargins();
+}
+
+void SourceFile::on_actionResetZoomLevel_triggered()
+{
+	ui_editor->zoomTo(0);
+	updateMargins();
 }
 
 /*ADDED BY NB*///2/10/2010-dpm

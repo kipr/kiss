@@ -102,7 +102,7 @@ void TargetSettingsDialog::saveTable()
 	settings.remove("");
 
 	// Write out all the key/value pairs
-	for(int i = 0;i < ui_settingsTable->rowCount();i++)
+	for(int i = 0; i < ui_settingsTable->rowCount(); ++i)
 		settings.setValue(ui_settingsTable->item(i,0)->text(), ui_settingsTable->item(i,1)->text());
 
 	settings.endGroup();

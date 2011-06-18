@@ -40,11 +40,11 @@ public:
 	void addToolbarActions(QToolBar* toolbar);
 	
 	bool beginSetup();
-	void completeSetup();
+	virtual void completeSetup();
 	
 	bool close();
 	
-	void load(QString url);
+	void load(QString url, bool hideUrl = false);
 	
 	void moveTo(int line, int pos);
 	
@@ -58,6 +58,10 @@ private slots:
 	void on_actionPaste_triggered();
 	
 	void refreshSettings();
+
+protected:
+	QWebView* webView();	
+
 private:
 };
 

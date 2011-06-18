@@ -36,7 +36,8 @@ HEADERS += src/MainWindow.h \
 	   src/Version.h \
 	   src/Tab.h \
 	   src/TargetManager.h \
-	   src/WebTab.h
+	   src/WebTab.h \
+	   src/WelcomeTab.h
 
 SOURCES += src/main.cpp \
 	   src/MainWindow.cpp \
@@ -50,7 +51,8 @@ SOURCES += src/main.cpp \
 	   src/Lexer.cpp \
 	   src/Tab.cpp \
 	   src/TargetManager.cpp \
-	   src/WebTab.cpp
+	   src/WebTab.cpp \
+	   src/WelcomeTab.cpp
 
 FORMS += ui/MainWindow.ui \
 	 ui/ChooseTargetDialog.ui \
