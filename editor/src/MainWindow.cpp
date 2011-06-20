@@ -24,6 +24,8 @@
 #include "LexerSpec.h"
 #include "SourceFile.h"
 #include "WebTab.h"
+#include "TargetManager.h"
+#include <QToolTip>
 
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qsciprinter.h>
@@ -47,7 +49,7 @@
 
 /* Constructor */
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0),
-	m_chooseTargetDialog(this), m_choosePortDialog(this)
+	m_chooseTargetDialog(this), m_choosePortDialog(this), m_findDialog(this)
 {
 	setupUi(this);
 	/* Turns off updates so all of these things are drawn at once */
@@ -71,8 +73,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	connect(&m_linkErrorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	connect(&m_verboseList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	
-	
-	initMenus(0);
+	// initMenus(0);
 	
 	addTab(new WelcomeTab(this));
 	
@@ -98,8 +99,8 @@ bool MainWindow::openFile(QString file)
 		return false;
 
 	for(int i = 0;i < ui_tabWidget->count();i++) {
-		SourceFile *sourceFile = (SourceFile*)ui_tabWidget->widget(i);
-		if(sourceFile->filePath() == file) {
+		SourceFile* sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
+		if(sourceFile && sourceFile->filePath() == file) {
 			ui_tabWidget->setCurrentIndex(i);
 			on_ui_tabWidget_currentChanged(i);
 			return true;
@@ -207,6 +208,12 @@ void MainWindow::hideErrors()
 	ui_errorView->hide();
 }
 
+void MainWindow::showFindDialog(SourceFile* sourceFile)
+{
+	m_findDialog.setSourceFile(sourceFile);
+	m_findDialog.show();
+}
+
 /* Handles closing all of the open editor windows when the window is closed */
 void MainWindow::closeEvent(QCloseEvent *e)
 {
@@ -253,7 +260,7 @@ void MainWindow::addTab(Tab* tab)
 	setUpdatesEnabled(false);
 	int tabNum = ui_tabWidget->addTab(dynamic_cast<QWidget*>(tab), QString::fromAscii(""));
 	ui_tabWidget->setCurrentIndex(tabNum);
-	on_ui_tabWidget_currentChanged(tabNum);
+	// on_ui_tabWidget_currentChanged(tabNum);
 	setUpdatesEnabled(true);
 	tab->completeSetup();
 	
@@ -300,7 +307,10 @@ void MainWindow::on_actionOpen_triggered()
 {
 	QSettings settings;
 	QString openPath = settings.value("openpath", QDir::homePath()).toString();
-	QString filePath = QFileDialog::getOpenFileName(this, "Open File", openPath, "All Files (*)");
+	QStringList filters = TargetManager::ref().getAllSupportedExtensions();
+	filters.removeDuplicates();
+	qWarning() << filters;
+	QString filePath = QFileDialog::getOpenFileName(this, "Open File", openPath, filters.join(";;") + ";;All Files (*)");
 		
 	if(filePath.isEmpty())
 		return;

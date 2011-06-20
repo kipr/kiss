@@ -45,15 +45,6 @@
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="actionChangePort">
-   <property name="icon">
-    <iconset resource="../rc/icons.qrc">
-     <normaloff>:/shortcuts/target/icon_set/icons/link.png</normaloff>:/shortcuts/target/icon_set/icons/link.png</iconset>
-   </property>
-   <property name="text">
-    <string>Change Port</string>
-   </property>
-  </action>
   <action name="actionCompile">
    <property name="icon">
     <iconset resource="../rc/icons.qrc">
@@ -217,6 +208,32 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+0</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/edit/icon_set/icons/find.png</normaloff>:/shortcuts/edit/icon_set/icons/find.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionChangeTarget">
+   <property name="text">
+    <string>Change Target</string>
+   </property>
+  </action>
+  <action name="actionChoosePort">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/link.png</normaloff>:/shortcuts/target/icon_set/icons/link.png</iconset>
+   </property>
+   <property name="text">
+    <string>Choose Port</string>
    </property>
   </action>
  </widget>

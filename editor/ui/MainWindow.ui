@@ -149,11 +149,6 @@
     <string>Ctrl+-</string>
    </property>
   </action>
-  <action name="actionChange_Port">
-   <property name="text">
-    <string>Change Port</string>
-   </property>
-  </action>
   <action name="actionEditor_Settings">
    <property name="text">
     <string>Editor Settings</string>

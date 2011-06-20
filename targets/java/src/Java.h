@@ -17,59 +17,51 @@
  *  along with KISS.  Check the LICENSE file in the project root.         *
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
-
-#ifndef __TARGETINTERFACE_H__
-#define __TARGETINTERFACE_H__
+ 
+#ifndef __GCC_H__
+#define __GCC_H__
 
 #include <qplugin.h>
+#include <QProcess>
 #include <QString>
-#include <QStringList>
-#include <QList>
-#include <QAction>
+#include <QSettings>
 
+#include "TargetInterface.h"
 #include "LexerSpec.h"
 #include "LexerStyles.h"
 
-class TargetInterface 
+class Java : public QObject, public TargetInterface
 {
+	Q_OBJECT
+	Q_INTERFACES(TargetInterface)
+	
 public:
-	// Destructor
-	virtual ~TargetInterface() {}
+	Java();
+	~Java();
 
-	// These methods will be called when their
-	// respective editor buttons are activated
-	virtual bool compile(QString filename, QString port) = 0;	
-	virtual bool run(QString filename, QString port) = 0;
-	virtual void stop(QString port) = 0;
-	virtual bool download(QString filename, QString port) = 0;
-	virtual bool simulate(QString filename, QString port) = 0;
+	bool compile(QString filename, QString port);
+	bool run(QString filename, QString port);
+	void stop(QString) {}
+	bool download(QString,QString) {return false;}
+	bool simulate(QString,QString) {return false;}
 
-	// These should inform the plugin loader of
-	// The features offered by this plugin
-	virtual bool hasDownload() = 0;
-	virtual bool hasCompile() = 0;
-	virtual bool hasRun() = 0;
-	virtual bool hasStop() = 0;
-	virtual bool hasSimulate() = 0;
+	bool hasCompile() { return true; }
+	bool hasRun() { return true; }
+	bool hasDownload() { return false; }
+	bool hasStop() { return false; }
+	bool hasSimulate() {return false; }
+
+private:
+	QProcess m_java;
+	QProcess m_outputBinary;
+	QString m_javaPath;
+	QString m_outputFileName;
+	QStringList m_cflags,m_lflags;
 	
-	/* Builtin Stuff */
-	QList<QAction*> getActionList() {return m_actionList;}
-	QStringList 	getErrorMessages() {return m_errorMessages;}
-	QStringList 	getWarningMessages() {return m_warningMessages;}
-	QStringList 	getLinkerMessages() {return m_linkerMessages;}
-	QStringList 	getVerboseMessages() {return m_verboseMessages;}
-	LexerSpec* 	getLexerSpec() {return &m_lexerSpec;}
-	
-	void setTargetFile(QString filename) {m_targetFile=filename;}
-	
-protected:
-	LexerSpec m_lexerSpec;
-	QString m_targetFile;
-	QStringList m_warningMessages, m_errorMessages, 
-		m_linkerMessages, m_verboseMessages;
-	QList<QAction*> m_actionList;
+	void processCompilerOutput();
+	void processLinkerOutput();
+	void refreshSettings();
+	void setLexerSpecs();
 };
-
-Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/2.2");
 
 #endif

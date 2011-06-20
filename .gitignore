@@ -11,6 +11,9 @@ targets/cbc/include/kiss-sim.h
 targets/cbc/cbc.target
 targets/cbc/build/
 targets/cbc/Makefile
+targets/java/java.target
+targets/java/build/
+targets/java/Makefile
 targets/Makefile
 libraries/kiss_sim/libkiss_sim.a
 libraries/kiss_sim/build/

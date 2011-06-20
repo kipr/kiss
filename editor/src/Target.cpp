@@ -124,6 +124,14 @@ QString Target::getSourceExtensions()
 	return extensions.split(",").join("\n") + "\n";
 }
 
+QString Target::getDefaultExtension()
+{
+	QSettings settings(m_targetFileName, QSettings::IniFormat);
+	QString extension = settings.value("default_extension").toString();
+	
+	return extension;
+}
+
 QString Target::getSourceTemplate()
 {
 	QSettings settings(m_targetFileName, QSettings::IniFormat);

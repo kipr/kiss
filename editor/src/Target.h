@@ -54,6 +54,7 @@ public:
 	
 	// These two load some settings from the target file
 	QString getSourceExtensions();
+	QString getDefaultExtension();
 	QString getSourceTemplate();
 	QString getTargetManualPath();
 

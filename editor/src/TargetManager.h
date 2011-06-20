@@ -30,6 +30,8 @@ class TargetManager
 public:
 	static TargetManager& ref();
 	TargetInterface* get(QString targetName);
+	
+	QStringList getAllSupportedExtensions();
 private:
 	TargetManager();
 	TargetManager(const TargetManager&);

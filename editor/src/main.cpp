@@ -49,8 +49,5 @@ int main(int argc, char **argv)
 	QTimer::singleShot(1500, &splash, SLOT(hide()));
 	QTimer::singleShot(1000, &window, SLOT(show()));
 
-	if(argc < 2 || !window.openFile(QApplication::arguments()[1]))
-		QTimer::singleShot(1500, &window, SLOT(on_actionChange_Target_triggered()));
-
 	return application.exec();
 }

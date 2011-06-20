@@ -75,6 +75,8 @@ void SourceFile::addActionsEdit(QMenu* edit)
 	edit->addAction(actionZoomIn);
 	edit->addAction(actionZoomOut);
 	edit->addAction(actionResetZoomLevel);
+	edit->addSeparator();
+	edit->addAction(actionFind);
 }
 
 void SourceFile::addActionsHelp(QMenu* help)
@@ -90,6 +92,9 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	if(m_target.hasSimulate()) target->addAction(actionSimulate);
 	if(m_target.hasRun()) target->addAction(actionRun);
 	if(m_target.hasStop()) target->addAction(actionStop);
+	target->addSeparator();
+	target->addAction(actionChangeTarget);
+	target->addAction(actionChoosePort);
 	target->addSeparator();
 	QList<QAction*> actionList = m_target.getActionList();
 	for(int i = 0; i < actionList.size(); ++i) target->insertAction(0, actionList[i]);
@@ -109,6 +114,9 @@ void SourceFile::addToolbarActions(QToolBar* toolbar)
 	toolbar->addAction(actionUndo);
 	toolbar->addAction(actionRedo);
 	toolbar->addSeparator();
+	toolbar->addAction(actionFind);
+	toolbar->addSeparator();
+	
 	if(m_target.hasCompile()) toolbar->addAction(actionCompile);
 	if(m_target.hasDownload()) toolbar->addAction(actionDownload);
 	if(m_target.hasSimulate()) toolbar->addAction(actionSimulate);
@@ -135,7 +143,7 @@ bool SourceFile::beginSetup()
 	
 	/* Pops up a port select dialog if the target should have a port set */
 	if(targetSettings.value("port_dialog").toBool()) {
-		on_actionChangePort_triggered();
+		on_actionChoosePort_triggered();
 		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
 	}
 
@@ -150,14 +158,6 @@ bool SourceFile::beginSetup()
 	refreshSettings();
 	return true;
 	
-}
-
-void SourceFile::on_actionChangePort_triggered() 
-{
-	ChoosePortDialog* pDialog = m_mainWindow->choosePortDialog();
-	if(pDialog->exec()) {
-		m_target.setPort(pDialog->getSelectedPortName());
-	}
 }
 
 void SourceFile::completeSetup()
@@ -495,8 +495,8 @@ void SourceFile::on_actionSaveAs_triggered()
 
 	QFileInfo fileInfo(filePath);
 	
-	if(fileInfo.suffix() != "c")
-		fileInfo.setFile(filePath + ".c");
+	QString ext = m_target.getDefaultExtension();
+	if(fileInfo.suffix() != ext) fileInfo.setFile(filePath + "." + ext);
 	
 	settings.setValue("savepath", fileInfo.absolutePath());
 
@@ -616,6 +616,11 @@ void SourceFile::on_actionRedo_triggered()
 	ui_editor->redo();
 }
 
+void SourceFile::on_actionFind_triggered()
+{
+	m_mainWindow->showFindDialog(this);
+}
+
 void SourceFile::on_actionManual_triggered()
 {
 	WebTab* tab = new WebTab(m_mainWindow);
@@ -647,6 +652,43 @@ void SourceFile::on_actionResetZoomLevel_triggered()
 {
 	ui_editor->zoomTo(0);
 	updateMargins();
+}
+
+void SourceFile::on_actionChangeTarget_triggered()
+{
+	ChooseTargetDialog* tDialog = m_mainWindow->chooseTargetDialog();
+	if(!tDialog->exec()) return;
+	if(!m_target.setTargetFile(tDialog->getSelectedTargetFilePath())) {
+		QMessageBox::critical(this, "Error", "Error loading target!");
+		return;
+	}
+	
+	QSettings targetSettings(tDialog->getSelectedTargetFilePath(), QSettings::IniFormat);
+
+	/* Tells the settings dialog which target file to use */
+	m_target.setTargetFile(tDialog->getSelectedTargetFilePath());
+	
+	/* Pops up a port select dialog if the target should have a port set */
+	if(targetSettings.value("port_dialog").toBool()) {
+		on_actionChoosePort_triggered();
+		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
+	}
+
+	/* Sets up the lexer for the target */
+	m_lexSpec = m_target.getLexerSpec();
+
+	/* Sets the api file for the new target */
+	m_lexAPI = tDialog->getSelectedTargetFilePath().replace(".target",".api");
+	
+	refreshSettings();
+}
+
+void SourceFile::on_actionChoosePort_triggered()
+{
+	ChoosePortDialog* pDialog = m_mainWindow->choosePortDialog();
+	if(pDialog->exec()) {
+		m_target.setPort(pDialog->getSelectedPortName());
+	}
 }
 
 /*ADDED BY NB*///2/10/2010-dpm

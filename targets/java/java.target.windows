@@ -1,0 +1,10 @@
+[General]
+description=Calls the local Java compiler
+display_name=Local Java
+extensions=Java Sources (*.java)
+manual=targets/java/manual/javamanual.html
+name=java
+template=targets/java/template.java
+
+[Target]
+lib_dirs=targets/gcc/lib

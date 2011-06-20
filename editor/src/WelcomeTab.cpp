@@ -23,12 +23,33 @@ void WelcomeTab::completeSetup()
 	QByteArray data = file.readAll();
 	data.replace("KISS_BACKGROUND", m_mainWindow->tabWidget()->palette().color(QPalette::Background).name().toAscii());
 	
-	qWarning() << data.data();
+	// qWarning() << data.data();
 	
 	webView()->setHtml(data.data());
 }
 
 void WelcomeTab::linkClicked(const QUrl& url)
 {
-	qWarning() << "Link " << url << "clicked!";
+	if(url.scheme() != "kiss") load(url.toString());
+	QString auth = url.authority();
+	if(auth == "new") {
+		m_mainWindow->newFile();
+		return;
+	}
+	if(auth == "open") {
+		m_mainWindow->on_actionOpen_triggered();
+		return;
+	}
+	if(auth == "newbrowser") {
+		qWarning() << "New Browser!";
+		WebTab* tab = new WebTab(m_mainWindow);
+		qWarning() << url.fragment();
+		tab->load(url.fragment());
+		m_mainWindow->addTab(tab);
+		return;
+	}
+	if(auth == "help") {
+		// No such thing as help yet :P
+		return;
+	}
 }

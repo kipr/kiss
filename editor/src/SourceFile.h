@@ -87,7 +87,6 @@ public slots:
 	void zoomIn();
 	void zoomOut();
 
-	void on_actionChangePort_triggered();
 	void on_actionSaveAs_triggered();
 	bool fileSave();
 
@@ -105,6 +104,7 @@ private slots:
 	void on_actionPaste_triggered();
 	void on_actionUndo_triggered();
 	void on_actionRedo_triggered();
+	void on_actionFind_triggered();
 	
 	void on_actionManual_triggered();
 	void on_actionPrint_triggered();
@@ -112,6 +112,9 @@ private slots:
 	void on_actionZoomIn_triggered();
 	void on_actionZoomOut_triggered();
 	void on_actionResetZoomLevel_triggered();
+	
+	void on_actionChangeTarget_triggered();
+	void on_actionChoosePort_triggered();
 private:
 	QFile m_fileHandle;
 	QFileInfo m_fileInfo;

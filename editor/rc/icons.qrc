@@ -5,7 +5,8 @@
         <file>icon_set/icons/cut.png</file>
         <file>icon_set/icons/page_white_copy.png</file>
         <file>icon_set/icons/page_white_paste.png</file>
-    </qresource>
+		<file>icon_set/icons/find.png</file>
+	</qresource>
     <qresource prefix="/browser">
         <file>icon_set/icons/resultset_next.png</file>
         <file>icon_set/icons/arrow_left.png</file>

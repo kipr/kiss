@@ -1,2 +1,2 @@
 TEMPLATE=subdirs
-SUBDIRS=gcc cbc2
+SUBDIRS=gcc cbc2 java

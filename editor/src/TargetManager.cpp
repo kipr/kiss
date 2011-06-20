@@ -20,6 +20,7 @@
 
 #include "TargetManager.h"
 
+#include <QSettings>
 #include <QDir>
 
 TargetManager& TargetManager::ref()
@@ -34,6 +35,41 @@ TargetInterface* TargetManager::get(QString targetName)
 		if(!loadPlugin(targetName)) return 0;
 	
 	return qobject_cast<TargetInterface *>(m_plugins[targetName]->instance());
+}
+
+QStringList TargetManager::getAllSupportedExtensions()
+{
+	QDir targetDir(QDir::currentPath() + "/targets");
+	QStringList targetDirs;
+	QStringList extensionList;
+
+	// Choke if we can't find the target directory
+	if(!targetDir.exists()) {
+		return extensionList;
+	}
+	
+	// Get a list of the possible target directories and check through them
+	targetDirs = targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	QStringListIterator i(targetDirs);
+
+	while(i.hasNext()) {
+		QString dirName = i.next();
+		targetDir.cd(dirName);
+		
+		// The target file naming scheme is <dirname>.target
+		QFileInfo targetFile(targetDir, dirName + ".target");
+
+		// If we can't find a target file, skip this directory
+		if(!targetFile.exists()) {
+			targetDir.cdUp();
+			continue;
+		}
+		
+		QSettings target(targetFile.absoluteFilePath(), QSettings::IniFormat);
+		extensionList << target.value("extensions").toString();
+		targetDir.cdUp();
+	}
+	return extensionList;
 }
 
 TargetManager::TargetManager()

@@ -31,6 +31,7 @@
 #include "ChooseTargetDialog.h"
 #include "EditorSettingsDialog.h"
 #include "ChoosePortDialog.h"
+#include "FindDialog.h"
 
 class QListWidgetItem;
 
@@ -58,9 +59,12 @@ public:
 	void setErrors(Tab* tab, QStringList errors, QStringList warnings, QStringList linker, QStringList verbose);
 	void hideErrors();
 	
+	void showFindDialog(SourceFile* sourceFile);
+	
 	void addTab(Tab* tab);
 	
 	QTabWidget* tabWidget();
+	
 public slots:
 	void on_actionNew_triggered();
 	void on_actionOpen_triggered();
@@ -85,6 +89,7 @@ private:
 	ChooseTargetDialog m_chooseTargetDialog;
 	ChoosePortDialog m_choosePortDialog;
 	EditorSettingsDialog m_editorSettingsDialog;
+	FindDialog m_findDialog;
 	QListWidget m_errorList, m_warningList, m_linkErrorList, m_verboseList;
 
 	void deleteTab(int index);
