@@ -33,7 +33,15 @@ LexerSpecManager::~LexerSpecManager()
 
 void LexerSpecManager::loadLexers()
 {
-	QStringList lexers = QDir("lexers").entryList(QStringList() << "*.dylib");
+	QStringList exts;
+#ifdef Q_OS_WIN
+	exts << "*.dll";
+#elif defined(Q_OS_MAC)
+	exts << "*.dylib";
+#else
+	exts << ".so";
+#endif
+	QStringList lexers = QDir("lexers").entryList();
 	qWarning() << "Lexers:" << lexers;
 	foreach(const QString& str, lexers) {
 		qWarning() << str;
