@@ -10,13 +10,13 @@ class LexerSpecManager
 public:
 	static LexerSpecManager& ref();
 	
-	LexerSpec* lexerSpec(QString ext);
+	LexerSpec* lexerSpec(const QString& ext);
 private:	
 	LexerSpecManager();
 	~LexerSpecManager();
 	
 	void loadLexers();
-	void loadLexer(QString fileName);
+	void loadLexer(const QString& fileName);
 	
 	QMap<QString, QPluginLoader*> m_lexers;
 	

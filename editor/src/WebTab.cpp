@@ -28,8 +28,8 @@ WebTab::WebTab(MainWindow* mainWindow) : Tab(mainWindow)
 {
 	setupUi(this);
 	
-	connect(ui_webView, SIGNAL(titleChanged(QString)), this, SLOT(updateTitle(QString)));
-	connect(ui_webView, SIGNAL(urlChanged(QUrl)), this, SLOT(updateUrl(QUrl)));
+	connect(ui_webView, SIGNAL(titleChanged(const QString&)), this, SLOT(updateTitle(const QString&)));
+	connect(ui_webView, SIGNAL(urlChanged(const QUrl&)), this, SLOT(updateUrl(const QUrl&)));
 }
 
 WebTab::~WebTab()
@@ -84,7 +84,7 @@ void WebTab::completeSetup()
 	updateUrl(QUrl::fromUserInput("about:blank"));
 }
 
-void WebTab::updateTitle(QString title)
+void WebTab::updateTitle(const QString& title)
 {
 	if(title.length() > 40) {
 		title.truncate(40);
@@ -93,7 +93,7 @@ void WebTab::updateTitle(QString title)
 	m_mainWindow->setTabName(this, title.length() == 0 ? "Untitled Browser" : title);
 }
 
-void WebTab::updateUrl(QUrl url)
+void WebTab::updateUrl(const QUrl& url)
 {
 	actionBack->setEnabled(ui_webView->history()->canGoBack());
 	actionForward->setEnabled(ui_webView->history()->canGoForward());

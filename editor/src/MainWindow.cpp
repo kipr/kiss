@@ -91,7 +91,7 @@ void MainWindow::newFile()
 	addTab(new SourceFile(this));
 }
 
-bool MainWindow::openFile(QString file)
+bool MainWindow::openFile(const QString& file)
 {
 	QFileInfo fileInfo(file);
 
@@ -164,27 +164,19 @@ void MainWindow::initMenus(Tab* tab)
 	if(tab) tab->addToolbarActions(ui_toolBar);
 }
 
-void MainWindow::setTabName(QWidget* widget, QString string)
+void MainWindow::setTabName(QWidget* widget, const QString& string)
 {
 	ui_tabWidget->setTabText(ui_tabWidget->indexOf(widget), string);
 }
 
-void MainWindow::setStatusMessage(QString message, int time)
+void MainWindow::setStatusMessage(const QString& message, int time)
 {
 	ui_statusbar->showMessage(message, time);
 }
 
-ChooseTargetDialog* MainWindow::chooseTargetDialog()
-{
-	return &m_chooseTargetDialog;
-}
-
-ChoosePortDialog* MainWindow::choosePortDialog()
-{
-	return &m_choosePortDialog;
-}
-
-void MainWindow::setErrors(Tab* tab, QStringList errors, QStringList warnings, QStringList linker, QStringList verbose)
+void MainWindow::setErrors(Tab* tab, 
+	const QStringList& errors, const QStringList& warnings, 
+	const QStringList& linker, const QStringList& verbose)
 {
 	m_errorTab = tab;
 	
@@ -207,12 +199,6 @@ void MainWindow::setErrors(Tab* tab, QStringList errors, QStringList warnings, Q
 void MainWindow::hideErrors()
 {
 	ui_errorView->hide();
-}
-
-void MainWindow::showFindDialog(SourceFile* sourceFile)
-{
-	m_findDialog.setSourceFile(sourceFile);
-	m_findDialog.show();
 }
 
 /* Handles closing all of the open editor windows when the window is closed */

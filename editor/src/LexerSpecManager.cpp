@@ -11,7 +11,7 @@ LexerSpecManager& LexerSpecManager::ref()
 	return instance;
 }
 
-LexerSpec* LexerSpecManager::lexerSpec(QString ext)
+LexerSpec* LexerSpecManager::lexerSpec(const QString& ext)
 {
 	return m_lexers.contains(ext) ? qobject_cast<LexerSpecProvider*>(m_lexers[ext]->instance())->lexerSpec() : 0;
 }
@@ -51,7 +51,7 @@ void LexerSpecManager::loadLexers()
 }
 
 /* These last two load/unload a plugin, determining the file name based on the target name */
-void LexerSpecManager::loadLexer(QString lexer)
+void LexerSpecManager::loadLexer(const QString& lexer)
 {	
 	// Create the QPluginLoader and start constructing the file name
 	QPluginLoader* plugin = new QPluginLoader();

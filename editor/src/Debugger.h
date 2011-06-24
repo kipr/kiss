@@ -26,7 +26,9 @@ public:
 	void programPaused();
 	void programStepped();
 	
-	void stack(QList<Frame> frames);
+	void stack(const QList<Frame>& frames);
+	void variables(const QList<Variable>& vars);
+	void breakpoints(const QList<Breakpoint>& bkpts);
 	
 private slots:
 	void on_ui_run_clicked();

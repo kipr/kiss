@@ -32,9 +32,10 @@ void Gdb::run()
 
 void Gdb::stop()
 {
-	m_process.write("-exec-abort\n");
-	m_active = false;
+	pause();
+	send("-exec-abort");
 	m_run = false;
+	
 	m_libs.clear();
 	
 	m_responder->programStopped();
@@ -42,43 +43,51 @@ void Gdb::stop()
 
 void Gdb::step()
 {
-	if(m_active) pause();
 	m_process.write("-exec-step\n");
-	m_active = false;
 	
 	m_responder->programStepped();
 }
 
 void Gdb::pause()
 {
-	if(!m_active) return;
 	m_process.write("-exec-interrupt\n");
-	m_active = false;
 }
 
 void Gdb::send(const QString& str)
 {
+	qWarning() << "Sending" << str;
 	m_process.write((str + "\n").toAscii());
+}
+
+void Gdb::addBreakpoint(const QString& filename, const int lineNum)
+{
+	send("-break-insert " + filename + ":" + QString::number(lineNum));
+}
+
+void Gdb::breakpoints()
+{
+	send("-break-list");
 }
 
 void Gdb::where()
 {
-	m_process.write("where\n");
+	send("where");
 }
 
 void Gdb::backtrace()
 {
-	m_process.write("-stack-list-frames\n");
+	send("-stack-list-frames");
 	
 }
 
 void Gdb::value(const QString& variable)
 {
-	m_process.write(("p " + variable + "\n").toLocal8Bit());
+	send("p " + variable);
 }
 
 void Gdb::variables()
 {
+	send("-stack-list-locals --all-values");
 }
 
 void Gdb::threads()
@@ -115,6 +124,9 @@ void Gdb::parse(const QByteArray& input)
 	else if(input.startsWith("^error")) m_responder->writeStderr(cString(input.data(), after(input.data(), "msg=")));
 	else if(input.startsWith("^done,stack=")) stack(input.data());
 	else if(input.startsWith("^done,stack-args=")) stackArgs(input.data());
+	else if(input.startsWith("^done,locals=")) locals(input.data());
+	else if(input.startsWith("^done,BreakpointTable=")) breakpointTable(input.data());
+	else if(input.startsWith("^done,bkpt="));
 	else if(input.startsWith("^done")) m_responder->writeDebugState(cString(input.data(), after(input.data(), "reason=")));
 	else if(input.startsWith("*stopped")) stopped(input.data());
 	else if(input.startsWith("=shlibs-added")) m_libs += shlibsAdded(input.data());
@@ -134,7 +146,7 @@ void Gdb::stopped(const QString& data)
 	QString reason = cString(data, after(data, "reason="));
 	m_responder->writeStdout("Program Stopped. Running Time: " + runningTime + ", Reason: " + reason + "\n");
 	
-	if(cString(data, after(data, "signal-name=")) != "SIGINT") {
+	if(reason == "exited-normally") {
 		m_run = false;
 		m_libs.clear();
 		m_responder->programStopped();
@@ -180,6 +192,33 @@ void Gdb::stackArgs(const QString& data)
 	
 	m_responder->stack(m_frames);
 	m_frames.clear();
+}
+
+void Gdb::locals(const QString& data)
+{
+	QStringList vars = data.split("name=");
+	vars.removeFirst();
+	QList<Variable> localList;
+	foreach(const QString& var, vars) {
+		Variable local(cString(var, 0), cString(var, after(var, "value=")));
+		localList.append(local);
+	}
+	m_responder->variables(localList);
+}
+
+void Gdb::breakpointTable(const QString& data)
+{
+	QStringList bkpts = data.split("bkpt=");
+	bkpts.removeFirst();
+	QList<Breakpoint> bs;
+	foreach(const QString& bkpt, bkpts) {
+		Breakpoint b;
+		b.file = cString(bkpt, after(bkpt, "file="));
+		b.function = cString(bkpt, after(bkpt, "func="));
+		b.line = cString(bkpt, after(bkpt, "line=")).toInt();
+		b.enabled = cString(bkpt, after(bkpt, "enabled=")).contains("y") ? true : false; 
+	}
+	m_responder->breakpoints(bs);
 }
 
 QString Gdb::cString(const QString& data, int starting)

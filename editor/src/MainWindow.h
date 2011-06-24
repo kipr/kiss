@@ -46,20 +46,18 @@ public:
 	void closeEvent(QCloseEvent *e);
 	
 	void newFile();
-	bool openFile(QString filePath);
+	bool openFile(const QString& filePath);
 	
 	void initMenus(Tab* tab);
 	
-	void setTabName(QWidget* widget, QString string);
-	void setStatusMessage(QString message, int time = 0);
+	void setTabName(QWidget* widget, const QString& string);
+	void setStatusMessage(const QString& message, int time = 0);
 	
-	ChooseTargetDialog* chooseTargetDialog();
-	ChoosePortDialog* choosePortDialog();
-	
-	void setErrors(Tab* tab, QStringList errors, QStringList warnings, QStringList linker, QStringList verbose);
+	void setErrors(Tab* tab, 
+		const QStringList& errors, const QStringList& warnings, 
+		const QStringList& linker, const QStringList& verbose);
+		
 	void hideErrors();
-	
-	void showFindDialog(SourceFile* sourceFile);
 	
 	void addTab(Tab* tab);
 	
@@ -86,10 +84,7 @@ private slots:
 private:
 	Tab* m_currentTab;
 	Tab* m_errorTab;
-	ChooseTargetDialog m_chooseTargetDialog;
-	ChoosePortDialog m_choosePortDialog;
 	EditorSettingsDialog m_editorSettingsDialog;
-	FindDialog m_findDialog;
 	QListWidget m_errorList, m_warningList, m_linkErrorList, m_verboseList;
 
 	void deleteTab(int index);

@@ -37,7 +37,7 @@ TargetSettingsDialog::~TargetSettingsDialog()
 
 
 // Sets the target file :)
-void TargetSettingsDialog::setTargetFile(QString filename)
+void TargetSettingsDialog::setTargetFile(const QString& filename)
 {
 	m_targetFile = filename;
 }

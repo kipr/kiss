@@ -37,12 +37,18 @@
 #include "MainWindow.h"
 #include "WebTab.h"
 #include "LexerSpecManager.h"
-
-#define BREAKPOINT_MASK 0xDEAD
+#include "SourceFileShared.h"
 
 SourceFile::SourceFile(MainWindow* parent) : Tab(parent), m_fileHandle("Untitled"), m_isNewFile(true), m_target(this), m_debugger(this)
 {
 	setupUi(this);
+	
+	m_errorIndicator = ui_editor->markerDefine(SourceFileShared::ref().redBullet());
+	m_warningIndicator = ui_editor->markerDefine(SourceFileShared::ref().yellowBullet());
+	m_breakIndicator = ui_editor->markerDefine(SourceFileShared::ref().blueBullet());
+	
+	
+	qWarning() << m_breakIndicator;
 	
 	ui_editor->setModified(false);
 	m_fileInfo.setFile(m_fileHandle);
@@ -58,6 +64,7 @@ SourceFile::SourceFile(MainWindow* parent) : Tab(parent), m_fileHandle("Untitled
 
 SourceFile::~SourceFile()
 {
+	SourceFileShared::ref().hideFindDialog();
 }
 
 void SourceFile::addActionsFile(QMenu* file) 
@@ -97,7 +104,12 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	if(m_target.hasSimulate()) target->addAction(actionSimulate);
 	if(m_target.hasRun()) target->addAction(actionRun);
 	if(m_target.hasStop()) target->addAction(actionStop);
-	if(m_target.hasDebug()) target->addAction(actionDebug);
+	if(m_target.hasDebug()) {
+		target->addAction(actionDebug);
+		QMenu* debug = menuBar->addMenu("Debug");
+		debug->addAction(actionAddBreakpoint);
+		debug->addAction(actionRemoveBreakpoint);
+	}
 	target->addSeparator();
 	target->addAction(actionChangeTarget);
 	target->addAction(actionChoosePort);
@@ -133,7 +145,7 @@ void SourceFile::addToolbarActions(QToolBar* toolbar)
 
 bool SourceFile::beginSetup()
 {
-	ChooseTargetDialog* tDialog = m_mainWindow->chooseTargetDialog();
+	ChooseTargetDialog* tDialog = SourceFileShared::ref().chooseTargetDialog();
 	if(!tDialog->exec()) return false;
 	if(!m_target.setTargetFile(tDialog->getSelectedTargetFilePath())) {
 		QMessageBox::critical(this, "Error", "Error loading target!");
@@ -199,7 +211,7 @@ bool SourceFile::fileSave()
 	return fileSaveAs(m_fileInfo.filePath());
 }
 
-bool SourceFile::fileSaveAs(QString filePath)
+bool SourceFile::fileSaveAs(const QString& filePath)
 {
 	if(filePath.isEmpty())
 		return false;
@@ -234,7 +246,7 @@ bool SourceFile::fileSaveAs(QString filePath)
 	return true;
 }
 
-bool SourceFile::fileOpen(QString filePath)
+bool SourceFile::fileOpen(const QString& filePath)
 {
 	m_fileHandle.setFileName(filePath);
 	m_fileInfo.setFile(m_fileHandle);	
@@ -553,12 +565,17 @@ void SourceFile::on_actionDownload_triggered()
 	else
 		m_mainWindow->setStatusMessage("Download Succeeded");
 	
+	const QStringList& errors = m_target.getErrorMessages();
+	const QStringList& warnings = m_target.getWarningMessages();
+	
 	/* Show any error messages if any */
 	m_mainWindow->setErrors(this,
-				m_target.getErrorMessages(),
-				m_target.getWarningMessages(),
+				errors,
+				warnings,
 				m_target.getLinkerMessages(),
 				m_target.getVerboseMessages());
+				
+	markProblems(errors, warnings);
 }
 
 void SourceFile::on_actionCompile_triggered()
@@ -571,12 +588,17 @@ void SourceFile::on_actionCompile_triggered()
 	else
 		m_mainWindow->setStatusMessage("Compile Succeeded");
 
-	/* Show error messages if there are any */
+	const QStringList& errors = m_target.getErrorMessages();
+	const QStringList& warnings = m_target.getWarningMessages();
+	
+	/* Show any error messages if any */
 	m_mainWindow->setErrors(this,
-				m_target.getErrorMessages(),
-				m_target.getWarningMessages(),
+				errors,
+				warnings,
 				m_target.getLinkerMessages(),
 				m_target.getVerboseMessages());
+				
+	markProblems(errors, warnings);
 }
 
 void SourceFile::on_actionRun_triggered()
@@ -589,11 +611,17 @@ void SourceFile::on_actionRun_triggered()
 	else
 		m_mainWindow->setStatusMessage("Run Succeeded");
 
+	const QStringList& errors = m_target.getErrorMessages();
+	const QStringList& warnings = m_target.getWarningMessages();
+	
+	/* Show any error messages if any */
 	m_mainWindow->setErrors(this,
-				m_target.getErrorMessages(),
-				m_target.getWarningMessages(),
+				errors,
+				warnings,
 				m_target.getLinkerMessages(),
 				m_target.getVerboseMessages());
+				
+	markProblems(errors, warnings);
 }
 
 void SourceFile::on_actionStop_triggered()
@@ -612,11 +640,17 @@ void SourceFile::on_actionSimulate_triggered()
 	else
 		m_mainWindow->setStatusMessage("Simulation Succeeded");
 
+	const QStringList& errors = m_target.getErrorMessages();
+	const QStringList& warnings = m_target.getWarningMessages();
+	
+	/* Show any error messages if any */
 	m_mainWindow->setErrors(this,
-				m_target.getErrorMessages(),
-				m_target.getWarningMessages(),
+				errors,
+				warnings,
 				m_target.getLinkerMessages(),
 				m_target.getVerboseMessages());
+				
+	markProblems(errors, warnings);
 }
 
 void SourceFile::on_actionDebug_triggered()
@@ -633,12 +667,23 @@ void SourceFile::on_actionDebug_triggered()
 		m_mainWindow->setStatusMessage("Debug Succeeded");
 	}
 	
+	const QStringList& errors = m_target.getErrorMessages();
+	const QStringList& warnings = m_target.getWarningMessages();
+	
+	/* Show any error messages if any */
 	m_mainWindow->setErrors(this,
-				m_target.getErrorMessages(),
-				m_target.getWarningMessages(),
+				errors,
+				warnings,
 				m_target.getLinkerMessages(),
 				m_target.getVerboseMessages());
+				
+	markProblems(errors, warnings);
 
+	if(!interface) return;
+	
+	foreach(const int& i, m_breakpoints) {
+		interface->addBreakpoint(m_fileInfo.fileName(), i);
+	}
 	m_debugger.startDebug(interface, this);
 }
 
@@ -669,7 +714,7 @@ void SourceFile::on_actionRedo_triggered()
 
 void SourceFile::on_actionFind_triggered()
 {
-	m_mainWindow->showFindDialog(this);
+	SourceFileShared::ref().showFindDialog(this);
 }
 
 void SourceFile::on_actionManual_triggered()
@@ -707,7 +752,7 @@ void SourceFile::on_actionResetZoomLevel_triggered()
 
 void SourceFile::on_actionChangeTarget_triggered()
 {
-	ChooseTargetDialog* tDialog = m_mainWindow->chooseTargetDialog();
+	ChooseTargetDialog* tDialog = SourceFileShared::ref().chooseTargetDialog();
 	if(!tDialog->exec()) return;
 	if(!m_target.setTargetFile(tDialog->getSelectedTargetFilePath())) {
 		QMessageBox::critical(this, "Error", "Error loading target!");
@@ -733,10 +778,30 @@ void SourceFile::on_actionChangeTarget_triggered()
 
 void SourceFile::on_actionChoosePort_triggered()
 {
-	ChoosePortDialog* pDialog = m_mainWindow->choosePortDialog();
+	ChoosePortDialog* pDialog = SourceFileShared::ref().choosePortDialog();
 	if(pDialog->exec()) {
 		m_target.setPort(pDialog->getSelectedPortName());
 	}
+}
+
+void SourceFile::on_actionAddBreakpoint_triggered()
+{
+	qWarning() << "Added breakpoint to " << m_currentLine;
+	m_breakpoints.removeAll(m_currentLine);
+	qWarning() << ui_editor->markerAdd(m_currentLine, m_breakIndicator);
+	m_breakpoints.append(m_currentLine);
+	
+}
+
+void SourceFile::on_actionRemoveBreakpoint_triggered()
+{
+	ui_editor->markerDelete(m_currentLine, m_breakIndicator);
+	m_breakpoints.removeAll(m_currentLine);
+}
+
+void SourceFile::on_ui_editor_cursorPositionChanged(int line, int index)
+{
+	m_currentLine = line;
 }
 
 /*ADDED BY NB*///2/10/2010-dpm
@@ -745,4 +810,24 @@ void SourceFile::dropEvent(QDropEvent *event)
     /*Emit signal that can be connected to any slot(s) desired*/
    // emit handleDrop(event);
 
+}
+
+void SourceFile::clearProblems()
+{
+	ui_editor->markerDeleteAll(m_errorIndicator);
+	ui_editor->markerDeleteAll(m_warningIndicator);
+}
+
+void SourceFile::markProblems(const QStringList& errors, const QStringList& warnings)
+{
+	foreach(const QString& error, errors) {
+		int line = error.section(":", 1, 1).toInt();
+		if(--line < 0) continue;
+		ui_editor->markerAdd(line, m_errorIndicator);
+	}
+	foreach(const QString& warning, warnings) {
+		int line = warning.section(":", 1, 1).toInt();
+		if(--line < 0) continue;
+		ui_editor->markerAdd(line, m_warningIndicator);
+	}
 }

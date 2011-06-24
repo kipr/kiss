@@ -237,8 +237,32 @@
    </property>
   </action>
   <action name="actionDebug">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/bug.png</normaloff>:/shortcuts/target/icon_set/icons/bug.png</iconset>
+   </property>
    <property name="text">
     <string>Debug</string>
+   </property>
+  </action>
+  <action name="actionAddBreakpoint">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/sourcefile/icon_set/icons/bullet_blue.png</normaloff>:/sourcefile/icon_set/icons/bullet_blue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Breakpoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+B</string>
+   </property>
+  </action>
+  <action name="actionRemoveBreakpoint">
+   <property name="text">
+    <string>Remove Breakpoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+N</string>
    </property>
   </action>
  </widget>

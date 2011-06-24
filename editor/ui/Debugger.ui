@@ -6,190 +6,221 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>946</width>
-    <height>676</height>
+    <width>612</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Debugger</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetMinimumSize</enum>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QPushButton" name="ui_run">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Run</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../rc/icons.qrc">
-         <normaloff>:/debugger/icon_set/icons/control_play.png</normaloff>:/debugger/icon_set/icons/control_play.png</iconset>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ui_step">
-       <property name="text">
-        <string>Step</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../rc/icons.qrc">
-         <normaloff>:/debugger/icon_set/icons/control_end.png</normaloff>:/debugger/icon_set/icons/control_end.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ui_pause">
-       <property name="text">
-        <string>Pause</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../rc/icons.qrc">
-         <normaloff>:/debugger/icon_set/icons/control_pause.png</normaloff>:/debugger/icon_set/icons/control_pause.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ui_stop">
-       <property name="text">
-        <string>Stop</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../rc/icons.qrc">
-         <normaloff>:/debugger/icon_set/icons/control_stop.png</normaloff>:/debugger/icon_set/icons/control_stop.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ui_clear">
-       <property name="text">
-        <string>Clear</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QTextEdit" name="ui_consoleOut">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLineEdit" name="ui_consoleIn"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ui_consoleEnter">
-       <property name="text">
-        <string>Enter</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QTabWidget" name="ui_tabWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="tabShape">
-      <enum>QTabWidget::Rounded</enum>
-     </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <property name="movable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="ui_stackTab">
-      <attribute name="title">
-       <string>Stack</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QListWidget" name="ui_stack"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="ui_threadTab">
-      <attribute name="title">
-       <string>Threads</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QListWidget" name="ui_threads"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="ui_variableTab">
-      <attribute name="title">
-       <string>Variables</string>
-      </attribute>
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="margin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QListWidget" name="ui_variables"/>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetMinimumSize</enum>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="ui_run">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Run</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../rc/icons.qrc">
+             <normaloff>:/debugger/icon_set/icons/control_play.png</normaloff>:/debugger/icon_set/icons/control_play.png</iconset>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ui_step">
+           <property name="text">
+            <string>Step</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../rc/icons.qrc">
+             <normaloff>:/debugger/icon_set/icons/control_end.png</normaloff>:/debugger/icon_set/icons/control_end.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ui_pause">
+           <property name="text">
+            <string>Pause</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../rc/icons.qrc">
+             <normaloff>:/debugger/icon_set/icons/control_pause.png</normaloff>:/debugger/icon_set/icons/control_pause.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ui_stop">
+           <property name="text">
+            <string>Stop</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../rc/icons.qrc">
+             <normaloff>:/debugger/icon_set/icons/control_stop.png</normaloff>:/debugger/icon_set/icons/control_stop.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ui_clear">
+           <property name="text">
+            <string>Clear</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="ui_librariesTab">
-      <attribute name="title">
-       <string>Libraries</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <widget class="QListWidget" name="ui_libs">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QTextEdit" name="ui_consoleOut">
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLineEdit" name="ui_consoleIn"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ui_consoleEnter">
+           <property name="text">
+            <string>Enter</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
+     </widget>
+     <widget class="QTabWidget" name="ui_tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="ui_stackTab">
+       <attribute name="title">
+        <string>Stack</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QListWidget" name="ui_stack"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="ui_threadTab">
+       <attribute name="title">
+        <string>Threads</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QListWidget" name="ui_threads"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="ui_variableTab">
+       <attribute name="title">
+        <string>Variables</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <widget class="QListWidget" name="ui_variables"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="ui_breakpointTab">
+       <attribute name="title">
+        <string>Breakpoints</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QListWidget" name="ui_breakpoints"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="ui_librariesTab">
+       <attribute name="title">
+        <string>Libraries</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QListWidget" name="ui_libs">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </widget>
    </item>

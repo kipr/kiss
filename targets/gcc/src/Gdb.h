@@ -20,6 +20,8 @@ public:
 	void pause();
 
 	void send(const QString& str);
+	void addBreakpoint(const QString& filename, const int lineNum);
+	void breakpoints();
 	void where();
 	void backtrace();
 	void value(const QString& variable);
@@ -40,6 +42,9 @@ private:
 	void stopped(const QString& data);
 	void stack(const QString& data);
 	void stackArgs(const QString& data);
+	void locals(const QString& data);
+	void bkpt(const QString& data);
+	void breakpointTable(const QString& data);
 	
 	QString cString(const QString& data, int starting);
 	int after(const QString& data, const QString& key);

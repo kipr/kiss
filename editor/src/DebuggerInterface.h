@@ -22,6 +22,15 @@ struct Variable
 	QString value;
 };
 
+struct Breakpoint 
+{
+	QString function;
+	QString file;
+	int line;
+	
+	bool enabled;
+};
+
 struct Frame
 {
 	QString function;
@@ -38,14 +47,16 @@ struct Responder {
 	virtual void writeStdout(const QString& str) = 0;
 	virtual void writeDebugState(const QString& str) = 0;
 	virtual void writeStderr(const QString& str) = 0;
-	virtual void update() = 0;	
+	virtual void update() = 0;
 	
 	virtual void programStopped() = 0;
 	virtual void programStarted() = 0;
 	virtual void programPaused() = 0;
 	virtual void programStepped() = 0;
 	
-	virtual void stack(QList<Frame> frames) = 0;
+	virtual void stack(const QList<Frame>& frames) = 0;
+	virtual void variables(const QList<Variable>& vars) = 0;
+	virtual void breakpoints(const QList<Breakpoint>& bkpts) = 0;
 };
 
 class DebuggerInterface
@@ -62,6 +73,8 @@ public:
 	virtual void pause() = 0;
 	
 	virtual void send(const QString& str) = 0;
+	virtual void addBreakpoint(const QString& filename, const int lineNum) = 0;
+	virtual void breakpoints() = 0;
 	virtual void where() = 0;
 	virtual void backtrace() = 0;
 	virtual void value(const QString& variable) = 0;

@@ -49,8 +49,8 @@ public:
 	void moveTo(int line, int pos);
 	
 private slots:
-	void updateTitle(QString title);
-	void updateUrl(QUrl url);
+	void updateTitle(const QString& title);
+	void updateUrl(const QUrl& url);
 	
 	void on_actionGo_triggered();
 	void on_actionCopy_triggered();

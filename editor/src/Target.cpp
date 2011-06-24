@@ -41,7 +41,7 @@ Target::~Target()
 }
 
 // Sets the target file and loads the associated plugin file
-bool Target::setTargetFile(QString filename)
+bool Target::setTargetFile(const QString& filename)
 {
 	QSettings settings(filename, QSettings::IniFormat);
 
@@ -199,19 +199,19 @@ bool Target::hasDebug()
 
 /* Begin action Methods */
 
-bool Target::compile(QString filename)
+bool Target::compile(const QString& filename)
 {
 	if(!hasCompile()) return false;
 	return TargetManager::ref().get(m_targetName)->compile(filename, m_port);
 }
 
-bool Target::download(QString filename)
+bool Target::download(const QString& filename)
 {
 	if(!hasDownload()) return false;
 	return TargetManager::ref().get(m_targetName)->download(filename, m_port);
 }
 
-bool Target::run(QString filename)
+bool Target::run(const QString& filename)
 {
 	if(!hasRun()) return false;
 	return TargetManager::ref().get(m_targetName)->run(filename, m_port);
@@ -223,13 +223,13 @@ void Target::stop()
 	TargetManager::ref().get(m_targetName)->stop(m_port);
 }
 
-bool Target::simulate(QString filename)
+bool Target::simulate(const QString& filename)
 {
 	if(!hasSimulate()) return false;
 	return TargetManager::ref().get(m_targetName)->simulate(filename, m_port);
 }
 
-DebuggerInterface* Target::debug(QString filename)
+DebuggerInterface* Target::debug(const QString& filename)
 {
 	if(!hasDebug()) return 0;
 	return TargetManager::ref().get(m_targetName)->debug(filename, m_port);
@@ -238,7 +238,7 @@ DebuggerInterface* Target::debug(QString filename)
 /* End action Methods */
 
 /* Serial Port set/get routines */
-void Target::setPort(QString port)
+void Target::setPort(const QString& port)
 {
 	m_port = port;
 }

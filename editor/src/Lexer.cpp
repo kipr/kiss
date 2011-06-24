@@ -59,14 +59,14 @@ QStringList Lexer::autoCompletionWordSeparators() const
     return m_lexerSpec->autoCompletionWordSeparators;
 }
 
-const char *Lexer::blockStartKeyword(int *style) const
+const char *Lexer::blockStartKeyword(int* style) const
 {
     if (style) *style = m_lexerSpec->blockStartKeywordStyle;
 
     return m_lexerSpec->blockStartKeyword.toLocal8Bit().data();
 }
 
-const char *Lexer::blockStart(int *style) const
+const char *Lexer::blockStart(int* style) const
 {
     if (style)
 	*style = m_lexerSpec->blockStartStyle;
@@ -74,7 +74,7 @@ const char *Lexer::blockStart(int *style) const
     return m_lexerSpec->blockStart.toLocal8Bit().data();
 }
 
-const char *Lexer::blockEnd(int *style) const
+const char *Lexer::blockEnd(int* style) const
 {
     if (style)
         *style = m_lexerSpec->blockEndStyle;

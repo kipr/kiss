@@ -43,7 +43,7 @@ public:
 	~Target();
 
 	// Sets the current target file (and loads the QPluginLoader object)
-	bool setTargetFile(QString filename);
+	bool setTargetFile(const QString& filename);
 
 	// These pass straight through to the TargetInterface if it is loaded
 	QStringList 	getErrorMessages();
@@ -67,15 +67,15 @@ public:
 	bool hasDebug();
 
 	// Again, these pass through to the TargetInterface if loaded
-	bool compile(QString filename);
-	bool download(QString filename);
-	bool run(QString filename);
+	bool compile(const QString& filename);
+	bool download(const QString& filename);
+	bool run(const QString& filename);
 	void stop();
-	bool simulate(QString filename);
-	DebuggerInterface* debug(QString filename);
+	bool simulate(const QString& filename);
+	DebuggerInterface* debug(const QString& filename);
 
 	// Set/Get the current serial port
-	void setPort(QString port);
+	void setPort(const QString& port);
 	QString getPort();
 
 private:

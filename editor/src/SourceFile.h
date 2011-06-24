@@ -65,8 +65,8 @@ public:
 	bool beginSetup();
 	void completeSetup();
 	
-	bool fileSaveAs(QString filePath);
-	bool fileOpen(QString filePath);
+	bool fileSaveAs(const QString& filePath);
+	bool fileOpen(const QString& filePath);
 	
 	bool close();
 
@@ -117,6 +117,11 @@ private slots:
 	
 	void on_actionChangeTarget_triggered();
 	void on_actionChoosePort_triggered();
+	
+	void on_actionAddBreakpoint_triggered();
+	void on_actionRemoveBreakpoint_triggered();
+	
+	void on_ui_editor_cursorPositionChanged(int line, int index);
 private:
 	QFile m_fileHandle;
 	QFileInfo m_fileInfo;
@@ -128,6 +133,17 @@ private:
 	QString m_lexAPI;
 	Debugger m_debugger;
 	int m_breakpointMarker;
+	
+	int m_errorIndicator;
+	int m_warningIndicator;
+	int m_breakIndicator;
+	
+	QList<int> m_breakpoints;
+	
+	int m_currentLine;
+	
+	void clearProblems();
+	void markProblems(const QStringList& errors, const QStringList& warnings);
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

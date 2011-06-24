@@ -46,7 +46,7 @@ public:
 	~TargetSettingsDialog();
 	
 	// Sets the target file that will be edited when exec is called
-	void setTargetFile(QString filename);
+	void setTargetFile(const QString& filename);
 	
 	// Run the dialog
 	int exec();

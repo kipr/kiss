@@ -104,6 +104,8 @@ void Debugger::programPaused()
 	ui_stop->setEnabled(true);
 	
 	m_interface->backtrace();
+	m_interface->variables();
+	m_interface->breakpoints();
 }
 
 void Debugger::programStepped()
@@ -128,5 +130,24 @@ void Debugger::stack(QList<Frame> frames)
 		ui_stack->addItem(frame.file + ":" + 
 			QString::number(frame.line) + "::" + 
 			frame.function + "(" + vars.join(",") + ")");
+	}
+}
+
+void Debugger::variables(QList<Variable> vars)
+{
+	ui_variables->clear();
+	
+	foreach(const Variable& var, vars) {
+		ui_variables->addItem(var.name + " = " + var.value);
+	}
+}
+
+void Debugger::breakpoints(QList<Breakpoint> bkpts)
+{
+	ui_breakpoints->clear();
+	
+	foreach(const Breakpoint& bkpt, bkpts) {
+		ui_breakpoints->addItem(QString((bkpt.enabled ? "Enabled:" : "Disabled:")) + " " + 
+			bkpt.file + ":" + bkpt.line + "::" + bkpt.function);
 	}
 }

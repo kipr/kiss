@@ -39,7 +39,8 @@ HEADERS += 	src/MainWindow.h \
 			src/WelcomeTab.h \
 			src/LexerSpecManager.h \
 			src/DebuggerInterface.h \
-			src/Debugger.h
+			src/Debugger.h \
+			src/SourceFileShared.h
 
 SOURCES += 	src/main.cpp \
 			src/MainWindow.cpp \
@@ -55,7 +56,8 @@ SOURCES += 	src/main.cpp \
 			src/WebTab.cpp \
 			src/WelcomeTab.cpp \
 			src/LexerSpecManager.cpp \
-			src/Debugger.cpp
+			src/Debugger.cpp \
+			src/SourceFileShared.cpp
 
 FORMS += 	ui/MainWindow.ui \
 			ui/ChooseTargetDialog.ui \
