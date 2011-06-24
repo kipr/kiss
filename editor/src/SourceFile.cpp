@@ -36,8 +36,11 @@
 
 #include "MainWindow.h"
 #include "WebTab.h"
+#include "LexerSpecManager.h"
 
-SourceFile::SourceFile(MainWindow* parent) : Tab(parent), m_fileHandle("Untitled"), m_isNewFile(true), m_target(this)
+#define BREAKPOINT_MASK 0xDEAD
+
+SourceFile::SourceFile(MainWindow* parent) : Tab(parent), m_fileHandle("Untitled"), m_isNewFile(true), m_target(this), m_debugger(this)
 {
 	setupUi(this);
 	
@@ -45,6 +48,8 @@ SourceFile::SourceFile(MainWindow* parent) : Tab(parent), m_fileHandle("Untitled
 	m_fileInfo.setFile(m_fileHandle);
 	m_mainWindow->setStatusMessage("");
 	ui_editor->setEolMode(QsciScintilla::EolUnix);
+	
+	m_debugger.hide();
 	
 	connect(actionSave, SIGNAL(triggered()), this, SLOT(fileSave()));
 	connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
@@ -92,6 +97,7 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	if(m_target.hasSimulate()) target->addAction(actionSimulate);
 	if(m_target.hasRun()) target->addAction(actionRun);
 	if(m_target.hasStop()) target->addAction(actionStop);
+	if(m_target.hasDebug()) target->addAction(actionDebug);
 	target->addSeparator();
 	target->addAction(actionChangeTarget);
 	target->addAction(actionChoosePort);
@@ -122,6 +128,7 @@ void SourceFile::addToolbarActions(QToolBar* toolbar)
 	if(m_target.hasSimulate()) toolbar->addAction(actionSimulate);
 	if(m_target.hasRun()) toolbar->addAction(actionRun);
 	if(m_target.hasStop()) toolbar->addAction(actionStop);
+	if(m_target.hasDebug()) toolbar->addAction(actionDebug);
 }
 
 bool SourceFile::beginSetup()
@@ -148,7 +155,7 @@ bool SourceFile::beginSetup()
 	}
 
 	/* Sets up the lexer for the target */
-	m_lexSpec = m_target.getLexerSpec();
+	m_lexSpec = LexerSpecManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
 	
 	if(!m_lexSpec) qWarning() << "Target did not supply a LexerSpec.";
 
@@ -216,6 +223,14 @@ bool SourceFile::fileSaveAs(QString filePath)
 	
 	m_mainWindow->setTabName(this, m_fileInfo.fileName());
 	
+	// Update the lexer to the new spec for that extension
+	LexerSpec* lexerSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
+	if(lexerSpec != m_lexSpec) {
+		m_lexSpec = lexerSpec;
+		refreshSettings();
+		updateMargins();
+	}
+	
 	return true;
 }
 
@@ -236,6 +251,17 @@ bool SourceFile::fileOpen(QString filePath)
 	m_isNewFile = false;
 
 	m_mainWindow->setTabName(this, m_fileInfo.fileName());
+	
+	m_breakpointMarker = ui_editor->markerDefine('*');
+	ui_editor->markerAdd(1, m_breakpointMarker);
+
+	// Update the lexer to the new spec for that extension
+	LexerSpec* lexerSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
+	if(lexerSpec != m_lexSpec) {
+		m_lexSpec = lexerSpec;
+		refreshSettings();
+		updateMargins();
+	}
 
 	return true;
 }
@@ -378,8 +404,6 @@ void SourceFile::refreshSettings()
 	/* Set the default font from settings */
 	QFont defFont(settings.value("font").toString(), settings.value("fontsize").toInt());
 	
-	if(!lexer) qWarning() << "No lexer!";
-	
 	if(lexer) {
 		lexer->defaultColor(0);
 		lexer->setDefaultFont(defFont);
@@ -413,10 +437,13 @@ void SourceFile::refreshSettings()
 	settings.endGroup();
 
 	if(settings.value("linenumbers").toBool()){
-		ui_editor->setMarginLineNumbers(1, true);
+		ui_editor->setMarginLineNumbers(0, true);
 		updateMargins();
 	}
-	else ui_editor->setMarginLineNumbers(1, false);
+	else ui_editor->setMarginLineNumbers(0, false);
+	
+	ui_editor->setMarginLineNumbers(1, false);
+	ui_editor->setMarginMarkerMask(1, m_breakpointMarker);
 	
 	if(settings.value("bracematching").toBool())
 		 ui_editor->setBraceMatching(QsciScintilla::StrictBraceMatch);
@@ -427,14 +454,15 @@ void SourceFile::refreshSettings()
 	else ui_editor->setCallTipsStyle(QsciScintilla::CallTipsNone);
 
 	settings.endGroup();
+	// qWarning() << lexer->defaultColor(LexerCPP::Keyword).name();
 
 	ui_editor->setLexer(lexer);
+	qWarning() << "Updated Lexer! " << lexer;
 }
 
 QString SourceFile::fileName()
 {
 	return m_fileInfo.fileName();
-	
 }
 
 QString SourceFile::filePath()
@@ -455,6 +483,7 @@ void SourceFile::updateMargins()
 		font.setPointSize(font.pointSize() + getZoom());
 		charWidth = QFontMetrics(font).width("0");
 	}
+	ui_editor->setMarginWidth(0, charWidth + charWidth/2 + charWidth * (int)ceil(log10(ui_editor->lines()+1)));
 	ui_editor->setMarginWidth(1, charWidth + charWidth/2 + charWidth * (int)ceil(log10(ui_editor->lines()+1)));
 }
 
@@ -489,19 +518,19 @@ void SourceFile::on_actionSaveAs_triggered()
 {
 	QSettings settings;
 	QString savePath = settings.value("savepath", QDir::homePath()).toString();
-	QString filePath = QFileDialog::getSaveFileName(m_mainWindow, "Save File", savePath, m_target.getSourceExtensions() + "All Files (*)");
+	QString filePath = QFileDialog::getSaveFileName(m_mainWindow, "Save File", savePath, m_target.getSourceExtensions().join(";;") + ";;All Files (*)");
 	if(filePath.isEmpty())
 		return;
 
 	QFileInfo fileInfo(filePath);
 	
 	QString ext = m_target.getDefaultExtension();
-	if(fileInfo.suffix() != ext) fileInfo.setFile(filePath + "." + ext);
+	if(!ext.isEmpty() && fileInfo.suffix().isEmpty()) fileInfo.setFile(filePath + "." + ext);
 	
 	settings.setValue("savepath", fileInfo.absolutePath());
 
 	/* Saves the file with the new fileName and updates the tabWidget label */
-	if(fileSaveAs(filePath)) {
+	if(fileSaveAs(fileInfo.absoluteFilePath())) {
 		m_mainWindow->setTabName(this, fileName());
 		m_mainWindow->setStatusMessage("Saved file\"" + fileName() + "\"");
 	} else QMessageBox::critical(m_mainWindow, "Error", "Error: Could not write file " + fileName());
@@ -590,6 +619,28 @@ void SourceFile::on_actionSimulate_triggered()
 				m_target.getVerboseMessages());
 }
 
+void SourceFile::on_actionDebug_triggered()
+{
+	fileSave();
+	m_mainWindow->hideErrors();
+	
+	DebuggerInterface* interface = m_target.debug(filePath());
+	
+	if(!interface) {
+		m_mainWindow->setStatusMessage("Debug Failed");
+		
+	} else {
+		m_mainWindow->setStatusMessage("Debug Succeeded");
+	}
+	
+	m_mainWindow->setErrors(this,
+				m_target.getErrorMessages(),
+				m_target.getWarningMessages(),
+				m_target.getLinkerMessages(),
+				m_target.getVerboseMessages());
+
+	m_debugger.startDebug(interface, this);
+}
 
 void SourceFile::on_actionCopy_triggered()
 {
@@ -673,9 +724,6 @@ void SourceFile::on_actionChangeTarget_triggered()
 		on_actionChoosePort_triggered();
 		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
 	}
-
-	/* Sets up the lexer for the target */
-	m_lexSpec = m_target.getLexerSpec();
 
 	/* Sets the api file for the new target */
 	m_lexAPI = tDialog->getSelectedTargetFilePath().replace(".target",".api");

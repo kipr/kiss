@@ -231,6 +231,11 @@
     <string>Ctrl+N</string>
    </property>
   </action>
+  <action name="actionErrorLog">
+   <property name="text">
+    <string>Error Log</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../rc/icons.qrc"/>

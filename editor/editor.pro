@@ -22,46 +22,50 @@ LIBS += -lqscintilla2
 win32: LIBS += -lshell32
 
 # Input
-HEADERS += src/MainWindow.h \
-	   src/ChooseTargetDialog.h \
-	   src/ChoosePortDialog.h \
-	   src/EditorSettingsDialog.h \
-	   src/TargetSettingsDialog.h \
-	   src/FindDialog.h \
-	   src/Target.h \
-	   src/SourceFile.h \
-	   src/Lexer.h \
-	   src/LexerSpec.h \
-	   src/LexerStyles.h \
-	   src/Version.h \
-	   src/Tab.h \
-	   src/TargetManager.h \
-	   src/WebTab.h \
-	   src/WelcomeTab.h
+HEADERS += 	src/MainWindow.h \
+			src/ChooseTargetDialog.h \
+			src/ChoosePortDialog.h \
+			src/EditorSettingsDialog.h \
+			src/TargetSettingsDialog.h \
+			src/FindDialog.h \
+			src/Target.h \
+			src/SourceFile.h \
+			src/Lexer.h \
+			src/LexerSpec.h \
+			src/Version.h \
+			src/Tab.h \
+			src/TargetManager.h \
+			src/WebTab.h \
+			src/WelcomeTab.h \
+			src/LexerSpecManager.h \
+			src/DebuggerInterface.h \
+			src/Debugger.h
 
-SOURCES += src/main.cpp \
-	   src/MainWindow.cpp \
-	   src/ChooseTargetDialog.cpp \
-	   src/ChoosePortDialog.cpp \
-	   src/EditorSettingsDialog.cpp \
-	   src/TargetSettingsDialog.cpp \
-	   src/FindDialog.cpp \
-	   src/Target.cpp \
-	   src/SourceFile.cpp \
-	   src/Lexer.cpp \
-	   src/Tab.cpp \
-	   src/TargetManager.cpp \
-	   src/WebTab.cpp \
-	   src/WelcomeTab.cpp
+SOURCES += 	src/main.cpp \
+			src/MainWindow.cpp \
+			src/ChooseTargetDialog.cpp \
+			src/ChoosePortDialog.cpp \
+			src/EditorSettingsDialog.cpp \
+			src/TargetSettingsDialog.cpp \
+			src/FindDialog.cpp \
+			src/Target.cpp \
+			src/SourceFile.cpp \
+			src/Lexer.cpp \
+			src/TargetManager.cpp \
+			src/WebTab.cpp \
+			src/WelcomeTab.cpp \
+			src/LexerSpecManager.cpp \
+			src/Debugger.cpp
 
-FORMS += ui/MainWindow.ui \
-	 ui/ChooseTargetDialog.ui \
-	 ui/ChoosePortDialog.ui \
-	 ui/FindDialog.ui \
-	 ui/EditorSettingsDialog.ui \
-	 ui/TargetSettingsDialog.ui \
-	 ui/SourceFile.ui \
-	 ui/WebTab.ui
+FORMS += 	ui/MainWindow.ui \
+			ui/ChooseTargetDialog.ui \
+			ui/ChoosePortDialog.ui \
+			ui/FindDialog.ui \
+			ui/EditorSettingsDialog.ui \
+			ui/TargetSettingsDialog.ui \
+			ui/SourceFile.ui \
+			ui/WebTab.ui \
+			ui/Debugger.ui
 
 RESOURCES += rc/icons.qrc
 

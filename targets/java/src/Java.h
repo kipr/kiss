@@ -44,12 +44,14 @@ public:
 	void stop(QString) {}
 	bool download(QString,QString) {return false;}
 	bool simulate(QString,QString) {return false;}
+	DebuggerInterface* debug(QString, QString) { return 0; }
 
 	bool hasCompile() { return true; }
 	bool hasRun() { return true; }
 	bool hasDownload() { return false; }
 	bool hasStop() { return false; }
 	bool hasSimulate() {return false; }
+	bool hasDebug() { return false; }
 
 private:
 	QProcess m_java;
@@ -61,7 +63,6 @@ private:
 	void processCompilerOutput();
 	void processLinkerOutput();
 	void refreshSettings();
-	void setLexerSpecs();
 };
 
 #endif

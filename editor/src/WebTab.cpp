@@ -137,7 +137,6 @@ void WebTab::load(QString url, bool hideUrl)
 
 void WebTab::moveTo(int line, int pos)
 {
-	
 }
 
 void WebTab::refreshSettings()

@@ -61,6 +61,22 @@ public:
 	QString description(int style) const;
 
 private:
+	char *m_language;
+	char *m_lexer;
+	QStringList m_autoCompletionWordSeparators;
+	char *m_blockEnd;
+	int	 m_blockEndStyle;
+	char *m_blockStart;
+	int   m_blockStartStyle;
+	char *m_blockStartKeyword;
+	int   m_blockStartKeywordStyle;
+	int   m_braceStyle;
+	char *m_wordCharacters;
+	QMap<int, QColor> m_defaultColor;
+	QList<int> m_defaultEolFill;
+	QMap<int, QFont> m_defaultFont;
+	QMap<int, QColor> m_defaultPaper;
+	QMap<int, QString> m_keywords;
 	
 	LexerSpec* m_lexerSpec;
 	QsciAPIs m_apis;

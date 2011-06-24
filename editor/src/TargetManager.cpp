@@ -66,7 +66,7 @@ QStringList TargetManager::getAllSupportedExtensions()
 		}
 		
 		QSettings target(targetFile.absoluteFilePath(), QSettings::IniFormat);
-		extensionList << target.value("extensions").toString();
+		extensionList << target.value("extensions").toString().split("|");
 		targetDir.cdUp();
 	}
 	return extensionList;

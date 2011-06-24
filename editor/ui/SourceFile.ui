@@ -236,6 +236,11 @@
     <string>Choose Port</string>
    </property>
   </action>
+  <action name="actionDebug">
+   <property name="text">
+    <string>Debug</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

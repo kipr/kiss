@@ -31,14 +31,16 @@
 #include <QMessageBox>
 #include <QDateTime>
 
+#include "Gdb.h"
+
 Gcc::Gcc()
 {
 #ifdef Q_OS_WIN32
-	m_gccPath = QDir::currentPath() + "/targets/gcc/mingw/bin/gcc.exe";
+	m_gccPath = QDir::currentPath() + "/targets/gcc/mingw/bin/g++.exe";
 #elif defined(Q_OS_MAC)
-  m_gccPath="/usr/bin/gcc";
+  m_gccPath="/usr/bin/g++";
 #else
-	m_gccPath="/usr/bin/gcc";
+	m_gccPath="/usr/bin/g++";
 #endif
 
 	QFileInfo gccExecutable(m_gccPath);
@@ -46,8 +48,6 @@ Gcc::Gcc()
 		QMessageBox::critical(0, "Error", "Could not find GCC Executable!");
 
 	m_gcc.setReadChannel(QProcess::StandardError);
-
-	setLexerSpecs();
 
 //FIXME This is ugly
 #ifdef Q_OS_MAC
@@ -65,47 +65,7 @@ Gcc::~Gcc()
 
 bool Gcc::compile(QString filename, QString port)
 {
-	QFileInfo sourceInfo(filename);
-	QStringList args;
-
-	refreshSettings();
-
-#ifdef Q_OS_WIN32
-	m_outputFileName = sourceInfo.dir().absoluteFilePath(sourceInfo.baseName() + ".exe");
-#else
-	m_outputFileName = sourceInfo.dir().absoluteFilePath(sourceInfo.baseName());
-#endif
-	QString objectName = sourceInfo.dir().absoluteFilePath(sourceInfo.baseName() + ".o");
-
-	QFileInfo outputInfo(m_outputFileName);
-	if(sourceInfo.lastModified() < outputInfo.lastModified())
-		return true;
-
-	args = m_cflags;
-	port.replace("\\", "\\\\");
-	args << "-DDEFAULT_SERIAL_PORT=\"" + port + "\"";
-	args << "-c" << filename << "-o" << objectName;
-	m_gcc.start(m_gccPath, args);
-	m_gcc.waitForFinished();
-	processCompilerOutput();
-	m_linkerMessages.clear();
-
-	if(m_gcc.exitCode() != 0)
-		return false;
-
-	args.clear();
-	args << "-o" << m_outputFileName << objectName;
-	args << m_lflags;
-	m_gcc.start(m_gccPath, args);
-	m_gcc.waitForFinished();
-	processLinkerOutput();
-
-	QFile objectFile(objectName);
-	objectFile.remove();
-
-	if(m_gcc.exitCode() == 0)
-		return true;
-	return false;
+	return compile(filename, port, false);
 }
 
 bool Gcc::run(QString filename, QString port)
@@ -160,6 +120,14 @@ bool Gcc::run(QString filename, QString port)
 
 	return true;
 
+}
+
+DebuggerInterface* Gcc::debug(QString filename, QString port)
+{
+	if(!compile(filename, port, true)) 
+		return 0;
+		
+	return new Gdb(m_outputFileName);
 }
 
 void Gcc::processCompilerOutput()
@@ -262,44 +230,50 @@ void Gcc::refreshSettings()
 #endif
 }
 
-void Gcc::setLexerSpecs()
+bool Gcc::compile(QString filename, QString port, bool debug)
 {
-	m_lexerSpec.language = "C";
-	m_lexerSpec.lexer = LexerCPP::lexerName();
-	m_lexerSpec.autoCompletionWordSeparators.clear();
-	m_lexerSpec.autoCompletionWordSeparators << "->" << ".";
-	m_lexerSpec.blockEnd = "}";
-	m_lexerSpec.blockEndStyle = LexerCPP::Operator;
-	m_lexerSpec.blockStart = "{";
-	m_lexerSpec.blockStartStyle = LexerCPP::Operator;
-	m_lexerSpec.blockStartKeyword = "case default";
-	m_lexerSpec.blockStartKeywordStyle = LexerCPP::Keyword;
-	m_lexerSpec.braceStyle = LexerCPP::Operator;
-	m_lexerSpec.wordCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_#";
+	QFileInfo sourceInfo(filename);
+	QStringList args;
 
-	m_lexerSpec.defaultColor[LexerCPP::Comment] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::CommentLine] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::CommentDoc] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::CommentLineDoc] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::CommentDocKeyword] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::CommentDocKeywordError] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::Keyword] = QColor("darkBlue");
-	m_lexerSpec.defaultColor[LexerCPP::String] = QColor("darkRed");
-	m_lexerSpec.defaultColor[LexerCPP::Character] = QColor("darkRed");
-	m_lexerSpec.defaultColor[LexerCPP::PreProcessor] = QColor("darkBlue");
-	m_lexerSpec.defaultColor[LexerCPP::StringEol] = QColor("darkRed");
+	refreshSettings();
 
-	m_lexerSpec.defaultFont[LexerCPP::Keyword] = QFont("", -1, QFont::Bold);
-	m_lexerSpec.defaultFont[LexerCPP::Operator] = QFont("", -1, QFont::Bold);
+#ifdef Q_OS_WIN32
+	m_outputFileName = sourceInfo.dir().absoluteFilePath(sourceInfo.baseName() + ".exe");
+#else
+	m_outputFileName = sourceInfo.dir().absoluteFilePath(sourceInfo.baseName());
+#endif
+	QString objectName = sourceInfo.dir().absoluteFilePath(sourceInfo.baseName() + ".o");
 
-	m_lexerSpec.keywords[1] = "asm auto break case char const continue default do "
-							  "double else enum extern float for goto if int long "
-							  "register return short signed sizeof static struct "
-							  "switch typedef union unsigned void volatile while";
-	
-	m_lexerSpec.defaultColor[LexerCPP::Keyword2] = QColor("darkMagenta"); // for ExtraGUIToolBar
-	m_lexerSpec.defaultFont[LexerCPP::Keyword2] = QFont("", -1, QFont::Bold); // for ExtraGUIToolBar
-	m_lexerSpec.keywords[2] = "boolean_expression  variable a_value starting_value ending_value change_in_variable"; // for ExtraGUIToolBar
+	QFileInfo outputInfo(m_outputFileName);
+	if(sourceInfo.lastModified() < outputInfo.lastModified())
+		return true;
+
+	args = m_cflags;
+	port.replace("\\", "\\\\");
+	args << "-DDEFAULT_SERIAL_PORT=\"" + port + "\"";
+	args << "-c" << filename << "-o" << objectName;
+	if(debug) args << "-g" << "-pg";
+	m_gcc.start(m_gccPath, args);
+	m_gcc.waitForFinished();
+	processCompilerOutput();
+	m_linkerMessages.clear();
+
+	if(m_gcc.exitCode() != 0)
+		return false;
+
+	args.clear();
+	args << "-o" << m_outputFileName << objectName;
+	args << m_lflags;
+	m_gcc.start(m_gccPath, args);
+	m_gcc.waitForFinished();
+	processLinkerOutput();
+
+	QFile objectFile(objectName);
+	if(!debug) objectFile.remove();
+
+	if(m_gcc.exitCode() == 0)
+		return true;
+	return false;
 }
 
 Q_EXPORT_PLUGIN2(gcc_plugin, Gcc);

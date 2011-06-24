@@ -46,8 +46,7 @@ void FindDialog::on_ui_buttonFind_clicked(bool)
 	if(isModified()) {
 		found = m_currentSourceFile->getEditor()->findFirst(ui_findInput->text(), false, ui_matchCaseCheckBox->isChecked(), false, true);
 		setModified(false);
-	}
-	else
+	} else
 		found = m_currentSourceFile->getEditor()->findNext();
 	if(!found)
 		QMessageBox::warning(this, "Not found", "Not Found");

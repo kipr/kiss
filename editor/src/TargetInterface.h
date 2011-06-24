@@ -29,6 +29,7 @@
 
 #include "LexerSpec.h"
 #include "LexerStyles.h"
+#include "DebuggerInterface.h"
 
 class TargetInterface 
 {
@@ -43,6 +44,7 @@ public:
 	virtual void stop(QString port) = 0;
 	virtual bool download(QString filename, QString port) = 0;
 	virtual bool simulate(QString filename, QString port) = 0;
+	virtual DebuggerInterface* debug(QString filename, QString port) = 0;
 
 	// These should inform the plugin loader of
 	// The features offered by this plugin
@@ -51,6 +53,7 @@ public:
 	virtual bool hasRun() = 0;
 	virtual bool hasStop() = 0;
 	virtual bool hasSimulate() = 0;
+	virtual bool hasDebug() = 0;
 	
 	/* Builtin Stuff */
 	QList<QAction*> getActionList() {return m_actionList;}
@@ -58,12 +61,10 @@ public:
 	QStringList 	getWarningMessages() {return m_warningMessages;}
 	QStringList 	getLinkerMessages() {return m_linkerMessages;}
 	QStringList 	getVerboseMessages() {return m_verboseMessages;}
-	LexerSpec* 	getLexerSpec() {return &m_lexerSpec;}
 	
 	void setTargetFile(QString filename) {m_targetFile=filename;}
 	
 protected:
-	LexerSpec m_lexerSpec;
 	QString m_targetFile;
 	QStringList m_warningMessages, m_errorMessages, 
 		m_linkerMessages, m_verboseMessages;

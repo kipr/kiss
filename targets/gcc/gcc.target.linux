@@ -1,10 +1,11 @@
 [General]
 description=Calls a native GCC compiler
 display_name=This Machine
-extensions=C Sources (*.c *.h)
+extensions=C Sources (*.c *.h)|C++ Sources (*.cpp *.h *.hpp)
 manual=targets/gcc/manual/gccmanual.html
 name=gcc
 template=targets/gcc/template.c
+default_extension=c
 
 [Target]
 cflags=-Wimplicit

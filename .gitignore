@@ -1,3 +1,4 @@
+*.dylib
 KISS
 targets/gcc/libgcc_plugin.so
 targets/gcc/lib/

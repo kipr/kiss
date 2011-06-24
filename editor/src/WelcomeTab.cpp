@@ -49,7 +49,6 @@ void WelcomeTab::linkClicked(const QUrl& url)
 		return;
 	}
 	if(auth == "help") {
-		// No such thing as help yet :P
 		return;
 	}
 }

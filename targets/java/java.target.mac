@@ -5,6 +5,7 @@ extensions=Java Sources (*.java)
 manual=targets/java/manual/javamanual.html
 name=java
 template=targets/java/template.java
+default_extension=java
 
 [Target]
 lib_dirs=targets/gcc/lib

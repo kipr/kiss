@@ -22,6 +22,7 @@
 #define __TARGET_H__
 
 #include "TargetInterface.h"
+#include "DebuggerInterface.h"
 
 #include <QPluginLoader>
 #include <QObject>
@@ -49,11 +50,10 @@ public:
 	QStringList 	getWarningMessages();
 	QStringList 	getLinkerMessages();
 	QStringList 	getVerboseMessages();
-	LexerSpec* 	getLexerSpec();
 	QList<QAction*> getActionList();
 	
 	// These two load some settings from the target file
-	QString getSourceExtensions();
+	QStringList getSourceExtensions();
 	QString getDefaultExtension();
 	QString getSourceTemplate();
 	QString getTargetManualPath();
@@ -64,6 +64,7 @@ public:
 	bool hasRun();
 	bool hasStop();
 	bool hasSimulate();
+	bool hasDebug();
 
 	// Again, these pass through to the TargetInterface if loaded
 	bool compile(QString filename);
@@ -71,6 +72,7 @@ public:
 	bool run(QString filename);
 	void stop();
 	bool simulate(QString filename);
+	DebuggerInterface* debug(QString filename);
 
 	// Set/Get the current serial port
 	void setPort(QString port);

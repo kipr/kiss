@@ -28,6 +28,7 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
+#include <QDebug>
 #include "TargetManager.h"
 
 // Constructor & Destructor
@@ -98,15 +99,6 @@ QStringList Target::getVerboseMessages()
 	return QStringList();
 }
 
-LexerSpec* Target::getLexerSpec()
-{
-	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
-	if(targetInterface) return targetInterface->getLexerSpec();
-
-	qWarning("Target::getLexerSpec() Invalid m_targetInterface");
-	return 0;
-}
-
 QList<QAction*> Target::getActionList()
 {
 	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
@@ -116,12 +108,12 @@ QList<QAction*> Target::getActionList()
 	return QList<QAction*>();
 }
 
-QString Target::getSourceExtensions()
+QStringList Target::getSourceExtensions()
 {
 	QSettings settings(m_targetFileName, QSettings::IniFormat);
 	QString extensions = settings.value("extensions").toString();
-	
-	return extensions.split(",").join("\n") + "\n";
+	qWarning() << "Extensions:" << extensions;
+	return extensions.split("|");
 }
 
 QString Target::getDefaultExtension()
@@ -197,6 +189,12 @@ bool Target::hasSimulate()
 	return targetInterface && targetInterface->hasSimulate();
 }
 
+bool Target::hasDebug()
+{
+	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
+	return targetInterface && targetInterface->hasDebug();
+}
+
 /* End HAS Methods */
 
 /* Begin action Methods */
@@ -229,6 +227,12 @@ bool Target::simulate(QString filename)
 {
 	if(!hasSimulate()) return false;
 	return TargetManager::ref().get(m_targetName)->simulate(filename, m_port);
+}
+
+DebuggerInterface* Target::debug(QString filename)
+{
+	if(!hasDebug()) return 0;
+	return TargetManager::ref().get(m_targetName)->debug(filename, m_port);
 }
 
 /* End action Methods */

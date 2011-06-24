@@ -45,12 +45,14 @@ public:
 	void stop(QString) {}
 	bool download(QString filename, QString port);
 	bool simulate(QString filename, QString port);
+	DebuggerInterface* debug(QString, QString) { return 0; }
 
 	bool hasCompile() { return true; }
 	bool hasRun() { return false; }
 	bool hasDownload() { return true; }
 	bool hasStop() { return false; }
 	bool hasSimulate() { return true; }
+	bool hasDebug() { return false; }
 
 private:
 	QProcess m_gcc;
@@ -63,7 +65,6 @@ private:
 	void processCompilerOutput();
 	void processLinkerOutput();
 	void refreshSettings();
-	void setLexerSpecs();
 	
   	QStringList getPaths(QString string);
 };

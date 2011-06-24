@@ -15,8 +15,9 @@ CONFIG += release
 
 LIBS += -lqscintilla2
 
-HEADERS += Gcc.h
-SOURCES += Gcc.cpp
+HEADERS += 	Gcc.h Gdb.h
+SOURCES += 	Gcc.cpp \
+			Gdb.cpp 
 
 QMAKE_CLEAN += $(DESTDIR)/$(TARGET) src/*~
 

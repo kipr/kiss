@@ -29,7 +29,7 @@ class QToolBar;
 class Tab
 {
 public:	
-	Tab(MainWindow* mainWindow);
+	Tab(MainWindow* mainWindow) : m_mainWindow(mainWindow) {}
 	
 	// All of these are hooks to add menu items
 	virtual void addActionsFile(QMenu* file) = 0;

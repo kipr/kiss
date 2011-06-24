@@ -30,24 +30,21 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QDebug>
 
 CBC::CBC()
 {
 #ifdef Q_OS_WIN32
 	m_gccPath = QDir::currentPath() + "/targets/gcc/mingw/bin/gcc.exe";
-#elif defined(Q_OS_MAC)
-  m_gccPath="/usr/bin/gcc";
 #else
 	m_gccPath="/usr/bin/gcc";
 #endif
 
 	QFileInfo gccExecutable(m_gccPath);
 	if(!gccExecutable.exists())
-		QMessageBox::critical(0, "Error", "Could not find GCC Executable!");
+		QMessageBox::critical(0, "Error", "Could not find G++ Executable!");
 
 	m_gcc.setReadChannel(QProcess::StandardError);
-
-	setLexerSpecs();
 	
 	// m_actionList.push_back(m_toolbar.toolbarAction());
 
@@ -55,7 +52,7 @@ CBC::CBC()
 #ifdef Q_OS_MAC
 	system(("ranlib " + QDir::currentPath() + "/targets/gcc/lib/*.a").toLocal8Bit());
 	system(("ranlib " + QDir::currentPath() + "/targets/cbc/lib/*.a").toLocal8Bit());
-  system(("ranlib " + QDir::currentPath() + "/targets/cbc2/lib/*.a").toLocal8Bit());
+	system(("ranlib " + QDir::currentPath() + "/targets/cbc2/lib/*.a").toLocal8Bit());
 #endif
 }
 
@@ -87,6 +84,7 @@ bool CBC::compile(QString filename, QString port)
 	port.replace("\\", "\\\\");
 	args << "-DDEFAULT_SERIAL_PORT=\"" + port + "\"";
 	args << "-c" << filename << "-o" << objectName;
+	qWarning() << "Object Args:" << args;
 	m_gcc.start(m_gccPath, args);
 	m_gcc.waitForFinished();
 	processCompilerOutput();
@@ -98,6 +96,7 @@ bool CBC::compile(QString filename, QString port)
 	args.clear();
 	args << "-o" << m_outputFileName << objectName;
 	args << m_lflags;
+	qWarning() << "Linker Args:" << args;
 	m_gcc.start(m_gccPath, args);
 	m_gcc.waitForFinished();
 	processLinkerOutput();
@@ -311,46 +310,6 @@ void CBC::refreshSettings()
     m_lflags << "-isysroot" << "/Developer/SDKs/MacOSX10.4u.sdk";
 	}
 #endif
-}
-
-void CBC::setLexerSpecs()
-{
-	m_lexerSpec.language = "C";
-	m_lexerSpec.lexer = LexerCPP::lexerName();
-	m_lexerSpec.autoCompletionWordSeparators.clear();
-	m_lexerSpec.autoCompletionWordSeparators << "->" << ".";
-	m_lexerSpec.blockEnd = "}";
-	m_lexerSpec.blockEndStyle = LexerCPP::Operator;
-	m_lexerSpec.blockStart = "{";
-	m_lexerSpec.blockStartStyle = LexerCPP::Operator;
-	m_lexerSpec.blockStartKeyword = "case default";
-	m_lexerSpec.blockStartKeywordStyle = LexerCPP::Keyword;
-	m_lexerSpec.braceStyle = LexerCPP::Operator;
-	m_lexerSpec.wordCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_#";
-
-	m_lexerSpec.defaultColor[LexerCPP::Comment] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::CommentLine] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::CommentDoc] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::CommentLineDoc] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::CommentDocKeyword] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::CommentDocKeywordError] = QColor("green");
-	m_lexerSpec.defaultColor[LexerCPP::Keyword] = QColor("darkBlue");
-	m_lexerSpec.defaultColor[LexerCPP::String] = QColor("darkRed");
-	m_lexerSpec.defaultColor[LexerCPP::Character] = QColor("darkRed");
-	m_lexerSpec.defaultColor[LexerCPP::PreProcessor] = QColor("darkBlue");
-	m_lexerSpec.defaultColor[LexerCPP::StringEol] = QColor("darkRed");
-
-	m_lexerSpec.defaultFont[LexerCPP::Keyword] = QFont("", -1, QFont::Bold);
-	m_lexerSpec.defaultFont[LexerCPP::Operator] = QFont("", -1, QFont::Bold);
-
-	m_lexerSpec.keywords[1] = "asm auto break case char const continue default do "
-							  "double else enum extern float for goto if int long "
-							  "register return short signed sizeof static struct "
-							  "switch typedef union unsigned void volatile while";
-							  
-	m_lexerSpec.defaultColor[LexerCPP::Keyword2] = QColor("darkMagenta"); // for ExtraGUIToolBar
-	m_lexerSpec.defaultFont[LexerCPP::Keyword2] = QFont("", -1, QFont::Bold); // for ExtraGUIToolBar
-	m_lexerSpec.keywords[2] = "boolean_expression  variable a_value starting_value ending_value change_in_variable"; // for ExtraGUIToolBar
 }
 
 Q_EXPORT_PLUGIN2(cbc_plugin, CBC);

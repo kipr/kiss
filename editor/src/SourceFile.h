@@ -44,6 +44,7 @@
 #include "Target.h"
 #include "ui_SourceFile.h"
 #include "Tab.h"
+#include "Debugger.h"
 
 class FindDialog;
 class MainWindow;
@@ -97,6 +98,7 @@ public slots:
 	void on_actionRun_triggered();
 	void on_actionStop_triggered();
 	void on_actionSimulate_triggered();
+	void on_actionDebug_triggered();
 	
 private slots:
 	void on_actionCopy_triggered();
@@ -124,6 +126,8 @@ private:
 	Target m_target;
 	LexerSpec* m_lexSpec;
 	QString m_lexAPI;
+	Debugger m_debugger;
+	int m_breakpointMarker;
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

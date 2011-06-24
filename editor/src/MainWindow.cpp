@@ -151,6 +151,7 @@ void MainWindow::initMenus(Tab* tab)
 
 	menuEdit->addAction(actionEditor_Settings);
 	
+	menuHelp->addAction(actionErrorLog);
 	menuHelp->addSeparator();
 	menuHelp->addAction(actionAbout);
 	
@@ -382,8 +383,6 @@ void MainWindow::on_actionEditor_Settings_triggered()
 	if(m_editorSettingsDialog.exec() == QDialog::Accepted) emit settingsUpdated();
 }
 
-
-
 void MainWindow::on_ui_tabWidget_currentChanged(int i) 
 {
 	setUpdatesEnabled(false);
@@ -402,7 +401,6 @@ void MainWindow::errorClicked(QListWidgetItem* item)
 	
 	if(line > 0) {
 		m_errorTab->moveTo(line, 0);
-		
 	}
 	
 	ui_tabWidget->setCurrentIndex(i);
