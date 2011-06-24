@@ -116,7 +116,7 @@ void Debugger::programStepped()
 	ui_stop->setEnabled(true);
 }
 
-void Debugger::stack(QList<Frame> frames)
+void Debugger::stack(const QList<Frame>& frames)
 {
 	ui_stack->clear();
 	
@@ -133,7 +133,7 @@ void Debugger::stack(QList<Frame> frames)
 	}
 }
 
-void Debugger::variables(QList<Variable> vars)
+void Debugger::variables(const QList<Variable>& vars)
 {
 	ui_variables->clear();
 	
@@ -142,7 +142,7 @@ void Debugger::variables(QList<Variable> vars)
 	}
 }
 
-void Debugger::breakpoints(QList<Breakpoint> bkpts)
+void Debugger::breakpoints(const QList<Breakpoint>& bkpts)
 {
 	ui_breakpoints->clear();
 	

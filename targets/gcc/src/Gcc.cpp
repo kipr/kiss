@@ -63,12 +63,12 @@ Gcc::~Gcc()
 	m_outputBinary.kill();
 }
 
-bool Gcc::compile(QString filename, QString port)
+bool Gcc::compile(const QString& filename, const QString& port)
 {
 	return compile(filename, port, false);
 }
 
-bool Gcc::run(QString filename, QString port)
+bool Gcc::run(const QString& filename, const QString& port)
 {
 	if(!compile(filename, port))
 		return false;
@@ -122,7 +122,7 @@ bool Gcc::run(QString filename, QString port)
 
 }
 
-DebuggerInterface* Gcc::debug(QString filename, QString port)
+DebuggerInterface* Gcc::debug(const QString& filename, const QString& port)
 {
 	if(!compile(filename, port, true)) 
 		return 0;
@@ -230,8 +230,10 @@ void Gcc::refreshSettings()
 #endif
 }
 
-bool Gcc::compile(QString filename, QString port, bool debug)
+bool Gcc::compile(const QString& filename, const QString& port, bool debug)
 {
+	QString p = port;
+	
 	QFileInfo sourceInfo(filename);
 	QStringList args;
 
@@ -249,8 +251,8 @@ bool Gcc::compile(QString filename, QString port, bool debug)
 		return true;
 
 	args = m_cflags;
-	port.replace("\\", "\\\\");
-	args << "-DDEFAULT_SERIAL_PORT=\"" + port + "\"";
+	p.replace("\\", "\\\\");
+	args << "-DDEFAULT_SERIAL_PORT=\"" + p + "\"";
 	args << "-c" << filename << "-o" << objectName;
 	if(debug) args << "-g" << "-pg";
 	m_gcc.start(m_gccPath, args);

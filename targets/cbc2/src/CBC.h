@@ -40,19 +40,19 @@ public:
 	CBC();
 	~CBC();
 
-	bool compile(QString filename, QString port);
-	bool run(QString,QString) { return false; }
-	void stop(QString) {}
-	bool download(QString filename, QString port);
-	bool simulate(QString filename, QString port);
-	DebuggerInterface* debug(QString, QString) { return 0; }
+	bool compile(const QString& filename, const QString& port);
+	bool run(const QString&, const QString&) { return false; }
+	void stop(const QString&) {}
+	bool download(const QString& filename, const QString& port);
+	bool simulate(const QString& filename, const QString& port);
+	DebuggerInterface* debug(const QString&, const QString&) { return 0; }
 
-	bool hasCompile() { return true; }
-	bool hasRun() { return false; }
-	bool hasDownload() { return true; }
-	bool hasStop() { return false; }
-	bool hasSimulate() { return true; }
-	bool hasDebug() { return false; }
+	bool hasCompile() 	{ return true; }
+	bool hasRun() 		{ return false; }
+	bool hasDownload() 	{ return true; }
+	bool hasStop() 		{ return false; }
+	bool hasSimulate() 	{ return true; }
+	bool hasDebug() 	{ return false; }
 
 private:
 	QProcess m_gcc;
@@ -66,7 +66,7 @@ private:
 	void processLinkerOutput();
 	void refreshSettings();
 	
-  	QStringList getPaths(QString string);
+  	QStringList getPaths(const QString& string);
 };
 
 #endif

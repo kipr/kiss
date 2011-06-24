@@ -48,8 +48,7 @@
 #endif
 
 /* Constructor */
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0),
-	m_chooseTargetDialog(this), m_choosePortDialog(this), m_findDialog(this)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0)
 {
 	setupUi(this);
 	/* Turns off updates so all of these things are drawn at once */

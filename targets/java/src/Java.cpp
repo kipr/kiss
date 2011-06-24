@@ -50,7 +50,7 @@ Java::~Java()
 	m_outputBinary.kill();
 }
 
-bool Java::compile(QString filename, QString port)
+bool Java::compile(const QString& filename, const QString& port)
 {
 	QFileInfo sourceInfo(filename);
 	QStringList args;
@@ -76,7 +76,7 @@ bool Java::compile(QString filename, QString port)
 	return true;
 }
 
-bool Java::run(QString filename, QString port)
+bool Java::run(const QString& filename, const QString& port)
 {
 	if(!compile(filename, port))
 		return false;

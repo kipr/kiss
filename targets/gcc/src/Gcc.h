@@ -39,21 +39,21 @@ public:
 	Gcc();
 	~Gcc();
 
-	bool compile(QString filename, QString port);
-	bool run(QString filename, QString port);
-	void stop(QString) {}
-	bool download(QString,QString) {return false;}
-	bool simulate(QString,QString) {return false;}
-	DebuggerInterface* debug(QString filename, QString port);
+	bool compile(const QString& filename, const QString& port);
+	bool run(const QString& filename, const QString& port);
+	void stop(const QString&) {}
+	bool download(const QString&, const QString&) { return false; }
+	bool simulate(const QString&, const QString&) { return false; }
+	DebuggerInterface* debug(const QString& filename, const QString& port);
 
-	bool hasCompile() { return true; }
-	bool hasRun() { return true; }
-	bool hasDownload() { return false; }
-	bool hasStop() { return false; }
-	bool hasSimulate() { return false; }
-	bool hasDebug() { return true; }
+	bool hasCompile() 	{ return true; }
+	bool hasRun() 		{ return true; }
+	bool hasDownload() 	{ return false; }
+	bool hasStop() 		{ return false; }
+	bool hasSimulate() 	{ return false; }
+	bool hasDebug() 	{ return true; }
 private:
-	bool compile(QString filename, QString port, bool debug);
+	bool compile(const QString& filename, const QString& port, bool debug);
 	
 	QProcess m_gcc;
 	QProcess m_outputBinary;

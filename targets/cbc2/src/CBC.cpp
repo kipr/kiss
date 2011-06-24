@@ -62,8 +62,10 @@ CBC::~CBC()
 	m_outputBinary.kill();
 }
 
-bool CBC::compile(QString filename, QString port)
+bool CBC::compile(const QString& filename, const QString& port)
 {
+	QString p = port;
+	
 	QFileInfo sourceInfo(filename);
 	QStringList args;
 
@@ -81,8 +83,8 @@ bool CBC::compile(QString filename, QString port)
 		return true;
 
 	args = m_cflags;
-	port.replace("\\", "\\\\");
-	args << "-DDEFAULT_SERIAL_PORT=\"" + port + "\"";
+	p.replace("\\", "\\\\");
+	args << "-DDEFAULT_SERIAL_PORT=\"" + p + "\"";
 	args << "-c" << filename << "-o" << objectName;
 	qWarning() << "Object Args:" << args;
 	m_gcc.start(m_gccPath, args);
@@ -109,27 +111,28 @@ bool CBC::compile(QString filename, QString port)
 	return false;
 }
 
-QStringList CBC::getPaths(QString string)
+QStringList CBC::getPaths(const QString& string)
 {
-    QStringList list;
-    
-    string.remove(QRegExp("^\\w*\\.o\\:\\s*"));
-    string.replace(QRegExp("\\s*\\W\\r?\\n\\s*"), " ");
-    string.remove("\n");
-    string += " ";
-    
-    qWarning("string=\"%s\"", qPrintable(string));
-    
-    while(1) {
-        int index = string.indexOf(QRegExp("\\w[ ]"));
-        if(index == -1) return list;
-        list << string.left(index+1).remove("\\");
-        string.remove(0, index+1);
-        while(!string.isEmpty() && string[0] == ' ') string.remove(0,1);
-   }
+	QString str = string;
+	QStringList list;
+
+	str.remove(QRegExp("^\\w*\\.o\\:\\s*"));
+	str.replace(QRegExp("\\s*\\W\\r?\\n\\s*"), " ");
+	str.remove("\n");
+	str += " ";
+
+	qWarning("string=\"%s\"", qPrintable(str));
+
+	while(1) {
+		int index = str.indexOf(QRegExp("\\w[ ]"));
+		if(index == -1) return list;
+		list << str.left(index+1).remove("\\");
+		str.remove(0, index+1);
+		while(!str.isEmpty() && string[0] == ' ') str.remove(0,1);
+	}
 }
 
-bool CBC::download(QString filename, QString port)
+bool CBC::download(const QString& filename, const QString& port)
 {
     if(!compile(filename, port))
         return false;
@@ -159,7 +162,7 @@ bool CBC::download(QString filename, QString port)
     return m_serial.sendFile(filename, deps);
 }
 
-bool CBC::simulate(QString filename, QString port)
+bool CBC::simulate(const QString& filename, const QString& port)
 {
 	if(!compile(filename, port))
 		return false;

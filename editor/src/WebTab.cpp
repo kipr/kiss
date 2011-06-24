@@ -86,11 +86,12 @@ void WebTab::completeSetup()
 
 void WebTab::updateTitle(const QString& title)
 {
+	QString local = title;
 	if(title.length() > 40) {
-		title.truncate(40);
-		title += "...";
+		local.truncate(40);
+		local += "...";
 	}
-	m_mainWindow->setTabName(this, title.length() == 0 ? "Untitled Browser" : title);
+	m_mainWindow->setTabName(this, local.length() == 0 ? "Untitled Browser" : local);
 }
 
 void WebTab::updateUrl(const QUrl& url)

@@ -39,30 +39,30 @@ public:
 
 	// These methods will be called when their
 	// respective editor buttons are activated
-	virtual bool compile(QString filename, QString port) = 0;	
-	virtual bool run(QString filename, QString port) = 0;
-	virtual void stop(QString port) = 0;
-	virtual bool download(QString filename, QString port) = 0;
-	virtual bool simulate(QString filename, QString port) = 0;
-	virtual DebuggerInterface* debug(QString filename, QString port) = 0;
+	virtual bool compile(const QString& filename, const QString& port) = 0;	
+	virtual bool run(const QString& filename, const QString& port) = 0;
+	virtual void stop(const QString& port) = 0;
+	virtual bool download(const QString& filename, const QString& port) = 0;
+	virtual bool simulate(const QString& filename, const QString& port) = 0;
+	virtual DebuggerInterface* debug(const QString& filename, const QString& port) = 0;
 
 	// These should inform the plugin loader of
 	// The features offered by this plugin
-	virtual bool hasDownload() = 0;
-	virtual bool hasCompile() = 0;
-	virtual bool hasRun() = 0;
-	virtual bool hasStop() = 0;
-	virtual bool hasSimulate() = 0;
-	virtual bool hasDebug() = 0;
+	virtual bool hasDownload() 	= 0;
+	virtual bool hasCompile() 	= 0;
+	virtual bool hasRun() 		= 0;
+	virtual bool hasStop() 		= 0;
+	virtual bool hasSimulate() 	= 0;
+	virtual bool hasDebug() 	= 0;
 	
 	/* Builtin Stuff */
-	QList<QAction*> getActionList() {return m_actionList;}
-	QStringList 	getErrorMessages() {return m_errorMessages;}
-	QStringList 	getWarningMessages() {return m_warningMessages;}
-	QStringList 	getLinkerMessages() {return m_linkerMessages;}
-	QStringList 	getVerboseMessages() {return m_verboseMessages;}
+	const QList<QAction*>& 	getActionList() 	{ return m_actionList; }
+	const QStringList& 	getErrorMessages() 	{ return m_errorMessages; }
+	const QStringList& 	getWarningMessages() 	{ return m_warningMessages; }
+	const QStringList& 	getLinkerMessages() 	{ return m_linkerMessages; }
+	const QStringList& 	getVerboseMessages() 	{ return m_verboseMessages; }
 	
-	void setTargetFile(QString filename) {m_targetFile=filename;}
+	void setTargetFile(const QString& filename) { m_targetFile=filename; }
 	
 protected:
 	QString m_targetFile;
