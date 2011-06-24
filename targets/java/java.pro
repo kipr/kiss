@@ -15,8 +15,8 @@ CONFIG += release
 
 LIBS += -lqscintilla2
 
-HEADERS += java.h
-SOURCES += java.cpp
+HEADERS += Java.h
+SOURCES += Java.cpp
 
 QMAKE_CLEAN += $(DESTDIR)/$(TARGET) src/*~
 
