@@ -24,7 +24,7 @@
 #include <QToolBar>
 #include <QWebHistory>
 
-WebTab::WebTab(MainWindow* mainWindow) : Tab(mainWindow)
+WebTab::WebTab(QWidget* parent) : QWidget(parent)
 {
 	setupUi(this);
 	
@@ -49,11 +49,12 @@ void WebTab::addActionsEdit(QMenu* edit)
 
 void WebTab::addActionsHelp(QMenu* help)
 {
+	Q_UNUSED(help);
 }
 
 void WebTab::addOtherActions(QMenuBar* menuBar)
 {
-	QMenu* browser = menuBar->addMenu("Browser");
+	QMenu* browser = menuBar->addMenu(tr("Browser"));
 	browser->addAction(actionBack);
 	browser->addAction(actionForward);
 	browser->addAction(actionReload);
@@ -91,7 +92,7 @@ void WebTab::updateTitle(const QString& title)
 		local.truncate(40);
 		local += "...";
 	}
-	m_mainWindow->setTabName(this, local.length() == 0 ? "Untitled Browser" : local);
+	MainWindow::ref().setTabName(this, local.length() == 0 ? tr("Untitled Browser") : local);
 }
 
 void WebTab::updateUrl(const QUrl& url)
@@ -100,7 +101,7 @@ void WebTab::updateUrl(const QUrl& url)
 	actionForward->setEnabled(ui_webView->history()->canGoForward());
 	
 	ui_urlBar->setText(url.toString());
-	m_mainWindow->setStatusMessage("Loaded " + url.toString(), 5000);
+	MainWindow::ref().setStatusMessage(tr("Loaded ") + url.toString(), 5000);
 }
 
 void WebTab::on_actionGo_triggered()

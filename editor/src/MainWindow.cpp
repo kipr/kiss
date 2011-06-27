@@ -47,6 +47,12 @@
 #include <shellapi.h>
 #endif
 
+MainWindow& MainWindow::ref()
+{
+	static MainWindow instance;
+	return instance;
+}
+
 /* Constructor */
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0)
 {
@@ -71,10 +77,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	connect(&m_warningList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	connect(&m_linkErrorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	connect(&m_verboseList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
-	
-	// initMenus(0);
-	
-	addTab(new WelcomeTab(this));
 	
 	setUpdatesEnabled(true);
 }
@@ -109,7 +111,7 @@ bool MainWindow::openFile(const QString& file)
 	/* Attempt to open the selected file */
 	SourceFile *sourceFile = new SourceFile(this);
 	if(!sourceFile->fileOpen(file)) {
-		QMessageBox::critical(this, "Error", "Error: Could not open file " + sourceFile->fileName() + " for reading");
+		QMessageBox::critical(this, tr("Error"), tr("Error: Could not open file ") + sourceFile->fileName() + tr(" for reading"));
 		delete sourceFile;
 		return false;
 	}	
@@ -146,11 +148,12 @@ void MainWindow::initMenus(Tab* tab)
 		menuEdit->addSeparator();
 		tab->addActionsHelp(menuHelp);
 		menuHelp->addSeparator();
+		
 	}
 
 	menuEdit->addAction(actionEditor_Settings);
 	
-	menuHelp->addAction(actionErrorLog);
+	menuHelp->addAction(actionDownloadFeatures);
 	menuHelp->addSeparator();
 	menuHelp->addAction(actionAbout);
 	
@@ -266,20 +269,20 @@ void MainWindow::showErrorMessages(bool verbose)
 	ui_errorView->hide();
 
 	if(m_errorList.count() > 0) {
-		ui_errorView->addTab(&m_errorList, "Errors");
+		ui_errorView->addTab(&m_errorList, tr("Errors"));
 		ui_errorView->show();
 	}
 	if(m_warningList.count() > 0) {
-		ui_errorView->addTab(&m_warningList, "Warnings");
+		ui_errorView->addTab(&m_warningList, tr("Warnings"));
 		ui_errorView->show();
 	}
 	if(m_linkErrorList.count() > 0) {
-		ui_errorView->addTab(&m_linkErrorList, "Linker Output");
+		ui_errorView->addTab(&m_linkErrorList, tr("Linker Output"));
 		ui_errorView->show();
 	}
 	if( (verbose || ui_errorView->count() == 0) && m_verboseList.count() > 0) {
 		ui_errorView->clear();
-		ui_errorView->addTab(&m_verboseList, "Verbose Output");
+		ui_errorView->addTab(&m_verboseList, tr("Verbose Output"));
 		ui_errorView->show();
 	}
 }
@@ -296,7 +299,7 @@ void MainWindow::on_actionOpen_triggered()
 	QStringList filters = TargetManager::ref().getAllSupportedExtensions();
 	filters.removeDuplicates();
 	qWarning() << filters;
-	QString filePath = QFileDialog::getOpenFileName(this, "Open File", openPath, filters.join(";;") + ";;All Files (*)");
+	QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), openPath, filters.join(";;") + ";;All Files (*)");
 		
 	if(filePath.isEmpty())
 		return;
@@ -334,19 +337,19 @@ void MainWindow::on_actionAbout_triggered()
 {
 	QString aboutString;
 
-	aboutString += "KISS Version " + QString::number(KISS_C_VERSION_MAJOR) + "." + 
+	aboutString += tr("KISS Version ") + QString::number(KISS_C_VERSION_MAJOR) + "." + 
 		QString::number(KISS_C_VERSION_MINOR) + "." +
 		QString::number(KISS_C_VERSION_BUILD) + "\n\n";
-	aboutString += "Copyright (C) 2007-2011 KISS Institute for Practical Robotics\n\n";
-	aboutString += "http://www.kipr.org/\nhttp://www.botball.org/\n\n";
-	aboutString += "KISS is a project of the KISS Institute for Practical Robotics. ";
-	QMessageBox::about(this, "KIPR's Instructional Software System", aboutString);
+	aboutString += tr("Copyright (C) 2007-2011 KISS Institute for Practical Robotics\n\n");
+	aboutString += tr("http://www.kipr.org/\nhttp://www.botball.org/\n\n");
+	aboutString += tr("KISS is a project of the KISS Institute for Practical Robotics. ");
+	QMessageBox::about(this, tr("KIPR's Instructional Software System"), aboutString);
 }
 
 
 void MainWindow::errorViewShowVerbose()
 {
-	ui_errorView->setCornerWidget(new QPushButton("Simple"));
+	ui_errorView->setCornerWidget(new QPushButton(tr("Simple")));
 	ui_errorView->cornerWidget()->show();
 	connect(ui_errorView->cornerWidget(), SIGNAL(clicked()), this, SLOT(errorViewShowSimple()));
 
@@ -355,7 +358,7 @@ void MainWindow::errorViewShowVerbose()
 
 void MainWindow::errorViewShowSimple()
 {
-	ui_errorView->setCornerWidget(new QPushButton("Verbose"));
+	ui_errorView->setCornerWidget(new QPushButton(tr("Verbose")));
 	ui_errorView->cornerWidget()->show();
 	connect(ui_errorView->cornerWidget(), SIGNAL(clicked()), this, SLOT(errorViewShowVerbose()));
 
@@ -374,6 +377,11 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	m_currentTab = dynamic_cast<Tab*>(ui_tabWidget->widget(i));
 	initMenus(m_currentTab);
 	setUpdatesEnabled(true);
+}
+
+void MainWindow::on_actionDownloadFeatures_triggered()
+{
+	addTab(new Repository(this));
 }
 
 void MainWindow::errorClicked(QListWidgetItem* item)

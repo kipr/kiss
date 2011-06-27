@@ -7,7 +7,7 @@ class WelcomeTab : public WebTab
 {
 	Q_OBJECT
 public:
-	WelcomeTab(MainWindow* mainWindow);	
+	WelcomeTab(QWidget* parent = 0);	
 	
 	virtual void completeSetup();
 	

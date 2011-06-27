@@ -32,6 +32,7 @@
 #include "EditorSettingsDialog.h"
 #include "ChoosePortDialog.h"
 #include "FindDialog.h"
+#include "Repository.h"
 
 class QListWidgetItem;
 
@@ -39,9 +40,8 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 {
 	Q_OBJECT
 
-public:
-	MainWindow(QWidget *parent = 0);
-	~MainWindow();
+public:	
+	static MainWindow& ref();
 
 	void closeEvent(QCloseEvent *e);
 	
@@ -76,12 +76,16 @@ public slots:
 	
 private slots:
 	void on_ui_tabWidget_currentChanged(int i);
+	void on_actionDownloadFeatures_triggered();
 	
 	void errorClicked(QListWidgetItem* item);
 	
 	void showContextMenuForError(const QPoint &pos);
 	
 private:
+	MainWindow(QWidget *parent = 0);
+	~MainWindow();
+	
 	Tab* m_currentTab;
 	Tab* m_errorTab;
 	EditorSettingsDialog m_editorSettingsDialog;

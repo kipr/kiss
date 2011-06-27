@@ -39,7 +39,7 @@
 #include "LexerSpecManager.h"
 #include "SourceFileShared.h"
 
-SourceFile::SourceFile(MainWindow* parent) : Tab(parent), m_fileHandle("Untitled"), m_isNewFile(true), m_target(this), m_debugger(this)
+SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle("Untitled"), m_isNewFile(true), m_target(this), m_debugger(this)
 {
 	setupUi(this);
 	
@@ -47,12 +47,9 @@ SourceFile::SourceFile(MainWindow* parent) : Tab(parent), m_fileHandle("Untitled
 	m_warningIndicator = ui_editor->markerDefine(SourceFileShared::ref().yellowBullet());
 	m_breakIndicator = ui_editor->markerDefine(SourceFileShared::ref().blueBullet());
 	
-	
-	qWarning() << m_breakIndicator;
-	
 	ui_editor->setModified(false);
 	m_fileInfo.setFile(m_fileHandle);
-	m_mainWindow->setStatusMessage("");
+	MainWindow::ref().setStatusMessage("");
 	ui_editor->setEolMode(QsciScintilla::EolUnix);
 	
 	m_debugger.hide();
@@ -83,12 +80,6 @@ void SourceFile::addActionsEdit(QMenu* edit)
 	edit->addSeparator();
 	edit->addAction(actionUndo);
 	edit->addAction(actionRedo);
-	edit->addSeparator();
-	edit->addAction(actionZoomIn);
-	edit->addAction(actionZoomOut);
-	edit->addAction(actionResetZoomLevel);
-	edit->addSeparator();
-	edit->addAction(actionFind);
 }
 
 void SourceFile::addActionsHelp(QMenu* help)
@@ -98,7 +89,13 @@ void SourceFile::addActionsHelp(QMenu* help)
 
 void SourceFile::addOtherActions(QMenuBar* menuBar)
 {
+	QMenu* source = menuBar->addMenu("Source");
 	QMenu* target = menuBar->addMenu("Target");
+	source->addAction(actionZoomIn);
+	source->addAction(actionZoomOut);
+	source->addAction(actionResetZoomLevel);
+	source->addSeparator();
+	source->addAction(actionFind);
 	if(m_target.hasCompile()) target->addAction(actionCompile);
 	if(m_target.hasDownload()) target->addAction(actionDownload);
 	if(m_target.hasSimulate()) target->addAction(actionSimulate);
@@ -106,9 +103,8 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	if(m_target.hasStop()) target->addAction(actionStop);
 	if(m_target.hasDebug()) {
 		target->addAction(actionDebug);
-		QMenu* debug = menuBar->addMenu("Debug");
-		debug->addAction(actionAddBreakpoint);
-		debug->addAction(actionRemoveBreakpoint);
+		source->addSeparator();
+		source->addAction(actionToggleBreakpoint);
 	}
 	target->addSeparator();
 	target->addAction(actionChangeTarget);
@@ -157,9 +153,6 @@ bool SourceFile::beginSetup()
 	/* Tells the settings dialog which target file to use */
 	m_target.setTargetFile(tDialog->getSelectedTargetFilePath());
 	
-	/* Adds custom buttons to the toolbar */
-	
-	
 	/* Pops up a port select dialog if the target should have a port set */
 	if(targetSettings.value("port_dialog").toBool()) {
 		on_actionChoosePort_triggered();
@@ -175,13 +168,14 @@ bool SourceFile::beginSetup()
 	m_lexAPI = tDialog->getSelectedTargetFilePath().replace(".target",".api");
 	
 	refreshSettings();
+	
 	return true;
 	
 }
 
 void SourceFile::completeSetup()
 {
-	m_mainWindow->setTabName(this, m_fileInfo.fileName());
+	MainWindow::ref().setTabName(this, m_fileInfo.fileName());
 	updateMargins();
 }
 
@@ -233,7 +227,7 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 
 	m_isNewFile = false;
 	
-	m_mainWindow->setTabName(this, m_fileInfo.fileName());
+	MainWindow::ref().setTabName(this, m_fileInfo.fileName());
 	
 	// Update the lexer to the new spec for that extension
 	LexerSpec* lexerSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
@@ -262,10 +256,7 @@ bool SourceFile::fileOpen(const QString& filePath)
 
 	m_isNewFile = false;
 
-	m_mainWindow->setTabName(this, m_fileInfo.fileName());
-	
-	m_breakpointMarker = ui_editor->markerDefine('*');
-	ui_editor->markerAdd(1, m_breakpointMarker);
+	MainWindow::ref().setTabName(this, m_fileInfo.fileName());
 
 	// Update the lexer to the new spec for that extension
 	LexerSpec* lexerSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
@@ -455,7 +446,6 @@ void SourceFile::refreshSettings()
 	else ui_editor->setMarginLineNumbers(0, false);
 	
 	ui_editor->setMarginLineNumbers(1, false);
-	ui_editor->setMarginMarkerMask(1, m_breakpointMarker);
 	
 	if(settings.value("bracematching").toBool())
 		 ui_editor->setBraceMatching(QsciScintilla::StrictBraceMatch);
@@ -496,7 +486,7 @@ void SourceFile::updateMargins()
 		charWidth = QFontMetrics(font).width("0");
 	}
 	ui_editor->setMarginWidth(0, charWidth + charWidth/2 + charWidth * (int)ceil(log10(ui_editor->lines()+1)));
-	ui_editor->setMarginWidth(1, charWidth + charWidth/2 + charWidth * (int)ceil(log10(ui_editor->lines()+1)));
+	ui_editor->setMarginWidth(1, 16);
 }
 
 int SourceFile::getZoom()
@@ -530,7 +520,7 @@ void SourceFile::on_actionSaveAs_triggered()
 {
 	QSettings settings;
 	QString savePath = settings.value("savepath", QDir::homePath()).toString();
-	QString filePath = QFileDialog::getSaveFileName(m_mainWindow, "Save File", savePath, m_target.getSourceExtensions().join(";;") + ";;All Files (*)");
+	QString filePath = QFileDialog::getSaveFileName(&MainWindow::ref(), "Save File", savePath, m_target.getSourceExtensions().join(";;") + ";;All Files (*)");
 	if(filePath.isEmpty())
 		return;
 
@@ -543,13 +533,13 @@ void SourceFile::on_actionSaveAs_triggered()
 
 	/* Saves the file with the new fileName and updates the tabWidget label */
 	if(fileSaveAs(fileInfo.absoluteFilePath())) {
-		m_mainWindow->setTabName(this, fileName());
-		m_mainWindow->setStatusMessage("Saved file\"" + fileName() + "\"");
-	} else QMessageBox::critical(m_mainWindow, "Error", "Error: Could not write file " + fileName());
+		MainWindow::ref().setTabName(this, fileName());
+		MainWindow::ref().setStatusMessage("Saved file\"" + fileName() + "\"");
+	} else QMessageBox::critical(&MainWindow::ref(), "Error", "Error: Could not write file " + fileName());
 }
 
 void SourceFile::sourceModified(bool m) {
-	m_mainWindow->setTabName(this, "* " + m_fileInfo.fileName());
+	MainWindow::ref().setTabName(this, "* " + m_fileInfo.fileName());
 }
 
 void SourceFile::on_actionDownload_triggered()
@@ -557,71 +547,41 @@ void SourceFile::on_actionDownload_triggered()
 	/* Save the file and hide the error view (in case this is not the first attempt */
 	fileSave();
 	
-	m_mainWindow->setStatusMessage("Downloading...");
+	MainWindow::ref().setStatusMessage("Downloading...");
 	QApplication::flush();
 	
 	if(!m_target.download(filePath()))
-		m_mainWindow->setStatusMessage("Download Failed");
+		MainWindow::ref().setStatusMessage("Download Failed");
 	else
-		m_mainWindow->setStatusMessage("Download Succeeded");
+		MainWindow::ref().setStatusMessage("Download Succeeded");
 	
-	const QStringList& errors = m_target.getErrorMessages();
-	const QStringList& warnings = m_target.getWarningMessages();
-	
-	/* Show any error messages if any */
-	m_mainWindow->setErrors(this,
-				errors,
-				warnings,
-				m_target.getLinkerMessages(),
-				m_target.getVerboseMessages());
-				
-	markProblems(errors, warnings);
+	updateErrors();
 }
 
 void SourceFile::on_actionCompile_triggered()
 {
 	fileSave();
-	m_mainWindow->hideErrors();
+	MainWindow::ref().hideErrors();
 	
 	if(!m_target.compile(filePath()))
-		m_mainWindow->setStatusMessage("Compile Failed");
+		MainWindow::ref().setStatusMessage("Compile Failed");
 	else
-		m_mainWindow->setStatusMessage("Compile Succeeded");
+		MainWindow::ref().setStatusMessage("Compile Succeeded");
 
-	const QStringList& errors = m_target.getErrorMessages();
-	const QStringList& warnings = m_target.getWarningMessages();
-	
-	/* Show any error messages if any */
-	m_mainWindow->setErrors(this,
-				errors,
-				warnings,
-				m_target.getLinkerMessages(),
-				m_target.getVerboseMessages());
-				
-	markProblems(errors, warnings);
+	updateErrors();
 }
 
 void SourceFile::on_actionRun_triggered()
 {	
 	fileSave();
-	m_mainWindow->hideErrors();
+	MainWindow::ref().hideErrors();
 	
 	if(!m_target.run(filePath()))
-		m_mainWindow->setStatusMessage("Run Failed");
+		MainWindow::ref().setStatusMessage("Run Failed");
 	else
-		m_mainWindow->setStatusMessage("Run Succeeded");
+		MainWindow::ref().setStatusMessage("Run Succeeded");
 
-	const QStringList& errors = m_target.getErrorMessages();
-	const QStringList& warnings = m_target.getWarningMessages();
-	
-	/* Show any error messages if any */
-	m_mainWindow->setErrors(this,
-				errors,
-				warnings,
-				m_target.getLinkerMessages(),
-				m_target.getVerboseMessages());
-				
-	markProblems(errors, warnings);
+	updateErrors();
 }
 
 void SourceFile::on_actionStop_triggered()
@@ -633,51 +593,31 @@ void SourceFile::on_actionSimulate_triggered()
 {	
 	/* Save the file and hide the error view */
 	fileSave();
-	m_mainWindow->hideErrors();
+	MainWindow::ref().hideErrors();
 	
 	if(!m_target.simulate(filePath()))
-		m_mainWindow->setStatusMessage("Simulation Failed");
+		MainWindow::ref().setStatusMessage("Simulation Failed");
 	else
-		m_mainWindow->setStatusMessage("Simulation Succeeded");
+		MainWindow::ref().setStatusMessage("Simulation Succeeded");
 
-	const QStringList& errors = m_target.getErrorMessages();
-	const QStringList& warnings = m_target.getWarningMessages();
-	
-	/* Show any error messages if any */
-	m_mainWindow->setErrors(this,
-				errors,
-				warnings,
-				m_target.getLinkerMessages(),
-				m_target.getVerboseMessages());
-				
-	markProblems(errors, warnings);
+	updateErrors();
 }
 
 void SourceFile::on_actionDebug_triggered()
 {
 	fileSave();
-	m_mainWindow->hideErrors();
+	MainWindow::ref().hideErrors();
 	
 	DebuggerInterface* interface = m_target.debug(filePath());
 	
 	if(!interface) {
-		m_mainWindow->setStatusMessage("Debug Failed");
+		MainWindow::ref().setStatusMessage(tr("Debug Failed"));
 		
 	} else {
-		m_mainWindow->setStatusMessage("Debug Succeeded");
+		MainWindow::ref().setStatusMessage(tr("Debug Succeeded"));
 	}
 	
-	const QStringList& errors = m_target.getErrorMessages();
-	const QStringList& warnings = m_target.getWarningMessages();
-	
-	/* Show any error messages if any */
-	m_mainWindow->setErrors(this,
-				errors,
-				warnings,
-				m_target.getLinkerMessages(),
-				m_target.getVerboseMessages());
-				
-	markProblems(errors, warnings);
+	updateErrors();
 
 	if(!interface) return;
 	
@@ -719,8 +659,8 @@ void SourceFile::on_actionFind_triggered()
 
 void SourceFile::on_actionManual_triggered()
 {
-	WebTab* tab = new WebTab(m_mainWindow);
-	m_mainWindow->addTab(tab);
+	WebTab* tab = new WebTab(&MainWindow::ref());
+	MainWindow::ref().addTab(tab);
 	tab->load("file://" + m_target.getTargetManualPath(), true);
 }
 
@@ -784,24 +724,24 @@ void SourceFile::on_actionChoosePort_triggered()
 	}
 }
 
-void SourceFile::on_actionAddBreakpoint_triggered()
+void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
 {
-	qWarning() << "Added breakpoint to " << m_currentLine;
-	m_breakpoints.removeAll(m_currentLine);
-	qWarning() << ui_editor->markerAdd(m_currentLine, m_breakIndicator);
-	m_breakpoints.append(m_currentLine);
+	if(checked) {
+		m_breakpoints.removeAll(m_currentLine); // Just for safety, make sure nothing is there to begin with
+		qWarning() << ui_editor->markerAdd(m_currentLine, m_breakIndicator);
+		m_breakpoints.append(m_currentLine);	
+	} else {
+		ui_editor->markerDelete(m_currentLine, m_breakIndicator);
+		m_breakpoints.removeAll(m_currentLine);
+	}
 	
-}
-
-void SourceFile::on_actionRemoveBreakpoint_triggered()
-{
-	ui_editor->markerDelete(m_currentLine, m_breakIndicator);
-	m_breakpoints.removeAll(m_currentLine);
+	actionToggleBreakpoint->setChecked(m_breakpoints.contains(m_currentLine));
 }
 
 void SourceFile::on_ui_editor_cursorPositionChanged(int line, int index)
 {
 	m_currentLine = line;
+	actionToggleBreakpoint->setChecked(m_breakpoints.contains(line));
 }
 
 /*ADDED BY NB*///2/10/2010-dpm
@@ -830,4 +770,20 @@ void SourceFile::markProblems(const QStringList& errors, const QStringList& warn
 		if(--line < 0) continue;
 		ui_editor->markerAdd(line, m_warningIndicator);
 	}
+}
+
+void SourceFile::updateErrors() 
+{
+	clearProblems();
+	
+	const QStringList& errors = m_target.getErrorMessages();
+	const QStringList& warnings = m_target.getWarningMessages();
+	
+	MainWindow::ref().setErrors(this,
+				errors,
+				warnings,
+				m_target.getLinkerMessages(),
+				m_target.getVerboseMessages());
+				
+	markProblems(errors, warnings);
 }

@@ -5,7 +5,7 @@
 #include <QWebPage>
 #include "MainWindow.h"
 
-WelcomeTab::WelcomeTab(MainWindow* mainWindow) : WebTab(mainWindow)
+WelcomeTab::WelcomeTab(QWidget* parent) : WebTab(parent)
 {
 	
 }	
@@ -21,7 +21,7 @@ void WelcomeTab::completeSetup()
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return;
 
 	QByteArray data = file.readAll();
-	data.replace("KISS_BACKGROUND", m_mainWindow->tabWidget()->palette().color(QPalette::Background).name().toAscii());
+	data.replace("KISS_BACKGROUND", MainWindow::ref().tabWidget()->palette().color(QPalette::Background).name().toAscii());
 	
 	// qWarning() << data.data();
 	
@@ -33,19 +33,18 @@ void WelcomeTab::linkClicked(const QUrl& url)
 	if(url.scheme() != "kiss") load(url.toString());
 	QString auth = url.authority();
 	if(auth == "new") {
-		m_mainWindow->newFile();
+		MainWindow::ref().newFile();
 		return;
 	}
 	if(auth == "open") {
-		m_mainWindow->on_actionOpen_triggered();
+		MainWindow::ref().on_actionOpen_triggered();
 		return;
 	}
 	if(auth == "newbrowser") {
-		qWarning() << "New Browser!";
-		WebTab* tab = new WebTab(m_mainWindow);
+		WebTab* tab = new WebTab();
 		qWarning() << url.fragment();
 		tab->load(url.fragment());
-		m_mainWindow->addTab(tab);
+		MainWindow::ref().addTab(tab);
 		return;
 	}
 	if(auth == "help") {

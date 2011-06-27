@@ -147,7 +147,7 @@ void Debugger::breakpoints(const QList<Breakpoint>& bkpts)
 	ui_breakpoints->clear();
 	
 	foreach(const Breakpoint& bkpt, bkpts) {
-		ui_breakpoints->addItem(QString((bkpt.enabled ? "Enabled:" : "Disabled:")) + " " + 
+		ui_breakpoints->addItem(QString((bkpt.enabled ? tr("Enabled:") : tr("Disabled:"))) + " " + 
 			bkpt.file + ":" + bkpt.line + "::" + bkpt.function);
 	}
 }

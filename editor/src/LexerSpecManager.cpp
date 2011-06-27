@@ -41,7 +41,7 @@ void LexerSpecManager::loadLexers()
 #else
 	exts << ".so";
 #endif
-	QStringList lexers = QDir("lexers").entryList();
+	QStringList lexers = QDir("lexers").entryList(exts);
 	qWarning() << "Lexers:" << lexers;
 	foreach(const QString& str, lexers) {
 		qWarning() << str;

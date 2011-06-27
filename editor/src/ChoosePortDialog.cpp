@@ -161,7 +161,7 @@ QString ChoosePortDialog::getSelectedPortName()
 void ChoosePortDialog::on_ui_addPortButton_clicked(bool)
 {
 	bool hitOk;
-	QString portName = QInputDialog::getText(this, "Add Port", "Port name: ", QLineEdit::Normal, QString(), &hitOk);
+	QString portName = QInputDialog::getText(this, tr("Add Port"), tr("Port name: "), QLineEdit::Normal, QString(), &hitOk);
 	
 	if(!hitOk)
 		return;

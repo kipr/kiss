@@ -30,7 +30,7 @@ class WebTab : public QWidget, public Tab, private Ui::WebTab
 {
 	Q_OBJECT
 public:
-	WebTab(MainWindow* mainWindow);
+	WebTab(QWidget* parent = 0);
 	~WebTab();
 	
 	void addActionsFile(QMenu* file);

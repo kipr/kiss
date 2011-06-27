@@ -49,7 +49,7 @@ void FindDialog::on_ui_buttonFind_clicked(bool)
 	} else
 		found = m_currentSourceFile->getEditor()->findNext();
 	if(!found)
-		QMessageBox::warning(this, "Not found", "Not Found");
+		QMessageBox::warning(this, tr("Not found"), tr("Not Found"));
 	else
 		close();
 }

@@ -231,9 +231,9 @@
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="actionErrorLog">
+  <action name="actionDownloadFeatures">
    <property name="text">
-    <string>Error Log</string>
+    <string>Download Features</string>
    </property>
   </action>
  </widget>

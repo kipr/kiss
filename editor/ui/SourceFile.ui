@@ -245,24 +245,22 @@
     <string>Debug</string>
    </property>
   </action>
-  <action name="actionAddBreakpoint">
+  <action name="actionToggleBreakpoint">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../rc/icons.qrc">
      <normaloff>:/sourcefile/icon_set/icons/bullet_blue.png</normaloff>:/sourcefile/icon_set/icons/bullet_blue.png</iconset>
    </property>
    <property name="text">
-    <string>Add Breakpoint</string>
+    <string>Toggle Breakpoint</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Breakpoint</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+B</string>
-   </property>
-  </action>
-  <action name="actionRemoveBreakpoint">
-   <property name="text">
-    <string>Remove Breakpoint</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+N</string>
    </property>
   </action>
  </widget>

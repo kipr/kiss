@@ -53,7 +53,7 @@ class SourceFile : public QWidget, public Tab, private Ui::SourceFile
 {
 Q_OBJECT
 public:
-	SourceFile(MainWindow* parent);
+	SourceFile(QWidget* parent = 0);
 	~SourceFile();
 	
 	void addActionsFile(QMenu* file);
@@ -118,8 +118,7 @@ private slots:
 	void on_actionChangeTarget_triggered();
 	void on_actionChoosePort_triggered();
 	
-	void on_actionAddBreakpoint_triggered();
-	void on_actionRemoveBreakpoint_triggered();
+	void on_actionToggleBreakpoint_triggered(bool checked);
 	
 	void on_ui_editor_cursorPositionChanged(int line, int index);
 private:
@@ -144,6 +143,7 @@ private:
 	
 	void clearProblems();
 	void markProblems(const QStringList& errors, const QStringList& warnings);
+	void updateErrors();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

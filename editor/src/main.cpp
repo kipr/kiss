@@ -22,12 +22,47 @@
 #include <QDir>
 #include <QSplashScreen>
 #include "MainWindow.h"
+#include "WelcomeTab.h"
+#include "KissArchive.h"
 #include <QTimer>
+#include <QDebug>
+
+void createArchive(QString fileList, QString out) {
+	QFile f(fileList);
+	if(!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		qWarning() << "Unable to open" << fileList << "for reading.";
+		return;
+	}
+	QFile outf(out);
+	if(!outf.open(QIODevice::WriteOnly)) {
+		qWarning() << "Unable to open" << out << "for writing.";
+		return;
+	}
+	bool ret = KissArchive::create(QString(f.readAll().data()).split('\n'), &outf);
+	if(!ret) qWarning() << "Archive creation failed!";
+}
 
 int main(int argc, char **argv)
 {
 	/* The Following lines just set up the application object */
 	QApplication application(argc, argv);
+	
+	if(QApplication::arguments().size() == 4) {
+		if(QApplication::arguments()[1] == "--createArchive") {
+			createArchive(QApplication::arguments()[2], QApplication::arguments()[3]);
+		}
+		
+		return 0;
+	} else if(QApplication::arguments().size() == 3) {
+		QFile f(QApplication::arguments()[2]);
+		if(!f.open(QIODevice::ReadOnly)) {
+			return 0;
+		}
+		
+		KissArchive::extract(&f);
+		
+		return 0;
+	}
 	
 
 #ifdef Q_OS_MAC
@@ -44,10 +79,10 @@ int main(int argc, char **argv)
 	
 	QPixmap splashPixmap(":/splash_screen.png");
 	QSplashScreen splash(splashPixmap);
-	MainWindow window;
 	splash.show();
+	MainWindow::ref().addTab(new WelcomeTab(&MainWindow::ref()));
 	QTimer::singleShot(1500, &splash, SLOT(hide()));
-	QTimer::singleShot(1000, &window, SLOT(show()));
+	QTimer::singleShot(1000, &MainWindow::ref(), SLOT(show()));
 
 	return application.exec();
 }

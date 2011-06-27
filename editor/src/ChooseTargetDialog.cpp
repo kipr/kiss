@@ -96,7 +96,7 @@ int ChooseTargetDialog::exec()
 {
 	if(!scanTargetDirectory()) {
 		setVisible(false);
-		QMessageBox::critical(parentWidget(), "Error", "Failed to scan targets directory.");
+		QMessageBox::critical(parentWidget(), tr("Error"), tr("Failed to scan targets directory."));
 		return QDialog::Rejected;
 	}
 	else

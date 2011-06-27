@@ -10,7 +10,7 @@ TARGET = KISS
 DEPENDPATH += src
 INCLUDEPATH += src
 DESTDIR=..
-QT += webkit
+QT += webkit network
 
 win32 {
 INCLUDEPATH += Qsci
@@ -40,7 +40,9 @@ HEADERS += 	src/MainWindow.h \
 			src/LexerSpecManager.h \
 			src/DebuggerInterface.h \
 			src/Debugger.h \
-			src/SourceFileShared.h
+			src/SourceFileShared.h \
+			src/Repository.h \
+			src/KissArchive.h
 
 SOURCES += 	src/main.cpp \
 			src/MainWindow.cpp \
@@ -57,7 +59,9 @@ SOURCES += 	src/main.cpp \
 			src/WelcomeTab.cpp \
 			src/LexerSpecManager.cpp \
 			src/Debugger.cpp \
-			src/SourceFileShared.cpp
+			src/SourceFileShared.cpp \
+			src/Repository.cpp \
+			src/KissArchive.cpp
 
 FORMS += 	ui/MainWindow.ui \
 			ui/ChooseTargetDialog.ui \
@@ -67,7 +71,8 @@ FORMS += 	ui/MainWindow.ui \
 			ui/TargetSettingsDialog.ui \
 			ui/SourceFile.ui \
 			ui/WebTab.ui \
-			ui/Debugger.ui
+			ui/Debugger.ui \
+			ui/Repository.ui
 
 RESOURCES += rc/icons.qrc
 
