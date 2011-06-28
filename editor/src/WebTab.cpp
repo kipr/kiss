@@ -36,9 +36,7 @@ WebTab::~WebTab()
 {	
 }
 
-void WebTab::addActionsFile(QMenu* file)
-{	
-}
+void WebTab::addActionsFile(QMenu* file) { Q_UNUSED(file); }
 
 void WebTab::addActionsEdit(QMenu* edit)
 {	
@@ -47,10 +45,7 @@ void WebTab::addActionsEdit(QMenu* edit)
 	edit->addAction(actionPaste);
 }
 
-void WebTab::addActionsHelp(QMenu* help)
-{
-	Q_UNUSED(help);
-}
+void WebTab::addActionsHelp(QMenu* help) { Q_UNUSED(help); }
 
 void WebTab::addOtherActions(QMenuBar* menuBar)
 {
@@ -74,10 +69,7 @@ void WebTab::addToolbarActions(QToolBar* toolbar)
 	toolbar->addAction(actionGo);
 }
 
-bool WebTab::beginSetup()
-{
-	return true;
-}
+bool WebTab::beginSetup() { return true; }
 
 void WebTab::completeSetup()
 {
@@ -124,10 +116,7 @@ void WebTab::on_actionPaste_triggered()
 	ui_webView->triggerPageAction(QWebPage::Paste);
 }
 
-bool WebTab::close()
-{
-	return true;
-}
+bool WebTab::close() { return true; }
 
 void WebTab::load(QString url, bool hideUrl)
 {
@@ -137,15 +126,11 @@ void WebTab::load(QString url, bool hideUrl)
 	ui_goButton->setVisible(!hideUrl);
 }
 
-void WebTab::moveTo(int line, int pos)
+void WebTab::moveTo(int line, int pos) 
 {
+	Q_UNUSED(line);
+	Q_UNUSED(pos);
 }
 
-void WebTab::refreshSettings()
-{
-}
-
-QWebView* WebTab::webView()
-{
-	return ui_webView;
-}
+void WebTab::refreshSettings() {}
+QWebView* WebTab::webView() { return ui_webView; }

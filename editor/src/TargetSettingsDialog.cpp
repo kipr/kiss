@@ -31,10 +31,7 @@ TargetSettingsDialog::TargetSettingsDialog(QWidget *parent) : QDialog(parent)
 	ui_settingsTable->setColumnCount(2);
 }
 
-TargetSettingsDialog::~TargetSettingsDialog()
-{
-}
-
+TargetSettingsDialog::~TargetSettingsDialog() {}
 
 // Sets the target file :)
 void TargetSettingsDialog::setTargetFile(const QString& filename)

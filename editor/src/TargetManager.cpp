@@ -23,13 +23,16 @@
 #include <QSettings>
 #include <QDir>
 
+/**
+ * Returns a reference to the singleton TargetManager instance
+ */
 TargetManager& TargetManager::ref()
 {
 	static TargetManager manager;
 	return manager;
 }
 
-TargetInterface* TargetManager::get(QString targetName)
+TargetInterface* TargetManager::get(const QString& targetName)
 {	
 	if(!m_plugins.contains(targetName))
 		if(!loadPlugin(targetName)) return 0;
@@ -37,7 +40,7 @@ TargetInterface* TargetManager::get(QString targetName)
 	return qobject_cast<TargetInterface *>(m_plugins[targetName]->instance());
 }
 
-QStringList TargetManager::getAllSupportedExtensions()
+QStringList TargetManager::allSupportedExtensions()
 {
 	QDir targetDir(QDir::currentPath() + "/targets");
 	QStringList targetDirs;
@@ -72,11 +75,7 @@ QStringList TargetManager::getAllSupportedExtensions()
 	return extensionList;
 }
 
-TargetManager::TargetManager()
-{
-	
-}
-
+TargetManager::TargetManager() {}
 TargetManager::TargetManager(const TargetManager& that) {}
 
 TargetManager::~TargetManager()
@@ -89,7 +88,7 @@ TargetManager::~TargetManager()
 }
 
 /* These last two load/unload a plugin, determining the file name based on the target name */
-bool TargetManager::loadPlugin(QString targetName)
+bool TargetManager::loadPlugin(const QString& targetName)
 {
 	if(m_plugins.contains(targetName)) unloadPlugin(targetName);
 	
@@ -131,7 +130,7 @@ bool TargetManager::loadPlugin(QString targetName)
 }
 
 // Simply delete the plugin and unset everything
-void TargetManager::unloadPlugin(QString targetName)
+void TargetManager::unloadPlugin(const QString& targetName)
 {
 	if(!m_plugins.contains(targetName)) return;
 	QPluginLoader* plugin = m_plugins.take(targetName);

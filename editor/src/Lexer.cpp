@@ -39,10 +39,7 @@ Lexer::Lexer(LexerSpec* spec, QString api) : m_lexerSpec(spec), QsciLexer(0), m_
 	setAPIs(&m_apis);
 }
 
-// Frees the memory allocated in the constructor
-Lexer::~Lexer()
-{
-}
+Lexer::~Lexer() {}
 
 const char *Lexer::language() const
 {
@@ -111,7 +108,7 @@ bool Lexer::defaultEolFill(int style) const
 
 QFont Lexer::defaultFont(int style) const
 {
-    QFont f;
+	QFont f;
 
 	if(m_lexerSpec->defaultFont.contains(style)) {
 		f = m_lexerSpec->defaultFont[style];
@@ -139,7 +136,4 @@ QColor Lexer::defaultPaper(int style) const
     return QsciLexer::defaultPaper(style);
 }
 
-QString Lexer::description(int) const
-{
-	return " ";
-}
+QString Lexer::description(int) const { return " "; }

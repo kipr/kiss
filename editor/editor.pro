@@ -8,17 +8,16 @@ include(../trademarks/branding.pri)
 TEMPLATE = app
 TARGET = KISS
 DEPENDPATH += src
-INCLUDEPATH += src
-DESTDIR=..
+INCLUDEPATH += include
+DESTDIR = ..
 QT += webkit network
 
 win32 {
-INCLUDEPATH += Qsci
-CONFIG -= embed_manifest_exe
+	INCLUDEPATH += Qsci
+	CONFIG -= embed_manifest_exe
 }
 
 LIBS += -lqscintilla2
-
 win32: LIBS += -lshell32
 
 # Input
@@ -74,11 +73,9 @@ FORMS += 	ui/MainWindow.ui \
 			ui/Debugger.ui \
 			ui/Repository.ui
 
-RESOURCES += rc/icons.qrc
+RESOURCES += rc/rc.qrc
 
-unix:QMAKE_CLEAN += src/*~
-
-#install directives
+#### Install Directives ####
 
 changelog.files = ../dog/ChangeLog.txt
 changelog.path = ../$${INSTALL_BASE}
@@ -86,9 +83,9 @@ changelog.path = ../$${INSTALL_BASE}
 target.path += ../$${INSTALL_BASE}
 INSTALLS += target changelog
 
-macx:{
-install_libs.extra = macdeployqt ../$${INSTALL_BASE}/KISS.app
-install_libs.path = ../$${INSTALL_BASE}
+macx: {
+	install_libs.extra = macdeployqt ../$${INSTALL_BASE}/KISS.app
+	install_libs.path = ../$${INSTALL_BASE}
  
-INSTALLS += install_libs
+	INSTALLS += install_libs
 }

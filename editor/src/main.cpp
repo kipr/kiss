@@ -38,12 +38,12 @@ void createArchive(const QString& name, const unsigned version, const QString& p
 		qWarning() << "Unable to open" << out << "for writing.";
 		return;
 	}
-	bool ret = KissArchive::create(name, version, 
+	KissReturn ret = KissArchive::create(name, version, 
 		platforms.split(','),
 		QString(f.readAll().data()).split('\n'), 
 		&outf);
 		
-	if(!ret) qWarning() << "Archive creation failed!";
+	if(ret.error) qWarning() << "Archive creation failed!";
 }
 
 int main(int argc, char **argv)

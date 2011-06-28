@@ -32,13 +32,8 @@
 #include "TargetManager.h"
 
 // Constructor & Destructor
-Target::Target(QObject *parent) : QObject(parent)
-{
-}
-
-Target::~Target()
-{
-}
+Target::Target(QObject *parent) : QObject(parent) {}
+Target::~Target() {}
 
 // Sets the target file and loads the associated plugin file
 bool Target::setTargetFile(const QString& filename)
@@ -63,7 +58,7 @@ bool Target::setTargetFile(const QString& filename)
 
 /* Begin GET methods */
 
-QStringList Target::getErrorMessages()
+QStringList Target::errorMessages()
 {
 	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
 	if(targetInterface) return targetInterface->getErrorMessages();
@@ -72,7 +67,7 @@ QStringList Target::getErrorMessages()
 	return QStringList();
 }
 
-QStringList Target::getWarningMessages()
+QStringList Target::warningMessages()
 {
 	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
 	if(targetInterface) return targetInterface->getWarningMessages();
@@ -81,7 +76,7 @@ QStringList Target::getWarningMessages()
 	return QStringList();
 }
 
-QStringList Target::getLinkerMessages()
+QStringList Target::linkerMessages()
 {
 	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
 	if(targetInterface) return targetInterface->getLinkerMessages();
@@ -90,7 +85,7 @@ QStringList Target::getLinkerMessages()
 	return QStringList();
 }
 
-QStringList Target::getVerboseMessages()
+QStringList Target::verboseMessages()
 {
 	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
 	if(targetInterface) return targetInterface->getVerboseMessages();
@@ -99,7 +94,7 @@ QStringList Target::getVerboseMessages()
 	return QStringList();
 }
 
-QList<QAction*> Target::getActionList()
+QList<QAction*> Target::actionList()
 {
 	TargetInterface* targetInterface = TargetManager::ref().get(m_targetName);
 	if(targetInterface) return targetInterface->getActionList();
@@ -108,7 +103,7 @@ QList<QAction*> Target::getActionList()
 	return QList<QAction*>();
 }
 
-QStringList Target::getSourceExtensions()
+QStringList Target::sourceExtensions()
 {
 	QSettings settings(m_targetFileName, QSettings::IniFormat);
 	QString extensions = settings.value("extensions").toString();
@@ -116,7 +111,7 @@ QStringList Target::getSourceExtensions()
 	return extensions.split("|");
 }
 
-QString Target::getDefaultExtension()
+QString Target::defaultExtension()
 {
 	QSettings settings(m_targetFileName, QSettings::IniFormat);
 	QString extension = settings.value("default_extension").toString();
@@ -124,7 +119,7 @@ QString Target::getDefaultExtension()
 	return extension;
 }
 
-QString Target::getSourceTemplate()
+QString Target::sourceTemplate()
 {
 	QSettings settings(m_targetFileName, QSettings::IniFormat);
 	QString filePath = settings.value("template").toString();
@@ -141,7 +136,7 @@ QString Target::getSourceTemplate()
 	return text;
 }
 
-QString Target::getTargetManualPath()
+QString Target::targetManualPath()
 {
 	QSettings settings(m_targetFileName, QSettings::IniFormat);
 	QString filePath = settings.value("manual").toString();
@@ -238,15 +233,5 @@ DebuggerInterface* Target::debug(const QString& filename)
 /* End action Methods */
 
 /* Serial Port set/get routines */
-void Target::setPort(const QString& port)
-{
-	m_port = port;
-}
-
-QString Target::getPort()
-{
-	return m_port;
-}
-
-
-
+void Target::setPort(const QString& port) { m_port = port; }
+const QString& Target::port() { return m_port; }

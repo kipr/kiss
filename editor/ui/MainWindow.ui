@@ -231,9 +231,14 @@
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="actionDownloadFeatures">
+  <action name="actionManagePackages">
    <property name="text">
-    <string>Download Features</string>
+    <string>Manage Packages</string>
+   </property>
+  </action>
+  <action name="actionInstallLocalPackage">
+   <property name="text">
+    <string>Install Local Package</string>
    </property>
   </action>
  </widget>

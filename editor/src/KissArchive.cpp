@@ -1,3 +1,23 @@
+/**************************************************************************
+ *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *                                                                        *
+ *  This file is part of KISS (Kipr's Instructional Software System).     *
+ *                                                                        *
+ *  KISS is free software: you can redistribute it and/or modify          *
+ *  it under the terms of the GNU General Public License as published by  *
+ *  the Free Software Foundation, either version 2 of the License, or     *
+ *  (at your option) any later version.                                   *
+ *                                                                        *
+ *  KISS is distributed in the hope that it will be useful,               *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *  GNU General Public License for more details.                          *
+ *                                                                        *
+ *  You should have received a copy of the GNU General Public License     *
+ *  along with KISS.  Check the LICENSE file in the project root.         *
+ *  If not, see <http://www.gnu.org/licenses/>.                           *
+ **************************************************************************/
+
 #include "KissArchive.h"
 #include <QFile>
 #include <QFileInfo>
@@ -12,7 +32,28 @@
 const static char kissMagic[2] = {0xB3, 0x7A};
 const static unsigned kissVersion = KISS_ARCHIVE_VERSION;
 
-bool KissArchive::create(const QString& name, unsigned pVersion, const QStringList& platforms, const QStringList& files, QIODevice* out)
+/**
+ * Writes a KISS Archive to the QIODevice specified
+ *
+ * Contents of a created archive: (Integer - 4 Byte Unsigned; String - x Bytes)
+ * 
+ * 2 Bytes - 0xB37A magic
+ * Integer - Number of platforms
+ * numPlatforms * 3 Bytes - Platforms supported (3 chars per platform)
+ * Integer - KISS Archiver version
+ * Integer - Length of Name String
+ * String - Name
+ * Integer - Package version
+ * Integer - Number of Files
+ * for(0 to numberFiles) [
+ *    Integer - File Name length
+ *    String - File Name
+ *    Integer - File length
+ *    String - File data
+ * ]
+ *
+ */
+KissReturn KissArchive::create(const QString& name, unsigned pVersion, const QStringList& platforms, const QStringList& files, QIODevice* out)
 {
 	QStringList noBlanks;
 	foreach(const QString& str, files) {
@@ -39,7 +80,7 @@ bool KissArchive::create(const QString& name, unsigned pVersion, const QStringLi
 	foreach(const QString& file, noBlanks) {
 		if(file.isEmpty()) continue;
 		QFile f(file);
-		if (!f.open(QIODevice::ReadOnly)) return false;
+		if (!f.open(QIODevice::ReadOnly)) return KissReturn(true, "Unable to open " + file + " for reading.");
 		
 		unsigned strLength = file.length();
 		out->write((char*)&strLength, sizeof(unsigned));
@@ -50,10 +91,13 @@ bool KissArchive::create(const QString& name, unsigned pVersion, const QStringLi
 		out->write((char*)&dataLength, sizeof(unsigned));
 		out->write(data);
 	}
-	return true;
+	return KissReturn(false);
 }
 
-bool KissArchive::install(QIODevice* in)
+/**
+ * Install a package given from a QIODevice
+ */
+KissReturn KissArchive::install(QIODevice* in)
 {
 	QStringList files;
 	QStringList dirs;
@@ -63,7 +107,7 @@ bool KissArchive::install(QIODevice* in)
 	in->read(magic, 2);
 	if(magic[0] != kissMagic[0] || magic[1] != kissMagic[1]) {
 		qWarning() << "Bad Magic";
-		return false;
+		return KissReturn(true, "Bad Magic. Probably not a KISS Archive");
 	}
 	
 	// Read platforms, halt if current platform not detected
@@ -73,12 +117,11 @@ bool KissArchive::install(QIODevice* in)
 	for(unsigned i = 0; i < numPlatforms; ++i) {
 		if(QString(in->read(3).data()) == osName()) {
 			match = true;
-			break;
 		}
 	}
 	if(!match) {
 		qWarning() << "Incorrect OS";
-		return false;
+		return KissReturn(true, "This OS is not supported by the archive");
 	}
 	
 	// Checks the Kiss Archive Specification version, so we know how to extract
@@ -98,7 +141,7 @@ bool KissArchive::install(QIODevice* in)
 	
 	if(KissArchive::version(name) >= pVersion) {
 		qWarning() << "Higher version already installed. Skipping.";
-		return true;
+		return KissReturn(true, "Higher version of same archive already installed");
 	} else if(KissArchive::version(name) < pVersion) {
 		uninstall(name);
 	}
@@ -127,7 +170,7 @@ bool KissArchive::install(QIODevice* in)
 		}
 		if(!f.open(QIODevice::WriteOnly)) {
 			qWarning() << "Unable to open" << str << "for writing.";
-			return false;
+			return KissReturn(true, "Unable to open " + str + " for writing");
 		}
 		f.write(data);
 	}
@@ -139,13 +182,16 @@ bool KissArchive::install(QIODevice* in)
 	installed.setValue(name + INSTALLED_DIRS_STRING, dirs);
 	installed.sync();
 	
-	return true;
+	return KissReturn(false);
 }
 
-bool KissArchive::uninstall(const QString& name)
+/**
+ * Uninstalls a package from KISS's directory structure
+ */
+KissReturn KissArchive::uninstall(const QString& name)
 {
 	QSettings installed(KISS_ARCHIVE_FILE, QSettings::IniFormat);
-	if(!installed.childGroups().contains(name)) return false;
+	if(!installed.childGroups().contains(name)) return KissReturn(true, "No such archive installed");
 	
 	const QStringList& files = installed.value(name + INSTALLED_FILES_STRING).toStringList();
 	foreach(const QString& file, files) {
@@ -161,19 +207,28 @@ bool KissArchive::uninstall(const QString& name)
 	installed.remove(name);
 	installed.sync();
 	
-	return true;
+	return KissReturn(false);
 }
 
+/**
+ * Returns the package's version, if that package is installed
+ */
 const unsigned KissArchive::version(const QString& name)
 {
 	return QSettings(KISS_ARCHIVE_FILE, QSettings::IniFormat).value(name + INSTALLED_VERSION_STRING, 0).toUInt();
 }
 
+/**
+ * List the installed packages, as declared in the file "installed"
+ */
 QStringList KissArchive::installed()
 {
 	return QSettings(KISS_ARCHIVE_FILE, QSettings::IniFormat).childGroups();
 }
 
+/**
+ * Fetch 3 char OS Name
+ */
 QString KissArchive::osName() 
 {
 	return 

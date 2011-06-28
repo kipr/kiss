@@ -28,9 +28,7 @@ FindDialog::FindDialog(QWidget *parent) : QDialog(parent)
 	setModified(false);
 }
 
-FindDialog::~FindDialog()
-{
-}
+FindDialog::~FindDialog() {}
 
 // Sets the current SourceFile object
 void FindDialog::setSourceFile(SourceFile *sourceFile)
@@ -74,15 +72,8 @@ void FindDialog::on_ui_buttonReplace_All_clicked(bool)
 	while(m_currentSourceFile->getEditor()->findNext());
 }
 
-bool FindDialog::isModified()
-{
-	return m_isModified;
-}
-
-void FindDialog::setModified(bool modified)
-{
-	m_isModified = modified;
-}
+bool FindDialog::isModified() { return m_isModified; }
+void FindDialog::setModified(bool modified) { m_isModified = modified; }
 
 void FindDialog::on_ui_findInput_textChanged(QString)
 {

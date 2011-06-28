@@ -25,8 +25,8 @@
 #include "SourceFile.h"
 #include "WebTab.h"
 #include "TargetManager.h"
-#include <QToolTip>
 
+#include <QToolTip>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qsciprinter.h>
 #include <QMessageBox>
@@ -41,6 +41,7 @@
 #include <QDebug>
 #include <QPrintDialog>
 #include "WelcomeTab.h"
+#include "KissArchive.h"
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -135,6 +136,7 @@ void MainWindow::initMenus(Tab* tab)
 	
 	menuFile->addAction(actionNew);
 	menuFile->addAction(actionOpen);
+	menuFile->addAction(actionInstallLocalPackage);
 	if(tab) tab->addActionsFile(menuFile);
 	menuFile->addSeparator();
 	menuFile->addAction(actionNext);
@@ -153,7 +155,7 @@ void MainWindow::initMenus(Tab* tab)
 
 	menuEdit->addAction(actionEditor_Settings);
 	
-	menuHelp->addAction(actionDownloadFeatures);
+	menuHelp->addAction(actionManagePackages);
 	menuHelp->addSeparator();
 	menuHelp->addAction(actionAbout);
 	
@@ -255,10 +257,7 @@ void MainWindow::addTab(Tab* tab)
 	actionClose->setEnabled(ui_tabWidget->count() > 0);
 }
 
-QTabWidget* MainWindow::tabWidget()
-{
-	return ui_tabWidget;
-}
+QTabWidget* MainWindow::tabWidget() { return ui_tabWidget; }
 
 void MainWindow::showErrorMessages(bool verbose)
 {
@@ -376,9 +375,36 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	setUpdatesEnabled(true);
 }
 
-void MainWindow::on_actionDownloadFeatures_triggered()
+void MainWindow::on_actionManagePackages_triggered()
 {
 	addTab(new Repository(this));
+}
+
+void MainWindow::on_actionInstallLocalPackage_triggered()
+{
+	QSettings settings;
+	QString openPath = settings.value("openpath", QDir::homePath()).toString();
+	QStringList filters = TargetManager::ref().getAllSupportedExtensions();
+	filters.removeDuplicates();
+	qWarning() << filters;
+	QString filePath = QFileDialog::getOpenFileName(this, tr("Open Package"), openPath, "KISS Archives (*.kiss)");
+		
+	if(filePath.isEmpty())
+		return;
+
+	QFileInfo fileInfo(filePath);
+	settings.setValue("openpath", fileInfo.absolutePath());
+
+	QFile f(filePath);
+	if(!f.open(QIODevice::ReadOnly)) {
+		QMessageBox::critical(this, tr("Install failed!"), tr("Unable to open package"));
+		return;
+	}
+	
+	KissReturn ret(KissArchive::install(&f));
+	if(ret.error) {
+		QMessageBox::critical(this, tr("Install failed!"), ret.message);
+	} else QMessageBox::information(this, tr("Install Complete!"), tr("Please restart KISS"));
 }
 
 void MainWindow::errorClicked(QListWidgetItem* item)
@@ -399,7 +425,4 @@ void MainWindow::errorClicked(QListWidgetItem* item)
 }
 
 // TODO: Make Error Googlable
-void MainWindow::showContextMenuForError(const QPoint &pos)
-{
-	
-}
+void MainWindow::showContextMenuForError(const QPoint &pos) {}
