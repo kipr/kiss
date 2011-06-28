@@ -8,6 +8,13 @@
 const static char kissMagic[2] = {0xB3, 0x7A};
 const static unsigned kissVersion = KISS_ARCHIVE_VERSION;
 
+template <typename T>
+QList<T> reversed( const QList<T> & in ) {
+    QList<T> result;
+    std::reverse_copy( in.begin(), in.end(), std::back_inserter( result ) );
+    return result;
+}
+
 bool KissArchive::create(const QString& name, unsigned pVersion, const QStringList& files, QIODevice* out)
 {
 	QStringList noBlanks;
@@ -92,11 +99,11 @@ bool KissArchive::install(QIODevice* in)
 		
 		
 		QFile f(str);
-		const QString& filePath = QFileInfo(str).canonicalPath();
+		const QString& filePath = QFileInfo(str).path();
 		QDir dir(filePath);
 		if(!dir.exists()) {
 			dir.mkpath(filePath);
-			dirs << filePath;
+			dirs.prepend(filePath);
 		}
 		if(!f.open(QIODevice::WriteOnly)) {
 			qWarning() << "Unable to open" << str << "for writing.";
@@ -129,7 +136,7 @@ bool KissArchive::uninstall(const QString& name)
 	
 	const QStringList& dirs = installed.value(name + "/dirs").toStringList();
 	foreach(const QString& dir, dirs) {
-		QDir().rmdir(dir);
+		if(!QDir().rmdir(dir)) qWarning() << "Unable to rm" << dir;
 	}
 	installed.remove(name);
 	installed.sync();
