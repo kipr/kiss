@@ -12,17 +12,7 @@
 const static char kissMagic[2] = {0xB3, 0x7A};
 const static unsigned kissVersion = KISS_ARCHIVE_VERSION;
 
-QString KissArchive::osName =
-#ifdef Q_OS_WIN
-	"win"
-#elif defined(Q_OS_MAC)
-	"osx"
-#else
-	"nix"
-#endif
-	;
-
-bool KissArchive::create(const QString& name, unsigned pVersion, const QStringList& files, QIODevice* out)
+bool KissArchive::create(const QString& name, unsigned pVersion, const QStringList& platforms, const QStringList& files, QIODevice* out)
 {
 	QStringList noBlanks;
 	foreach(const QString& str, files) {
@@ -31,6 +21,14 @@ bool KissArchive::create(const QString& name, unsigned pVersion, const QStringLi
 	
 	unsigned size = (unsigned)noBlanks.size();
 	out->write(kissMagic, 2);
+	
+	unsigned numPlatforms = platforms.size();
+	out->write((char*)&numPlatforms, sizeof(unsigned));
+	foreach(const QString& platform, platforms) {
+		if(platform.size() != 3) qWarning() << "Platform" << platform << "not 3 bytes";
+		out->write(platform.toLocal8Bit(), 3);
+	}
+	
 	out->write((char*)&kissVersion, sizeof(unsigned));
 	unsigned nameSize = (unsigned)name.length();
 	out->write((char*)&nameSize, sizeof(unsigned));
@@ -65,6 +63,21 @@ bool KissArchive::install(QIODevice* in)
 	in->read(magic, 2);
 	if(magic[0] != kissMagic[0] || magic[1] != kissMagic[1]) {
 		qWarning() << "Bad Magic";
+		return false;
+	}
+	
+	// Read platforms, halt if current platform not detected
+	unsigned numPlatforms = 0;
+	in->read((char*)&numPlatforms, sizeof(unsigned));
+	bool match = false;
+	for(unsigned i = 0; i < numPlatforms; ++i) {
+		if(QString(in->read(3).data()) == osName()) {
+			match = true;
+			break;
+		}
+	}
+	if(!match) {
+		qWarning() << "Incorrect OS";
 		return false;
 	}
 	
@@ -159,4 +172,17 @@ const unsigned KissArchive::version(const QString& name)
 QStringList KissArchive::installed()
 {
 	return QSettings(KISS_ARCHIVE_FILE, QSettings::IniFormat).childGroups();
+}
+
+QString KissArchive::osName() 
+{
+	return 
+	#ifdef Q_OS_WIN
+		"win"
+	#elif defined(Q_OS_MAC)
+		"osx"
+	#else
+		"nix"
+	#endif
+		;
 }

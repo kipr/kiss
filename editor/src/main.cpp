@@ -27,7 +27,7 @@
 #include <QTimer>
 #include <QDebug>
 
-void createArchive(QString name, unsigned version, QString fileList, QString out) {
+void createArchive(const QString& name, const unsigned version, const QString& platforms, const QString& fileList, const QString& out) {
 	QFile f(fileList);
 	if(!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		qWarning() << "Unable to open" << fileList << "for reading.";
@@ -39,6 +39,7 @@ void createArchive(QString name, unsigned version, QString fileList, QString out
 		return;
 	}
 	bool ret = KissArchive::create(name, version, 
+		platforms.split(','),
 		QString(f.readAll().data()).split('\n'), 
 		&outf);
 		
@@ -51,9 +52,9 @@ int main(int argc, char **argv)
 	QApplication application(argc, argv);
 	
 	const QStringList& args = QApplication::arguments();
-	if(args.size() == 6) {
+	if(args.size() == 7) {
 		if(args[1] == "--createArchive") {
-			createArchive(args[2], args[3].toUInt(), args[4], args[5]);
+			createArchive(args[2], args[3].toUInt(), args[4], args[5], args[6]);
 		}
 		
 		return 0;

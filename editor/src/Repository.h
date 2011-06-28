@@ -33,6 +33,7 @@ public:
 private slots:
 	void on_ui_mark_clicked();
 	void on_ui_unmark_clicked();
+	void on_ui_uninstall_clicked();
 	void on_ui_begin_clicked();
 	
 	void downloadProgress(qint64, qint64);
@@ -40,7 +41,7 @@ private slots:
 	void finished(QNetworkReply* reply);
 	void downloadFinished(QNetworkReply* reply);
 private:
-	void downloadNext();
+	void next();
 	
 	QNetworkAccessManager m_network;
 	QMap<QString, QString> m_locations;	

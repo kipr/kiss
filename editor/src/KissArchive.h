@@ -10,14 +10,13 @@
 class KissArchive 
 {
 public:
-	static bool create(const QString& name, unsigned version, const QStringList& files, QIODevice* out);
+	static bool create(const QString& name, unsigned version, const QStringList& platforms, const QStringList& files, QIODevice* out);
 	static bool install(QIODevice* in);
 	static bool uninstall(const QString& name);
 	static const unsigned version(const QString& name);
 	static QStringList installed();
-	static const QString& osName();
+	static QString osName();
 private:
-	static QString osName;
 };
 
 #endif
