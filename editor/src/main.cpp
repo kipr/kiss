@@ -27,7 +27,7 @@
 #include <QTimer>
 #include <QDebug>
 
-void createArchive(QString fileList, QString out) {
+void createArchive(QString name, unsigned version, QString fileList, QString out) {
 	QFile f(fileList);
 	if(!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		qWarning() << "Unable to open" << fileList << "for reading.";
@@ -38,7 +38,10 @@ void createArchive(QString fileList, QString out) {
 		qWarning() << "Unable to open" << out << "for writing.";
 		return;
 	}
-	bool ret = KissArchive::create(QString(f.readAll().data()).split('\n'), &outf);
+	bool ret = KissArchive::create(name, version, 
+		QString(f.readAll().data()).split('\n'), 
+		&outf);
+		
 	if(!ret) qWarning() << "Archive creation failed!";
 }
 
@@ -47,19 +50,25 @@ int main(int argc, char **argv)
 	/* The Following lines just set up the application object */
 	QApplication application(argc, argv);
 	
-	if(QApplication::arguments().size() == 4) {
-		if(QApplication::arguments()[1] == "--createArchive") {
-			createArchive(QApplication::arguments()[2], QApplication::arguments()[3]);
+	const QStringList& args = QApplication::arguments();
+	if(args.size() == 6) {
+		if(args[1] == "--createArchive") {
+			createArchive(args[2], args[3].toUInt(), args[4], args[5]);
 		}
 		
 		return 0;
-	} else if(QApplication::arguments().size() == 3) {
-		QFile f(QApplication::arguments()[2]);
+	} else if(args.size() == 3) {
+		if(args[1] == "--uninstall") {
+			KissArchive::uninstall(args[2]);
+			return 0;
+		}
+		
+		QFile f(args[2]);
 		if(!f.open(QIODevice::ReadOnly)) {
 			return 0;
 		}
 		
-		KissArchive::extract(&f);
+		KissArchive::install(&f);
 		
 		return 0;
 	}

@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	setUpdatesEnabled(false);
 
 	/* Sets up the QTabWidget that handles the editor windows */
-	QToolButton *cornerButton = new QToolButton();
+	QToolButton *cornerButton = new QToolButton(ui_tabWidget);
 	cornerButton->setDefaultAction(actionClose);
 	cornerButton->setAutoRaise(true);
 	ui_tabWidget->setCornerWidget(cornerButton);
@@ -243,13 +243,10 @@ void MainWindow::deleteTab(int index)
 
 void MainWindow::addTab(Tab* tab)
 {
-	/* Adds the tab to the tabWidget */
-	
 	if(!tab->beginSetup()) return;
 	setUpdatesEnabled(false);
 	int tabNum = ui_tabWidget->addTab(dynamic_cast<QWidget*>(tab), QString::fromAscii(""));
 	ui_tabWidget->setCurrentIndex(tabNum);
-	// on_ui_tabWidget_currentChanged(tabNum);
 	setUpdatesEnabled(true);
 	tab->completeSetup();
 	

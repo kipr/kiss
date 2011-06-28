@@ -110,7 +110,7 @@ void Repository::finished(QNetworkReply* reply)
 void Repository::downloadFinished(QNetworkReply* reply)
 {
 	disconnect(reply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(downloadProgress(qint64, qint64)));
-	if(!KissArchive::extract(reply)) {
+	if(!KissArchive::install(reply)) {
 		qWarning() << "Installing" << reply->request().url() << "failed!";
 	}
 	downloadNext();
