@@ -5,15 +5,22 @@
 #include <QDebug>
 #include <QSettings>
 
+#define INSTALLED_VERSION_STRING "/version"
+#define INSTALLED_DIRS_STRING "/dirs"
+#define INSTALLED_FILES_STRING "/files"
+
 const static char kissMagic[2] = {0xB3, 0x7A};
 const static unsigned kissVersion = KISS_ARCHIVE_VERSION;
 
-template <typename T>
-QList<T> reversed( const QList<T> & in ) {
-    QList<T> result;
-    std::reverse_copy( in.begin(), in.end(), std::back_inserter( result ) );
-    return result;
-}
+QString KissArchive::osName =
+#ifdef Q_OS_WIN
+	"win"
+#elif defined(Q_OS_MAC)
+	"osx"
+#else
+	"nix"
+#endif
+	;
 
 bool KissArchive::create(const QString& name, unsigned pVersion, const QStringList& files, QIODevice* out)
 {
@@ -100,8 +107,8 @@ bool KissArchive::install(QIODevice* in)
 		
 		QFile f(str);
 		const QString& filePath = QFileInfo(str).path();
-		QDir dir(filePath);
-		if(!dir.exists()) {
+		QDir dir;
+		if(!dir.exists(filePath)) {
 			dir.mkpath(filePath);
 			dirs.prepend(filePath);
 		}
@@ -114,9 +121,9 @@ bool KissArchive::install(QIODevice* in)
 	qWarning() << files;
 	
 	QSettings installed(KISS_ARCHIVE_FILE, QSettings::IniFormat);
-	installed.setValue(name + "/version", pVersion);
-	installed.setValue(name + "/files", files);
-	installed.setValue(name + "/dirs", dirs);
+	installed.setValue(name + INSTALLED_VERSION_STRING, pVersion);
+	installed.setValue(name + INSTALLED_FILES_STRING, files);
+	installed.setValue(name + INSTALLED_DIRS_STRING, dirs);
 	installed.sync();
 	
 	return true;
@@ -127,16 +134,16 @@ bool KissArchive::uninstall(const QString& name)
 	QSettings installed(KISS_ARCHIVE_FILE, QSettings::IniFormat);
 	if(!installed.childGroups().contains(name)) return false;
 	
-	const QStringList& files = installed.value(name + "/files").toStringList();
+	const QStringList& files = installed.value(name + INSTALLED_FILES_STRING).toStringList();
 	foreach(const QString& file, files) {
 		if(!QFile(file).remove()) qWarning() << "Failed to remove file" << file;
 		const QDir& dir = QFileInfo(file).dir();
 		if(dir.entryList(QDir::NoDotAndDotDot).size() == 0) dir.rmdir(dir.absolutePath());
 	}
 	
-	const QStringList& dirs = installed.value(name + "/dirs").toStringList();
+	const QStringList& dirs = installed.value(name + INSTALLED_DIRS_STRING).toStringList();
 	foreach(const QString& dir, dirs) {
-		if(!QDir().rmdir(dir)) qWarning() << "Unable to rm" << dir;
+		QDir().rmdir(dir);
 	}
 	installed.remove(name);
 	installed.sync();
@@ -146,7 +153,7 @@ bool KissArchive::uninstall(const QString& name)
 
 const unsigned KissArchive::version(const QString& name)
 {
-	return QSettings(KISS_ARCHIVE_FILE, QSettings::IniFormat).value(name + "/version", 0).toUInt();
+	return QSettings(KISS_ARCHIVE_FILE, QSettings::IniFormat).value(name + INSTALLED_VERSION_STRING, 0).toUInt();
 }
 
 QStringList KissArchive::installed()

@@ -15,7 +15,9 @@ public:
 	static bool uninstall(const QString& name);
 	static const unsigned version(const QString& name);
 	static QStringList installed();
+	static const QString& osName();
 private:
+	static QString osName;
 };
 
 #endif
