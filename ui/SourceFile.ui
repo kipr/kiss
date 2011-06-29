@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SourceFile</class>
+ <widget class="QWidget" name="SourceFile">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>508</width>
+    <height>434</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QsciScintilla" name="ui_editor">
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="whatsThis">
+      <string/>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/file/icon_set/icons/disk.png</normaloff>:/shortcuts/file/icon_set/icons/disk.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="text">
+    <string>Save As</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionCompile">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/bricks.png</normaloff>:/shortcuts/target/icon_set/icons/bricks.png</iconset>
+   </property>
+   <property name="text">
+    <string>Compile</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</iconset>
+   </property>
+   <property name="text">
+    <string>Run</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+R</string>
+   </property>
+  </action>
+  <action name="actionSimulate">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/application_go.png</normaloff>:/shortcuts/target/icon_set/icons/application_go.png</iconset>
+   </property>
+   <property name="text">
+    <string>Simulate</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/stop.png</normaloff>:/shortcuts/target/icon_set/icons/stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+.</string>
+   </property>
+  </action>
+  <action name="actionDownload">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/ruby_blue.png</normaloff>:/shortcuts/target/icon_set/icons/ruby_blue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Download</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/edit/icon_set/icons/page_white_copy.png</normaloff>:/shortcuts/edit/icon_set/icons/page_white_copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/edit/icon_set/icons/page_white_paste.png</normaloff>:/shortcuts/edit/icon_set/icons/page_white_paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/edit/icon_set/icons/cut.png</normaloff>:/shortcuts/edit/icon_set/icons/cut.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/edit/icon_set/icons/arrow_undo.png</normaloff>:/shortcuts/edit/icon_set/icons/arrow_undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/edit/icon_set/icons/arrow_redo.png</normaloff>:/shortcuts/edit/icon_set/icons/arrow_redo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Z</string>
+   </property>
+  </action>
+  <action name="actionManual">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/report.png</normaloff>:/shortcuts/target/icon_set/icons/report.png</iconset>
+   </property>
+   <property name="text">
+    <string>Manual</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/file/icon_set/icons/printer.png</normaloff>:/shortcuts/file/icon_set/icons/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+=</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionResetZoomLevel">
+   <property name="text">
+    <string>Reset Zoom Level</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+0</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/edit/icon_set/icons/find.png</normaloff>:/shortcuts/edit/icon_set/icons/find.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionChangeTarget">
+   <property name="text">
+    <string>Change Target</string>
+   </property>
+  </action>
+  <action name="actionChoosePort">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/link.png</normaloff>:/shortcuts/target/icon_set/icons/link.png</iconset>
+   </property>
+   <property name="text">
+    <string>Choose Port</string>
+   </property>
+  </action>
+  <action name="actionDebug">
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/bug.png</normaloff>:/shortcuts/target/icon_set/icons/bug.png</iconset>
+   </property>
+   <property name="text">
+    <string>Debug</string>
+   </property>
+  </action>
+  <action name="actionToggleBreakpoint">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../rc/icons.qrc">
+     <normaloff>:/sourcefile/icon_set/icons/bullet_blue.png</normaloff>:/sourcefile/icon_set/icons/bullet_blue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle Breakpoint</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Breakpoint</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+B</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QsciScintilla</class>
+   <extends>QFrame</extends>
+   <header>Qsci/qsciscintilla.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../rc/icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>
