@@ -17,3 +17,4 @@ cp -R deploy/* ${TARGET_DIR}
 
 hdiutil create -srcfolder package -volname "KISS ${1}" releases/KISS-${1}.dmg
 
+rm -Rf ${TARGET_DIR}

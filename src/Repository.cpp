@@ -67,7 +67,7 @@ void Repository::on_ui_mark_clicked()
 {
 	QListWidgetItem* item = ui_list->currentItem();
 	if(!item) return;
-	QListWidgetItem* nItem = new QListWidgetItem(QIcon(":/shortcuts/target/icon_set/icons/tick.png"), item->text(), ui_stagedList, item->type());
+	QListWidgetItem* nItem = new QListWidgetItem(QIcon(":/shortcuts/target/icon_set/icons/tick.png"), item->text(), ui_stagedList, TYPE_AVAIL);
 	nItem->setData(Qt::UserRole, item->data(Qt::UserRole));
 	ui_stagedList->addItem(nItem);
 	delete ui_list->takeItem(ui_list->row(item));
@@ -89,7 +89,7 @@ void Repository::on_ui_uninstall_clicked()
 {
 	QListWidgetItem* item = ui_installList->currentItem();
 	if(!item) return;
-	QListWidgetItem* nItem = new QListWidgetItem(QIcon(":/shortcuts/file/icon_set/icons/cross.png"), item->text(), ui_stagedList, item->type());
+	QListWidgetItem* nItem = new QListWidgetItem(QIcon(":/shortcuts/file/icon_set/icons/cross.png"), item->text(), ui_stagedList, TYPE_INSTALLED);
 	nItem->setData(Qt::UserRole, item->data(Qt::UserRole));
 	ui_stagedList->addItem(nItem);
 	delete ui_installList->takeItem(ui_installList->row(item));
@@ -169,6 +169,6 @@ void Repository::next()
 	
 	ui_log->addItem(tr("Downloading ") + item->text() + "...");
 	
-	QNetworkReply* reply = m_network.get(QNetworkRequest(QUrl("http://files.kipr.org/kiss/" + m_locations[item->text()] + "/package.kiss")));
+	QNetworkReply* reply = m_network.get(QNetworkRequest(QUrl("http://files.kipr.org/kiss/" + m_locations[item->text()])));
 	connect(reply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(downloadProgress(qint64, qint64)));
 }

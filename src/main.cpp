@@ -50,7 +50,10 @@ void handleArgs()
 {
 	const QStringList& args = QApplication::arguments();
 	if(args[1] == "--createArchive") {
-		if(args.size() != 7) qWarning() << "Wrong number of arguments";
+		if(args.size() != 7) {
+			qWarning() << "Wrong number of arguments";
+			return;
+		}
 		createArchive(args[2], args[3].toUInt(), args[4], args[5], args[6]);
 	} else if(args.size() == 3) {
 		if(args[1] == "--uninstall") {
