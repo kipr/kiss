@@ -55,18 +55,23 @@ void handleArgs()
 			return;
 		}
 		createArchive(args[2], args[3].toUInt(), args[4], args[5], args[6]);
-	} else if(args.size() == 3) {
-		if(args[1] == "--uninstall") {
-			KissArchive::uninstall(args[2]);
-		} else if(args[1] == "--install") {
-		
-			QFile f(args[2]);
-			if(!f.open(QIODevice::ReadOnly)) {
-				return;
-			}
-		
-			KissArchive::install(&f);
+	} if(args[1] == "--uninstall") {
+		if(args.size() != 3) {
+			qWarning() << "Wrong number of arguments";
+			return;
 		}
+		KissArchive::uninstall(args[2]);
+	} else if(args[1] == "--install") {
+		if(args.size() != 3) {
+			qWarning() << "Wrong number of arguments";
+			return;
+		}
+		QFile f(args[2]);
+		if(!f.open(QIODevice::ReadOnly)) {
+			return;
+		}
+	
+		KissArchive::install(&f);
 	}
 }
 

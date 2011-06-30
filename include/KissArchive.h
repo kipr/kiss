@@ -29,7 +29,7 @@
 
 struct KissReturn 
 {
-	KissReturn(bool error, const QString& message = "") : error(error), message(message) {}
+	KissReturn(const bool& error, const QString& message = "") : error(error), message(message) {}
 	
 	bool error;
 	QString message;
@@ -43,7 +43,6 @@ public:
 	static KissReturn uninstall(const QString& name);
 	static const unsigned version(const QString& name);
 	static QStringList installed();
-	static QString osName();
 private:
 };
 

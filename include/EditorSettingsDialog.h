@@ -77,7 +77,7 @@ Q_OBJECT
 
 public:
 	// Constructor & Destructor
-	EditorSettingsDialog(QWidget *parent = 0);
+	EditorSettingsDialog(QWidget* parent = 0);
 	~EditorSettingsDialog();
 
 	// Show the dialog

@@ -45,16 +45,16 @@ Q_OBJECT
 
 public:
 	// Constructor & Destructor
-	FindDialog(QWidget *parent = 0);
+	FindDialog(QWidget* parent = 0);
 	~FindDialog();
 
 	// Set the source file to run find on
-	void setSourceFile(SourceFile *sourceFile);
+	void setSourceFile(SourceFile* sourceFile);
 	
 	bool isModified();
 
 private:
-	SourceFile *m_currentSourceFile;
+	SourceFile* m_currentSourceFile;
 	bool m_isModified;
 
 public slots:

@@ -19,11 +19,14 @@
  **************************************************************************/
 
 #include "KissArchive.h"
+#include "Os.h"
+
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
 #include <QDebug>
 #include <QSettings>
+#include <QString>
 
 #define INSTALLED_VERSION_STRING "/version"
 #define INSTALLED_DIRS_STRING "/dirs"
@@ -80,7 +83,7 @@ KissReturn KissArchive::create(const QString& name, unsigned pVersion, const QSt
 	foreach(const QString& file, noBlanks) {
 		if(file.isEmpty()) continue;
 		QFile f(file);
-		if (!f.open(QIODevice::ReadOnly)) return KissReturn(true, "Unable to open " + file + " for reading.");
+		if (!f.open(QIODevice::ReadOnly)) return KissReturn(true, QObject::tr("Unable to open ") + file + QObject::tr(" for reading."));
 		
 		unsigned strLength = file.length();
 		out->write((char*)&strLength, sizeof(unsigned));
@@ -107,7 +110,7 @@ KissReturn KissArchive::install(QIODevice* in)
 	in->read(magic, 2);
 	if(magic[0] != kissMagic[0] || magic[1] != kissMagic[1]) {
 		qWarning() << "Bad Magic";
-		return KissReturn(true, "Bad Magic. Probably not a KISS Archive");
+		return KissReturn(true, QObject::tr("Bad Magic. Probably not a KISS Archive"));
 	}
 	
 	// Read platforms, halt if current platform not detected
@@ -115,13 +118,13 @@ KissReturn KissArchive::install(QIODevice* in)
 	in->read((char*)&numPlatforms, sizeof(unsigned));
 	bool match = false;
 	for(unsigned i = 0; i < numPlatforms; ++i) {
-		if(QString(in->read(3).data()) == osName()) {
+		if(QString(in->read(3).data()) == OS_NAME) {
 			match = true;
 		}
 	}
 	if(!match) {
 		qWarning() << "Incorrect OS";
-		return KissReturn(true, "This OS is not supported by the archive");
+		return KissReturn(true, QObject::tr("This OS is not supported by the archive"));
 	}
 	
 	// Checks the Kiss Archive Specification version, so we know how to extract
@@ -141,7 +144,7 @@ KissReturn KissArchive::install(QIODevice* in)
 	
 	if(KissArchive::version(name) >= pVersion) {
 		qWarning() << "Higher version already installed. Skipping.";
-		return KissReturn(true, "Higher version of same archive already installed");
+		return KissReturn(true, QObject::tr("Higher version of same archive already installed"));
 	} else if(KissArchive::version(name) < pVersion) {
 		uninstall(name);
 	}
@@ -160,6 +163,7 @@ KissReturn KissArchive::install(QIODevice* in)
 		in->read((char*)&dataLength, sizeof(unsigned));
 		const QByteArray& data = qUncompress(in->read(dataLength));
 		
+		if(str.isEmpty()) continue;
 		
 		QFile f(str);
 		const QString& filePath = QFileInfo(str).path();
@@ -170,7 +174,6 @@ KissReturn KissArchive::install(QIODevice* in)
 		}
 		if(!f.open(QIODevice::WriteOnly)) {
 			qWarning() << "Unable to open" << str << "for writing.";
-			return KissReturn(true, "Unable to open " + str + " for writing");
 		}
 		f.write(data);
 	}
@@ -191,7 +194,7 @@ KissReturn KissArchive::install(QIODevice* in)
 KissReturn KissArchive::uninstall(const QString& name)
 {
 	QSettings installed(KISS_ARCHIVE_FILE, QSettings::IniFormat);
-	if(!installed.childGroups().contains(name)) return KissReturn(true, "No such archive installed");
+	if(!installed.childGroups().contains(name)) return KissReturn(true, QObject::tr("No such archive installed"));
 	
 	const QStringList& files = installed.value(name + INSTALLED_FILES_STRING).toStringList();
 	foreach(const QString& file, files) {
@@ -224,20 +227,4 @@ const unsigned KissArchive::version(const QString& name)
 QStringList KissArchive::installed()
 {
 	return QSettings(KISS_ARCHIVE_FILE, QSettings::IniFormat).childGroups();
-}
-
-/**
- * Fetch 3 char OS Name
- */
-QString KissArchive::osName() 
-{
-	return 
-	#ifdef Q_OS_WIN
-		"win"
-	#elif defined(Q_OS_MAC)
-		"osx"
-	#else
-		"nix"
-	#endif
-		;
 }

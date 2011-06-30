@@ -29,7 +29,6 @@
 
 #include "LexerSpec.h"
 
-// Ugly constructor which initializes all of the local member variables
 Lexer::Lexer(LexerSpec* spec, QString api) : QsciLexer(0), m_lexerSpec(spec), m_apis(this)
 {
 	m_apis.clear();
@@ -59,23 +58,18 @@ QStringList Lexer::autoCompletionWordSeparators() const
 const char *Lexer::blockStartKeyword(int* style) const
 {
     if (style) *style = m_lexerSpec->blockStartKeywordStyle;
-
     return m_lexerSpec->blockStartKeyword.toLocal8Bit().data();
 }
 
 const char *Lexer::blockStart(int* style) const
 {
-    if (style)
-	*style = m_lexerSpec->blockStartStyle;
-
+    if (style) *style = m_lexerSpec->blockStartStyle;
     return m_lexerSpec->blockStart.toLocal8Bit().data();
 }
 
 const char *Lexer::blockEnd(int* style) const
 {
-    if (style)
-        *style = m_lexerSpec->blockEndStyle;
-
+    if (style) *style = m_lexerSpec->blockEndStyle;
     return m_lexerSpec->blockEnd.toLocal8Bit().data();
 }
 
@@ -88,49 +82,38 @@ const char *Lexer::wordCharacters() const
 
 QColor Lexer::defaultColor(int style) const
 {
-	if(m_lexerSpec->defaultColor.contains(style)) {
-		return m_lexerSpec->defaultColor[style];
-	}
-
-    return QsciLexer::defaultColor(style);
+    return m_lexerSpec->defaultColor.contains(style) ? m_lexerSpec->defaultColor[style] 
+	: QsciLexer::defaultColor(style);
 }
 
 bool Lexer::defaultEolFill(int style) const
 {
-    if (m_lexerSpec->defaultEolFill.contains(style))
-        return true;
-
-    return QsciLexer::defaultEolFill(style);
+    return m_lexerSpec->defaultEolFill.contains(style) ? true 
+	: QsciLexer::defaultEolFill(style);
 }
 
 QFont Lexer::defaultFont(int style) const
 {
-	QFont f;
-
 	if(m_lexerSpec->defaultFont.contains(style)) {
+		QFont f;
 		f = m_lexerSpec->defaultFont[style];
 		f.setFamily(QsciLexer::defaultFont(style).family());
 		f.setPointSize(QsciLexer::defaultFont(style).pointSize());
+		return f;
 	}
-	else f = QsciLexer::defaultFont(style);
-
-	return f;
+	
+	return QsciLexer::defaultFont(style);
 }
 
 const char* Lexer::keywords(int set) const
 {
-	if(m_lexerSpec->keywords.contains(set))
-		return m_lexerSpec->keywords[set].toLocal8Bit();
-
-	return 0;
+	return m_lexerSpec->keywords.contains(set) ? (const char*)m_lexerSpec->keywords[set].toAscii() : 0;
 }
 
 QColor Lexer::defaultPaper(int style) const
 {
-	if(m_lexerSpec->defaultPaper.contains(style))
-		return m_lexerSpec->defaultPaper[style];
-
-    return QsciLexer::defaultPaper(style);
+    return m_lexerSpec->defaultPaper.contains(style) ? m_lexerSpec->defaultPaper[style] 
+	: QsciLexer::defaultPaper(style);
 }
 
 QString Lexer::description(int) const { return " "; }

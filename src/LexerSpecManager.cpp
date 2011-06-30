@@ -21,6 +21,9 @@
 #include "LexerSpecManager.h"
 #include "LexerSpec.h"
 #include "LexerSpecProvider.h"
+#include "Os.h"
+#include "Kiss.h"
+
 #include <QSettings>
 #include <QDir>
 #include <QDebug>
@@ -49,16 +52,8 @@ LexerSpecManager::~LexerSpecManager()
 }
 
 void LexerSpecManager::loadLexers()
-{
-	QStringList exts;
-#ifdef Q_OS_WIN
-	exts << "*.dll";
-#elif defined(Q_OS_MAC)
-	exts << "*.dylib";
-#else
-	exts << ".so";
-#endif
-	QStringList lexers = QDir("lexers").entryList(exts);
+{	
+	QStringList lexers = QDir(LEXER_FOLDER).entryList(QStringList() << (QString("*.") + OS_LIB_EXT));
 	qWarning() << "Lexers:" << lexers;
 	foreach(const QString& str, lexers) {
 		qWarning() << str;
@@ -73,7 +68,7 @@ void LexerSpecManager::loadLexer(const QString& lexer)
 	// Create the QPluginLoader and start constructing the file name
 	QPluginLoader* plugin = new QPluginLoader();
 
-	QDir pluginPath(QDir::currentPath()  + "/lexers");
+	QDir pluginPath(QDir::currentPath()  + "/" + LEXER_FOLDER);
 	QString pluginPathString;
 
 	pluginPathString = pluginPath.absoluteFilePath(lexer);
@@ -92,8 +87,6 @@ void LexerSpecManager::loadLexer(const QString& lexer)
 		qWarning("LexerSpecManager::loadLexer: Plugin for lexer \"%s\" failed qobject_cast", qPrintable(lexer));
 		return;
 	}
-	
-	qWarning() << "Loaded" << lexer;
 	
 	LexerSpecProvider* provider = qobject_cast<LexerSpecProvider*>(plugin->instance());
 	provider->init();

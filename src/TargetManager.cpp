@@ -19,6 +19,8 @@
  **************************************************************************/
 
 #include "TargetManager.h"
+#include "Os.h"
+#include "Kiss.h"
 
 #include <QSettings>
 #include <QDir>
@@ -42,7 +44,7 @@ TargetInterface* TargetManager::get(const QString& targetName)
 
 QStringList TargetManager::allSupportedExtensions()
 {
-	QDir targetDir(QDir::currentPath() + "/targets");
+	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER);
 	QStringList targetDirs;
 	QStringList extensionList;
 
@@ -60,7 +62,7 @@ QStringList TargetManager::allSupportedExtensions()
 		targetDir.cd(dirName);
 		
 		// The target file naming scheme is <dirname>.target
-		QFileInfo targetFile(targetDir, dirName + ".target");
+		QFileInfo targetFile(targetDir, dirName + "." + TARGET_EXT);
 
 		// If we can't find a target file, skip this directory
 		if(!targetFile.exists()) {
@@ -95,19 +97,12 @@ bool TargetManager::loadPlugin(const QString& targetName)
 	// Create the QPluginLoader and start constructing the file name
 	QPluginLoader* plugin = new QPluginLoader();
 
-	QDir pluginPath(QDir::currentPath()  + "/targets");
+	QDir pluginPath(QDir::currentPath()  + "/" + TARGET_FOLDER);
 	QString pluginPathString;
 
 	pluginPath.cd(targetName.toLocal8Bit());
 
-	// These conditionals deal with different file names on different platforms
-#ifdef Q_OS_MAC
-	pluginPathString = pluginPath.absoluteFilePath("lib" + targetName + "_plugin.dylib");
-#elif defined(Q_OS_LINUX)
-	pluginPathString = pluginPath.absoluteFilePath("lib" + targetName + "_plugin.so");
-#else
-	pluginPathString = pluginPath.absoluteFilePath("lib" + targetName + "_plugin.dll");
-#endif
+	pluginPathString = pluginPath.absoluteFilePath("lib" + targetName + "_plugin." + OS_LIB_EXT);
 
 	// Attempts to load the plugin
 	plugin->setFileName(pluginPathString);

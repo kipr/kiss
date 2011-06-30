@@ -85,6 +85,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 /* Destructor */
 MainWindow::~MainWindow()
 {
+	ui_toolBar->clear();
 	while(ui_tabWidget->count() > 0) deleteTab(0);
 }
 
@@ -137,6 +138,7 @@ void MainWindow::initMenus(Tab* tab)
 	menuFile->addAction(actionNew);
 	menuFile->addAction(actionOpen);
 	menuFile->addAction(actionInstallLocalPackage);
+	menuFile->addAction(actionHideErrors);
 	if(tab) tab->addActionsFile(menuFile);
 	menuFile->addSeparator();
 	menuFile->addAction(actionNext);
@@ -217,7 +219,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 			e->ignore();
 			return;
 		}
-		widgetCount--;
+		--widgetCount;
 	}
 
 	//Close all other windows

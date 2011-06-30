@@ -22,6 +22,7 @@
 #include <QDebug>
 #include "KissArchive.h"
 #include "MainWindow.h"
+#include "Os.h"
 #include <QCoreApplication>
 
 #define TYPE_AVAIL 	1001
@@ -111,7 +112,7 @@ void Repository::finished(QNetworkReply* reply)
 	ui_list->clear();
 	m_locations.clear();
 	QStringList lines = QString(reply->readAll()).split('\n');
-	lines = lines.filter(KissArchive::osName());
+	lines = lines.filter(OS_NAME);
 	foreach(const QString& line, lines) {
 		QString name = line.section("\t", 1, 1) + " - v" + line.section("\t", 2, 2);
 		ui_list->addItem(new QListWidgetItem(name, ui_list, TYPE_AVAIL));

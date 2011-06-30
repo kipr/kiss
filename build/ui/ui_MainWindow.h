@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'MainWindow.ui'
 **
-** Created: Wed Jun 29 09:40:50 2011
+** Created: Thu Jun 30 10:57:36 2011
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -45,6 +45,7 @@ public:
     QAction *actionNewProject;
     QAction *actionManagePackages;
     QAction *actionInstallLocalPackage;
+    QAction *actionHideErrors;
     QWidget *ui_centralwidget;
     QHBoxLayout *horizontalLayout;
     QSplitter *splitter;
@@ -111,6 +112,8 @@ public:
         actionManagePackages->setObjectName(QString::fromUtf8("actionManagePackages"));
         actionInstallLocalPackage = new QAction(MainWindow);
         actionInstallLocalPackage->setObjectName(QString::fromUtf8("actionInstallLocalPackage"));
+        actionHideErrors = new QAction(MainWindow);
+        actionHideErrors->setObjectName(QString::fromUtf8("actionHideErrors"));
         ui_centralwidget = new QWidget(MainWindow);
         ui_centralwidget->setObjectName(QString::fromUtf8("ui_centralwidget"));
         horizontalLayout = new QHBoxLayout(ui_centralwidget);
@@ -170,6 +173,7 @@ public:
 
         retranslateUi(MainWindow);
         QObject::connect(actionQuit, SIGNAL(triggered()), MainWindow, SLOT(close()));
+        QObject::connect(actionHideErrors, SIGNAL(triggered()), ui_errorView, SLOT(hide()));
 
         ui_tabWidget->setCurrentIndex(0);
         ui_errorView->setCurrentIndex(0);
@@ -205,6 +209,7 @@ public:
         actionNewProject->setShortcut(QApplication::translate("MainWindow", "Ctrl+N", 0, QApplication::UnicodeUTF8));
         actionManagePackages->setText(QApplication::translate("MainWindow", "Manage Packages", 0, QApplication::UnicodeUTF8));
         actionInstallLocalPackage->setText(QApplication::translate("MainWindow", "Install Local Package", 0, QApplication::UnicodeUTF8));
+        actionHideErrors->setText(QApplication::translate("MainWindow", "Hide Errors", 0, QApplication::UnicodeUTF8));
         ui_tabWidget->setTabText(ui_tabWidget->indexOf(tab), QApplication::translate("MainWindow", "Tab 1", 0, QApplication::UnicodeUTF8));
         ui_errorView->setTabText(ui_errorView->indexOf(tab_2), QApplication::translate("MainWindow", "Tab 1", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
