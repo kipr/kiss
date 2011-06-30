@@ -85,7 +85,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 /* Destructor */
 MainWindow::~MainWindow()
 {
-	ui_toolBar->clear();
+	delete ui_toolBar;
+	ui_toolBar = 0;
+	
 	while(ui_tabWidget->count() > 0) deleteTab(0);
 }
 
