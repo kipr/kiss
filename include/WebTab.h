@@ -26,7 +26,7 @@
 
 class MainWindow;
 
-class WebTab : public QWidget, public Tab, private Ui::WebTab
+class WebTab : public QWidget, public Tab, protected Ui::WebTab
 {
 	Q_OBJECT
 public:
@@ -56,6 +56,11 @@ private slots:
 	void on_actionCopy_triggered();
 	void on_actionCut_triggered();
 	void on_actionPaste_triggered();
+	
+	void on_ui_prevFind_clicked();
+	void on_ui_nextFind_clicked();
+	
+	void on_actionOpenInBrowser_triggered();
 	
 	void refreshSettings();
 

@@ -20,9 +20,11 @@
 
 #include "WebTab.h"
 #include "MainWindow.h"
+
 #include <QUrl>
 #include <QToolBar>
 #include <QWebHistory>
+#include <QDesktopServices>
 
 WebTab::WebTab(QWidget* parent) : QWidget(parent)
 {
@@ -30,6 +32,8 @@ WebTab::WebTab(QWidget* parent) : QWidget(parent)
 	
 	connect(ui_webView, SIGNAL(titleChanged(const QString&)), this, SLOT(updateTitle(const QString&)));
 	connect(ui_webView, SIGNAL(urlChanged(const QUrl&)), this, SLOT(updateUrl(const QUrl&)));
+	
+	ui_frameFind->hide();
 }
 
 WebTab::~WebTab()
@@ -43,6 +47,8 @@ void WebTab::addActionsEdit(QMenu* edit)
 	edit->addAction(actionCopy);
 	edit->addAction(actionCut);
 	edit->addAction(actionPaste);
+	edit->addSeparator();
+	edit->addAction(actionFind);
 }
 
 void WebTab::addActionsHelp(QMenu* help) { Q_UNUSED(help); }
@@ -54,6 +60,7 @@ void WebTab::addOtherActions(QMenuBar* menuBar)
 	browser->addAction(actionForward);
 	browser->addAction(actionReload);
 	browser->addAction(actionGo);
+	browser->addAction(actionOpenInBrowser);
 }
 
 void WebTab::addToolbarActions(QToolBar* toolbar)
@@ -62,11 +69,14 @@ void WebTab::addToolbarActions(QToolBar* toolbar)
 	toolbar->addAction(actionCopy);
 	toolbar->addAction(actionCut);
 	toolbar->addAction(actionPaste);
+	toolbar->addAction(actionFind);
 	toolbar->addSeparator();
 	toolbar->addAction(actionBack);
 	toolbar->addAction(actionForward);
 	toolbar->addAction(actionReload);
 	toolbar->addAction(actionGo);
+	toolbar->addAction(actionOpenInBrowser);
+	
 }
 
 bool WebTab::beginSetup() { return true; }
@@ -130,6 +140,21 @@ void WebTab::moveTo(int line, int pos)
 {
 	Q_UNUSED(line);
 	Q_UNUSED(pos);
+}
+
+void WebTab::on_ui_prevFind_clicked()
+{
+	ui_webView->findText(ui_find->text(), QWebPage::FindBackward);
+}
+
+void WebTab::on_ui_nextFind_clicked()
+{
+	ui_webView->findText(ui_find->text());
+}
+
+void WebTab::on_actionOpenInBrowser_triggered()
+{
+	QDesktopServices::openUrl(ui_webView->url());
 }
 
 void WebTab::refreshSettings() {}

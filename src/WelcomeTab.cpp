@@ -41,9 +41,11 @@ void WelcomeTab::completeSetup()
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return;
 
 	QByteArray data = file.readAll();
-	data.replace("KISS_BACKGROUND", MainWindow::ref().tabWidget()->palette().color(QPalette::Background).name().toAscii());
+	data.replace("KISS_BACKGROUND", palette().color(QPalette::Background).name().toAscii());
 	
 	webView()->setHtml(data.data());
+	
+	actionOpenInBrowser->setEnabled(false);
 }
 
 void WelcomeTab::linkClicked(const QUrl& url)

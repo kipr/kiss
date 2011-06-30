@@ -500,7 +500,8 @@ void SourceFile::on_actionSaveAs_triggered()
 {
 	QSettings settings;
 	QString savePath = settings.value("savepath", QDir::homePath()).toString();
-	QString filePath = QFileDialog::getSaveFileName(&MainWindow::ref(), "Save File", savePath, m_target.sourceExtensions().join(";;") + ";;All Files (*)");
+	QString filePath = QFileDialog::getSaveFileName(&MainWindow::ref(), "Save File", savePath, 
+		m_target.sourceExtensions().join(";;") + ";;All Files (*)");
 	if(filePath.isEmpty()) return;
 
 	QFileInfo fileInfo(filePath);

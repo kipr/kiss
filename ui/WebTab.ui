@@ -13,12 +13,12 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
    <property name="spacing">
-    <number>-1</number>
+    <number>1</number>
    </property>
    <property name="margin">
-    <number>2</number>
+    <number>5</number>
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -37,7 +37,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../rc/icons.qrc">
+        <iconset resource="../rc/rc.qrc">
          <normaloff>:/browser/icon_set/icons/resultset_next.png</normaloff>:/browser/icon_set/icons/resultset_next.png</iconset>
        </property>
        <property name="default">
@@ -59,10 +59,84 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QFrame" name="ui_frameFind">
+     <property name="frameShape">
+      <enum>QFrame::WinPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="margin">
+       <number>1</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Find</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="ui_find"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ui_prevFind">
+        <property name="text">
+         <string>Previous</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../rc/rc.qrc">
+          <normaloff>:/shortcuts/edit/icon_set/icons/arrow_undo.png</normaloff>:/shortcuts/edit/icon_set/icons/arrow_undo.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ui_nextFind">
+        <property name="text">
+         <string>Next</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../rc/rc.qrc">
+          <normaloff>:/shortcuts/edit/icon_set/icons/arrow_redo.png</normaloff>:/shortcuts/edit/icon_set/icons/arrow_redo.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>100</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ui_closeFind">
+        <property name="text">
+         <string>Close</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../rc/rc.qrc">
+          <normaloff>:/shortcuts/file/icon_set/icons/cross.png</normaloff>:/shortcuts/file/icon_set/icons/cross.png</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
   <action name="actionBack">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/browser/icon_set/icons/arrow_left.png</normaloff>:/browser/icon_set/icons/arrow_left.png</iconset>
    </property>
    <property name="text">
@@ -71,7 +145,7 @@
   </action>
   <action name="actionForward">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/browser/icon_set/icons/arrow_right.png</normaloff>:/browser/icon_set/icons/arrow_right.png</iconset>
    </property>
    <property name="text">
@@ -80,7 +154,7 @@
   </action>
   <action name="actionReload">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/browser/icon_set/icons/arrow_refresh.png</normaloff>:/browser/icon_set/icons/arrow_refresh.png</iconset>
    </property>
    <property name="text">
@@ -89,7 +163,7 @@
   </action>
   <action name="actionGo">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/browser/icon_set/icons/resultset_next.png</normaloff>:/browser/icon_set/icons/resultset_next.png</iconset>
    </property>
    <property name="text">
@@ -98,7 +172,7 @@
   </action>
   <action name="actionCopy">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/edit/icon_set/icons/page_white_copy.png</normaloff>:/shortcuts/edit/icon_set/icons/page_white_copy.png</iconset>
    </property>
    <property name="text">
@@ -110,7 +184,7 @@
   </action>
   <action name="actionCut">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/edit/icon_set/icons/cut.png</normaloff>:/shortcuts/edit/icon_set/icons/cut.png</iconset>
    </property>
    <property name="text">
@@ -122,7 +196,7 @@
   </action>
   <action name="actionPaste">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/edit/icon_set/icons/page_white_paste.png</normaloff>:/shortcuts/edit/icon_set/icons/page_white_paste.png</iconset>
    </property>
    <property name="text">
@@ -130,6 +204,24 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="icon">
+    <iconset resource="../rc/rc.qrc">
+     <normaloff>:/shortcuts/edit/icon_set/icons/find.png</normaloff>:/shortcuts/edit/icon_set/icons/find.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find</string>
+   </property>
+  </action>
+  <action name="actionOpenInBrowser">
+   <property name="icon">
+    <iconset resource="../rc/rc.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open In Browser</string>
    </property>
   </action>
  </widget>
@@ -141,7 +233,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../rc/icons.qrc"/>
+  <include location="../rc/rc.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -221,6 +313,70 @@
     <hint type="destinationlabel">
      <x>450</x>
      <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFind</sender>
+   <signal>triggered()</signal>
+   <receiver>ui_frameFind</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>450</x>
+     <y>625</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ui_closeFind</sender>
+   <signal>clicked()</signal>
+   <receiver>ui_frameFind</receiver>
+   <slot>hide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>845</x>
+     <y>625</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>450</x>
+     <y>625</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ui_find</sender>
+   <signal>returnPressed()</signal>
+   <receiver>ui_nextFind</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>256</x>
+     <y>623</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>634</x>
+     <y>625</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFind</sender>
+   <signal>triggered()</signal>
+   <receiver>ui_find</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>256</x>
+     <y>623</y>
     </hint>
    </hints>
   </connection>
