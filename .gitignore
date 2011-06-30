@@ -1,6 +1,8 @@
 *.dylib
 *.o
 moc_*
+ui_*
+qrc_*
 KISS
 targets/gcc/libgcc_plugin.so
 targets/gcc/lib/

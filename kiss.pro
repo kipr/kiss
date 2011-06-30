@@ -1,5 +1,5 @@
 include(config.pri)
-# include(../trademarks/branding.pri)
+include(trademarks/branding.pri)
 
 TEMPLATE = app
 INSTALL_BASE = deploy

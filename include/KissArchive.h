@@ -38,7 +38,9 @@ struct KissReturn
 class KissArchive 
 {
 public:
-	static KissReturn create(const QString& name, unsigned version, const QStringList& platforms, const QStringList& files, QIODevice* out);
+	static KissReturn create(const QString& name, unsigned version, 
+		const QStringList& platforms, const QStringList& files, 
+		QIODevice* out);
 	static KissReturn install(QIODevice* in);
 	static KissReturn uninstall(const QString& name);
 	static const unsigned version(const QString& name);
