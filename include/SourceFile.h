@@ -143,6 +143,7 @@ private:
 	void clearProblems();
 	void markProblems(const QStringList& errors, const QStringList& warnings);
 	void updateErrors();
+	void updateBreakpointToggle();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

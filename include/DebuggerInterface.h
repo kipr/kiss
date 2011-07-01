@@ -75,7 +75,6 @@ public:
 	virtual void send(const QString& str) = 0;
 	virtual void addBreakpoint(const QString& filename, const int lineNum) = 0;
 	virtual void breakpoints() = 0;
-	virtual void where() = 0;
 	virtual void backtrace() = 0;
 	virtual void value(const QString& variable) = 0;
 	virtual void variables() = 0;

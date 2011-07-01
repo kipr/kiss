@@ -578,7 +578,8 @@ void SourceFile::on_actionDebug_triggered()
 	if(!interface) return;
 	
 	foreach(const int& i, m_breakpoints) {
-		interface->addBreakpoint(m_fileInfo.fileName(), i);
+		// QScintilla starts at 0, while gdb starts at 1, + 1
+		interface->addBreakpoint(m_fileInfo.fileName(), ui_editor->markerLine(i) + 1); 
 	}
 	
 	SourceFileShared::ref().debugger()->startDebug(interface);
@@ -661,22 +662,19 @@ void SourceFile::on_actionChoosePort_triggered()
 void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
 {
 	if(checked) {
-		m_breakpoints.removeAll(m_currentLine); // Just for safety, make sure nothing is there to begin with
-		qWarning() << ui_editor->markerAdd(m_currentLine, m_breakIndicator);
-		m_breakpoints.append(m_currentLine);	
+		m_breakpoints.append(ui_editor->markerAdd(m_currentLine, m_breakIndicator));
 	} else {
+		m_breakpoints.removeAll(ui_editor->markerLine(m_currentLine));
 		ui_editor->markerDelete(m_currentLine, m_breakIndicator);
-		m_breakpoints.removeAll(m_currentLine);
 	}
-	
-	actionToggleBreakpoint->setChecked(m_breakpoints.contains(m_currentLine));
+	updateBreakpointToggle();
 }
 
 void SourceFile::on_ui_editor_cursorPositionChanged(int line, int index)
 {
 	Q_UNUSED(index);
 	m_currentLine = line;
-	actionToggleBreakpoint->setChecked(m_breakpoints.contains(line));
+	updateBreakpointToggle();
 }
 
 /*ADDED BY NB*///2/10/2010-dpm
@@ -718,4 +716,13 @@ void SourceFile::updateErrors()
 				m_target.verboseMessages());
 				
 	markProblems(errors, warnings);
+}
+
+void SourceFile::updateBreakpointToggle()
+{
+	bool markerOnLine = false;
+	foreach(const int& i, m_breakpoints) {
+		markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
+	}
+	actionToggleBreakpoint->setChecked(markerOnLine);
 }

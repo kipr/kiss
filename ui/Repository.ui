@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>905</width>
-    <height>524</height>
+    <width>1039</width>
+    <height>623</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,7 +55,7 @@
             <string>Install</string>
            </property>
            <property name="icon">
-            <iconset resource="../rc/icons.qrc">
+            <iconset resource="../rc/rc.qrc">
              <normaloff>:/shortcuts/target/icon_set/icons/tick.png</normaloff>:/shortcuts/target/icon_set/icons/tick.png</iconset>
            </property>
           </widget>
@@ -106,7 +106,7 @@
             <string>Unstage</string>
            </property>
            <property name="icon">
-            <iconset resource="../rc/icons.qrc">
+            <iconset resource="../rc/rc.qrc">
              <normaloff>:/shortcuts/file/icon_set/icons/cross.png</normaloff>:/shortcuts/file/icon_set/icons/cross.png</iconset>
            </property>
           </widget>
@@ -144,7 +144,7 @@
             <string>Uninstall</string>
            </property>
            <property name="icon">
-            <iconset resource="../rc/icons.qrc">
+            <iconset resource="../rc/rc.qrc">
              <normaloff>:/shortcuts/file/icon_set/icons/cross.png</normaloff>:/shortcuts/file/icon_set/icons/cross.png</iconset>
            </property>
           </widget>
@@ -198,6 +198,10 @@
        <property name="text">
         <string>Commit</string>
        </property>
+       <property name="icon">
+        <iconset resource="../rc/rc.qrc">
+         <normaloff>:/shortcuts/target/icon_set/icons/cog_go.png</normaloff>:/shortcuts/target/icon_set/icons/cog_go.png</iconset>
+       </property>
       </widget>
      </item>
     </layout>
@@ -208,7 +212,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../rc/icons.qrc"/>
+  <include location="../rc/rc.qrc"/>
  </resources>
  <connections/>
 </ui>

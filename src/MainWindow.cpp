@@ -25,6 +25,8 @@
 #include "SourceFile.h"
 #include "WebTab.h"
 #include "TargetManager.h"
+#include "WelcomeTab.h"
+#include "KissArchive.h"
 
 #include <QToolTip>
 #include <Qsci/qsciscintilla.h>
@@ -40,8 +42,6 @@
 #include <QList>
 #include <QDebug>
 #include <QPrintDialog>
-#include "WelcomeTab.h"
-#include "KissArchive.h"
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -70,7 +70,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	/* Deletes the tab that QTabWidget starts with by default */
 	deleteTab(0);
 
+	#ifdef Q_OS_MAC
 	QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus);
+	#endif
 
 	ui_errorView->hide();
 	
@@ -78,6 +80,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	connect(&m_warningList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	connect(&m_linkErrorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	connect(&m_verboseList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
+	
+	initMenus(0);
 	
 	setUpdatesEnabled(true);
 }
@@ -87,6 +91,9 @@ MainWindow::~MainWindow()
 {
 	delete ui_toolBar;
 	ui_toolBar = 0;
+	
+	delete ui_menubar;
+	ui_menubar = 0;
 	
 	while(ui_tabWidget->count() > 0) deleteTab(0);
 }

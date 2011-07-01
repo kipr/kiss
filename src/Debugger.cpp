@@ -29,7 +29,6 @@ Debugger::Debugger(QWidget* parent) : QWidget(parent, Qt::Tool), m_interface(0)
 
 Debugger::~Debugger()
 {
-	if(m_interface) delete m_interface;
 }
 
 void Debugger::on_ui_run_clicked() { m_interface->run(); }
@@ -45,10 +44,19 @@ void Debugger::on_ui_consoleEnter_clicked()
 
 void Debugger::startDebug(DebuggerInterface* interface)
 {
+	if(m_interface) {
+		m_interface->stop();
+		delete m_interface;
+		m_interface = 0;
+	}
+	
 	m_interface = interface;
 	m_interface->setResponder(this);
 	
 	programStopped();
+	
+	ui_consoleOut->clear();
+	ui_consoleIn->clear();
 	
 	show();
 }
@@ -76,11 +84,8 @@ void Debugger::writeStderr(const QString& str)
 
 void Debugger::update()
 {
-	// qWarning() << m_interface << ui_variables << ui_libs;
-	
-	// ui_libs->clear();
-	
-	// ui_libs->addItems(m_interface->libs());
+	ui_libs->clear();
+	ui_libs->addItems(m_interface->libs());
 }
 
 void Debugger::programStopped()
@@ -91,6 +96,9 @@ void Debugger::programStopped()
 	ui_stop->setEnabled(false);
 	
 	ui_stack->clear();
+	ui_breakpoints->clear();
+	ui_variables->clear();
+	ui_libs->clear();
 }
 
 void Debugger::programStarted()
@@ -125,7 +133,6 @@ void Debugger::stack(const QList<Frame>& frames)
 {
 	ui_stack->clear();
 	
-	
 	foreach(const Frame& frame, frames) {
 		QStringList vars;
 		foreach(const Variable& var, frame.variables) {
@@ -155,4 +162,14 @@ void Debugger::breakpoints(const QList<Breakpoint>& bkpts)
 		ui_breakpoints->addItem(QString((bkpt.enabled ? tr("Enabled:") : tr("Disabled:"))) + " " + 
 			bkpt.file + ":" + bkpt.line + "::" + bkpt.function);
 	}
+}
+
+void Debugger::closeEvent(QCloseEvent *event)
+{
+	if(m_interface) {
+		m_interface->stop();
+		delete m_interface;
+		m_interface = 0;
+	}
+	event->accept();
 }

@@ -36,6 +36,7 @@ class Repository : public QWidget, public Tab, private Ui::Repository
 	Q_OBJECT
 public:
 	Repository(QWidget* parent = 0);
+	virtual ~Repository();
 	
 	void addActionsFile(QMenu* file);
 	void addActionsEdit(QMenu* edit);
@@ -49,6 +50,8 @@ public:
 	bool close();
 	
 	void moveTo(int line, int pos);
+	
+public slots:
 	void refreshSettings();
 	
 private slots:

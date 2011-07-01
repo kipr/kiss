@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>612</width>
-    <height>527</height>
+    <width>882</width>
+    <height>575</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,7 +56,7 @@
             <string>Run</string>
            </property>
            <property name="icon">
-            <iconset resource="../rc/icons.qrc">
+            <iconset resource="../rc/rc.qrc">
              <normaloff>:/debugger/icon_set/icons/control_play.png</normaloff>:/debugger/icon_set/icons/control_play.png</iconset>
            </property>
            <property name="flat">
@@ -70,7 +70,7 @@
             <string>Step</string>
            </property>
            <property name="icon">
-            <iconset resource="../rc/icons.qrc">
+            <iconset resource="../rc/rc.qrc">
              <normaloff>:/debugger/icon_set/icons/control_end.png</normaloff>:/debugger/icon_set/icons/control_end.png</iconset>
            </property>
           </widget>
@@ -81,7 +81,7 @@
             <string>Pause</string>
            </property>
            <property name="icon">
-            <iconset resource="../rc/icons.qrc">
+            <iconset resource="../rc/rc.qrc">
              <normaloff>:/debugger/icon_set/icons/control_pause.png</normaloff>:/debugger/icon_set/icons/control_pause.png</iconset>
            </property>
           </widget>
@@ -92,7 +92,7 @@
             <string>Stop</string>
            </property>
            <property name="icon">
-            <iconset resource="../rc/icons.qrc">
+            <iconset resource="../rc/rc.qrc">
              <normaloff>:/debugger/icon_set/icons/control_stop.png</normaloff>:/debugger/icon_set/icons/control_stop.png</iconset>
            </property>
           </widget>
@@ -115,6 +115,21 @@
            <property name="text">
             <string>Clear</string>
            </property>
+           <property name="icon">
+            <iconset resource="../rc/rc.qrc">
+             <normaloff>:/shortcuts/file/icon_set/icons/page_white.png</normaloff>:/shortcuts/file/icon_set/icons/page_white.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ui_close">
+           <property name="text">
+            <string>Close</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../rc/rc.qrc">
+             <normaloff>:/shortcuts/file/icon_set/icons/cross.png</normaloff>:/shortcuts/file/icon_set/icons/cross.png</iconset>
+           </property>
           </widget>
          </item>
         </layout>
@@ -135,6 +150,10 @@
           <widget class="QPushButton" name="ui_consoleEnter">
            <property name="text">
             <string>Enter</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../rc/rc.qrc">
+             <normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</iconset>
            </property>
           </widget>
          </item>
@@ -159,7 +178,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -171,16 +190,6 @@
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QListWidget" name="ui_stack"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="ui_threadTab">
-       <attribute name="title">
-        <string>Threads</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QListWidget" name="ui_threads"/>
         </item>
        </layout>
       </widget>
@@ -227,7 +236,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../rc/icons.qrc"/>
+  <include location="../rc/rc.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -259,6 +268,22 @@
     <hint type="destinationlabel">
      <x>880</x>
      <y>93</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ui_close</sender>
+   <signal>clicked()</signal>
+   <receiver>Debugger</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>821</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>440</x>
+     <y>287</y>
     </hint>
    </hints>
   </connection>

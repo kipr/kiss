@@ -25,10 +25,8 @@
 #include <QWebPage>
 #include "MainWindow.h"
 
-WelcomeTab::WelcomeTab(QWidget* parent) : WebTab(parent)
-{
-	
-}	
+WelcomeTab::WelcomeTab(QWidget* parent) : WebTab(parent) {}
+WelcomeTab::~WelcomeTab() {}
 
 void WelcomeTab::completeSetup()
 {	

@@ -85,7 +85,6 @@ private:
 	QString m_targetFileName;
 	QString m_targetName;
 	QString m_port;
-	
 };
 
 #endif

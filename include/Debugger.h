@@ -25,6 +25,7 @@
 #include "DebuggerInterface.h"
 
 #include <QWidget>
+#include <QCloseEvent>
 
 class SourceFile;
 
@@ -57,8 +58,10 @@ private slots:
 	void on_ui_step_clicked();
 	void on_ui_stop_clicked();
 	void on_ui_consoleEnter_clicked();
-
+protected:
+	void closeEvent(QCloseEvent *event);
 private:
+	
 	DebuggerInterface* m_interface;
 };
 

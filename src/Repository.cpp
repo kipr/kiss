@@ -33,6 +33,8 @@ Repository::Repository(QWidget* parent) : QWidget(parent)
 	setupUi(this);
 }
 
+Repository::~Repository() {}
+
 void Repository::addActionsFile(QMenu* file) { Q_UNUSED(file); }
 void Repository::addActionsEdit(QMenu* edit) { Q_UNUSED(edit); }
 void Repository::addActionsHelp(QMenu* help) { Q_UNUSED(help); }

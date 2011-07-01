@@ -74,7 +74,13 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Find</string>
+         <string/>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../rc/rc.qrc">:/shortcuts/edit/icon_set/icons/find.png</pixmap>
         </property>
        </widget>
       </item>
@@ -121,12 +127,21 @@
       </item>
       <item>
        <widget class="QPushButton" name="ui_closeFind">
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
         <property name="text">
-         <string>Close</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="../rc/rc.qrc">
           <normaloff>:/shortcuts/file/icon_set/icons/cross.png</normaloff>:/shortcuts/file/icon_set/icons/cross.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
