@@ -72,6 +72,18 @@ void handleArgs()
 		}
 	
 		KissArchive::install(&f);
+	} else if(args[1] == "--list") {
+		foreach(const QString arg, args.mid(2)) {
+			qWarning() << arg << ":";
+			QFile f(arg);
+			if(!f.open(QIODevice::ReadOnly)) {
+				qWarning() << "Unable to open" << arg << "for reading";
+			}
+
+			foreach(const QString& file, KissArchive::list(&f)) {
+				qWarning() << "\t" << file;
+			}
+		}
 	}
 }
 
@@ -84,7 +96,6 @@ int main(int argc, char **argv)
 		handleArgs();
 		return 0;
 	}
-	
 
 #ifdef Q_OS_MAC
 	QDir::setCurrent(QApplication::applicationDirPath() + "../../../");

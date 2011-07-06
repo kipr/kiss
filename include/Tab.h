@@ -29,6 +29,8 @@ class QToolBar;
 class Tab
 {
 public:	
+	virtual void activate() = 0;
+	
 	// All of these are hooks to add menu items
 	virtual void addActionsFile(QMenu* file) = 0;
 	virtual void addActionsEdit(QMenu* edit) = 0;

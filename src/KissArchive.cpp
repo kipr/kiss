@@ -213,6 +213,57 @@ KissReturn KissArchive::uninstall(const QString& name)
 	return KissReturn(false);
 }
 
+QStringList KissArchive::list(QIODevice* in)
+{
+	QStringList files;
+	QStringList dirs;
+	
+	// Reads the file's "magic" to make sure we have a Kiss Archive
+	char magic[2];
+	in->read(magic, 2);
+	if(magic[0] != kissMagic[0] || magic[1] != kissMagic[1]) {
+		qWarning() << "Bad Magic";
+		return QStringList();
+	}
+	
+	// Read platforms, halt if current platform not detected
+	unsigned numPlatforms = 0;
+	in->read((char*)&numPlatforms, sizeof(unsigned));
+	in->read(numPlatforms * 3);
+	
+	// Checks the Kiss Archive Specification version, so we know how to extract
+	unsigned version = 0;
+	in->read((char*)&version, sizeof(unsigned));
+	if(kissVersion != version) {
+		qWarning() << "Version mismatch. Expected:" << kissVersion << ", got" << version;
+		return QStringList();
+	}
+	
+	// Reads archive name and internal version
+	unsigned nameSize = 0;
+	in->read((char*)&nameSize, sizeof(unsigned));
+	QString name(in->read(nameSize).data());
+	unsigned pVersion = 0;
+	in->read((char*)&pVersion, sizeof(unsigned));
+	
+	// Recursively extract files and dirs
+	unsigned numFiles = 0;
+	in->read((char*)&numFiles, sizeof(unsigned));
+	for(unsigned i = 0; i < numFiles; ++i) {
+		unsigned strLength = 0;
+		in->read((char*)&strLength, sizeof(unsigned));
+		QString str = QString(in->read(strLength).data());
+		
+		files << str;
+		
+		unsigned dataLength = 0;
+		in->read((char*)&dataLength, sizeof(unsigned));
+		in->read(dataLength);
+	}
+	
+	return files;
+}
+
 /**
  * Returns the package's version, if that package is installed
  */

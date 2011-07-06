@@ -22,6 +22,7 @@
 
 #include <QColor>
 #include <QFont>
+#include <QDebug>
 #include <QSettings>
 #include <Qsci/qsciapis.h>
 
@@ -31,11 +32,11 @@
 
 Lexer::Lexer(LexerSpec* spec, QString api) : QsciLexer(0), m_lexerSpec(spec), m_apis(this)
 {
+	connect(&m_apis, SIGNAL(apiPreparationFinished()), this, SLOT(prepFinished()));
 	m_apis.clear();
-	m_apis.load(api);
-	m_apis.prepare();
-
-	setAPIs(&m_apis);
+	if(!m_apis.load(api)) {
+		qWarning() << "Failed to load" << api;
+	} else m_apis.prepare();
 }
 
 Lexer::~Lexer() {}
@@ -94,6 +95,7 @@ bool Lexer::defaultEolFill(int style) const
 
 QFont Lexer::defaultFont(int style) const
 {
+	
 	if(m_lexerSpec->defaultFont.contains(style)) {
 		QFont f;
 		f = m_lexerSpec->defaultFont[style];
@@ -117,3 +119,8 @@ QColor Lexer::defaultPaper(int style) const
 }
 
 QString Lexer::description(int) const { return " "; }
+
+void Lexer::prepFinished()
+{
+	setAPIs(&m_apis);
+}

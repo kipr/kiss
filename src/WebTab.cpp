@@ -36,10 +36,9 @@ WebTab::WebTab(QWidget* parent) : QWidget(parent)
 	ui_frameFind->hide();
 }
 
-WebTab::~WebTab()
-{	
-}
+WebTab::~WebTab() {}
 
+void WebTab::activate() {}
 void WebTab::addActionsFile(QMenu* file) { Q_UNUSED(file); }
 
 void WebTab::addActionsEdit(QMenu* edit)

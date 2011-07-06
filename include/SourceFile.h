@@ -23,7 +23,7 @@
 
 #include "Lexer.h"
 #include "LexerSpec.h"
-#include "ChooseTargetDialog.h"
+#include "TemplateDialog.h"
 #include "ChoosePortDialog.h"
 #include "EditorSettingsDialog.h"
 #include "TargetSettingsDialog.h"
@@ -31,6 +31,7 @@
 #include "ui_SourceFile.h"
 #include "Tab.h"
 #include "Debugger.h"
+#include "FindDialog.h"
 
 #include <QtGlobal>
 #include <Qsci/qsciscintilla.h>
@@ -55,6 +56,7 @@ public:
 	SourceFile(QWidget* parent = 0);
 	~SourceFile();
 	
+	void activate();
 	void addActionsFile(QMenu* file);
 	void addActionsEdit(QMenu* edit);
 	void addActionsHelp(QMenu* help);
@@ -118,6 +120,7 @@ private slots:
 	void on_actionChoosePort_triggered();
 	
 	void on_actionToggleBreakpoint_triggered(bool checked);
+	void on_actionClearBreakpoints_triggered();
 	
 	void on_ui_editor_cursorPositionChanged(int line, int index);
 private:
@@ -129,7 +132,8 @@ private:
 	Target m_target;
 	LexerSpec* m_lexSpec;
 	QString m_lexAPI;
-	int m_breakpointMarker;
+	FindDialog m_findDialog;
+	QString m_targetName;
 	
 	// These are handles for the markers shown in the margin
 	int m_errorIndicator;
@@ -144,6 +148,7 @@ private:
 	void markProblems(const QStringList& errors, const QStringList& warnings);
 	void updateErrors();
 	void updateBreakpointToggle();
+	bool changeTarget(bool _template = true);
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

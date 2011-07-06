@@ -42,6 +42,85 @@ TargetInterface* TargetManager::get(const QString& targetName)
 	return qobject_cast<TargetInterface *>(m_plugins[targetName]->instance());
 }
 
+void TargetManager::unloadAll()
+{
+	QMap<QString, QPluginLoader*>::iterator i = m_plugins.begin();
+	while (i != m_plugins.end()) {
+		unloadPlugin(i.key());
+		i = m_plugins.erase(i);
+	}
+}
+
+QStringList TargetManager::targets()
+{
+	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER);
+	QStringList targetDirs;
+	QStringList targetList;
+
+	// Choke if we can't find the target directory
+	if(!targetDir.exists()) {
+		qWarning("ChooseTargetDialog::scanTargetDirectory: Could not find targets directory");
+		return QStringList();
+	}
+	
+	// Get a list of the possible target directories and check through them
+	targetDirs = targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	QStringListIterator i(targetDirs);
+
+	while(i.hasNext()) {
+		QString dirName = i.next();
+		targetDir.cd(dirName);
+		
+		// The target file naming scheme is <dirname>.target
+		QFileInfo targetFile(targetDir, dirName + ".target");
+
+		// If we can't find a target file, skip this directory
+		if(!targetFile.exists()) {
+			qWarning("ChooseTargetDialog::scanTargetDirectory: Invalid target directory %s", qPrintable(targetDir.absolutePath()));
+			targetDir.cdUp();
+			continue;
+		}
+		
+		targetList << dirName;
+		targetDir.cdUp();
+	}
+
+	// Didn't find any targets, quit
+	if(targetList.count() == 0) {
+		qWarning("ChooseTargetDialog::scanTargetDirectory: No targets to display!\n");
+		return QStringList();
+	}
+
+	return targetList;
+}
+
+QString TargetManager::displayName(const QString& target)
+{
+	QFileInfo targetFile(targetPath(target), target + ".target");
+	return QSettings(targetFile.absoluteFilePath(), QSettings::IniFormat).value("display_name").toString();
+}
+
+QString TargetManager::targetPath(const QString& target)
+{
+	return QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target;
+}
+
+QStringList TargetManager::templates(const QString& target)
+{
+	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/" + "templates");
+
+	if(!targetDir.exists()) {
+		return QStringList();
+	}
+	
+	return targetDir.entryList(QStringList() << "*.template", QDir::Files | QDir::NoDotAndDotDot);
+}
+
+QIcon TargetManager::templateIcon(const QString& target, const QString& _template)
+{	
+	return QIcon(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/templates/" + _template + ".png");
+}
+
 QStringList TargetManager::allSupportedExtensions()
 {
 	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER);
@@ -79,15 +158,7 @@ QStringList TargetManager::allSupportedExtensions()
 
 TargetManager::TargetManager() {}
 TargetManager::TargetManager(const TargetManager& that) { Q_UNUSED(that); }
-
-TargetManager::~TargetManager()
-{
-	QMap<QString, QPluginLoader*>::iterator i = m_plugins.begin();
-	while (i != m_plugins.end()) {
-		unloadPlugin(i.key());
-		i = m_plugins.erase(i);
-	}
-}
+TargetManager::~TargetManager() { unloadAll(); }
 
 /* These last two load/unload a plugin, determining the file name based on the target name */
 bool TargetManager::loadPlugin(const QString& targetName)

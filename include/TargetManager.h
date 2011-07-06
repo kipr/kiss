@@ -25,13 +25,20 @@
 
 #include <QString>
 #include <QPluginLoader>
+#include <QIcon>
 
 class TargetManager
 {
 public:
 	static TargetManager& ref();
 	TargetInterface* get(const QString& targetName);
+	void unloadAll();
 	
+	QStringList targets();
+	QString displayName(const QString& target);
+	QString targetPath(const QString& target);
+	QStringList templates(const QString& target);
+	QIcon templateIcon(const QString& target, const QString& _template);
 	QStringList allSupportedExtensions();
 private:
 	TargetManager();

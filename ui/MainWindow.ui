@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>996</width>
-    <height>609</height>
+    <width>1024</width>
+    <height>625</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,6 +42,12 @@
        <property name="elideMode">
         <enum>Qt::ElideRight</enum>
        </property>
+       <property name="tabsClosable">
+        <bool>false</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
+       </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
          <string>Tab 1</string>
@@ -68,7 +74,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>996</width>
+     <width>1024</width>
      <height>22</height>
     </rect>
    </property>
@@ -119,7 +125,7 @@
   </widget>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>Quit KISS</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -130,7 +136,7 @@
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>About KISS</string>
    </property>
   </action>
   <action name="actionZoom_In">
@@ -151,7 +157,7 @@
   </action>
   <action name="actionEditor_Settings">
    <property name="text">
-    <string>Editor Settings</string>
+    <string>Settings</string>
    </property>
    <property name="menuRole">
     <enum>QAction::PreferencesRole</enum>

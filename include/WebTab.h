@@ -33,6 +33,8 @@ public:
 	WebTab(QWidget* parent = 0);
 	~WebTab();
 	
+	void activate();
+	
 	void addActionsFile(QMenu* file);
 	void addActionsEdit(QMenu* edit);
 	void addActionsHelp(QMenu* help);

@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>508</width>
-    <height>434</height>
+    <width>781</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>12</number>
+   </property>
    <item>
     <widget class="QsciScintilla" name="ui_editor">
      <property name="toolTip">
@@ -22,12 +25,13 @@
      <property name="whatsThis">
       <string/>
      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2"/>
     </widget>
    </item>
   </layout>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/file/icon_set/icons/disk.png</normaloff>:/shortcuts/file/icon_set/icons/disk.png</iconset>
    </property>
    <property name="text">
@@ -47,7 +51,7 @@
   </action>
   <action name="actionCompile">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/target/icon_set/icons/bricks.png</normaloff>:/shortcuts/target/icon_set/icons/bricks.png</iconset>
    </property>
    <property name="text">
@@ -59,7 +63,7 @@
   </action>
   <action name="actionRun">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</iconset>
    </property>
    <property name="text">
@@ -71,7 +75,7 @@
   </action>
   <action name="actionSimulate">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/target/icon_set/icons/application_go.png</normaloff>:/shortcuts/target/icon_set/icons/application_go.png</iconset>
    </property>
    <property name="text">
@@ -83,7 +87,7 @@
   </action>
   <action name="actionStop">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/target/icon_set/icons/stop.png</normaloff>:/shortcuts/target/icon_set/icons/stop.png</iconset>
    </property>
    <property name="text">
@@ -95,7 +99,7 @@
   </action>
   <action name="actionDownload">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/target/icon_set/icons/ruby_blue.png</normaloff>:/shortcuts/target/icon_set/icons/ruby_blue.png</iconset>
    </property>
    <property name="text">
@@ -107,7 +111,7 @@
   </action>
   <action name="actionCopy">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/edit/icon_set/icons/page_white_copy.png</normaloff>:/shortcuts/edit/icon_set/icons/page_white_copy.png</iconset>
    </property>
    <property name="text">
@@ -119,7 +123,7 @@
   </action>
   <action name="actionPaste">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/edit/icon_set/icons/page_white_paste.png</normaloff>:/shortcuts/edit/icon_set/icons/page_white_paste.png</iconset>
    </property>
    <property name="text">
@@ -131,7 +135,7 @@
   </action>
   <action name="actionCut">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/edit/icon_set/icons/cut.png</normaloff>:/shortcuts/edit/icon_set/icons/cut.png</iconset>
    </property>
    <property name="text">
@@ -143,7 +147,7 @@
   </action>
   <action name="actionUndo">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/edit/icon_set/icons/arrow_undo.png</normaloff>:/shortcuts/edit/icon_set/icons/arrow_undo.png</iconset>
    </property>
    <property name="text">
@@ -155,7 +159,7 @@
   </action>
   <action name="actionRedo">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/edit/icon_set/icons/arrow_redo.png</normaloff>:/shortcuts/edit/icon_set/icons/arrow_redo.png</iconset>
    </property>
    <property name="text">
@@ -167,7 +171,7 @@
   </action>
   <action name="actionManual">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/target/icon_set/icons/report.png</normaloff>:/shortcuts/target/icon_set/icons/report.png</iconset>
    </property>
    <property name="text">
@@ -176,7 +180,7 @@
   </action>
   <action name="actionPrint">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/file/icon_set/icons/printer.png</normaloff>:/shortcuts/file/icon_set/icons/printer.png</iconset>
    </property>
    <property name="text">
@@ -212,7 +216,7 @@
   </action>
   <action name="actionFind">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/edit/icon_set/icons/find.png</normaloff>:/shortcuts/edit/icon_set/icons/find.png</iconset>
    </property>
    <property name="text">
@@ -229,7 +233,7 @@
   </action>
   <action name="actionChoosePort">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/target/icon_set/icons/link.png</normaloff>:/shortcuts/target/icon_set/icons/link.png</iconset>
    </property>
    <property name="text">
@@ -238,7 +242,7 @@
   </action>
   <action name="actionDebug">
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/shortcuts/target/icon_set/icons/bug.png</normaloff>:/shortcuts/target/icon_set/icons/bug.png</iconset>
    </property>
    <property name="text">
@@ -250,7 +254,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../rc/icons.qrc">
+    <iconset resource="../rc/rc.qrc">
      <normaloff>:/sourcefile/icon_set/icons/bullet_blue.png</normaloff>:/sourcefile/icon_set/icons/bullet_blue.png</iconset>
    </property>
    <property name="text">
@@ -263,6 +267,11 @@
     <string>Ctrl+Shift+B</string>
    </property>
   </action>
+  <action name="actionClearBreakpoints">
+   <property name="text">
+    <string>Clear Breakpoints</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -273,7 +282,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../rc/icons.qrc"/>
+  <include location="../rc/rc.qrc"/>
  </resources>
  <connections/>
 </ui>

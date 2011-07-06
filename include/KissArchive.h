@@ -43,6 +43,7 @@ public:
 		QIODevice* out);
 	static KissReturn install(QIODevice* in);
 	static KissReturn uninstall(const QString& name);
+	static QStringList list(QIODevice* in);
 	static const unsigned version(const QString& name);
 	static QStringList installed();
 private:

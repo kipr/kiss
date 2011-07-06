@@ -19,6 +19,7 @@
  **************************************************************************/
 
 #include "FindDialog.h"
+#include "SourceFile.h"
 #include <QMessageBox>
 
 // Constructor & Destructor

@@ -38,9 +38,11 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QDebug>
+#include <QShortcut>
 #include <math.h>
+#include <QDate>
 
-SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this)
+SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), m_findDialog(&MainWindow::ref()), m_targetName("?")
 {
 	setupUi(this);
 	
@@ -57,11 +59,15 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 	connect(actionSave, SIGNAL(triggered()), this, SLOT(fileSave()));
 	connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
 	connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
+	
+	m_findDialog.setSourceFile(this);
 }
 
-SourceFile::~SourceFile()
+SourceFile::~SourceFile() {}
+
+void SourceFile::activate()
 {
-	SourceFileShared::ref().hideFindDialog();
+	MainWindow::ref().setTitle(m_targetName + (!m_target.port().isEmpty() ? (" - " + m_target.port()) : ""));
 }
 
 void SourceFile::addActionsFile(QMenu* file) 
@@ -102,6 +108,7 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 		target->addAction(actionDebug);
 		source->addSeparator();
 		source->addAction(actionToggleBreakpoint);
+		source->addAction(actionClearBreakpoints);
 	}
 	target->addSeparator();
 	target->addAction(actionChangeTarget);
@@ -138,34 +145,7 @@ void SourceFile::addToolbarActions(QToolBar* toolbar)
 
 bool SourceFile::beginSetup()
 {
-	ChooseTargetDialog* tDialog = SourceFileShared::ref().chooseTargetDialog();
-	if(!tDialog->exec()) return false;
-	if(!m_target.setTargetFile(tDialog->getSelectedTargetFilePath())) {
-		QMessageBox::critical(this, tr("Error"), tr("Error loading target!"));
-		return false;
-	}
-	
-	QSettings targetSettings(tDialog->getSelectedTargetFilePath(), QSettings::IniFormat);
-
-	/* Tells the settings dialog which target file to use */
-	m_target.setTargetFile(tDialog->getSelectedTargetFilePath());
-	
-	/* Pops up a port select dialog if the target should have a port set */
-	if(targetSettings.value("port_dialog").toBool()) {
-		on_actionChoosePort_triggered();
-		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
-	}
-
-	/* Sets up the lexer for the target */
-	m_lexSpec = LexerSpecManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
-
-	/* Sets the api file for the new target */
-	m_lexAPI = tDialog->getSelectedTargetFilePath().replace(".target",".api");
-	
-	refreshSettings();
-	
-	return true;
-	
+	return changeTarget(isNewFile());
 }
 
 void SourceFile::completeSetup()
@@ -281,7 +261,7 @@ void SourceFile::indentAll()
 
 	QString outDocument;
 
-	for(int i = 0, pos =0;i < ui_editor->lines();i++) {
+	for(int i = 0, pos = 0; i < ui_editor->lines(); ++i) {
 		// Get the current line of text and iterate through it looking for blockStart/End chars
 		QString line = ui_editor->text(i);
 		int blockStartCount = 0, blockEndCount = 0;
@@ -432,6 +412,8 @@ void SourceFile::refreshSettings()
 		}
 	}
 	ui_editor->setAutoCompletionThreshold(settings.value("threshold").toInt());
+	qWarning() << ui_editor->autoCompletionSource();
+	qWarning() << ui_editor->autoCompletionThreshold();
 	settings.endGroup();
 
 	if(settings.value("linenumbers").toBool()){
@@ -590,7 +572,7 @@ void SourceFile::on_actionCut_triggered() 	{ ui_editor->cut(); }
 void SourceFile::on_actionPaste_triggered() 	{ ui_editor->paste(); }
 void SourceFile::on_actionUndo_triggered() 	{ ui_editor->undo(); }
 void SourceFile::on_actionRedo_triggered() 	{ ui_editor->redo(); }
-void SourceFile::on_actionFind_triggered() 	{ SourceFileShared::ref().showFindDialog(this); }
+void SourceFile::on_actionFind_triggered() 	{ m_findDialog.show(); }
 
 void SourceFile::on_actionManual_triggered()
 {
@@ -627,36 +609,13 @@ void SourceFile::on_actionResetZoomLevel_triggered()
 
 void SourceFile::on_actionChangeTarget_triggered()
 {
-	ChooseTargetDialog* tDialog = SourceFileShared::ref().chooseTargetDialog();
-	if(!tDialog->exec()) return;
-	if(!m_target.setTargetFile(tDialog->getSelectedTargetFilePath())) {
-		QMessageBox::critical(this, "Error", "Error loading target!");
-		return;
-	}
-	
-	QSettings targetSettings(tDialog->getSelectedTargetFilePath(), QSettings::IniFormat);
-
-	/* Tells the settings dialog which target file to use */
-	m_target.setTargetFile(tDialog->getSelectedTargetFilePath());
-	
-	/* Pops up a port select dialog if the target should have a port set */
-	if(targetSettings.value("port_dialog").toBool()) {
-		on_actionChoosePort_triggered();
-		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
-	}
-
-	/* Sets the api file for the new target */
-	m_lexAPI = tDialog->getSelectedTargetFilePath().replace(".target",".api");
-	
-	refreshSettings();
+	changeTarget(false);
 }
 
 void SourceFile::on_actionChoosePort_triggered()
 {
-	ChoosePortDialog* pDialog = SourceFileShared::ref().choosePortDialog();
-	if(pDialog->exec()) {
-		m_target.setPort(pDialog->getSelectedPortName());
-	}
+	ChoosePortDialog pDialog(this);
+	if(pDialog.exec()) m_target.setPort(pDialog.getSelectedPortName());
 }
 
 void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
@@ -666,8 +625,22 @@ void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
 	} else {
 		m_breakpoints.removeAll(ui_editor->markerLine(m_currentLine));
 		ui_editor->markerDelete(m_currentLine, m_breakIndicator);
+		
 	}
-	updateBreakpointToggle();
+	
+	bool markerOnLine = false;
+	foreach(const int& i, m_breakpoints) {
+		markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
+	}
+	actionToggleBreakpoint->setChecked(markerOnLine);
+}
+
+void SourceFile::on_actionClearBreakpoints_triggered()
+{	
+	foreach(const int& i, m_breakpoints) {
+		ui_editor->markerDeleteHandle(i);
+	}
+	m_breakpoints.clear();
 }
 
 void SourceFile::on_ui_editor_cursorPositionChanged(int line, int index)
@@ -725,4 +698,56 @@ void SourceFile::updateBreakpointToggle()
 		markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
 	}
 	actionToggleBreakpoint->setChecked(markerOnLine);
+}
+
+bool SourceFile::changeTarget(bool _template)
+{
+	TemplateDialog tDialog(this);
+	if((_template ? tDialog.exec() : tDialog.execTarget()) == QDialog::Rejected) return false;
+	const QString& targetPath = tDialog.selectedTargetFilePath();
+	if(!m_target.setTargetFile(targetPath)) {
+		QMessageBox::critical(this, tr("Error"), tr("Error loading target!"));
+		return false;
+	}
+	
+	
+	QSettings targetSettings(targetPath, QSettings::IniFormat);
+	
+	/* Tells the settings dialog which target file to use */
+	m_target.setTargetFile(targetPath);
+	
+	/* Pops up a port select dialog if the target should have a port set */
+	if(targetSettings.value("port_dialog").toBool()) {
+		on_actionChoosePort_triggered();
+		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
+	}
+
+	/* Sets up the lexer for the target */
+	
+	m_lexSpec = LexerSpecManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
+	qWarning() << m_fileInfo.completeSuffix();
+	m_lexAPI = QString(targetPath).replace(".target",".api");
+	m_targetName = QFileInfo(targetPath).baseName();
+	refreshSettings();
+	
+	if(!isNewFile()) {
+		m_lexSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
+		refreshSettings();
+	}
+	
+	if(!_template) return true;
+	
+	QFile tFile(tDialog.templateFile());
+	if(!tFile.open(QIODevice::ReadOnly)) {
+		QMessageBox::critical(this, tr("Error"), tr("Error loading template!"));
+		return true;
+	}
+	
+	QString str = QTextStream(&tFile).readAll();
+	// Move this?
+	str.replace("KISS_DATE", QDate::currentDate().toString(Qt::TextDate));
+	
+	ui_editor->setText(str);
+	
+	return true;
 }

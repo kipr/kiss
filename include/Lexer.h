@@ -38,6 +38,7 @@
  */
 class Lexer : public QsciLexer
 {
+	Q_OBJECT
 public:
 	// Constructor & Destructor 
 	Lexer(LexerSpec* spec, QString api);
@@ -58,7 +59,9 @@ public:
 	QColor defaultPaper(int style) const;
 	const char *keywords(int set) const;
 	QString description(int style) const;
-
+private slots:
+	void prepFinished();
+	
 private:
 	LexerSpec* m_lexerSpec;
 	QsciAPIs m_apis;

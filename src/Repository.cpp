@@ -23,18 +23,24 @@
 #include "KissArchive.h"
 #include "MainWindow.h"
 #include "Os.h"
+#include "TargetManager.h"
+#include "LexerSpecManager.h"
+#include "SourceDialog.h"
+
 #include <QCoreApplication>
+
+#define DELIM "\t"
 
 #define TYPE_AVAIL 	1001
 #define TYPE_INSTALLED 	1002
 
-Repository::Repository(QWidget* parent) : QWidget(parent)
+Repository::Repository(QWidget* parent) : QWidget(parent), m_source("http://files.kipr.org/kiss/")
 {
 	setupUi(this);
 }
 
 Repository::~Repository() {}
-
+void Repository::activate() {}
 void Repository::addActionsFile(QMenu* file) { Q_UNUSED(file); }
 void Repository::addActionsEdit(QMenu* edit) { Q_UNUSED(edit); }
 void Repository::addActionsHelp(QMenu* help) { Q_UNUSED(help); }
@@ -44,16 +50,26 @@ bool Repository::beginSetup() { return true; }
 
 void Repository::completeSetup()
 {
-	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*)));
-	connect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
-	m_network.get(QNetworkRequest(QUrl("http://files.kipr.org/kiss/available.lst")));
 	MainWindow::ref().setTabName(this, tr("Repository"));
+	
+	// Just in case this isn't the first call to completeSetup
+	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*)));
+	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
+	
+	connect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
+	
+	m_network.get(QNetworkRequest(QUrl(m_source + "available.lst")));
+	
+	ui_list->clear();
+	m_locations.clear();
 	ui_installList->clear();
 	foreach(const QString& name, KissArchive::installed()) {
 		QListWidgetItem* item = new QListWidgetItem(name + " - v" + QString::number(KissArchive::version(name)), ui_installList, TYPE_INSTALLED);
 		item->setData(Qt::UserRole, name);
 		ui_installList->addItem(item);
 	}
+	
+	ui_availGroup->setTitle(m_source + "available.lst");
 }
 
 bool Repository::close() { return true; }
@@ -100,31 +116,51 @@ void Repository::on_ui_uninstall_clicked()
 
 void Repository::on_ui_begin_clicked()
 {
+	MainWindow::ref().closeAllOthers(this);
+	TargetManager::ref().unloadAll();
+	LexerSpecManager::ref().unloadAll();
+	
+	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*)));
 	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
 	connect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*)));
 	next();
 }
 
+void Repository::on_ui_source_clicked()
+{
+	SourceDialog sourceDialog(this);
+	sourceDialog.setSource(m_source);
+	if(sourceDialog.exec() == QDialog::Rejected) return;
+	m_source = sourceDialog.source();
+	completeSetup();
+}
+
 void Repository::finished(QNetworkReply* reply) 
 {
-	if(reply->error() != QNetworkReply::NoError) {
-		qWarning() << "Error:" << reply->error();
-		return; 
-	}
 	ui_list->clear();
 	m_locations.clear();
+	if(reply->error() != QNetworkReply::NoError) {
+		ui_log->addItem(tr("Error fetching list (") + QString::number(reply->error()) + tr(") from ") + m_source);
+		return; 
+	}
 	QStringList lines = QString(reply->readAll()).split('\n');
 	lines = lines.filter(OS_NAME);
 	foreach(const QString& line, lines) {
-		QString name = line.section("\t", 1, 1) + " - v" + line.section("\t", 2, 2);
+		QString name = line.section(DELIM, 1, 1) + " - v" + line.section(DELIM, 2, 2);
 		ui_list->addItem(new QListWidgetItem(name, ui_list, TYPE_AVAIL));
-		qWarning() << line.section("\t", 1, 1) << line.section("\t", 2, 2) << line.section("\t", 3, 3);
-		m_locations[name] = line.section("\t", 3, 3);
+		qWarning() << line.section(DELIM, 1, 1) << line.section(DELIM, 2, 2) << line.section(DELIM, 3, 3);
+		m_locations[name] = line.section(DELIM, 3, 3);
 	}
 }
 
 void Repository::downloadFinished(QNetworkReply* reply)
 {
+	if(reply->error() != QNetworkReply::NoError) {
+		ui_log->addItem(tr("Error fetching (") + QString::number(reply->error()) + tr(") from ") + reply->request().url().toString());
+		next();
+		return; 
+	}
+	
 	disconnect(reply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(downloadProgress(qint64, qint64)));
 	ui_log->addItem(tr("Installing ") + reply->request().url().toString() + "...");
 	KissReturn ret(KissArchive::install(reply));
@@ -172,6 +208,6 @@ void Repository::next()
 	
 	ui_log->addItem(tr("Downloading ") + item->text() + "...");
 	
-	QNetworkReply* reply = m_network.get(QNetworkRequest(QUrl("http://files.kipr.org/kiss/" + m_locations[item->text()])));
+	QNetworkReply* reply = m_network.get(QNetworkRequest(QUrl(m_source + m_locations[item->text()])));
 	connect(reply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(downloadProgress(qint64, qint64)));
 }

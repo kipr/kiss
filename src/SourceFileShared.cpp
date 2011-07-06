@@ -27,21 +27,6 @@ SourceFileShared& SourceFileShared::ref()
 	return instance;
 }
 
-ChooseTargetDialog* SourceFileShared::chooseTargetDialog() 	{ return &m_chooseTargetDialog; }
-ChoosePortDialog* SourceFileShared::choosePortDialog() 		{ return &m_choosePortDialog; }
-
-void SourceFileShared::showFindDialog(SourceFile* sourceFile)
-{
-	m_findDialog.setSourceFile(sourceFile);
-	m_findDialog.show();
-}
-
-void SourceFileShared::hideFindDialog()
-{
-	m_findDialog.setSourceFile(0);
-	m_findDialog.hide();
-}
-
 const QPixmap& SourceFileShared::blackBullet() const 	{ return m_blackBullet; }
 const QPixmap& SourceFileShared::blueBullet() const 	{ return m_blueBullet; }
 const QPixmap& SourceFileShared::redBullet() const 	{ return m_redBullet; }
@@ -49,16 +34,13 @@ const QPixmap& SourceFileShared::yellowBullet() const 	{ return m_yellowBullet; 
 
 Debugger* SourceFileShared::debugger() { return &m_debugger; }
 
-SourceFileShared::SourceFileShared() : m_findDialog(&MainWindow::ref()),
+SourceFileShared::SourceFileShared() :
 	m_blackBullet(":/sourcefile/icon_set/icons/bullet_black.png"), 
 	m_blueBullet(":/sourcefile/icon_set/icons/bullet_blue.png"), 
 	m_redBullet(":/sourcefile/icon_set/icons/bullet_red.png"), 
 	m_yellowBullet(":/sourcefile/icon_set/icons/bullet_yellow.png"),
 	m_debugger(&MainWindow::ref())
 {
-	m_chooseTargetDialog.hide();
-	m_choosePortDialog.hide();
-	m_findDialog.hide();
 	m_debugger.hide();
 }
 

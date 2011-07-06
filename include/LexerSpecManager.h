@@ -30,7 +30,7 @@ class LexerSpecManager
 {
 public:
 	static LexerSpecManager& ref();
-	
+	void unloadAll();
 	LexerSpec* lexerSpec(const QString& ext);
 private:	
 	LexerSpecManager();

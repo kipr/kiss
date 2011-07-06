@@ -38,6 +38,7 @@ public:
 	Repository(QWidget* parent = 0);
 	virtual ~Repository();
 	
+	void activate();
 	void addActionsFile(QMenu* file);
 	void addActionsEdit(QMenu* edit);
 	void addActionsHelp(QMenu* help);
@@ -59,6 +60,7 @@ private slots:
 	void on_ui_unmark_clicked();
 	void on_ui_uninstall_clicked();
 	void on_ui_begin_clicked();
+	void on_ui_source_clicked();
 	
 	void downloadProgress(qint64, qint64);
 
@@ -68,7 +70,8 @@ private:
 	void next();
 	
 	QNetworkAccessManager m_network;
-	QMap<QString, QString> m_locations;	
+	QMap<QString, QString> m_locations;
+	QString m_source;
 };
 
 #endif

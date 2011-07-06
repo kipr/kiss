@@ -39,9 +39,7 @@ LexerSpec* LexerSpecManager::lexerSpec(const QString& ext)
 	return m_lexers.contains(ext) ? qobject_cast<LexerSpecProvider*>(m_lexers[ext]->instance())->lexerSpec() : 0;
 }
 
-LexerSpecManager::LexerSpecManager() { loadLexers(); }
-
-LexerSpecManager::~LexerSpecManager()
+void LexerSpecManager::unloadAll()
 {
 	QList<QPluginLoader*> lexers = m_lexers.values();
 	while (lexers.size() > 0) {
@@ -49,7 +47,11 @@ LexerSpecManager::~LexerSpecManager()
 		lexers.removeAll(loader);
 		delete loader;
 	}
+	m_lexers.clear();
 }
+
+LexerSpecManager::LexerSpecManager() { loadLexers(); }
+LexerSpecManager::~LexerSpecManager() {	unloadAll(); }
 
 void LexerSpecManager::loadLexers()
 {	

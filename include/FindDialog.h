@@ -22,7 +22,6 @@
 #define __FINDDIALOG_H__
 
 #include "ui_FindDialog.h"
-#include "SourceFile.h"
 
 #include <QDialog>
 
@@ -38,6 +37,8 @@
  *	QCheckBox	ui_matchCaseCheckBox
  *
  */
+
+class SourceFile;
 
 class FindDialog : public QDialog, private Ui::FindDialog
 {

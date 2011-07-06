@@ -19,7 +19,6 @@ win32: LIBS += -lshell32
 
 # Input
 HEADERS += 	include/MainWindow.h \
-			include/ChooseTargetDialog.h \
 			include/ChoosePortDialog.h \
 			include/EditorSettingsDialog.h \
 			include/TargetSettingsDialog.h \
@@ -38,11 +37,12 @@ HEADERS += 	include/MainWindow.h \
 			include/Debugger.h \
 			include/SourceFileShared.h \
 			include/Repository.h \
-			include/KissArchive.h
+			include/KissArchive.h \
+			include/TemplateDialog.h \
+			include/SourceDialog.h
 
 SOURCES += 	src/main.cpp \
 			src/MainWindow.cpp \
-			src/ChooseTargetDialog.cpp \
 			src/ChoosePortDialog.cpp \
 			src/EditorSettingsDialog.cpp \
 			src/TargetSettingsDialog.cpp \
@@ -57,10 +57,11 @@ SOURCES += 	src/main.cpp \
 			src/Debugger.cpp \
 			src/SourceFileShared.cpp \
 			src/Repository.cpp \
-			src/KissArchive.cpp
+			src/KissArchive.cpp \
+			src/TemplateDialog.cpp \
+			src/SourceDialog.cpp
 
 FORMS += 	ui/MainWindow.ui \
-			ui/ChooseTargetDialog.ui \
 			ui/ChoosePortDialog.ui \
 			ui/FindDialog.ui \
 			ui/EditorSettingsDialog.ui \
@@ -68,7 +69,9 @@ FORMS += 	ui/MainWindow.ui \
 			ui/SourceFile.ui \
 			ui/WebTab.ui \
 			ui/Debugger.ui \
-			ui/Repository.ui
+			ui/Repository.ui \
+			ui/TemplateDialog.ui \
+			ui/SourceDialog.ui
 
 RESOURCES += rc/rc.qrc
 

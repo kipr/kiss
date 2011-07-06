@@ -42,6 +42,7 @@
 #include <QList>
 #include <QDebug>
 #include <QPrintDialog>
+#include <QNetworkProxyFactory>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -57,6 +58,8 @@ MainWindow& MainWindow::ref()
 /* Constructor */
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0)
 {
+	QNetworkProxyFactory::setUseSystemConfiguration(true);
+	
 	setupUi(this);
 	/* Turns off updates so all of these things are drawn at once */
 	setUpdatesEnabled(false);
@@ -82,6 +85,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	connect(&m_verboseList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	
 	initMenus(0);
+	
+	setTitle("");
 	
 	setUpdatesEnabled(true);
 }
@@ -146,13 +151,15 @@ void MainWindow::initMenus(Tab* tab)
 	
 	menuFile->addAction(actionNew);
 	menuFile->addAction(actionOpen);
-	menuFile->addAction(actionInstallLocalPackage);
-	menuFile->addAction(actionHideErrors);
+	
 	if(tab) tab->addActionsFile(menuFile);
 	menuFile->addSeparator();
 	menuFile->addAction(actionNext);
 	menuFile->addAction(actionPrevious);
 	menuFile->addAction(actionClose);
+	menuFile->addSeparator();
+	menuFile->addAction(actionInstallLocalPackage);
+	menuFile->addAction(actionHideErrors);
 	menuFile->addSeparator();
 	menuFile->addAction(actionQuit);
 	
@@ -177,6 +184,11 @@ void MainWindow::initMenus(Tab* tab)
 	ui_toolBar->addAction(actionNew);
 	ui_toolBar->addAction(actionOpen);
 	if(tab) tab->addToolbarActions(ui_toolBar);
+}
+
+void MainWindow::setTitle(const QString& title)
+{
+	setWindowTitle(tr("KIPR's Instructional Software System") + (title.isEmpty() ? "" : (" - " + title)));
 }
 
 void MainWindow::setTabName(QWidget* widget, const QString& string)
@@ -269,6 +281,14 @@ void MainWindow::addTab(Tab* tab)
 }
 
 QTabWidget* MainWindow::tabWidget() { return ui_tabWidget; }
+void MainWindow::closeAllOthers(Tab* tab)
+{
+	int i = 0;
+	while(ui_tabWidget->count() > 1) {
+		if(dynamic_cast<Tab*>(ui_tabWidget->widget(i)) == tab) ++i;
+		deleteTab(i);
+	}
+}
 
 void MainWindow::showErrorMessages(bool verbose)
 {
@@ -382,6 +402,10 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	setUpdatesEnabled(false);
 	m_currentTab = dynamic_cast<Tab*>(ui_tabWidget->widget(i));
 	initMenus(m_currentTab);
+	setTitle("");
+	if(m_currentTab) m_currentTab->activate();
+	actionNext->setEnabled(m_currentTab && i != ui_tabWidget->count() - 1);
+	actionPrevious->setEnabled(m_currentTab && i != 0);
 	setUpdatesEnabled(true);
 }
 
@@ -397,24 +421,27 @@ void MainWindow::on_actionInstallLocalPackage_triggered()
 	QStringList filters = TargetManager::ref().allSupportedExtensions();
 	filters.removeDuplicates();
 	qWarning() << filters;
-	QString filePath = QFileDialog::getOpenFileName(this, tr("Open Package"), openPath, "KISS Archives (*.kiss)");
-		
-	if(filePath.isEmpty())
-		return;
+	QStringList filePaths = QFileDialog::getOpenFileNames(this, tr("Open Packages"), openPath, "KISS Archives (*.kiss)");
+	foreach(const QString& filePath, filePaths) {
+		if(filePath.isEmpty())
+			continue;
 
-	QFileInfo fileInfo(filePath);
-	settings.setValue("openpath", fileInfo.absolutePath());
+		QFileInfo fileInfo(filePath);
+		settings.setValue("openpath", fileInfo.absolutePath());
 
-	QFile f(filePath);
-	if(!f.open(QIODevice::ReadOnly)) {
-		QMessageBox::critical(this, tr("Install failed!"), tr("Unable to open package"));
-		return;
-	}
+		QFile f(filePath);
+		if(!f.open(QIODevice::ReadOnly)) {
+			QMessageBox::critical(this, tr("Install failed!") + fileInfo.fileName(), tr("Unable to open package"));
+			return;
+		}
 	
-	KissReturn ret(KissArchive::install(&f));
-	if(ret.error) {
-		QMessageBox::critical(this, tr("Install failed!"), ret.message);
-	} else QMessageBox::information(this, tr("Install Complete!"), tr("Please restart KISS"));
+		KissReturn ret(KissArchive::install(&f));
+		if(ret.error) {
+			QMessageBox::critical(this, tr("Install failed!") + fileInfo.fileName(), ret.message);
+			return;
+		} 
+	}
+	QMessageBox::information(this, tr("Install Complete!"), tr("Please restart KISS"));
 }
 
 void MainWindow::errorClicked(QListWidgetItem* item)

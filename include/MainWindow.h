@@ -22,7 +22,6 @@
 #define __MAINWINDOW_H__
 
 #include "ui_MainWindow.h"
-#include "ChooseTargetDialog.h"
 #include "EditorSettingsDialog.h"
 #include "ChoosePortDialog.h"
 #include "FindDialog.h"
@@ -50,6 +49,7 @@ public:
 	
 	void initMenus(Tab* tab);
 	
+	void setTitle(const QString& title);
 	void setTabName(QWidget* widget, const QString& string);
 	void setStatusMessage(const QString& message, int time = 0);
 	
@@ -62,6 +62,8 @@ public:
 	void addTab(Tab* tab);
 	
 	QTabWidget* tabWidget();
+	
+	void closeAllOthers(Tab* tab);
 	
 public slots:
 	void on_actionNew_triggered();
