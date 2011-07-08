@@ -34,10 +34,7 @@ TargetSettingsDialog::TargetSettingsDialog(QWidget *parent) : QDialog(parent)
 TargetSettingsDialog::~TargetSettingsDialog() {}
 
 // Sets the target file :)
-void TargetSettingsDialog::setTargetFile(const QString& filename)
-{
-	m_targetFile = filename;
-}
+void TargetSettingsDialog::setTargetFile(const QString& filename) { m_targetFile = filename; }
 
 // Loads the target file data, execs the dialog
 //     and saves it again if Accept is clicked

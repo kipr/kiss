@@ -1,5 +1,6 @@
 #include "TemplateDialog.h"
 #include "TargetManager.h"
+#include "Kiss.h"
 #include <QListWidgetItem>
 #include <QDebug>
 
@@ -32,14 +33,14 @@ int TemplateDialog::execTarget()
 {
 	ui_templates->hide();
 	setFixedSize(200, 200);
-	setWindowTitle("Targets");
+	setWindowTitle(tr("Targets"));
 	return exec();
 }
 
 QString TemplateDialog::selectedTargetFilePath()
 {
 	const QString& target = ui_targets->currentItem()->data(Qt::UserRole).toString();
-	return TargetManager::ref().targetPath(target) + "/" + target + ".target";
+	return TargetManager::ref().targetPath(target) + "/" + target + "." + TARGET_EXT;
 }
 
 QString TemplateDialog::templateFile()
