@@ -229,6 +229,9 @@
    <property name="text">
     <string>Find</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
   </action>
   <action name="actionOpenInBrowser">
    <property name="icon">
@@ -391,6 +394,22 @@
     </hint>
     <hint type="destinationlabel">
      <x>256</x>
+     <y>623</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFind</sender>
+   <signal>triggered()</signal>
+   <receiver>ui_find</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>289</x>
      <y>623</y>
     </hint>
    </hints>

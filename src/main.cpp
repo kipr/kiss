@@ -115,6 +115,10 @@ int main(int argc, char **argv)
 	MainWindow::ref().addTab(new WelcomeTab(&MainWindow::ref()));
 	QTimer::singleShot(1500, &splash, SLOT(hide()));
 	QTimer::singleShot(1000, &MainWindow::ref(), SLOT(show()));
-
-	return application.exec();
+	freopen ("stdout.txt", "w", stdout);
+	freopen ("stderr.txt", "w", stderr);
+	int ret = application.exec();
+	fclose(stdout);
+	fclose(stderr);
+	return ret;
 }

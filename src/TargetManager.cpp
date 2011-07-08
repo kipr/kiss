@@ -105,20 +105,26 @@ QString TargetManager::targetPath(const QString& target)
 	return QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target;
 }
 
-QStringList TargetManager::templates(const QString& target)
+QStringList TargetManager::templateFolders(const QString& target)
 {
 	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/" + "templates");
-
-	if(!targetDir.exists()) {
-		return QStringList();
-	}
-	
-	return targetDir.entryList(QStringList() << "*.template", QDir::Files | QDir::NoDotAndDotDot);
+	return targetDir.exists() ? targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) : QStringList();
 }
 
-QIcon TargetManager::templateIcon(const QString& target, const QString& _template)
+QStringList TargetManager::templates(const QString& target, const QString& folder)
+{
+	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/" + "templates" + (folder.isEmpty() ? "" : (QString("/") + folder)));
+	
+	return targetDir.exists() ? 
+		targetDir.entryList(QStringList() << "*.template", QDir::Files | QDir::NoDotAndDotDot) : 
+		QStringList();
+}
+
+QIcon TargetManager::templateIcon(const QString& target, const QString& _template, const QString& folder)
 {	
-	return QIcon(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/templates/" + _template + ".png");
+	return QIcon(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + 
+		target + "/templates/" + (folder.isEmpty() ? "" : (folder + "/")) + 
+		_template + ".png");
 }
 
 QStringList TargetManager::allSupportedExtensions()

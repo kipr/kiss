@@ -412,8 +412,6 @@ void SourceFile::refreshSettings()
 		}
 	}
 	ui_editor->setAutoCompletionThreshold(settings.value("threshold").toInt());
-	qWarning() << ui_editor->autoCompletionSource();
-	qWarning() << ui_editor->autoCompletionThreshold();
 	settings.endGroup();
 
 	if(settings.value("linenumbers").toBool()){
@@ -433,9 +431,10 @@ void SourceFile::refreshSettings()
 	else ui_editor->setCallTipsStyle(QsciScintilla::CallTipsNone);
 
 	settings.endGroup();
-	// qWarning() << lexer->defaultColor(LexerCPP::Keyword).name();
 
 	ui_editor->setLexer(lexer);
+	
+	updateMargins();
 }
 
 QString SourceFile::fileName() 	{ return m_fileInfo.fileName(); }
@@ -628,11 +627,7 @@ void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
 		
 	}
 	
-	bool markerOnLine = false;
-	foreach(const int& i, m_breakpoints) {
-		markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
-	}
-	actionToggleBreakpoint->setChecked(markerOnLine);
+	updateBreakpointToggle();
 }
 
 void SourceFile::on_actionClearBreakpoints_triggered()
@@ -641,6 +636,8 @@ void SourceFile::on_actionClearBreakpoints_triggered()
 		ui_editor->markerDeleteHandle(i);
 	}
 	m_breakpoints.clear();
+	
+	actionToggleBreakpoint->setChecked(false);
 }
 
 void SourceFile::on_ui_editor_cursorPositionChanged(int line, int index)
@@ -734,6 +731,8 @@ bool SourceFile::changeTarget(bool _template)
 		m_lexSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
 		refreshSettings();
 	}
+	
+	MainWindow::ref().refreshMenus();
 	
 	if(!_template) return true;
 	

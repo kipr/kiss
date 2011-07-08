@@ -65,6 +65,8 @@ public:
 	
 	void closeAllOthers(Tab* tab);
 	
+	void refreshMenus();
+	
 public slots:
 	void on_actionNew_triggered();
 	void on_actionOpen_triggered();

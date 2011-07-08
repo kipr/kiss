@@ -37,8 +37,9 @@ public:
 	QStringList targets();
 	QString displayName(const QString& target);
 	QString targetPath(const QString& target);
-	QStringList templates(const QString& target);
-	QIcon templateIcon(const QString& target, const QString& _template);
+	QStringList templateFolders(const QString& target);
+	QStringList templates(const QString& target, const QString& folder = "");
+	QIcon templateIcon(const QString& target, const QString& _template, const QString& folder = "");
 	QStringList allSupportedExtensions();
 private:
 	TargetManager();

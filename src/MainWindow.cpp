@@ -223,10 +223,7 @@ void MainWindow::setErrors(Tab* tab,
 	errorViewShowSimple();
 }
 
-void MainWindow::hideErrors()
-{
-	ui_errorView->hide();
-}
+void MainWindow::hideErrors() { ui_errorView->hide(); }
 
 /* Handles closing all of the open editor windows when the window is closed */
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -289,6 +286,8 @@ void MainWindow::closeAllOthers(Tab* tab)
 		deleteTab(i);
 	}
 }
+
+void MainWindow::refreshMenus() { initMenus(dynamic_cast<Tab*>(ui_tabWidget->currentWidget())); }
 
 void MainWindow::showErrorMessages(bool verbose)
 {
