@@ -4,6 +4,7 @@ CONFIG += release
 mac:CONFIG += x86
 QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.6.sdk
 unix:QMAKE_DEL_FILE=rm -rf
+win32:CONFIG += console
 win32:CONFIG -= embed_manifest_dll
 
 OBJECTS_DIR = build/obj
