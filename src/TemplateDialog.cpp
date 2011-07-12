@@ -4,10 +4,7 @@
 #include <QListWidgetItem>
 #include <QDebug>
 
-TemplateDialog::TemplateDialog(QWidget* parent) : QDialog(parent)
-{
-	setupUi(this);
-}
+TemplateDialog::TemplateDialog(QWidget* parent) : QDialog(parent) { setupUi(this); }
 
 int TemplateDialog::exec()
 {
@@ -76,7 +73,7 @@ void TemplateDialog::on_ui_targets_currentItemChanged(QListWidgetItem* current, 
 		QTreeWidgetItem* item = new QTreeWidgetItem(ui_templates);
 		item->setText(0, folder);
 		item->setIcon(0, QIcon(":/welcome/document-open.png"));
-		item->setFlags(Qt::NoItemFlags);
+		item->setFlags(Qt::ItemIsEnabled);
 		const QStringList& templates = TargetManager::ref().templates(target, folder);
 		foreach(const QString& _template, templates) {
 			const QString& templateName = _template.section(".", 0, 0);

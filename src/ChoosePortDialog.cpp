@@ -107,7 +107,7 @@ void ChoosePortDialog::refreshPortList()
 // Determines how to look for serial port files
 //     depending on your platform
 #ifdef Q_OS_MAC
-	devListFilter << "tty.*";
+	devListFilter << "tty.usb*";
 #else
 	devListFilter << "ttyUSB*";
 #endif
@@ -133,9 +133,11 @@ void ChoosePortDialog::refreshPortList()
 	ui_portGroupBox->setLayout(new QVBoxLayout());
 	QStringListIterator strings(portList);
 	for(int i = 0;strings.hasNext();i++) {
-		m_portButtonList.push_back(new QRadioButton(strings.next()));
+		QRadioButton* button = new QRadioButton(strings.next());
+		m_portButtonList.push_back(button);
 		ui_portGroupBox->layout()->addWidget(m_portButtonList[i]);
 	}
+	if(!m_portButtonList.isEmpty()) m_portButtonList[0]->setChecked(true);
 }
 
 //Show the dialog, refresh the port list, and run the dialog

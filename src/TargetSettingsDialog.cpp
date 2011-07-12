@@ -26,8 +26,6 @@
 TargetSettingsDialog::TargetSettingsDialog(QWidget *parent) : QDialog(parent)
 {
 	setupUi(this);
-	
-	// Sets up the table for two columns (key/value)
 	ui_settingsTable->setColumnCount(2);
 }
 
@@ -41,8 +39,7 @@ void TargetSettingsDialog::setTargetFile(const QString& filename) { m_targetFile
 int TargetSettingsDialog::exec()
 {
 	loadTable();
-	if(QDialog::exec() == QDialog::Rejected)
-		return QDialog::Rejected;
+	if(QDialog::exec() == QDialog::Rejected) return QDialog::Rejected;
 	saveTable();
 	return QDialog::Accepted;
 }
@@ -69,7 +66,7 @@ void TargetSettingsDialog::loadTable()
 	// Make sure there's enough space in the table
 	ui_settingsTable->setRowCount(keys.count());
 	
-	for(int j = 0;i.hasNext();j++) {
+	for(int j = 0; i.hasNext(); ++j) {
 		QString key = i.next();
 
 		// Add the key and turn off editing
@@ -109,19 +106,18 @@ void TargetSettingsDialog::on_ui_insertButton_clicked(bool)
 	QString key = QInputDialog::getText(this, "Insert Key", "Key:");
 
 	// Don't do anything if the user clicked cancel or didn't enter a name
-	if(!key.length())
-		return;
+	if(!key.length()) return;
 
 	// Make sure there are enough rows
 	ui_settingsTable->setRowCount(ui_settingsTable->rowCount() + 1);
 
 	// Add the key, making it uneditable
-	QTableWidgetItem *item = new QTableWidgetItem(key);
+	QTableWidgetItem* item = new QTableWidgetItem(key);
 	item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-	ui_settingsTable->setItem(ui_settingsTable->rowCount()-1, 0, item);
+	ui_settingsTable->setItem(ui_settingsTable->rowCount() - 1, 0, item);
 
 	// Add the corresponding item
-	ui_settingsTable->setItem(ui_settingsTable->rowCount()-1, 1, new QTableWidgetItem());
+	ui_settingsTable->setItem(ui_settingsTable->rowCount() - 1, 1, new QTableWidgetItem());
 }
 
 // Deletes a row from the table

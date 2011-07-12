@@ -42,6 +42,8 @@
 #include <math.h>
 #include <QDate>
 
+#define END_KISS "END_KISS_META"
+
 SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), m_findDialog(&MainWindow::ref()), m_targetName("?")
 {
 	setupUi(this);
@@ -52,6 +54,7 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 	
 	ui_editor->setModified(false);
 	ui_editor->setEolMode(QsciScintilla::EolUnix);
+	ui_editor->setWrapMode(QsciScintilla::WrapWord);
 	
 	m_fileInfo.setFile(m_fileHandle);
 	MainWindow::ref().setStatusMessage("");
@@ -59,6 +62,7 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 	connect(actionSave, SIGNAL(triggered()), this, SLOT(fileSave()));
 	connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
 	connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
+	connect(actionIndentAll, SIGNAL(triggered()), this, SLOT(indentAll()));
 	
 	m_findDialog.setSourceFile(this);
 }
@@ -88,7 +92,10 @@ void SourceFile::addActionsEdit(QMenu* edit)
 	edit->addAction(actionRedo);
 }
 
-void SourceFile::addActionsHelp(QMenu* help) { Q_UNUSED(help); }
+void SourceFile::addActionsHelp(QMenu* help) 
+{ 
+	help->addAction(actionManual); 
+}
 
 void SourceFile::addOtherActions(QMenuBar* menuBar)
 {
@@ -97,6 +104,8 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	source->addAction(actionZoomIn);
 	source->addAction(actionZoomOut);
 	source->addAction(actionResetZoomLevel);
+	source->addSeparator();
+	source->addAction(actionIndentAll);
 	source->addSeparator();
 	source->addAction(actionFind);
 	if(m_target.hasCompile()) target->addAction(actionCompile);
@@ -123,15 +132,12 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 void SourceFile::addToolbarActions(QToolBar* toolbar) 
 {
 	toolbar->addAction(actionSave);
-	toolbar->addAction(actionPrint);
 	toolbar->addSeparator();
 	toolbar->addAction(actionCopy);
 	toolbar->addAction(actionCut);
 	toolbar->addAction(actionPaste);
-	toolbar->addSeparator();
 	toolbar->addAction(actionUndo);
 	toolbar->addAction(actionRedo);
-	toolbar->addSeparator();
 	toolbar->addAction(actionFind);
 	toolbar->addSeparator();
 	
@@ -248,6 +254,8 @@ void SourceFile::indentAll()
 {
 	if(!ui_editor->lexer())
 		return;
+		
+	setUpdatesEnabled(false);
 
 	int indentLevel = 0;
 	int blockStartStyle; ui_editor->lexer()->blockStart(&blockStartStyle);
@@ -293,9 +301,11 @@ void SourceFile::indentAll()
 	}
 	
 	outDocument.chop(1);
-	ui_editor->setText(outDocument);
+	ui_editor->setText(outDocument + "\n");
 	
 	ui_editor->setCursorPosition(currentLine, currentIndex);
+	
+	setUpdatesEnabled(true);
 }
 
 void SourceFile::keyPressEvent(QKeyEvent *event)
@@ -481,14 +491,28 @@ void SourceFile::on_actionSaveAs_triggered()
 {
 	QSettings settings;
 	QString savePath = settings.value("savepath", QDir::homePath()).toString();
+	QStringList exts = m_target.sourceExtensions();
+	
+	QRegExp reg("*." + m_target.defaultExtension() + "*");
+	reg.setPatternSyntax(QRegExp::Wildcard);
+	int i = exts.indexOf(reg);
+	if(i != -1) exts.swap(0, i);
+	
+	if(!m_templateExt.isEmpty()) {
+		QRegExp reg("*." + m_templateExt + "*");
+		reg.setPatternSyntax(QRegExp::Wildcard);
+		int i = exts.indexOf(reg);
+		if(i != -1) exts.swap(0, i);
+	}
+	
 	QString filePath = QFileDialog::getSaveFileName(&MainWindow::ref(), "Save File", savePath, 
-		m_target.sourceExtensions().join(";;") + ";;All Files (*)");
+		exts.join(";;") + (exts.size() < 1 ? "" : ";;") + "All Files (*)");
 	if(filePath.isEmpty()) return;
 
 	QFileInfo fileInfo(filePath);
 	
 	QString ext = m_target.defaultExtension();
-	if(!ext.isEmpty() && fileInfo.suffix().isEmpty()) fileInfo.setFile(filePath + "." + ext);
+	if(!ext.isEmpty() && fileInfo.suffix().isEmpty()) fileInfo.setFile(filePath.section(".", 0, 0) + "." + ext);
 	
 	settings.setValue("savepath", fileInfo.absolutePath());
 
@@ -719,34 +743,47 @@ bool SourceFile::changeTarget(bool _template)
 		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
 	}
 
-	/* Sets up the lexer for the target */
+	if(!_template) {
+		qWarning() << m_fileInfo.completeSuffix();
+		
+		if(!isNewFile()) m_lexSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
+		else m_lexSpec = LexerSpecManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
+	} else {
+		QFile tFile(tDialog.templateFile());
+		if(!tFile.open(QIODevice::ReadOnly)) {
+			QMessageBox::critical(this, tr("Error"), tr("Error loading template!"));
+			return true;
+		}
 	
-	m_lexSpec = LexerSpecManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
-	qWarning() << m_fileInfo.completeSuffix();
+		QString str = QTextStream(&tFile).readAll();
+		// Move this?
+		str.replace("KISS_DATE", QDate::currentDate().toString(Qt::TextDate));
+		QString text;
+		bool lexerSet = false;
+		if(str.contains(END_KISS)) {
+			QString meta = str.section(END_KISS, 0, 0);
+			text = str.section(END_KISS, 1, 1).trimmed() + "\n";
+			foreach(const QString& metaLine, meta.split("\n")) {
+				const QStringList& parts = metaLine.split(" ");
+				if(parts.size() < 1) continue;
+				// Perhaps something here in the future
+				if(parts.size() < 2) continue;
+				if(parts[0] == "KISS_LEXER") {
+					qWarning() << "Template specified" << parts[1];
+					m_lexSpec = LexerSpecManager::ref().lexerSpec(parts[1]);
+					m_templateExt = parts[1];
+					lexerSet = true;
+				}
+			}
+		} else text = str;
+		ui_editor->setText(text);
+		if(!lexerSet) m_lexSpec = LexerSpecManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
+	}
+	
 	m_lexAPI = QString(targetPath).replace(".target",".api");
 	m_targetName = QFileInfo(targetPath).baseName();
 	refreshSettings();
-	
-	if(!isNewFile()) {
-		m_lexSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
-		refreshSettings();
-	}
-	
 	MainWindow::ref().refreshMenus();
-	
-	if(!_template) return true;
-	
-	QFile tFile(tDialog.templateFile());
-	if(!tFile.open(QIODevice::ReadOnly)) {
-		QMessageBox::critical(this, tr("Error"), tr("Error loading template!"));
-		return true;
-	}
-	
-	QString str = QTextStream(&tFile).readAll();
-	// Move this?
-	str.replace("KISS_DATE", QDate::currentDate().toString(Qt::TextDate));
-	
-	ui_editor->setText(str);
 	
 	return true;
 }

@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	deleteTab(0);
 
 	#ifdef Q_OS_MAC
-	QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus);
+	//QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus);
 	#endif
 
 	ui_errorView->hide();
@@ -158,7 +158,9 @@ void MainWindow::initMenus(Tab* tab)
 	menuFile->addAction(actionPrevious);
 	menuFile->addAction(actionClose);
 	menuFile->addSeparator();
-	menuFile->addAction(actionInstallLocalPackage);
+	QMenu* menuPackages = menuFile->addMenu(tr("Packages"));
+	menuPackages->addAction(actionInstallLocalPackage);
+	menuPackages->addAction(actionManagePackages);
 	menuFile->addAction(actionHideErrors);
 	menuFile->addSeparator();
 	menuFile->addAction(actionQuit);
@@ -170,10 +172,8 @@ void MainWindow::initMenus(Tab* tab)
 		menuHelp->addSeparator();
 		
 	}
-
-	menuEdit->addAction(actionEditor_Settings);
 	
-	menuHelp->addAction(actionManagePackages);
+	menuEdit->addAction(actionEditor_Settings);
 	menuHelp->addSeparator();
 	menuHelp->addAction(actionAbout);
 	

@@ -40,7 +40,12 @@ Repository::Repository(QWidget* parent) : QWidget(parent), m_source("http://file
 }
 
 Repository::~Repository() {}
-void Repository::activate() {}
+
+void Repository::activate() 
+{
+	MainWindow::ref().setTitle(m_source);
+}
+
 void Repository::addActionsFile(QMenu* file) { Q_UNUSED(file); }
 void Repository::addActionsEdit(QMenu* edit) { Q_UNUSED(edit); }
 void Repository::addActionsHelp(QMenu* help) { Q_UNUSED(help); }
@@ -70,6 +75,7 @@ void Repository::completeSetup()
 	}
 	
 	ui_availGroup->setTitle(m_source + "available.lst");
+	MainWindow::ref().setTitle(m_source);
 }
 
 bool Repository::close() { return true; }

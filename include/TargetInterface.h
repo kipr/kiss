@@ -62,7 +62,7 @@ public:
 	const QStringList& 	getLinkerMessages() 	{ return m_linkerMessages; }
 	const QStringList& 	getVerboseMessages() 	{ return m_verboseMessages; }
 	
-	void setTargetFile(const QString& filename) { m_targetFile=filename; }
+	void setTargetFile(const QString& filename) { m_targetFile = filename; }
 	
 protected:
 	QString m_targetFile;

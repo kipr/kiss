@@ -134,6 +134,7 @@ private:
 	QString m_lexAPI;
 	FindDialog m_findDialog;
 	QString m_targetName;
+	QString m_templateExt;
 	
 	// These are handles for the markers shown in the margin
 	int m_errorIndicator;

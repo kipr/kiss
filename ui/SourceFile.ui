@@ -272,6 +272,14 @@
     <string>Clear Breakpoints</string>
    </property>
   </action>
+  <action name="actionIndentAll">
+   <property name="text">
+    <string>Indent All</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

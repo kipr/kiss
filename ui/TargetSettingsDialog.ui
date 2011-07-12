@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>TargetSettingsDialog</class>
- <widget class="QDialog" name="TargetSettingsDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="TargetSettingsDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,35 +10,41 @@
     <height>325</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="QTableWidget" name="ui_settingsTable" />
+    <widget class="QTableWidget" name="ui_settingsTable">
+     <property name="columnCount">
+      <number>2</number>
+     </property>
+     <column/>
+     <column/>
+    </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QPushButton" name="ui_insertButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="ui_insertButton">
+       <property name="text">
         <string>Insert</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="ui_deleteButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="ui_deleteButton">
+       <property name="text">
         <string>Delete</string>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -46,12 +53,12 @@
       </spacer>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="ui_buttonBox" >
-       <property name="orientation" >
+      <widget class="QDialogButtonBox" name="ui_buttonBox">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="standardButtons" >
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
        </property>
       </widget>
      </item>
@@ -67,11 +74,11 @@
    <receiver>TargetSettingsDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>248</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -83,11 +90,11 @@
    <receiver>TargetSettingsDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>316</x>
      <y>260</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>
