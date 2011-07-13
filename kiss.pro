@@ -75,6 +75,8 @@ FORMS += 	ui/MainWindow.ui \
 
 RESOURCES += rc/rc.qrc
 
+QMAKE_INFO_PLIST = Info.plist
+
 #### Install Directives ####
 
 changelog.files = dog/ChangeLog.txt
@@ -86,6 +88,9 @@ INSTALLS += target changelog
 macx: {
 	install_libs.extra = macdeployqt $${INSTALL_BASE}/KISS.app
 	install_libs.path = $${INSTALL_BASE}
+	
+	install_plist.extra = cp Info.plist $${INSTALL_BASE}/KISS.app/Contents
+	install_plist.path = $${INSTALL_BASE}/..
 
-	INSTALLS += install_libs
+	INSTALLS += install_libs install_plist
 }

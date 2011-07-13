@@ -188,8 +188,7 @@ bool SourceFile::fileSave()
 
 bool SourceFile::fileSaveAs(const QString& filePath)
 {
-	if(filePath.isEmpty())
-		return false;
+	if(filePath.isEmpty()) return false;
 	
 	m_fileHandle.setFileName(filePath);
 	m_fileInfo.setFile(m_fileHandle);
@@ -453,13 +452,17 @@ bool SourceFile::isNewFile() 	{ return m_isNewFile; }
 
 void SourceFile::updateMargins()
 {
-	int charWidth = 6;
-	if(ui_editor->lexer()) {
-		QFont font = ui_editor->lexer()->defaultFont();
-		font.setPointSize(font.pointSize() + getZoom());
-		charWidth = QFontMetrics(font).width("0");
+	int size = 0;
+	if(ui_editor->marginLineNumbers(0)) {
+		int charWidth = 6;
+		if(ui_editor->lexer()) {
+			QFont font = ui_editor->lexer()->defaultFont();
+			font.setPointSize(font.pointSize() + getZoom());
+			charWidth = QFontMetrics(font).width("0");
+		}
+		size = charWidth + charWidth/2 + charWidth * (int)ceil(log10(ui_editor->lines()+1));
 	}
-	ui_editor->setMarginWidth(0, charWidth + charWidth/2 + charWidth * (int)ceil(log10(ui_editor->lines()+1)));
+	ui_editor->setMarginWidth(0, size);
 	ui_editor->setMarginWidth(1, 16);
 }
 

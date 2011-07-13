@@ -7,13 +7,13 @@ then
 fi
 
 
-TARGET_DIR=package/KISS-${1}
+TARGET_DIR=package
 
-rm -rf package
+rm -rf ${TARGET_DIR}
 mkdir -p ${TARGET_DIR}
 mkdir -p releases
 
-cp -R deploy/* ${TARGET_DIR}
+cp -R deploy/KISS.app ${TARGET_DIR}
 
 hdiutil create -srcfolder package -volname "KISS ${1}" releases/KISS-${1}.dmg
 

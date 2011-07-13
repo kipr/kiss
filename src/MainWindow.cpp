@@ -77,7 +77,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	//QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus);
 	#endif
 
-	ui_errorView->hide();
+	hideErrors();
 	
 	connect(&m_errorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	connect(&m_warningList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
