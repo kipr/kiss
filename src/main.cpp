@@ -92,16 +92,16 @@ int main(int argc, char **argv)
 	/* The Following lines just set up the application object */
 	QApplication application(argc, argv);
 	
+	if(QApplication::arguments().size() > 1) {
+		handleArgs();
+		return 0;
+	}
+	
 	#ifdef Q_OS_MAC
 		QDir::setCurrent(QApplication::applicationDirPath() + "/../");
 	#else
 		QDir::setCurrent(QApplication::applicationDirPath());	
 	#endif
-	
-	if(QApplication::arguments().size() > 1) {
-		handleArgs();
-		return 0;
-	}
 
 	QApplication::setOrganizationName("KIPR");
 	QApplication::setOrganizationDomain("kipr.org");
