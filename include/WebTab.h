@@ -68,7 +68,7 @@ private slots:
 	void refreshSettings();
 
 protected:
-	QWebView* webView();	
+	QWebView* webView();
 
 private:
 };

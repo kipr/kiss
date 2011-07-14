@@ -21,7 +21,7 @@
     <number>5</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,0">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="10,0,0">
      <item>
       <widget class="QLineEdit" name="ui_urlBar"/>
      </item>
@@ -69,6 +69,9 @@
       <url>
        <string>about:blank</string>
       </url>
+     </property>
+     <property name="renderHints">
+      <set>QPainter::TextAntialiasing</set>
      </property>
     </widget>
    </item>
@@ -274,7 +277,7 @@
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>785</x>
+     <x>651</x>
      <y>34</y>
     </hint>
     <hint type="destinationlabel">
