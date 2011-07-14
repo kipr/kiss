@@ -21,7 +21,7 @@
     <number>5</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0,0">
      <item>
       <widget class="QLineEdit" name="ui_urlBar"/>
      </item>
@@ -45,6 +45,19 @@
        </property>
        <property name="flat">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QProgressBar" name="ui_load">
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="invertedAppearance">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -261,8 +274,8 @@
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>877</x>
-     <y>28</y>
+     <x>785</x>
+     <y>34</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -357,8 +370,8 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>845</x>
-     <y>625</y>
+     <x>893</x>
+     <y>635</y>
     </hint>
     <hint type="destinationlabel">
      <x>450</x>
@@ -377,8 +390,8 @@
      <y>623</y>
     </hint>
     <hint type="destinationlabel">
-     <x>634</x>
-     <y>625</y>
+     <x>757</x>
+     <y>641</y>
     </hint>
    </hints>
   </connection>
@@ -411,6 +424,38 @@
     <hint type="destinationlabel">
      <x>289</x>
      <y>623</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ui_webView</sender>
+   <signal>loadProgress(int)</signal>
+   <receiver>ui_load</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>625</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>839</x>
+     <y>29</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ui_webView</sender>
+   <signal>loadStarted()</signal>
+   <receiver>ui_load</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>712</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>17</y>
     </hint>
    </hints>
   </connection>

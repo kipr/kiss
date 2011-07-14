@@ -22,14 +22,8 @@
 
 #include <QDebug>
 
-Debugger::Debugger(QWidget* parent) : QWidget(parent, Qt::Tool), m_interface(0)
-{
-	setupUi(this);
-}
-
-Debugger::~Debugger()
-{
-}
+Debugger::Debugger(QWidget* parent) : QWidget(parent, Qt::Tool), m_interface(0) { setupUi(this); }
+Debugger::~Debugger() {}
 
 void Debugger::on_ui_run_clicked() { m_interface->run(); }
 void Debugger::on_ui_pause_clicked() { m_interface->pause(); }
@@ -61,10 +55,7 @@ void Debugger::startDebug(DebuggerInterface* interface)
 	show();
 }
 
-void Debugger::writeStdout(const QString& str)
-{
-	ui_consoleOut->append(str);
-}
+void Debugger::writeStdout(const QString& str) { ui_consoleOut->append(str); }
 
 void Debugger::writeDebugState(const QString& str)
 {

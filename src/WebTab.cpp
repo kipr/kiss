@@ -25,6 +25,7 @@
 #include <QToolBar>
 #include <QWebHistory>
 #include <QDesktopServices>
+#include <QDebug>
 
 WebTab::WebTab(QWidget* parent) : QWidget(parent)
 {
@@ -149,6 +150,12 @@ void WebTab::on_ui_prevFind_clicked()
 void WebTab::on_ui_nextFind_clicked()
 {
 	ui_webView->findText(ui_find->text());
+}
+
+void WebTab::on_ui_webView_loadFinished(bool ok)
+{
+	ui_load->hide();
+	qWarning() << ok;
 }
 
 void WebTab::on_actionOpenInBrowser_triggered()

@@ -61,6 +61,7 @@ private slots:
 	
 	void on_ui_prevFind_clicked();
 	void on_ui_nextFind_clicked();
+	void on_ui_webView_loadFinished(bool ok);
 	
 	void on_actionOpenInBrowser_triggered();
 	
