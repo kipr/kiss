@@ -21,7 +21,6 @@
 #include "LexerSpecManager.h"
 #include "LexerSpec.h"
 #include "LexerSpecProvider.h"
-#include "Os.h"
 #include "Kiss.h"
 
 #include <QSettings>

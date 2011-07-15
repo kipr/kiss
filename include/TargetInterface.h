@@ -28,7 +28,6 @@
 #include <QAction>
 
 #include "LexerSpec.h"
-#include "LexerStyles.h"
 #include "DebuggerInterface.h"
 
 class TargetInterface 

@@ -27,7 +27,6 @@ HEADERS += 	include/MainWindow.h \
 			include/SourceFile.h \
 			include/Lexer.h \
 			include/LexerSpec.h \
-			include/Version.h \
 			include/Tab.h \
 			include/TargetManager.h \
 			include/WebTab.h \

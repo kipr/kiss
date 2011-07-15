@@ -19,7 +19,6 @@
  **************************************************************************/
 
 #include "TargetManager.h"
-#include "Os.h"
 #include "Kiss.h"
 
 #include <QSettings>

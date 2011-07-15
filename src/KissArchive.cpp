@@ -19,7 +19,7 @@
  **************************************************************************/
 
 #include "KissArchive.h"
-#include "Os.h"
+#include "Kiss.h"
 
 #include <QFile>
 #include <QFileInfo>

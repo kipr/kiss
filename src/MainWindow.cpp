@@ -19,7 +19,7 @@
  **************************************************************************/
 
 #include "MainWindow.h"
-#include "Version.h"
+#include "Kiss.h"
 #include "Lexer.h"
 #include "LexerSpec.h"
 #include "SourceFile.h"

@@ -22,7 +22,7 @@
 #include <QDebug>
 #include "KissArchive.h"
 #include "MainWindow.h"
-#include "Os.h"
+#include "Kiss.h"
 #include "TargetManager.h"
 #include "LexerSpecManager.h"
 #include "SourceDialog.h"
