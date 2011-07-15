@@ -29,7 +29,7 @@
 class LexerSpecProvider
 {
 public:
-	LexerSpecProvider(const QString& extension) : m_extension(extension) {}
+	LexerSpecProvider(const QString& extension) : m_lexerSpec(), m_extension(extension) {}
 	
 	virtual void init() = 0;
 	QString extension() const { return m_extension; }

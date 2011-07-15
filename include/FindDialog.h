@@ -25,19 +25,6 @@
 
 #include <QDialog>
 
-/* FindDialog Class inherits QDialog and Ui::FindDialog
- *
- * List of Ui::FindDialog inherited widgets:
- *	QLineEdit	ui_findInput
- *	QLineEdit	ui_replaceInput
- *	QPushButton ui_buttonFind
- *	QPushButton ui_buttonReplace
- *  QPushButton ui_buttonReplace_All
- *	QPushButton ui_buttonClose
- *	QCheckBox	ui_matchCaseCheckBox
- *
- */
-
 class SourceFile;
 
 class FindDialog : public QDialog, private Ui::FindDialog

@@ -56,11 +56,11 @@ public:
 	virtual bool hasDebug() 	= 0;
 	
 	/* Builtin Stuff */
-	const QList<QAction*>& 	getActionList() 	{ return m_actionList; }
-	const QStringList& 	getErrorMessages() 	{ return m_errorMessages; }
-	const QStringList& 	getWarningMessages() 	{ return m_warningMessages; }
-	const QStringList& 	getLinkerMessages() 	{ return m_linkerMessages; }
-	const QStringList& 	getVerboseMessages() 	{ return m_verboseMessages; }
+	const QList<QAction*>& 	getActionList() const 		{ return m_actionList; }
+	const QStringList& 	getErrorMessages() const	{ return m_errorMessages; }
+	const QStringList& 	getWarningMessages() const 	{ return m_warningMessages; }
+	const QStringList& 	getLinkerMessages() const 	{ return m_linkerMessages; }
+	const QStringList& 	getVerboseMessages() const 	{ return m_verboseMessages; }
 	
 	void setTargetFile(const QString& filename) { m_targetFile = filename; }
 	

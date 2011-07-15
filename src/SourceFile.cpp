@@ -193,7 +193,7 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 	m_fileHandle.setFileName(filePath);
 	m_fileInfo.setFile(m_fileHandle);
 	
-	if(!m_fileHandle.open(QIODevice::WriteOnly))
+	if(!m_fileHandle.open(Q9IODevice::WriteOnly))
 		return false;
 
 	if(ui_editor->text(ui_editor->lines()-1).length() > 0) ui_editor->append("\n");
@@ -604,7 +604,11 @@ void SourceFile::on_actionManual_triggered()
 {
 	WebTab* tab = new WebTab(&MainWindow::ref());
 	MainWindow::ref().addTab(tab);
-	tab->load("file://" + m_target.targetManualPath(), true);
+	#ifdef Q_OS_WIN
+	tab->load("file:///" + slash + m_target.targetManualPath(), true);
+	#else
+	tab->load("file://" + slash + m_target.targetManualPath(), true);
+	#endif
 }
 
 void SourceFile::on_actionPrint_triggered()

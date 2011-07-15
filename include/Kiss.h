@@ -25,4 +25,19 @@
 #define TARGET_FOLDER "targets"
 #define TARGET_EXT "target"
 
+#ifdef Q_OS_WIN
+#define OS_NAME "win"
+#define OS_LIB_EXT "dll"
+#elif defined(Q_OS_MAC)
+#define OS_NAME "osx"
+#define OS_LIB_EXT "dylib"
+#else
+#define OS_NAME "nix"
+#define OS_LIB_EXT "so"
+#endif
+
+#define KISS_C_VERSION_MAJOR 3
+#define KISS_C_VERSION_MINOR 0
+#define KISS_C_VERSION_BUILD 0
+
 #endif

@@ -22,7 +22,6 @@
 
 #include <QSettings>
 
-// Constructor
 EditorSettingsDialog::EditorSettingsDialog(QWidget *parent) : QDialog(parent)
 {
 	setupUi(this);
@@ -42,10 +41,7 @@ EditorSettingsDialog::EditorSettingsDialog(QWidget *parent) : QDialog(parent)
 	saveSettings();
 }
 
-//Destructor
-EditorSettingsDialog::~EditorSettingsDialog()
-{
-}
+EditorSettingsDialog::~EditorSettingsDialog() {}
 
 // Show the dialog and save if ok is clicked
 int EditorSettingsDialog::exec()

@@ -32,7 +32,7 @@
 #include "TargetManager.h"
 
 // Constructor & Destructor
-Target::Target(QObject *parent) : QObject(parent) {}
+Target::Target(QObject *parent) : QObject(parent), m_plugin(0) {}
 Target::~Target() {}
 
 // Sets the target file and loads the associated plugin file
