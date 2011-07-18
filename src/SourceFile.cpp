@@ -22,7 +22,7 @@
 
 #include "MainWindow.h"
 #include "WebTab.h"
-#include "LexerSpecManager.h"
+#include "LexerManager.h"
 #include "SourceFileShared.h"
 
 #include <Qsci/qscilexercpp.h>
@@ -210,7 +210,7 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 	MainWindow::ref().setTabName(this, m_fileInfo.fileName());
 	
 	// Update the lexer to the new spec for that extension
-	LexerSpec* lexerSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
+	LexerSpec* lexerSpec = LexerManager::ref().lexerSpec(m_fileInfo.completeSuffix());
 	if(lexerSpec != m_lexSpec) {
 		m_lexSpec = lexerSpec;
 		refreshSettings();
@@ -239,7 +239,7 @@ bool SourceFile::fileOpen(const QString& filePath)
 	MainWindow::ref().setTabName(this, m_fileInfo.fileName());
 
 	// Update the lexer to the new spec for that extension
-	LexerSpec* lexerSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
+	LexerSpec* lexerSpec = LexerManager::ref().lexerSpec(m_fileInfo.completeSuffix());
 	if(lexerSpec != m_lexSpec) {
 		m_lexSpec = lexerSpec;
 		refreshSettings();
@@ -753,8 +753,8 @@ bool SourceFile::changeTarget(bool _template)
 	if(!_template) {
 		qWarning() << m_fileInfo.completeSuffix();
 		
-		if(!isNewFile()) m_lexSpec = LexerSpecManager::ref().lexerSpec(m_fileInfo.completeSuffix());
-		else m_lexSpec = LexerSpecManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
+		if(!isNewFile()) m_lexSpec = LexerManager::ref().lexerSpec(m_fileInfo.completeSuffix());
+		else m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
 	} else {
 		QFile tFile(tDialog.templateFile());
 		if(!tFile.open(QIODevice::ReadOnly)) {
@@ -777,14 +777,14 @@ bool SourceFile::changeTarget(bool _template)
 				if(parts.size() < 2) continue;
 				if(parts[0] == "KISS_LEXER") {
 					qWarning() << "Template specified" << parts[1];
-					m_lexSpec = LexerSpecManager::ref().lexerSpec(parts[1]);
+					m_lexSpec = LexerManager::ref().lexerSpec(parts[1]);
 					m_templateExt = parts[1];
 					lexerSet = true;
 				}
 			}
 		} else text = str;
 		ui_editor->setText(text);
-		if(!lexerSet) m_lexSpec = LexerSpecManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
+		if(!lexerSet) m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
 	}
 	
 	m_lexAPI = QString(targetPath).replace(".target",".api");

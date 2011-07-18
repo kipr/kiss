@@ -21,30 +21,62 @@
 #ifndef __LEXER_H__
 #define __LEXER_H__
 
-#include "LexerSpec.h"
-
 #include <QObject>
 #include <Qsci/qscilexer.h>
 #include <Qsci/qsciapis.h>
 
-/** 
- * Lexer class inherits QsciLexer
- *
- * This class implements all of the methods provided by QsciLexer
- * and allows them to be customized through the use of a LexerSpec
- * object.  This object is static across all instances of the class
- * and is designed to be passed in by a plugin
- *
- */
+#include <QString>
+#include <QStringList>
+#include <QMap>
+#include <QList>
+#include <QColor>
+#include <QFont>
+#include <qplugin.h>
+#include <QString>
+
+struct LexerSpec {
+	QString language;
+	QString lexer;
+	QStringList autoCompletionWordSeparators;
+	QString blockEnd;
+	int blockEndStyle;
+	QString	blockStart;
+	int blockStartStyle;
+	QString	blockStartKeyword;
+	int blockStartKeywordStyle;
+	int braceStyle;
+	QString	wordCharacters;
+	QMap<int, QColor> defaultColor;
+	QList<int> defaultEolFill;
+	QMap<int, QFont> defaultFont;
+	QMap<int, QColor> defaultPaper;
+	QMap<int, QString> keywords;
+};
+
+class LexerProvider
+{
+public:
+	LexerProvider(const QString& extension) : m_lexerSpec(), m_extension(extension) {}
+	
+	virtual void init() = 0;
+	QString extension() const { return m_extension; }
+	
+	LexerSpec* lexerSpec() { return &m_lexerSpec; }
+	
+protected:
+	LexerSpec m_lexerSpec;
+	QString m_extension;
+};
+
+Q_DECLARE_INTERFACE(LexerProvider, "com.kipr.kiss-c.LexerProvider/1.0");
+
 class Lexer : public QsciLexer
 {
 	Q_OBJECT
 public:
-	// Constructor & Destructor 
 	Lexer(LexerSpec* spec, QString api);
 	~Lexer();
 
-	// Implementations of the virtuals defined in QsciLexer
 	const char *language() const;
 	const char *lexer() const;
 	QStringList autoCompletionWordSeparators() const;

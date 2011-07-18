@@ -27,6 +27,7 @@
 #include "FindDialog.h"
 #include "Repository.h"
 #include "Tab.h"
+#include "Singleton.h"
 
 #include <Qsci/qscilexercpp.h>
 #include <QEvent>
@@ -35,13 +36,14 @@
 
 class QListWidgetItem;
 
-class MainWindow : public QMainWindow, private Ui::MainWindow
+class MainWindow : public QMainWindow, private Ui::MainWindow, public Singleton<MainWindow>
 {
 	Q_OBJECT
 
 public:	
-	static MainWindow& ref();
-
+	MainWindow(QWidget *parent = 0);
+	~MainWindow();
+	
 	void closeEvent(QCloseEvent *e);
 	
 	void newFile();
@@ -88,9 +90,6 @@ private slots:
 	void showContextMenuForError(const QPoint &pos);
 	
 private:
-	MainWindow(QWidget *parent = 0);
-	~MainWindow();
-	
 	Tab* m_currentTab;
 	Tab* m_errorTab;
 	EditorSettingsDialog m_editorSettingsDialog;

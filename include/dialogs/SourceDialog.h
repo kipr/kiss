@@ -7,6 +7,7 @@
 
 class SourceDialog : public QDialog, private Ui::SourceDialog
 {
+	Q_OBJECT
 public:
 	SourceDialog(QWidget* parent = 0);
 	

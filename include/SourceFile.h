@@ -22,7 +22,6 @@
 #define __SourceFile_H__
 
 #include "Lexer.h"
-#include "LexerSpec.h"
 #include "TemplateDialog.h"
 #include "ChoosePortDialog.h"
 #include "EditorSettingsDialog.h"

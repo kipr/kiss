@@ -24,31 +24,7 @@
 #include <QSettings>
 #include <QDir>
 
-/**
- * Returns a reference to the singleton TargetManager instance
- */
-TargetManager& TargetManager::ref()
-{
-	static TargetManager manager;
-	return manager;
-}
-
-TargetInterface* TargetManager::get(const QString& targetName)
-{	
-	if(!m_plugins.contains(targetName))
-		if(!loadPlugin(targetName)) return 0;
-	
-	return qobject_cast<TargetInterface *>(m_plugins[targetName]->instance());
-}
-
-void TargetManager::unloadAll()
-{
-	QMap<QString, QPluginLoader*>::iterator i = m_plugins.begin();
-	while (i != m_plugins.end()) {
-		unloadPlugin(i.key());
-		i = m_plugins.erase(i);
-	}
-}
+TargetManager::~TargetManager() { unloadAll(); }
 
 QStringList TargetManager::targets()
 {
@@ -161,52 +137,7 @@ QStringList TargetManager::allSupportedExtensions()
 	return extensionList;
 }
 
-TargetManager::TargetManager() {}
-TargetManager::TargetManager(const TargetManager& that) { Q_UNUSED(that); }
-TargetManager::~TargetManager() { unloadAll(); }
-
-/* These last two load/unload a plugin, determining the file name based on the target name */
-bool TargetManager::loadPlugin(const QString& targetName)
+QString TargetManager::getExpectedLocation(const QString& name) const
 {
-	if(m_plugins.contains(targetName)) unloadPlugin(targetName);
-	
-	// Create the QPluginLoader and start constructing the file name
-	QPluginLoader* plugin = new QPluginLoader();
-
-	QDir pluginPath(QDir::currentPath()  + "/" + TARGET_FOLDER);
-	QString pluginPathString;
-
-	pluginPath.cd(targetName.toLocal8Bit());
-
-	pluginPathString = pluginPath.absoluteFilePath("lib" + targetName + "_plugin." + OS_LIB_EXT);
-
-	// Attempts to load the plugin
-	plugin->setFileName(pluginPathString);
-	if(!plugin->load()) {
-		qWarning("Target::loadPlugin: %s", qPrintable(plugin->errorString()));
-		return false;
-	}
-	
-	// The plugin was loaded, attempt to cast it
-	if(!qobject_cast<TargetInterface *>(plugin->instance())) {
-		plugin->unload();
-		delete plugin;
-		qWarning("Target::loadPlugin: Plugin for target \"%s\" failed qobject_cast", qPrintable(targetName));
-		return false;
-	}
-	
-	// Everything worked!
-	m_plugins[targetName] = plugin;
-	return true;
-}
-
-// Simply delete the plugin and unset everything
-void TargetManager::unloadPlugin(const QString& targetName)
-{
-	if(!m_plugins.contains(targetName)) return;
-	QPluginLoader* plugin = m_plugins.take(targetName);
-	if(plugin) {
-		plugin->unload();
-		delete plugin;
-	}
+	return QString(TARGET_FOLDER) + "/" + name;
 }

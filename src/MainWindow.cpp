@@ -21,7 +21,6 @@
 #include "MainWindow.h"
 #include "Kiss.h"
 #include "Lexer.h"
-#include "LexerSpec.h"
 #include "SourceFile.h"
 #include "WebTab.h"
 #include "TargetManager.h"
@@ -48,12 +47,6 @@
 #include <windows.h>
 #include <shellapi.h>
 #endif
-
-MainWindow& MainWindow::ref()
-{
-	static MainWindow instance;
-	return instance;
-}
 
 /* Constructor */
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0)

@@ -57,3 +57,4 @@ trademarks/simulator/cbc2_sim/build/
 trademarks/simulator/cbc2_sim/libcbc2_sim.a
 releases/
 package/
+build/

@@ -27,7 +27,6 @@
 #include <QList>
 #include <QAction>
 
-#include "LexerSpec.h"
 #include "DebuggerInterface.h"
 
 class TargetInterface 

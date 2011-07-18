@@ -62,22 +62,22 @@ void handleArgs()
 		}
 		KissArchive::uninstall(args[2]);
 	} else if(args[1] == "--install") {
-		if(args.size() != 3) {
-			qWarning() << "Wrong number of arguments";
-			return;
-		}
-		QFile f(args[2]);
-		if(!f.open(QIODevice::ReadOnly)) {
-			return;
-		}
+		foreach(const QString arg, args.mid(2)) {
+			QFile f(arg);
+			if(!f.open(QIODevice::ReadOnly)) {
+				qWarning() << "Unable to open" << arg << "for reading";
+				continue;
+			}
 	
-		KissArchive::install(&f);
+			KissArchive::install(&f);
+		}
 	} else if(args[1] == "--list") {
 		foreach(const QString arg, args.mid(2)) {
 			qWarning() << arg << ":";
 			QFile f(arg);
 			if(!f.open(QIODevice::ReadOnly)) {
 				qWarning() << "Unable to open" << arg << "for reading";
+				continue;
 			}
 
 			foreach(const QString& file, KissArchive::list(&f)) {
@@ -89,6 +89,8 @@ void handleArgs()
 
 int main(int argc, char **argv)
 {
+	
+	qWarning() << "Qt Version:" << qVersion();
 	/* The Following lines just set up the application object */
 	QApplication application(argc, argv);
 	

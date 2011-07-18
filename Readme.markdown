@@ -1,16 +1,18 @@
-Kipr's Instructional Software System
-------------------------------------
+KIPR's Instructional Software System
+-------------------------------------
 
 Building this software is very simple, make sure you have the following pieces of software installed:
 
+* CMake >2.6
 * GCC
-* Qt 4.5 Dev
-* QScintilla Dev
+* Qt 4.7 Dev
+* QScintilla 2 Dev
 
 Once those are set, run the following commands:
-    qmake
-    make
+	mkdir -p build
+	cd build
+	cmake ..
+	make
     make install
 
-
-You should now have KISS ready to go in the deploy/ directory.  Happy Hacking!
+You should now have KISS ready to go in the deploy/ directory.

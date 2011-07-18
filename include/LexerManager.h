@@ -18,29 +18,27 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef __LEXER_SPEC_PROVIDER_H__
-#define __LEXER_SPEC_PROVIDER_H__
+#ifndef __LEXER_SPEC_MANAGER_H__
+#define __LEXER_SPEC_MANAGER_H__
 
-#include "LexerSpec.h"
+#include "Lexer.h"
+#include "PluginManager.h"
 
-#include <qplugin.h>
-#include <QString>
-
-class LexerSpecProvider
+class LexerManager : public PluginManager<LexerManager, LexerProvider>
 {
 public:
-	LexerSpecProvider(const QString& extension) : m_lexerSpec(), m_extension(extension) {}
+	LexerManager();
+	~LexerManager();
 	
-	virtual void init() = 0;
-	QString extension() const { return m_extension; }
+	LexerSpec* lexerSpec(const QString& ext);
+	QString getExpectedLocation(const QString& name) const;
 	
-	LexerSpec* lexerSpec() { return &m_lexerSpec; }
+	void pluginLoaded(LexerProvider* plugin);
+	void pluginUnloaded(LexerProvider* plugin);
+private:
+	void loadLexers();
 	
-protected:
-	LexerSpec m_lexerSpec;
-	QString m_extension;
+	QMap<QString, LexerProvider*> m_lexers;
 };
-
-Q_DECLARE_INTERFACE(LexerSpecProvider, "com.kipr.kiss-c.LexerSpecProvider/1.0");
 
 #endif

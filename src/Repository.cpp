@@ -24,7 +24,7 @@
 #include "MainWindow.h"
 #include "Kiss.h"
 #include "TargetManager.h"
-#include "LexerSpecManager.h"
+#include "LexerManager.h"
 #include "SourceDialog.h"
 
 #include <QCoreApplication>
@@ -124,7 +124,7 @@ void Repository::on_ui_begin_clicked()
 {
 	MainWindow::ref().closeAllOthers(this);
 	TargetManager::ref().unloadAll();
-	LexerSpecManager::ref().unloadAll();
+	LexerManager::ref().unloadAll();
 	
 	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*)));
 	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));

@@ -22,17 +22,14 @@
 #define __TARGET_MANAGER_H__
 
 #include "TargetInterface.h"
+#include "PluginManager.h"
 
-#include <QString>
-#include <QPluginLoader>
 #include <QIcon>
 
-class TargetManager
+class TargetManager : public PluginManager<TargetManager, TargetInterface>
 {
 public:
-	static TargetManager& ref();
-	TargetInterface* get(const QString& targetName);
-	void unloadAll();
+	~TargetManager();
 	
 	QStringList targets();
 	QString displayName(const QString& target);
@@ -41,15 +38,10 @@ public:
 	QStringList templates(const QString& target, const QString& folder = "");
 	QIcon templateIcon(const QString& target, const QString& _template, const QString& folder = "");
 	QStringList allSupportedExtensions();
-private:
-	TargetManager();
-	TargetManager(const TargetManager&);
-	~TargetManager();
+	QString getExpectedLocation(const QString& name) const;
 	
-	bool loadPlugin(const QString& targetName);
-	void unloadPlugin(const QString& targetName);	
-	
-	QMap<QString, QPluginLoader*> m_plugins;
+	virtual void pluginLoaded(TargetInterface* plugin) { Q_UNUSED(plugin) }
+	virtual void pluginUnloaded(TargetInterface* plugin) { Q_UNUSED(plugin) }
 };
 
 #endif

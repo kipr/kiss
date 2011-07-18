@@ -25,10 +25,7 @@
 #include <QDebug>
 #include <QSettings>
 #include <Qsci/qsciapis.h>
-
 #include <string.h>
-
-#include "LexerSpec.h"
 
 Lexer::Lexer(LexerSpec* spec, QString api) : QsciLexer(0), m_lexerSpec(spec), m_apis(this)
 {
