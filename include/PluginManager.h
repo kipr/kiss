@@ -10,6 +10,8 @@
 #include <QDir>
 #include <QDebug>
 
+#include <typeinfo>
+
 typedef QMap<QString, QPluginLoader*> PluginMap;
 
 template<typename M, typename T>

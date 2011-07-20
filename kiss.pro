@@ -38,8 +38,7 @@ HEADERS += 	include/MainWindow.h \
 			include/Repository.h \
 			include/KissArchive.h \
 			include/dialogs/TemplateDialog.h \
-			include/dialogs/SourceDialog.h \
-			include/TargetUtils.h
+			include/dialogs/SourceDialog.h
 
 SOURCES += 	src/main.cpp \
 			src/MainWindow.cpp \
@@ -58,8 +57,7 @@ SOURCES += 	src/main.cpp \
 			src/Repository.cpp \
 			src/KissArchive.cpp \
 			src/dialogs/TemplateDialog.cpp \
-			src/dialogs/SourceDialog.cpp \
-			src/TargetUtils.cpp
+			src/dialogs/SourceDialog.cpp 
 
 FORMS += 	ui/MainWindow.ui \
 			ui/ChoosePortDialog.ui \
