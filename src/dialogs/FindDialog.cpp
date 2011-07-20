@@ -29,8 +29,6 @@ FindDialog::FindDialog(QWidget *parent) : QDialog(parent)
 	setModified(false);
 }
 
-FindDialog::~FindDialog() {}
-
 // Sets the current SourceFile object
 void FindDialog::setSourceFile(SourceFile *sourceFile)
 {

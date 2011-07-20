@@ -26,32 +26,33 @@
 #include <QStringList>
 #include <QList>
 #include <QAction>
+#include <QWidget>
 
 #include "DebuggerInterface.h"
+#include "Tab.h"
 
 class TargetInterface 
 {
 public:
-	// Destructor
-	virtual ~TargetInterface() {}
-
 	// These methods will be called when their
 	// respective editor buttons are activated
-	virtual bool compile(const QString& filename, const QString& port) = 0;	
-	virtual bool run(const QString& filename, const QString& port) = 0;
-	virtual void stop(const QString& port) = 0;
-	virtual bool download(const QString& filename, const QString& port) = 0;
-	virtual bool simulate(const QString& filename, const QString& port) = 0;
-	virtual DebuggerInterface* debug(const QString& filename, const QString& port) = 0;
+	virtual bool compile(const QString&, const QString&) { return false; }
+	virtual bool run(const QString&, const QString&) { return false; }
+	virtual void stop(const QString&) {}
+	virtual bool download(const QString&, const QString&) { return false; }
+	virtual bool simulate(const QString&, const QString&) { return false; }
+	virtual DebuggerInterface* debug(const QString&, const QString&) { return 0; }
+	virtual Tab* ui(const QString&) { return 0; }
 
 	// These should inform the plugin loader of
 	// The features offered by this plugin
-	virtual bool hasDownload() 	= 0;
-	virtual bool hasCompile() 	= 0;
-	virtual bool hasRun() 		= 0;
-	virtual bool hasStop() 		= 0;
-	virtual bool hasSimulate() 	= 0;
-	virtual bool hasDebug() 	= 0;
+	virtual bool hasDownload() 	{ return false; }
+	virtual bool hasCompile() 	{ return false; }
+	virtual bool hasRun() 		{ return false; }
+	virtual bool hasStop() 		{ return false; }
+	virtual bool hasSimulate() 	{ return false; }
+	virtual bool hasDebug() 	{ return false; }
+	virtual bool hasUi() 		{ return false; }
 	
 	/* Builtin Stuff */
 	const QList<QAction*>& 	getActionList() const 		{ return m_actionList; }
@@ -64,8 +65,7 @@ public:
 	
 protected:
 	QString m_targetFile;
-	QStringList m_warningMessages, m_errorMessages, 
-		m_linkerMessages, m_verboseMessages;
+	QStringList m_warningMessages, m_errorMessages, m_linkerMessages, m_verboseMessages;
 	QList<QAction*> m_actionList;
 };
 

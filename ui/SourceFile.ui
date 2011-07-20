@@ -280,6 +280,15 @@
     <string>Ctrl+I</string>
    </property>
   </action>
+  <action name="actionUi">
+   <property name="icon">
+    <iconset resource="../rc/rc.qrc">
+     <normaloff>:/shortcuts/target/icon_set/icons/bricks.png</normaloff>:/shortcuts/target/icon_set/icons/bricks.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ui</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

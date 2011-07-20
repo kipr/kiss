@@ -26,7 +26,7 @@
 #include <QDataStream>
 #include <QObject>
 
-struct Location
+struct Location 
 {
 	Location(QString file, int line) : file(file), line(line) {}
 	
@@ -34,7 +34,7 @@ struct Location
 	int line;
 };
 
-struct Variable
+struct Variable 
 {
 	Variable(QString name, QString value) : name(name), value(value) {}
 	
@@ -83,7 +83,6 @@ class DebuggerInterface
 {
 public:
 	DebuggerInterface() : m_responder(0) {}
-	virtual ~DebuggerInterface() {}
 	
 	void setResponder(Responder* resp) { m_responder = resp; }
 	

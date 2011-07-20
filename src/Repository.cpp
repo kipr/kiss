@@ -33,19 +33,12 @@
 
 #define TYPE_AVAIL 	1001
 #define TYPE_INSTALLED 	1002
+#define DEFAULT_SOURCE "http://files.kipr.org/kiss/"
 
-Repository::Repository(QWidget* parent) : QWidget(parent), m_source("http://files.kipr.org/kiss/")
-{
-	setupUi(this);
-}
 
-Repository::~Repository() {}
+Repository::Repository(QWidget* parent) : QWidget(parent), m_source(DEFAULT_SOURCE) { setupUi(this); }
 
-void Repository::activate() 
-{
-	MainWindow::ref().setTitle(m_source);
-}
-
+void Repository::activate()  { MainWindow::ref().setTitle(m_source); }
 void Repository::addActionsFile(QMenu* file) { Q_UNUSED(file); }
 void Repository::addActionsEdit(QMenu* edit) { Q_UNUSED(edit); }
 void Repository::addActionsHelp(QMenu* help) { Q_UNUSED(help); }
@@ -79,13 +72,7 @@ void Repository::completeSetup()
 }
 
 bool Repository::close() { return true; }
-
-void Repository::moveTo(int line, int pos)
-{
-	Q_UNUSED(line)
-	Q_UNUSED(pos)
-}
-
+void Repository::moveTo(int line, int pos) { Q_UNUSED(line); Q_UNUSED(pos); }
 void Repository::refreshSettings() {}
 
 void Repository::on_ui_mark_clicked()

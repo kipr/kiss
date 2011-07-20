@@ -23,7 +23,7 @@
 #include "MainWindow.h"
 #include "WebTab.h"
 #include "LexerManager.h"
-#include "SourceFileShared.h"
+#include "Singleton.h"
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
@@ -41,10 +41,51 @@
 #include <QShortcut>
 #include <math.h>
 #include <QDate>
+#include <QPixmap>
 
 #define END_KISS "END_KISS_META"
 
-SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), m_findDialog(&MainWindow::ref()), m_targetName("?")
+class SourceFileShared : public Singleton<SourceFileShared>
+{
+public:	
+	SourceFileShared();
+	
+	const QPixmap& blackBullet() const;
+	const QPixmap& blueBullet() const;
+	const QPixmap& redBullet() const; 
+	const QPixmap& yellowBullet() const;
+	
+	Debugger* debugger();
+private:
+	QPixmap m_blackBullet;
+	QPixmap m_blueBullet;
+	QPixmap m_redBullet;
+	QPixmap m_yellowBullet;
+	
+	Debugger m_debugger;
+
+};
+
+const QPixmap& SourceFileShared::blackBullet() const 	{ return m_blackBullet; }
+const QPixmap& SourceFileShared::blueBullet() const 	{ return m_blueBullet; }
+const QPixmap& SourceFileShared::redBullet() const 	{ return m_redBullet; }
+const QPixmap& SourceFileShared::yellowBullet() const 	{ return m_yellowBullet; }
+
+Debugger* SourceFileShared::debugger() { return &m_debugger; }
+
+SourceFileShared::SourceFileShared() :
+	m_blackBullet(":/sourcefile/icon_set/icons/bullet_black.png"), 
+	m_blueBullet(":/sourcefile/icon_set/icons/bullet_blue.png"), 
+	m_redBullet(":/sourcefile/icon_set/icons/bullet_red.png"), 
+	m_yellowBullet(":/sourcefile/icon_set/icons/bullet_yellow.png"),
+	m_debugger(&MainWindow::ref())
+{
+	m_debugger.hide();
+}
+
+
+SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), 
+	m_findDialog(&MainWindow::ref()), m_targetName("?"), m_runTab(0)
 {
 	setupUi(this);
 	
@@ -67,7 +108,6 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 	m_findDialog.setSourceFile(this);
 }
 
-SourceFile::~SourceFile() {}
 
 void SourceFile::activate()
 {
@@ -92,10 +132,7 @@ void SourceFile::addActionsEdit(QMenu* edit)
 	edit->addAction(actionRedo);
 }
 
-void SourceFile::addActionsHelp(QMenu* help) 
-{ 
-	help->addAction(actionManual); 
-}
+void SourceFile::addActionsHelp(QMenu* help) { help->addAction(actionManual); }
 
 void SourceFile::addOtherActions(QMenuBar* menuBar)
 {
@@ -136,8 +173,6 @@ void SourceFile::addToolbarActions(QToolBar* toolbar)
 	toolbar->addAction(actionCopy);
 	toolbar->addAction(actionCut);
 	toolbar->addAction(actionPaste);
-	toolbar->addAction(actionUndo);
-	toolbar->addAction(actionRedo);
 	toolbar->addAction(actionFind);
 	toolbar->addSeparator();
 	
@@ -149,10 +184,7 @@ void SourceFile::addToolbarActions(QToolBar* toolbar)
 	if(m_target.hasDebug()) toolbar->addAction(actionDebug);
 }
 
-bool SourceFile::beginSetup()
-{
-	return changeTarget(isNewFile());
-}
+bool SourceFile::beginSetup() { return changeTarget(isNewFile()); }
 
 void SourceFile::completeSetup()
 {
@@ -466,17 +498,9 @@ void SourceFile::updateMargins()
 	ui_editor->setMarginWidth(1, 16);
 }
 
-int SourceFile::getZoom()
-{
-	return ui_editor->SendScintilla(QsciScintilla::SCI_GETZOOM);
-}
-
+int SourceFile::getZoom() { return ui_editor->SendScintilla(QsciScintilla::SCI_GETZOOM); }
 QsciScintilla* SourceFile::getEditor() { return ui_editor; }
-
-void SourceFile::moveTo(int line, int pos) 
-{
-	if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos);
-}
+void SourceFile::moveTo(int line, int pos)  { if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos); }
 
 void SourceFile::zoomIn()
 {
@@ -555,7 +579,20 @@ void SourceFile::on_actionRun_triggered()
 {	
 	fileSave();
 	MainWindow::ref().hideErrors();
-	MainWindow::ref().setStatusMessage(m_target.run(filePath()) ? tr("Run Succeeded") : tr("Run Failed"));
+	bool success = false;
+	MainWindow::ref().setStatusMessage((success = m_target.run(filePath())) ? tr("Run Succeeded") : tr("Run Failed"));
+	
+	if(m_runTab) {
+		int i = MainWindow::ref().tabWidget()->indexOf(m_runTab);
+		if(i >= 0) MainWindow::ref().deleteTab(i);
+	}
+	Tab* ui = success ? m_target.ui() : 0;
+	m_runTab = !ui ? 0 : dynamic_cast<QWidget*>(ui);
+	if(ui) {
+		MainWindow::ref().addTab(ui);
+		const QString& port = m_target.port();
+		MainWindow::ref().setTabName(dynamic_cast<QWidget*>(ui), QString("Running") + (port.isEmpty() ? "" : (" on " + port)));
+	}
 
 	updateErrors();
 }
@@ -564,7 +601,6 @@ void SourceFile::on_actionStop_triggered() { m_target.stop(); }
 
 void SourceFile::on_actionSimulate_triggered()
 {	
-	/* Save the file and hide the error view */
 	fileSave();
 	MainWindow::ref().hideErrors();
 	MainWindow::ref().setStatusMessage(m_target.simulate(filePath()) ? tr("Simulation Succeeded") : tr("Simulation Failed"));
@@ -576,13 +612,9 @@ void SourceFile::on_actionDebug_triggered()
 {
 	fileSave();
 	MainWindow::ref().hideErrors();
-	
 	DebuggerInterface* interface = m_target.debug(filePath());
-	
 	MainWindow::ref().setStatusMessage(interface ? tr("Debug Succeeded") : tr("Debug Failed"));
-	
 	updateErrors();
-
 	if(!interface) return;
 	
 	foreach(const int& i, m_breakpoints) {
@@ -616,7 +648,7 @@ void SourceFile::on_actionPrint_triggered()
 	QsciPrinter printer;
 	QPrintDialog printDialog(&printer, this);
 	
-	if(printDialog.exec() == QDialog::Accepted) printer.printRange(ui_editor);
+	if(printDialog.exec()) printer.printRange(ui_editor);
 }
 
 void SourceFile::on_actionZoomIn_triggered()
@@ -637,10 +669,7 @@ void SourceFile::on_actionResetZoomLevel_triggered()
 	updateMargins();
 }
 
-void SourceFile::on_actionChangeTarget_triggered()
-{
-	changeTarget(false);
-}
+void SourceFile::on_actionChangeTarget_triggered() { changeTarget(false); }
 
 void SourceFile::on_actionChoosePort_triggered()
 {
@@ -679,10 +708,7 @@ void SourceFile::on_ui_editor_cursorPositionChanged(int line, int index)
 }
 
 /*ADDED BY NB*///2/10/2010-dpm
-void SourceFile::dropEvent(QDropEvent *event)
-{
-	Q_UNUSED(event);
-}
+void SourceFile::dropEvent(QDropEvent *event) { Q_UNUSED(event); }
 
 void SourceFile::clearProblems()
 {
@@ -787,7 +813,7 @@ bool SourceFile::changeTarget(bool _template)
 		if(!lexerSet) m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
 	}
 	
-	m_lexAPI = QString(targetPath).replace(".target",".api");
+	m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT,".api");
 	m_targetName = QFileInfo(targetPath).baseName();
 	refreshSettings();
 	MainWindow::ref().refreshMenus();

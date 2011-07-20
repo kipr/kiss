@@ -36,7 +36,6 @@ class Repository : public QWidget, public Tab, private Ui::Repository
 	Q_OBJECT
 public:
 	Repository(QWidget* parent = 0);
-	virtual ~Repository();
 	
 	void activate();
 	void addActionsFile(QMenu* file);

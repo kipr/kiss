@@ -37,8 +37,6 @@ WebTab::WebTab(QWidget* parent) : QWidget(parent)
 	ui_frameFind->hide();
 }
 
-WebTab::~WebTab() {}
-
 void WebTab::activate() {}
 void WebTab::addActionsFile(QMenu* file) { Q_UNUSED(file); }
 
@@ -106,26 +104,10 @@ void WebTab::updateUrl(const QUrl& url)
 	MainWindow::ref().setStatusMessage(tr("Loaded ") + url.toString(), 5000);
 }
 
-void WebTab::on_actionGo_triggered()
-{
-	ui_webView->load(QUrl::fromUserInput(ui_urlBar->text()));
-}
-
-void WebTab::on_actionCopy_triggered()
-{
-	ui_webView->triggerPageAction(QWebPage::Copy);
-}
-
-void WebTab::on_actionCut_triggered()
-{
-	ui_webView->triggerPageAction(QWebPage::Cut);
-}
-
-void WebTab::on_actionPaste_triggered()
-{
-	ui_webView->triggerPageAction(QWebPage::Paste);
-}
-
+void WebTab::on_actionGo_triggered() { ui_webView->load(QUrl::fromUserInput(ui_urlBar->text())); }
+void WebTab::on_actionCopy_triggered() { ui_webView->triggerPageAction(QWebPage::Copy); }
+void WebTab::on_actionCut_triggered() { ui_webView->triggerPageAction(QWebPage::Cut); }
+void WebTab::on_actionPaste_triggered() { ui_webView->triggerPageAction(QWebPage::Paste); }
 bool WebTab::close() { return true; }
 
 void WebTab::load(QString url, bool hideUrl)
@@ -136,21 +118,9 @@ void WebTab::load(QString url, bool hideUrl)
 	ui_goButton->setVisible(!hideUrl);
 }
 
-void WebTab::moveTo(int line, int pos) 
-{
-	Q_UNUSED(line);
-	Q_UNUSED(pos);
-}
-
-void WebTab::on_ui_prevFind_clicked()
-{
-	ui_webView->findText(ui_find->text(), QWebPage::FindBackward);
-}
-
-void WebTab::on_ui_nextFind_clicked()
-{
-	ui_webView->findText(ui_find->text());
-}
+void WebTab::moveTo(int line, int pos)  { Q_UNUSED(line); Q_UNUSED(pos); }
+void WebTab::on_ui_prevFind_clicked() { ui_webView->findText(ui_find->text(), QWebPage::FindBackward); }
+void WebTab::on_ui_nextFind_clicked() { ui_webView->findText(ui_find->text()); }
 
 void WebTab::on_ui_webView_loadFinished(bool ok)
 {
@@ -160,10 +130,7 @@ void WebTab::on_ui_webView_loadFinished(bool ok)
 	}
 }
 
-void WebTab::on_actionOpenInBrowser_triggered()
-{
-	QDesktopServices::openUrl(ui_webView->url());
-}
+void WebTab::on_actionOpenInBrowser_triggered() { QDesktopServices::openUrl(ui_webView->url()); }
 
 void WebTab::refreshSettings() {}
 QWebView* WebTab::webView() { return ui_webView; }

@@ -31,7 +31,6 @@ class WebTab : public QWidget, public Tab, protected Ui::WebTab
 	Q_OBJECT
 public:
 	WebTab(QWidget* parent = 0);
-	~WebTab();
 	
 	void activate();
 	

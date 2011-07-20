@@ -31,27 +31,13 @@ Lexer::Lexer(LexerSpec* spec, QString api) : QsciLexer(0), m_lexerSpec(spec), m_
 {
 	connect(&m_apis, SIGNAL(apiPreparationFinished()), this, SLOT(prepFinished()));
 	m_apis.clear();
-	if(!m_apis.load(api)) {
-		qWarning() << "Failed to load" << api;
-	} else m_apis.prepare();
+	if(!m_apis.load(api)) qWarning() << "Failed to load API" << api;
+	else m_apis.prepare();
 }
 
-Lexer::~Lexer() {}
-
-const char *Lexer::language() const
-{
-	return m_lexerSpec->language.toLocal8Bit().data();
-}
-
-const char *Lexer::lexer() const
-{
-	return m_lexerSpec->lexer.toLocal8Bit().data();
-}
-
-QStringList Lexer::autoCompletionWordSeparators() const
-{
-    return m_lexerSpec->autoCompletionWordSeparators;
-}
+const char *Lexer::language() const { return m_lexerSpec->language.toLocal8Bit().data(); }
+const char *Lexer::lexer() const { return m_lexerSpec->lexer.toLocal8Bit().data(); }
+QStringList Lexer::autoCompletionWordSeparators() const { return m_lexerSpec->autoCompletionWordSeparators; }
 
 const char *Lexer::blockStartKeyword(int* style) const
 {
@@ -72,11 +58,7 @@ const char *Lexer::blockEnd(int* style) const
 }
 
 int Lexer::braceStyle() const { return m_lexerSpec->braceStyle; }
-
-const char *Lexer::wordCharacters() const
-{
-	return m_lexerSpec->wordCharacters.toLocal8Bit().data();
-}
+const char *Lexer::wordCharacters() const { return m_lexerSpec->wordCharacters.toLocal8Bit().data(); }
 
 QColor Lexer::defaultColor(int style) const
 {
@@ -92,10 +74,8 @@ bool Lexer::defaultEolFill(int style) const
 
 QFont Lexer::defaultFont(int style) const
 {
-	
 	if(m_lexerSpec->defaultFont.contains(style)) {
-		QFont f;
-		f = m_lexerSpec->defaultFont[style];
+		QFont f(m_lexerSpec->defaultFont[style]);
 		f.setFamily(QsciLexer::defaultFont(style).family());
 		f.setPointSize(QsciLexer::defaultFont(style).pointSize());
 		return f;
@@ -116,8 +96,4 @@ QColor Lexer::defaultPaper(int style) const
 }
 
 QString Lexer::description(int) const { return " "; }
-
-void Lexer::prepFinished()
-{
-	setAPIs(&m_apis);
-}
+void Lexer::prepFinished() { setAPIs(&m_apis); }

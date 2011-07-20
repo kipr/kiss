@@ -10,23 +10,19 @@
 #include <QDir>
 #include <QDebug>
 
+typedef QMap<QString, QPluginLoader*> PluginMap;
+
 template<typename M, typename T>
 class PluginManager : public Singleton<M>
 {
 public:
-	T* get(const QString& name) {	
+	T* get(const QString& name) {
 		if(!m_plugins.contains(name)) 
 			if(!loadPlugin(name)) return 0;
 		return qobject_cast<T*>(m_plugins[name]->instance());
 	}
 
-	void unloadAll() {
-		QMap<QString, QPluginLoader*>::iterator i = m_plugins.begin();
-		while (i != m_plugins.end()) {
-			unloadPlugin(i.key());
-			i = m_plugins.erase(i);
-		}
-	}
+	void unloadAll() { while (!m_plugins.isEmpty()) unloadPlugin(m_plugins.begin().key()); }
 	
 	bool loadPlugin(const QString& name) {
 		if(m_plugins.contains(name)) return false;
@@ -48,9 +44,10 @@ public:
 
 		T* instance = qobject_cast<T*>(plugin->instance());
 		if(!instance) {
+			qWarning("PluginManager::loadPlugin: %s", qPrintable(plugin->errorString()));
 			plugin->unload();
 			delete plugin;
-			qWarning("PluginManager::loadPlugin: Plugin \"%s\" failed qobject_cast", qPrintable(name));
+			qWarning("PluginManager::loadPlugin: Plugin \"%s\" failed qobject_cast to \"%s\"", qPrintable(name), typeid(T).name());
 			return false;
 		}
 
@@ -63,7 +60,7 @@ public:
 
 	void unloadPlugin(const QString& name) {
 		if(!m_plugins.contains(name)) return;
-		pluginUnloaded(get(name));
+		pluginUnloaded(qobject_cast<T*>(m_plugins[name]->instance()));
 		QPluginLoader* plugin = m_plugins.take(name);
 		if(plugin) {
 			plugin->unload();
@@ -77,7 +74,7 @@ protected:
 	virtual void pluginUnloaded(T* plugin) = 0;
 	
 private:
-	QMap<QString, QPluginLoader*> m_plugins;
+	PluginMap m_plugins;
 };
 
 #endif 

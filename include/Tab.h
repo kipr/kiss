@@ -45,6 +45,8 @@ public:
 	
 	virtual void refreshSettings() = 0;
 	virtual void moveTo(int line, int pos) = 0;
+	
+	virtual bool exclusive() { return false; }
 protected:
 };
 

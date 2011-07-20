@@ -26,6 +26,9 @@
 #include "TargetManager.h"
 #include "WelcomeTab.h"
 #include "KissArchive.h"
+#include "ChoosePortDialog.h"
+#include "FindDialog.h"
+#include "Repository.h"
 
 #include <QToolTip>
 #include <Qsci/qsciscintilla.h>
@@ -48,7 +51,8 @@
 #include <shellapi.h>
 #endif
 
-/* Constructor */
+#define TITLE "KIPR's Instructional Software System"
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0)
 {
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
@@ -66,10 +70,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	/* Deletes the tab that QTabWidget starts with by default */
 	deleteTab(0);
 
-	#ifdef Q_OS_MAC
-	//QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus);
-	#endif
-
 	hideErrors();
 	
 	connect(&m_errorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
@@ -84,7 +84,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	setUpdatesEnabled(true);
 }
 
-/* Destructor */
 MainWindow::~MainWindow()
 {
 	delete ui_toolBar;
@@ -96,17 +95,13 @@ MainWindow::~MainWindow()
 	while(ui_tabWidget->count() > 0) deleteTab(0);
 }
 
-void MainWindow::newFile()
-{
-	addTab(new SourceFile(this));
-}
+void MainWindow::newFile() { addTab(new SourceFile(this)); }
 
 bool MainWindow::openFile(const QString& file)
 {
 	QFileInfo fileInfo(file);
 
-	if(!fileInfo.isFile() || !fileInfo.isReadable())
-		return false;
+	if(!fileInfo.isFile() || !fileInfo.isReadable()) return false;
 
 	for(int i = 0;i < ui_tabWidget->count();i++) {
 		SourceFile* sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
@@ -163,7 +158,6 @@ void MainWindow::initMenus(Tab* tab)
 		menuEdit->addSeparator();
 		tab->addActionsHelp(menuHelp);
 		menuHelp->addSeparator();
-		
 	}
 	
 	menuEdit->addAction(actionEditor_Settings);
@@ -179,20 +173,9 @@ void MainWindow::initMenus(Tab* tab)
 	if(tab) tab->addToolbarActions(ui_toolBar);
 }
 
-void MainWindow::setTitle(const QString& title)
-{
-	setWindowTitle(tr("KIPR's Instructional Software System") + (title.isEmpty() ? "" : (" - " + title)));
-}
-
-void MainWindow::setTabName(QWidget* widget, const QString& string)
-{
-	ui_tabWidget->setTabText(ui_tabWidget->indexOf(widget), string);
-}
-
-void MainWindow::setStatusMessage(const QString& message, int time)
-{
-	ui_statusbar->showMessage(message, time);
-}
+void MainWindow::setTitle(const QString& title) { setWindowTitle(tr(TITLE) + (title.isEmpty() ? "" : (" - " + title))); }
+void MainWindow::setTabName(QWidget* widget, const QString& string) { ui_tabWidget->setTabText(ui_tabWidget->indexOf(widget), string); }
+void MainWindow::setStatusMessage(const QString& message, int time) { ui_statusbar->showMessage(message, time); }
 
 void MainWindow::setErrors(Tab* tab, 
 	const QStringList& errors, const QStringList& warnings, 
@@ -306,10 +289,7 @@ void MainWindow::showErrorMessages(bool verbose)
 	}
 }
 
-void MainWindow::on_actionNew_triggered()
-{
-	newFile();
-}
+void MainWindow::on_actionNew_triggered() { newFile(); }
 
 void MainWindow::on_actionOpen_triggered()
 {
@@ -329,15 +309,8 @@ void MainWindow::on_actionOpen_triggered()
 	openFile(filePath);
 }
 
-void MainWindow::on_actionNext_triggered()
-{
-	ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() + 1);
-}
-
-void MainWindow::on_actionPrevious_triggered()
-{
-	ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() - 1);
-}
+void MainWindow::on_actionNext_triggered() { ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() + 1); }
+void MainWindow::on_actionPrevious_triggered() { ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() - 1); }
 
 void MainWindow::on_actionClose_triggered()
 {	
@@ -353,9 +326,7 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::on_actionAbout_triggered()
 {
-	QString aboutString;
-
-	aboutString += tr("KISS Version ") + QString::number(KISS_C_VERSION_MAJOR) + "." + 
+	QString aboutString = tr("KISS Version ") + QString::number(KISS_C_VERSION_MAJOR) + "." + 
 		QString::number(KISS_C_VERSION_MINOR) + "." +
 		QString::number(KISS_C_VERSION_BUILD) + "\n\n";
 	aboutString += tr("Copyright (C) 2007-2011 KISS Institute for Practical Robotics\n\n");
@@ -383,11 +354,7 @@ void MainWindow::errorViewShowSimple()
 	showErrorMessages(false);
 }
 
-void MainWindow::on_actionEditor_Settings_triggered()
-{
-	/* opens the editor dialog and emits a settingsUpdated signal if needed */
-	if(m_editorSettingsDialog.exec() == QDialog::Accepted) emit settingsUpdated();
-}
+void MainWindow::on_actionEditor_Settings_triggered() { if(m_editorSettingsDialog.exec()) emit settingsUpdated(); }
 
 void MainWindow::on_ui_tabWidget_currentChanged(int i) 
 {
@@ -401,10 +368,7 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	setUpdatesEnabled(true);
 }
 
-void MainWindow::on_actionManagePackages_triggered()
-{
-	addTab(new Repository(this));
-}
+void MainWindow::on_actionManagePackages_triggered() { addTab(new Repository(this)); }
 
 void MainWindow::on_actionInstallLocalPackage_triggered()
 {

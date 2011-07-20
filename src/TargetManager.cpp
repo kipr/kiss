@@ -24,13 +24,14 @@
 #include <QSettings>
 #include <QDir>
 
+#define DISPLAY_NAME "display_name"
+#define EXTENSIONS "extensions"
+
 TargetManager::~TargetManager() { unloadAll(); }
 
 QStringList TargetManager::targets()
 {
 	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER);
-	QStringList targetDirs;
-	QStringList targetList;
 
 	// Choke if we can't find the target directory
 	if(!targetDir.exists()) {
@@ -38,8 +39,10 @@ QStringList TargetManager::targets()
 		return QStringList();
 	}
 	
+	QStringList targetList;
+	
 	// Get a list of the possible target directories and check through them
-	targetDirs = targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	const QStringList& targetDirs = targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 	QStringListIterator i(targetDirs);
 
 	while(i.hasNext()) {
@@ -47,7 +50,7 @@ QStringList TargetManager::targets()
 		targetDir.cd(dirName);
 		
 		// The target file naming scheme is <dirname>.target
-		QFileInfo targetFile(targetDir, dirName + ".target");
+		QFileInfo targetFile(targetDir, dirName + "." + TARGET_EXT);
 
 		// If we can't find a target file, skip this directory
 		if(!targetFile.exists()) {
@@ -71,73 +74,57 @@ QStringList TargetManager::targets()
 
 QString TargetManager::displayName(const QString& target)
 {
-	QFileInfo targetFile(targetPath(target), target + ".target");
-	return QSettings(targetFile.absoluteFilePath(), QSettings::IniFormat).value("display_name").toString();
+	return QSettings(QFileInfo(targetPath(target), target + "." + TARGET_EXT).absoluteFilePath(), 
+		QSettings::IniFormat).value(DISPLAY_NAME).toString();
 }
 
-QString TargetManager::targetPath(const QString& target)
-{
-	return QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target;
-}
+QString TargetManager::targetPath(const QString& target) { return QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target; }
 
 QStringList TargetManager::templateFolders(const QString& target)
 {
-	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/" + "templates");
+	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/" + TEMPLATES_FOLDER);
 	return targetDir.exists() ? targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) : QStringList();
 }
 
 QStringList TargetManager::templates(const QString& target, const QString& folder)
 {
-	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/" + "templates" + (folder.isEmpty() ? "" : (QString("/") + folder)));
+	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/" + TEMPLATES_FOLDER + 
+		(folder.isEmpty() ? "" : (QString("/") + folder)));
 	
-	return targetDir.exists() ? 
-		targetDir.entryList(QStringList() << "*.template", QDir::Files | QDir::NoDotAndDotDot) : 
-		QStringList();
+	return targetDir.entryList(QStringList() << (QString("*.") + TEMPLATE_EXT), QDir::Files); 
 }
 
 QIcon TargetManager::templateIcon(const QString& target, const QString& _template, const QString& folder)
 {	
 	return QIcon(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + 
-		target + "/templates/" + (folder.isEmpty() ? "" : (folder + "/")) + 
+		target + "/" + TEMPLATES_FOLDER + "/" + (folder.isEmpty() ? "" : (folder + "/")) + 
 		_template + ".png");
 }
 
 QStringList TargetManager::allSupportedExtensions()
 {
 	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER);
-	QStringList targetDirs;
 	QStringList extensionList;
 
 	// Choke if we can't find the target directory
-	if(!targetDir.exists()) {
-		return extensionList;
-	}
+	if(!targetDir.exists()) return extensionList;
 	
 	// Get a list of the possible target directories and check through them
-	targetDirs = targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+	const QStringList& targetDirs = targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 	QStringListIterator i(targetDirs);
 
 	while(i.hasNext()) {
 		QString dirName = i.next();
 		targetDir.cd(dirName);
-		
-		// The target file naming scheme is <dirname>.target
 		QFileInfo targetFile(targetDir, dirName + "." + TARGET_EXT);
-
-		// If we can't find a target file, skip this directory
-		if(!targetFile.exists()) {
-			targetDir.cdUp();
-			continue;
+		if(targetFile.exists()) {
+			QSettings target(targetFile.absoluteFilePath(), QSettings::IniFormat);
+			extensionList << target.value(EXTENSIONS).toString().split("|");
 		}
 		
-		QSettings target(targetFile.absoluteFilePath(), QSettings::IniFormat);
-		extensionList << target.value("extensions").toString().split("|");
 		targetDir.cdUp();
 	}
 	return extensionList;
 }
 
-QString TargetManager::getExpectedLocation(const QString& name) const
-{
-	return QString(TARGET_FOLDER) + "/" + name;
-}
+QString TargetManager::getExpectedLocation(const QString& name) const { return QString(TARGET_FOLDER) + "/" + name; }

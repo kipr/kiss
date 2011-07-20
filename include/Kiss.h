@@ -23,6 +23,8 @@
 
 #define LEXER_FOLDER "lexers"
 #define TARGET_FOLDER "targets"
+#define TEMPLATES_FOLDER "templates"
+#define TEMPLATE_EXT "template"
 #define TARGET_EXT "target"
 
 #ifdef Q_OS_WIN

@@ -53,7 +53,6 @@ class SourceFile : public QWidget, public Tab, private Ui::SourceFile
 Q_OBJECT
 public:
 	SourceFile(QWidget* parent = 0);
-	~SourceFile();
 	
 	void activate();
 	void addActionsFile(QMenu* file);
@@ -143,6 +142,7 @@ private:
 	QList<int> m_breakpoints;
 	
 	int m_currentLine;
+	QWidget* m_runTab;
 	
 	void clearProblems();
 	void markProblems(const QStringList& errors, const QStringList& warnings);

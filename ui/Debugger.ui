@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>882</width>
-    <height>575</height>
+    <height>624</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Debugger</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
@@ -161,75 +161,32 @@
        </item>
       </layout>
      </widget>
-     <widget class="QTabWidget" name="ui_tabWidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSplitter" name="splitter_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Variables</string>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QListWidget" name="ui_variables"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Stack</string>
       </property>
-      <property name="tabShape">
-       <enum>QTabWidget::Rounded</enum>
-      </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <property name="movable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="ui_stackTab">
-       <attribute name="title">
-        <string>Stack</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <item>
-         <widget class="QListWidget" name="ui_stack"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="ui_variableTab">
-       <attribute name="title">
-        <string>Variables</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_7">
-        <item>
-         <widget class="QListWidget" name="ui_variables"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="ui_breakpointTab">
-       <attribute name="title">
-        <string>Breakpoints</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QListWidget" name="ui_breakpoints"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="ui_librariesTab">
-       <attribute name="title">
-        <string>Libraries</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
-        <item>
-         <widget class="QListWidget" name="ui_libs">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QListWidget" name="ui_stack"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>

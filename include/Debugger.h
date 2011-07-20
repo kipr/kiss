@@ -34,7 +34,6 @@ class Debugger : public QWidget, private Ui::Debugger, public Responder
 	Q_OBJECT
 public:
 	Debugger(QWidget* parent = 0);
-	~Debugger();
 	
 	void startDebug(DebuggerInterface* interface);
 

@@ -22,50 +22,33 @@
 #include "Lexer.h"
 #include "Kiss.h"
 
-#include <QSettings>
 #include <QDir>
 #include <QDebug>
 
 LexerManager::LexerManager() { loadLexers(); }
 LexerManager::~LexerManager() { unloadAll(); }
 
-LexerSpec* LexerManager::lexerSpec(const QString& ext)
-{
-	return m_lexers.contains(ext) ? m_lexers[ext]->lexerSpec() : 0;
-}
+LexerSpec* LexerManager::lexerSpec(const QString& ext) { return m_lexers.contains(ext) ? m_lexers[ext]->lexerSpec() : 0; }
 
 void LexerManager::pluginLoaded(LexerProvider* plugin)
 {
-	qWarning() << "Loaded:" << plugin->extension();
-	foreach(const QString& ext, plugin->extension().split(" ")) {
-		m_lexers[ext] = plugin;
-		qWarning() << ext << plugin;
-	}
+	plugin->init();
+	foreach(const QString& ext, plugin->extension().split(" ")) m_lexers[ext] = plugin;
 }
 
 void LexerManager::pluginUnloaded(LexerProvider* plugin)
 {
-	qWarning() << "Unloaded:" << plugin->extension();
-	foreach(const QString& ext, plugin->extension().split(" ")) {
-		m_lexers.remove(ext);
-	}
+	foreach(const QString& ext, plugin->extension().split(" ")) m_lexers.remove(ext);
 }
 
 void LexerManager::loadLexers()
 {
-	const QStringList& lexers = QDir(LEXER_FOLDER).entryList(QStringList() << (QString("*.") + OS_LIB_EXT));
-	foreach(const QString& str, lexers) {
-		qWarning() << str;
+	foreach(const QString& str, QDir(LEXER_FOLDER).entryList(QStringList() << (QString("*.") + OS_LIB_EXT))) {
 		const QString& base = QFileInfo(str).baseName();
 		const QString& withPlugin = base.right(base.length() - 3);
 		const QString& name = withPlugin.left(withPlugin.lastIndexOf('_'));
-		qWarning() << "About to load this mofo" << name;
 		qWarning() << get(name);
 	}
 }
 
-QString LexerManager::getExpectedLocation(const QString& name) const
-{
-	Q_UNUSED(name);
-	return LEXER_FOLDER;
-}
+QString LexerManager::getExpectedLocation(const QString& name) const { Q_UNUSED(name); return LEXER_FOLDER; }

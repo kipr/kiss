@@ -23,7 +23,6 @@
 #include <QDebug>
 
 Debugger::Debugger(QWidget* parent) : QWidget(parent, Qt::Tool), m_interface(0) { setupUi(this); }
-Debugger::~Debugger() {}
 
 void Debugger::on_ui_run_clicked() { m_interface->run(); }
 void Debugger::on_ui_pause_clicked() { m_interface->pause(); }
@@ -75,8 +74,6 @@ void Debugger::writeStderr(const QString& str)
 
 void Debugger::update()
 {
-	ui_libs->clear();
-	ui_libs->addItems(m_interface->libs());
 }
 
 void Debugger::programStopped()
@@ -87,9 +84,9 @@ void Debugger::programStopped()
 	ui_stop->setEnabled(false);
 	
 	ui_stack->clear();
-	ui_breakpoints->clear();
+	//ui_breakpoints->clear();
 	ui_variables->clear();
-	ui_libs->clear();
+	//ui_libs->clear();
 }
 
 void Debugger::programStarted()
@@ -147,12 +144,6 @@ void Debugger::variables(const QList<Variable>& vars)
 
 void Debugger::breakpoints(const QList<Breakpoint>& bkpts)
 {
-	ui_breakpoints->clear();
-	
-	foreach(const Breakpoint& bkpt, bkpts) {
-		ui_breakpoints->addItem(QString((bkpt.enabled ? tr("Enabled:") : tr("Disabled:"))) + " " + 
-			bkpt.file + ":" + bkpt.line + "::" + bkpt.function);
-	}
 }
 
 void Debugger::closeEvent(QCloseEvent *event)

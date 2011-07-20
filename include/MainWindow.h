@@ -23,9 +23,6 @@
 
 #include "ui_MainWindow.h"
 #include "EditorSettingsDialog.h"
-#include "ChoosePortDialog.h"
-#include "FindDialog.h"
-#include "Repository.h"
 #include "Tab.h"
 #include "Singleton.h"
 
@@ -61,6 +58,7 @@ public:
 		
 	void hideErrors();
 	
+	void deleteTab(int index);
 	void addTab(Tab* tab);
 	
 	QTabWidget* tabWidget();
@@ -95,7 +93,6 @@ private:
 	EditorSettingsDialog m_editorSettingsDialog;
 	QListWidget m_errorList, m_warningList, m_linkErrorList, m_verboseList;
 
-	void deleteTab(int index);
 	void showErrorMessages(bool verbose = false);
 
 signals:

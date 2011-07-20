@@ -68,14 +68,13 @@ protected:
 	QString m_extension;
 };
 
-Q_DECLARE_INTERFACE(LexerProvider, "com.kipr.kiss-c.LexerProvider/1.0");
+Q_DECLARE_INTERFACE(LexerProvider, "com.kipr.kiss-c.LexerProvider/3.0");
 
 class Lexer : public QsciLexer
 {
 	Q_OBJECT
 public:
 	Lexer(LexerSpec* spec, QString api);
-	~Lexer();
 
 	const char *language() const;
 	const char *lexer() const;

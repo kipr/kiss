@@ -34,7 +34,6 @@
  * QPluginLoader.  This class also has methods to check the availability
  * offered by the currently loaded plugin						 
  */
-
 class Target : public QObject
 {
 Q_OBJECT
@@ -42,10 +41,10 @@ Q_OBJECT
 public:
 	//Constructor & Destructor
 	Target(QObject *parent = 0);
-	~Target();
 
 	// Sets the current target file (and loads the QPluginLoader object)
 	bool setTargetFile(const QString& filename);
+	QString targetManualPath();
 
 	// These pass straight through to the TargetInterface if it is loaded
 	QStringList 	errorMessages();
@@ -57,8 +56,6 @@ public:
 	// These two load some settings from the target file
 	QStringList sourceExtensions();
 	QString defaultExtension();
-	QString sourceTemplate();
-	QString targetManualPath();
 
 	// These methods check the availability of certain features
 	bool hasDownload();
@@ -67,6 +64,7 @@ public:
 	bool hasStop();
 	bool hasSimulate();
 	bool hasDebug();
+	bool hasUi();
 
 	// Again, these pass through to the TargetInterface if loaded
 	bool compile(const QString& filename);
@@ -75,12 +73,15 @@ public:
 	void stop();
 	bool simulate(const QString& filename);
 	DebuggerInterface* debug(const QString& filename);
+	Tab* ui();
 
 	// Set/Get the current serial port
 	void setPort(const QString& port);
-	const QString& port();
+	const QString& port() const;
 
 private:
+	TargetInterface* get() const;
+	
 	QPluginLoader *m_plugin;
 	QString m_targetFileName;
 	QString m_targetName;
