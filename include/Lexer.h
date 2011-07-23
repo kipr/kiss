@@ -34,8 +34,14 @@
 #include <qplugin.h>
 #include <QString>
 
+/*! \struct LexerSpec
+ * \brief Contains everything necessary to highlight a language
+ * 
+ * These are to be implemented by a LexerProvider, then loaded at runtime
+ */
 struct LexerSpec {
 	QString language;
+	/*! Internal lexer as identified by QScintilla */
 	QString lexer;
 	QStringList autoCompletionWordSeparators;
 	QString blockEnd;
@@ -53,14 +59,23 @@ struct LexerSpec {
 	QMap<int, QString> keywords;
 };
 
+/*! \class LexerProvider
+ * \brief Interface for Lexer Plugins.
+ *
+ * A LexerProvider is loaded by the LexerManager, and provides one LexerSpec for a number of languages.
+ */
 class LexerProvider
 {
 public:
 	LexerProvider(const QString& extension) : m_lexerSpec(), m_extension(extension) {}
 	
+	/*! Init sets up a LexerSpec. This should be the only function needed in a plugin */
 	virtual void init() = 0;
+	
+	/*! \return All extensions provided by the lexer provider. Language extensions separated by a space */
 	QString extension() const { return m_extension; }
 	
+	/*! \return Inited LexerSpec */
 	LexerSpec* lexerSpec() { return &m_lexerSpec; }
 	
 protected:
@@ -70,6 +85,11 @@ protected:
 
 Q_DECLARE_INTERFACE(LexerProvider, "com.kipr.kiss-c.LexerProvider/3.0");
 
+/*! \class Lexer 
+ * \brief Interfaces LexerSpec with QScintilla's QsciLexer.
+ *
+ * Wraps LexerSpec struct in QsciLexer, allowing LexerSpecs to be loaded into the SourceFile editor.
+ */
 class Lexer : public QsciLexer
 {
 	Q_OBJECT

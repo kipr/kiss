@@ -125,9 +125,7 @@ void WebTab::on_ui_nextFind_clicked() { ui_webView->findText(ui_find->text()); }
 void WebTab::on_ui_webView_loadFinished(bool ok)
 {
 	ui_load->hide();
-	if(!ok) {
-		ui_webView->setHtml("Error loading page");
-	}
+	if(!ok) ui_webView->setHtml("Error loading page");
 }
 
 void WebTab::on_actionOpenInBrowser_triggered() { QDesktopServices::openUrl(ui_webView->url()); }

@@ -120,6 +120,12 @@ bool MainWindow::openFile(const QString& file)
 		return false;
 	}	
 
+	QSettings settings;
+	QStringList current = settings.value(RECENTS).toStringList().mid(0, 5);
+	current.push_front(fileInfo.absoluteFilePath());
+	current.removeDuplicates();
+	settings.setValue(RECENTS, current);
+	
 	addTab(sourceFile);
 
 	return true;
@@ -139,6 +145,12 @@ void MainWindow::initMenus(Tab* tab)
 	
 	menuFile->addAction(actionNew);
 	menuFile->addAction(actionOpen);
+	QMenu* recentMenu = menuFile->addMenu("Open Recent");
+	foreach(const QString& recent, QSettings().value(RECENTS).toStringList()) {
+		QAction* action = recentMenu->addAction(recent);
+		action->setData(recent);
+		connect(action, SIGNAL(triggered()), this, SLOT(openRecent()));
+	}
 	
 	if(tab) tab->addActionsFile(menuFile);
 	menuFile->addSeparator();
@@ -398,6 +410,18 @@ void MainWindow::on_actionInstallLocalPackage_triggered()
 		} 
 	}
 	QMessageBox::information(this, tr("Install Complete!"), tr("Please restart KISS"));
+}
+
+void MainWindow::openRecent()
+{
+	QAction* action = qobject_cast<QAction*>(sender());
+	QString file = action->data().toString();
+	QSettings settings;
+	QStringList current = settings.value(RECENTS).toStringList();
+	current.push_front(file);
+	current.removeDuplicates();
+	settings.setValue(RECENTS, current);
+	if(action) openFile(file);
 }
 
 void MainWindow::errorClicked(QListWidgetItem* item)

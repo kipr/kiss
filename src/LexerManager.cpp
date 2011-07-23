@@ -25,6 +25,8 @@
 #include <QDir>
 #include <QDebug>
 
+#define DELIM " "
+
 LexerManager::LexerManager() { loadLexers(); }
 LexerManager::~LexerManager() { unloadAll(); }
 
@@ -33,12 +35,12 @@ LexerSpec* LexerManager::lexerSpec(const QString& ext) { return m_lexers.contain
 void LexerManager::pluginLoaded(LexerProvider* plugin)
 {
 	plugin->init();
-	foreach(const QString& ext, plugin->extension().split(" ")) m_lexers[ext] = plugin;
+	foreach(const QString& ext, plugin->extension().split(DELIM)) m_lexers[ext] = plugin;
 }
 
 void LexerManager::pluginUnloaded(LexerProvider* plugin)
 {
-	foreach(const QString& ext, plugin->extension().split(" ")) m_lexers.remove(ext);
+	foreach(const QString& ext, plugin->extension().split(DELIM)) m_lexers.remove(ext);
 }
 
 void LexerManager::loadLexers()

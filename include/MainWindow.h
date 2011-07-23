@@ -31,8 +31,15 @@
 #include <QToolButton>
 #include <QListWidget>
 
+#define RECENTS "recents"
+
 class QListWidgetItem;
 
+/*! \class MainWindow
+ * \brief Holds tabs to display
+ *
+ * Very little is actually implemented in MainWindow. Instead, most is in the implementation of every Tab.
+ */
 class MainWindow : public QMainWindow, private Ui::MainWindow, public Singleton<MainWindow>
 {
 	Q_OBJECT
@@ -43,28 +50,64 @@ public:
 	
 	void closeEvent(QCloseEvent *e);
 	
+	/*! 
+	 * Creates a new SourceFile tab
+	 */
 	void newFile();
+	
+	/*!
+	 * Opens a file with SourceFile tab
+	 * \param filePath Path to file
+	 */
 	bool openFile(const QString& filePath);
 	
 	void initMenus(Tab* tab);
 	
+	/*! Sets Window Title
+	 * \param title Title to append to primary window name
+	 */
 	void setTitle(const QString& title);
+	
+	/*! Sets Tab title
+	 * \param widget Tab to set
+	 * \param string String to set tab's text to.
+	 */
 	void setTabName(QWidget* widget, const QString& string);
+	
+	/*! Sets Window's status message
+	 * \param message Message to display
+	 * \param time Time to display in milliseconds
+	 */
 	void setStatusMessage(const QString& message, int time = 0);
 	
+	/*! Shows given errors in Error View */
 	void setErrors(Tab* tab, 
 		const QStringList& errors, const QStringList& warnings, 
 		const QStringList& linker, const QStringList& verbose);
 		
 	void hideErrors();
 	
+	/*! 
+	 * Deletes tab at given index. Does NOT clean up tab via close method.
+	 * \param index Tab to add
+	 */
 	void deleteTab(int index);
+	
+	/*! 
+	 * Adds given tab window. Calls tab setup functions.
+	 * \param tab Tab to add
+	 */
 	void addTab(Tab* tab);
 	
 	QTabWidget* tabWidget();
 	
+	/*! 
+	 * Closes all but given tab 
+	 * \param tab Tab to keep open
+	 */
 	void closeAllOthers(Tab* tab);
 	
+	/*! Reinits menus for current tab */
 	void refreshMenus();
 	
 public slots:
@@ -82,6 +125,7 @@ private slots:
 	void on_ui_tabWidget_currentChanged(int i);
 	void on_actionManagePackages_triggered();
 	void on_actionInstallLocalPackage_triggered();
+	void openRecent();
 	
 	void errorClicked(QListWidgetItem* item);
 	

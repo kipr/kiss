@@ -26,27 +26,68 @@ class QMenu;
 class QMenuBar;
 class QToolBar;
 
+/*! \class Tab
+ * \brief Provides an interface all Tabs must implement
+ *
+ * A Tab must implement both this interface and QWidget, which is expected once passed to MainWindow for processing.
+ */
 class Tab
 {
 public:	
+	/*!
+	 * Called every time this Tab is switched to. Useful for setting window title.
+	 */
 	virtual void activate() = 0;
 	
-	// All of these are hooks to add menu items
+	/*!
+	 * Allows a Tab to add actions to the "File" menu in the menu bar.
+	 * \param file Pointer to current file menu
+	 */
 	virtual void addActionsFile(QMenu* file) = 0;
+	
+	/*!
+	 * Allows a Tab to add actions to the "Edit" menu in the menu bar.
+	 * \param edit Pointer to current edit menu
+	 */
 	virtual void addActionsEdit(QMenu* edit) = 0;
+	
+	/*!
+	 * Allows a Tab to add actions to the "Help" menu in the menu bar.
+	 * \param help Pointer to current help menu
+	 */
 	virtual void addActionsHelp(QMenu* help) = 0;
+	
+	/*!
+	 * Allows a Tab to create menus and add actions to them.
+	 * \param menuBar Pointer to current menu bar
+	 */
 	virtual void addOtherActions(QMenuBar* menuBar) = 0;
+	
+	/*!
+	 * Allows a Tab to add actions to the tool bar.
+	 * \param toolbar Pointer to current tool bar
+	 */
 	virtual void addToolbarActions(QToolBar* toolbar) = 0;
 	
+	/*!
+	 * Begin setup is called before a Tab is added to the Tab Widget. 
+	 * \return false cancels adding this Tab, true continues setup process
+	 */
 	virtual bool beginSetup() = 0;
+	
+	/*!
+	 * The Tab has been added to the Tab Widget. Set the Tab Name here.
+	 */
 	virtual void completeSetup() = 0;
 	
+	/*!
+	 * Requests a Tab to close
+	 * \return false cancels the close operation, true closes the Tab
+	 */
 	virtual bool close() = 0;
 	
 	virtual void refreshSettings() = 0;
 	virtual void moveTo(int line, int pos) = 0;
-	
-	virtual bool exclusive() { return false; }
 protected:
 };
 

@@ -27,14 +27,22 @@
 #define KISS_ARCHIVE_VERSION 	1
 #define KISS_ARCHIVE_FILE 	"installed"
 
+/*! \struct KissReturn
+ * \brief Holds a KissArchive command return value
+ */
 struct KissReturn 
 {
 	KissReturn(const bool& error, const QString& message = "") : error(error), message(message) {}
 	
+	/*! True if error occurred */
 	bool error;
+	/*! Holds message of error if an error occurred */
 	QString message;
 };
 
+/*! \class KissArchive
+ * \brief Holds methods to manipulate Kiss Archives
+ */
 class KissArchive 
 {
 public:

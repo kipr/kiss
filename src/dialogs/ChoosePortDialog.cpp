@@ -42,15 +42,11 @@ ChoosePortDialog::ChoosePortDialog(QWidget *parent) : QDialog(parent)
 {
 	setupUi(this);
 
-	// Set up the refresh button
 	connect(ui_refreshButton, SIGNAL(clicked()), this, SLOT(refreshPortList()));
 }
 
 // Destructor
-ChoosePortDialog::~ChoosePortDialog()
-{
-	clearPortButtonList();
-}
+ChoosePortDialog::~ChoosePortDialog() { clearPortButtonList(); }
 
 // Clears the portButtonList, deleting the entries
 //     and cleaning out the ui_portGroupBox
@@ -151,22 +147,17 @@ int ChoosePortDialog::exec()
 // Figure out which port was selected and return it, or nothing if none are
 QString ChoosePortDialog::getSelectedPortName()
 {
-	QListIterator<QRadioButton*> i(m_portButtonList);
-	while(i.hasNext()) {
-		QRadioButton *button = i.next();
-		if(button->isChecked())
-			return button->text();
+	foreach(QRadioButton* button, m_portButtonList) {
+		if(button->isChecked()) return button->text();
 	}
 	return QString();
 }
 
 void ChoosePortDialog::on_ui_addPortButton_clicked(bool)
 {
-	bool hitOk;
-	QString portName = QInputDialog::getText(this, tr("Add Port"), tr("Port name: "), QLineEdit::Normal, QString(), &hitOk);
-	
-	if(!hitOk)
-		return;
+	bool hitOk = false;
+	const QString& portName = QInputDialog::getText(this, tr("Add Port"), tr("Port name: "), QLineEdit::Normal, QString(), &hitOk);
+	if(!hitOk) return;
 		
 	m_portButtonList.push_back(new QRadioButton(portName));
 	ui_portGroupBox->layout()->addWidget(m_portButtonList.back());

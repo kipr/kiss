@@ -38,8 +38,7 @@ void createArchive(const QString& name, const unsigned version, const QString& p
 		qWarning() << "Unable to open" << out << "for writing.";
 		return;
 	}
-	KissReturn ret = KissArchive::create(name, version, 
-		platforms.split(','),
+	KissReturn ret = KissArchive::create(name, version, platforms.split(','),
 		QString(f.readAll().data()).split('\n'), 
 		&outf);
 		
@@ -90,7 +89,6 @@ void handleArgs()
 int main(int argc, char **argv)
 {
 	
-	qWarning() << "Qt Version:" << qVersion();
 	/* The Following lines just set up the application object */
 	QApplication application(argc, argv);
 	
@@ -104,12 +102,13 @@ int main(int argc, char **argv)
 	#else
 		QDir::setCurrent(QApplication::applicationDirPath());	
 	#endif
+	
+	qWarning() << "Qt Version:" << qVersion();
 
 	QApplication::setOrganizationName("KIPR");
 	QApplication::setOrganizationDomain("kipr.org");
 	QApplication::setApplicationName("KISS");
 	QApplication::setWindowIcon(QIcon(":/icon.png"));
-	/* Now actually do stuff */
 	
 	QPixmap splashPixmap(":/splash_screen.png");
 	QSplashScreen splash(splashPixmap);

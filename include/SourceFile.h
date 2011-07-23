@@ -30,7 +30,6 @@
 #include "ui_SourceFile.h"
 #include "Tab.h"
 #include "Debugger.h"
-#include "FindDialog.h"
 
 #include <QtGlobal>
 #include <Qsci/qsciscintilla.h>
@@ -69,10 +68,14 @@ public:
 	
 	bool close();
 
+	//! \return File's Name
 	QString fileName();
+	//! \return Absolute path to current file
 	QString filePath();
+	//! \return true if file is new
 	bool isNewFile();
 	
+	//! \return Current zoom level
 	int getZoom();
 	
 	QsciScintilla* getEditor();
@@ -84,10 +87,15 @@ public slots:
 	void refreshSettings();
 	void updateMargins();
 
+	//! Increase editor's zoom level
 	void zoomIn();
+	//! Decreate editor's zoom level
 	void zoomOut();
 
+	//! Promps user to save file to a browsed location
 	void on_actionSaveAs_triggered();
+	
+	//! Save current file
 	bool fileSave();
 
 	void sourceModified(bool m);
@@ -121,7 +129,16 @@ private slots:
 	void on_actionClearBreakpoints_triggered();
 	
 	void on_ui_editor_cursorPositionChanged(int line, int index);
+	
+	void on_ui_next_clicked();
+	void on_ui_find_textChanged(const QString& text);
+	void on_ui_matchCase_stateChanged(int state);
+	void on_ui_replaceNext_clicked();
+	void on_ui_replaceAll_clicked();
 private:
+	void showFind();
+	bool checkPort();
+	
 	QFile m_fileHandle;
 	QFileInfo m_fileInfo;
 	bool m_isNewFile;
@@ -130,7 +147,6 @@ private:
 	Target m_target;
 	LexerSpec* m_lexSpec;
 	QString m_lexAPI;
-	FindDialog m_findDialog;
 	QString m_targetName;
 	QString m_templateExt;
 	
@@ -143,6 +159,7 @@ private:
 	
 	int m_currentLine;
 	QWidget* m_runTab;
+	bool m_findModified;
 	
 	void clearProblems();
 	void markProblems(const QStringList& errors, const QStringList& warnings);

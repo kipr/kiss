@@ -29,10 +29,10 @@
 #include <QWidget>
 #include <QSettings>
 
-/** 
- * The Target class handles loading the TargetInterface through
- * QPluginLoader.  This class also has methods to check the availability
- * offered by the currently loaded plugin						 
+/*! \class Target
+ * \brief Handles loading the TargetInterface through TargetManager.
+ *
+ * This class also has methods to check the availability offered by the currently loaded plugin.					 
  */
 class Target : public QObject
 {
@@ -57,26 +57,59 @@ public:
 	QStringList sourceExtensions();
 	QString defaultExtension();
 
-	// These methods check the availability of certain features
+	/*! \return True if the TargetInterface exists and supports downloading */
 	bool hasDownload();
+	/*! \return True if the TargetInterface exists and supports compiling */
 	bool hasCompile();
+	/*! \return True if the TargetInterface exists and supports running */
 	bool hasRun();
+	/*! \return True if the TargetInterface exists and supports stopping */
 	bool hasStop();
+	/*! \return True if the TargetInterface exists and supports simulating */
 	bool hasSimulate();
+	/*! \return True if the TargetInterface exists and supports debugging */
 	bool hasDebug();
+	/*! \return True if the TargetInterface exists and supports a UI at runtime */
 	bool hasUi();
-
-	// Again, these pass through to the TargetInterface if loaded
+	
+	/*! Compiles a file
+	 * \param filename Absolute path to a file
+	 * \return true if the TargetInterface exists and compile was successful
+	 */
 	bool compile(const QString& filename);
+	
+	/*! Downloads a file
+	 * \param filename Absolute path to a file
+	 * \return true if the TargetInterface exists and download was successful
+	 */
 	bool download(const QString& filename);
+	
+	/*! Runs a file
+	 * \param filename Absolute path to a file
+	 * \return true if the TargetInterface exists and run was successful
+	 */
 	bool run(const QString& filename);
+	
+	/*! Stops current run. No effect if no file running. */
 	void stop();
+	
+	/*! Simulates a file
+	 * \param filename Absolute path to a file
+	 * \return true if the TargetInterface exists and simulate was successful
+	 */
 	bool simulate(const QString& filename);
+	
+	/*! Sets up a debugger for a file
+	 * \param filename Absolute path to a file
+	 * \return Pointer to DebuggerInterface if the TargetInterface exists and debug setup was successful.
+	 */
 	DebuggerInterface* debug(const QString& filename);
 	Tab* ui();
 
-	// Set/Get the current serial port
+	//! \param port Port to associate with Target
 	void setPort(const QString& port);
+	
+	//! \return currently set port
 	const QString& port() const;
 
 private:

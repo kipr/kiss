@@ -14,18 +14,27 @@
 
 typedef QMap<QString, QPluginLoader*> PluginMap;
 
+/*! \class PluginManager
+ * \brief Manages loading/unloading of Qt plugins.
+ *
+ * Takes M, the name of the Manager, and T, the name of the Plugin Interface
+ * Maps the plugins to PluginMap, expecting each to be referenced using a unique name.
+ */
 template<typename M, typename T>
 class PluginManager : public Singleton<M>
 {
 public:
+	//! Get plugin instance, loads if not found
 	T* get(const QString& name) {
 		if(!m_plugins.contains(name)) 
 			if(!loadPlugin(name)) return 0;
 		return qobject_cast<T*>(m_plugins[name]->instance());
 	}
 
+	//! Unloads all plugins
 	void unloadAll() { while (!m_plugins.isEmpty()) unloadPlugin(m_plugins.begin().key()); }
 	
+	//! Loads plugin by given name
 	bool loadPlugin(const QString& name) {
 		if(m_plugins.contains(name)) return false;
 
@@ -60,6 +69,7 @@ public:
 		return true;
 	}
 
+	//! Unloads plugin by given name
 	void unloadPlugin(const QString& name) {
 		if(!m_plugins.contains(name)) return;
 		pluginUnloaded(qobject_cast<T*>(m_plugins[name]->instance()));

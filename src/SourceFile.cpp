@@ -43,6 +43,8 @@
 #include <QDate>
 #include <QPixmap>
 
+#define KISS_LEXER "KISS_LEXER"
+#define KISS_DATE "KISS_DATE"
 #define END_KISS "END_KISS_META"
 
 class SourceFileShared : public Singleton<SourceFileShared>
@@ -85,7 +87,7 @@ SourceFileShared::SourceFileShared() :
 
 
 SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), 
-	m_findDialog(&MainWindow::ref()), m_targetName("?"), m_runTab(0)
+ 	m_targetName("?"), m_runTab(0), m_findModified(false)
 {
 	setupUi(this);
 	
@@ -105,7 +107,7 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 	connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
 	connect(actionIndentAll, SIGNAL(triggered()), this, SLOT(indentAll()));
 	
-	m_findDialog.setSourceFile(this);
+	ui_findFrame->hide();
 }
 
 
@@ -185,12 +187,7 @@ void SourceFile::addToolbarActions(QToolBar* toolbar)
 }
 
 bool SourceFile::beginSetup() { return changeTarget(isNewFile()); }
-
-void SourceFile::completeSetup()
-{
-	MainWindow::ref().setTabName(this, m_fileInfo.fileName());
-	updateMargins();
-}
+void SourceFile::completeSetup() { MainWindow::ref().setTabName(this, m_fileInfo.fileName()); updateMargins(); }
 
 bool SourceFile::close()
 {
@@ -225,8 +222,7 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 	m_fileHandle.setFileName(filePath);
 	m_fileInfo.setFile(m_fileHandle);
 	
-	if(!m_fileHandle.open(QIODevice::WriteOnly))
-		return false;
+	if(!m_fileHandle.open(QIODevice::WriteOnly)) return false;
 
 	if(ui_editor->text(ui_editor->lines()-1).length() > 0) ui_editor->append("\n");
 		
@@ -257,8 +253,7 @@ bool SourceFile::fileOpen(const QString& filePath)
 	m_fileHandle.setFileName(filePath);
 	m_fileInfo.setFile(m_fileHandle);	
 	
-	if(!m_fileHandle.open(QIODevice::ReadOnly))
-		return false;
+	if(!m_fileHandle.open(QIODevice::ReadOnly)) return false;
 
 	QTextStream fileStream(&m_fileHandle);
 	ui_editor->setText(fileStream.readAll());
@@ -283,8 +278,7 @@ bool SourceFile::fileOpen(const QString& filePath)
 
 void SourceFile::indentAll()
 {
-	if(!ui_editor->lexer())
-		return;
+	if(!ui_editor->lexer()) return;
 		
 	setUpdatesEnabled(false);
 
@@ -341,12 +335,10 @@ void SourceFile::indentAll()
 
 void SourceFile::keyPressEvent(QKeyEvent *event)
 {
-	int ctrlMod;
-	
 #ifdef Q_OS_MAC
-	ctrlMod = Qt::MetaModifier;
+	int ctrlMod = Qt::MetaModifier;
 #else
-	ctrlMod = Qt::ControlModifier;
+	int ctrlMod = Qt::ControlModifier;
 #endif
 	
 	if(event->modifiers() & ctrlMod) {
@@ -426,9 +418,7 @@ void SourceFile::refreshSettings()
 	if(lexer) {
 		lexer->defaultColor(0);
 		lexer->setDefaultFont(defFont);
-	}
-	else
-		ui_editor->setFont(defFont);
+	} else ui_editor->setFont(defFont);
 
 	/* Set other options from settings */
 	settings.beginGroup("autoindent");
@@ -502,17 +492,8 @@ int SourceFile::getZoom() { return ui_editor->SendScintilla(QsciScintilla::SCI_G
 QsciScintilla* SourceFile::getEditor() { return ui_editor; }
 void SourceFile::moveTo(int line, int pos)  { if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos); }
 
-void SourceFile::zoomIn()
-{
-	ui_editor->zoomIn();
-	updateMargins();
-}
-
-void SourceFile::zoomOut()
-{
-	ui_editor->zoomOut();
-	updateMargins();
-}
+void SourceFile::zoomIn() { ui_editor->zoomIn(); updateMargins(); }
+void SourceFile::zoomOut() { ui_editor->zoomOut(); updateMargins(); }
 
 void SourceFile::on_actionSaveAs_triggered()
 {
@@ -546,18 +527,22 @@ void SourceFile::on_actionSaveAs_triggered()
 	/* Saves the file with the new fileName and updates the tabWidget label */
 	if(fileSaveAs(fileInfo.absoluteFilePath())) {
 		MainWindow::ref().setTabName(this, fileName());
-		MainWindow::ref().setStatusMessage("Saved file\"" + fileName() + "\"");
+		MainWindow::ref().setStatusMessage("Saved file \"" + fileName() + "\"");
 	} else QMessageBox::critical(&MainWindow::ref(), "Error", "Error: Could not write file " + fileName());
+
+	QStringList current = settings.value(RECENTS).toStringList().mid(0, 5);
+	current.push_front(fileInfo.absoluteFilePath());
+	current.removeDuplicates();
+	settings.setValue(RECENTS, current);
 }
 
-void SourceFile::sourceModified(bool m) {
-	Q_UNUSED(m);
-	MainWindow::ref().setTabName(this, "* " + m_fileInfo.fileName());
-}
+void SourceFile::sourceModified(bool m) { Q_UNUSED(m); MainWindow::ref().setTabName(this, "* " + m_fileInfo.fileName()); }
 
 void SourceFile::on_actionDownload_triggered()
 {	
 	fileSave();
+	
+	if(!checkPort()) return;
 	
 	MainWindow::ref().setStatusMessage("Downloading...");
 	QApplication::flush();
@@ -578,6 +563,9 @@ void SourceFile::on_actionCompile_triggered()
 void SourceFile::on_actionRun_triggered()
 {	
 	fileSave();
+	
+	if(!checkPort()) return;
+	
 	MainWindow::ref().hideErrors();
 	bool success = false;
 	MainWindow::ref().setStatusMessage((success = m_target.run(filePath())) ? tr("Run Succeeded") : tr("Run Failed"));
@@ -630,7 +618,7 @@ void SourceFile::on_actionCut_triggered() 	{ ui_editor->cut(); }
 void SourceFile::on_actionPaste_triggered() 	{ ui_editor->paste(); }
 void SourceFile::on_actionUndo_triggered() 	{ ui_editor->undo(); }
 void SourceFile::on_actionRedo_triggered() 	{ ui_editor->redo(); }
-void SourceFile::on_actionFind_triggered() 	{ m_findDialog.show(); }
+void SourceFile::on_actionFind_triggered() 	{ showFind(); }
 
 void SourceFile::on_actionManual_triggered()
 {
@@ -651,23 +639,9 @@ void SourceFile::on_actionPrint_triggered()
 	if(printDialog.exec()) printer.printRange(ui_editor);
 }
 
-void SourceFile::on_actionZoomIn_triggered()
-{
-	ui_editor->zoomIn();
-	updateMargins();
-}
-
-void SourceFile::on_actionZoomOut_triggered()
-{
-	ui_editor->zoomOut();
-	updateMargins();
-}
-
-void SourceFile::on_actionResetZoomLevel_triggered()
-{
-	ui_editor->zoomTo(0);
-	updateMargins();
-}
+void SourceFile::on_actionZoomIn_triggered() { zoomIn(); }
+void SourceFile::on_actionZoomOut_triggered() { zoomOut(); }
+void SourceFile::on_actionResetZoomLevel_triggered() { ui_editor->zoomTo(0); updateMargins(); }
 
 void SourceFile::on_actionChangeTarget_triggered() { changeTarget(false); }
 
@@ -684,7 +658,6 @@ void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
 	} else {
 		m_breakpoints.removeAll(ui_editor->markerLine(m_currentLine));
 		ui_editor->markerDelete(m_currentLine, m_breakIndicator);
-		
 	}
 	
 	updateBreakpointToggle();
@@ -705,6 +678,38 @@ void SourceFile::on_ui_editor_cursorPositionChanged(int line, int index)
 	Q_UNUSED(index);
 	m_currentLine = line;
 	updateBreakpointToggle();
+}
+
+void SourceFile::on_ui_next_clicked()
+{
+	bool found = m_findModified ? ui_editor->findFirst(ui_find->text(), false, ui_matchCase->isChecked(), false, true) : 
+		ui_editor->findNext();
+	m_findModified = false;
+}
+
+void SourceFile::on_ui_find_textChanged(const QString&) { m_findModified = true; }
+void SourceFile::on_ui_matchCase_stateChanged(int) { m_findModified = true; }
+void SourceFile::on_ui_replaceNext_clicked() { ui_editor->replace(ui_replace->text()); on_ui_next_clicked(); }
+
+void SourceFile::on_ui_replaceAll_clicked()
+{
+	ui_editor->setText(ui_editor->text().replace(ui_find->text(), ui_replace->text()));
+}
+
+void SourceFile::showFind()
+{
+	ui_find->clear();
+	ui_replace->clear();
+	ui_findFrame->show();
+}
+
+bool SourceFile::checkPort()
+{
+	if(m_target.port().isEmpty()) {
+		on_actionChoosePort_triggered();
+		if(m_target.port().isEmpty()) return false;
+	}
+	return true;
 }
 
 /*ADDED BY NB*///2/10/2010-dpm
@@ -790,7 +795,7 @@ bool SourceFile::changeTarget(bool _template)
 	
 		QString str = QTextStream(&tFile).readAll();
 		// Move this?
-		str.replace("KISS_DATE", QDate::currentDate().toString(Qt::TextDate));
+		str.replace(KISS_DATE, QDate::currentDate().toString(Qt::TextDate));
 		QString text;
 		bool lexerSet = false;
 		if(str.contains(END_KISS)) {
@@ -801,7 +806,7 @@ bool SourceFile::changeTarget(bool _template)
 				if(parts.size() < 1) continue;
 				// Perhaps something here in the future
 				if(parts.size() < 2) continue;
-				if(parts[0] == "KISS_LEXER") {
+				if(parts[0] == KISS_LEXER) {
 					qWarning() << "Template specified" << parts[1];
 					m_lexSpec = LexerManager::ref().lexerSpec(parts[1]);
 					m_templateExt = parts[1];
@@ -813,7 +818,7 @@ bool SourceFile::changeTarget(bool _template)
 		if(!lexerSet) m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
 	}
 	
-	m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT,".api");
+	m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
 	m_targetName = QFileInfo(targetPath).baseName();
 	refreshSettings();
 	MainWindow::ref().refreshMenus();

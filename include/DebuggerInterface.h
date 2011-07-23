@@ -26,6 +26,11 @@
 #include <QDataStream>
 #include <QObject>
 
+/*! \struct Location
+ * \brief Stores a line number and file name
+ *
+ * Used in communcation between Debugger and DebuggerInterface
+ */
 struct Location 
 {
 	Location(QString file, int line) : file(file), line(line) {}
@@ -34,6 +39,11 @@ struct Location
 	int line;
 };
 
+/*! \struct Variable
+ * \brief Stores a name and value
+ *
+ * Used in communcation between Debugger and DebuggerInterface
+ */
 struct Variable 
 {
 	Variable(QString name, QString value) : name(name), value(value) {}
@@ -42,6 +52,11 @@ struct Variable
 	QString value;
 };
 
+/*! \struct Breakpoint
+ * \brief Stores a file name, function name, and line number
+ *
+ * Used in communcation between Debugger and DebuggerInterface
+ */
 struct Breakpoint 
 {
 	QString function;
@@ -51,6 +66,11 @@ struct Breakpoint
 	bool enabled;
 };
 
+/*! \struct Frame
+ * \brief Stores a file name, function name, line number, and list of Variable objects
+ *
+ * Used in communcation between Debugger and DebuggerInterface
+ */
 struct Frame
 {
 	QString function;

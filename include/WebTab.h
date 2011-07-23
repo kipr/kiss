@@ -45,6 +45,7 @@ public:
 	
 	bool close();
 	
+	//! Loads an unformatted URL
 	void load(QString url, bool hideUrl = false);
 	
 	void moveTo(int line, int pos);
@@ -60,8 +61,11 @@ private slots:
 	
 	void on_ui_prevFind_clicked();
 	void on_ui_nextFind_clicked();
+	
+	//! Check if there was an error loading the page
 	void on_ui_webView_loadFinished(bool ok);
 	
+	//! Opens current web page in system's default browser
 	void on_actionOpenInBrowser_triggered();
 	
 	void refreshSettings();

@@ -44,8 +44,6 @@ public:
 	virtual DebuggerInterface* debug(const QString&, const QString&) { return 0; }
 	virtual Tab* ui(const QString&) { return 0; }
 
-	// These should inform the plugin loader of
-	// The features offered by this plugin
 	virtual bool hasDownload() 	{ return false; }
 	virtual bool hasCompile() 	{ return false; }
 	virtual bool hasRun() 		{ return false; }
@@ -54,7 +52,6 @@ public:
 	virtual bool hasDebug() 	{ return false; }
 	virtual bool hasUi() 		{ return false; }
 	
-	/* Builtin Stuff */
 	const QList<QAction*>& 	getActionList() const 		{ return m_actionList; }
 	const QStringList& 	getErrorMessages() const	{ return m_errorMessages; }
 	const QStringList& 	getWarningMessages() const 	{ return m_warningMessages; }

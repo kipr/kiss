@@ -72,9 +72,7 @@ void Debugger::writeStderr(const QString& str)
 	ui_consoleOut->setTextColor(color);
 }
 
-void Debugger::update()
-{
-}
+void Debugger::update() {}
 
 void Debugger::programStopped()
 {
@@ -142,9 +140,7 @@ void Debugger::variables(const QList<Variable>& vars)
 	}
 }
 
-void Debugger::breakpoints(const QList<Breakpoint>& bkpts)
-{
-}
+void Debugger::breakpoints(const QList<Breakpoint>& bkpts) {}
 
 void Debugger::closeEvent(QCloseEvent *event)
 {

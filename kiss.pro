@@ -22,7 +22,6 @@ HEADERS += 	include/MainWindow.h \
 			include/dialogs/ChoosePortDialog.h \
 			include/dialogs/EditorSettingsDialog.h \
 			include/dialogs/TargetSettingsDialog.h \
-			include/dialogs/FindDialog.h \
 			include/Target.h \
 			include/SourceFile.h \
 			include/Lexer.h \
@@ -45,7 +44,6 @@ SOURCES += 	src/main.cpp \
 			src/dialogs/ChoosePortDialog.cpp \
 			src/dialogs/EditorSettingsDialog.cpp \
 			src/dialogs/TargetSettingsDialog.cpp \
-			src/dialogs/FindDialog.cpp \
 			src/Target.cpp \
 			src/SourceFile.cpp \
 			src/Lexer.cpp \

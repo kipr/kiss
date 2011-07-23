@@ -275,7 +275,4 @@ const unsigned KissArchive::version(const QString& name)
 /**
  * List the installed packages, as declared in the file "installed"
  */
-QStringList KissArchive::installed()
-{
-	return QSettings(KISS_ARCHIVE_FILE, QSettings::IniFormat).childGroups();
-}
+QStringList KissArchive::installed() { return QSettings(KISS_ARCHIVE_FILE, QSettings::IniFormat).childGroups(); }

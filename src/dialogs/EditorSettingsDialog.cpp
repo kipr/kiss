@@ -47,8 +47,7 @@ EditorSettingsDialog::~EditorSettingsDialog() {}
 int EditorSettingsDialog::exec()
 {
 	readSettings();
-	if(QDialog::exec() == QDialog::Rejected)
-		return QDialog::Rejected;
+	if(!QDialog::exec()) return QDialog::Rejected;
 	saveSettings();
 	return QDialog::Accepted;
 }
