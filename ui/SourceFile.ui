@@ -287,15 +287,6 @@
     <string>Ctrl+Shift+Z</string>
    </property>
   </action>
-  <action name="actionManual">
-   <property name="icon">
-    <iconset resource="../rc/rc.qrc">
-     <normaloff>:/shortcuts/target/icon_set/icons/report.png</normaloff>:/shortcuts/target/icon_set/icons/report.png</iconset>
-   </property>
-   <property name="text">
-    <string>Manual</string>
-   </property>
-  </action>
   <action name="actionPrint">
    <property name="icon">
     <iconset resource="../rc/rc.qrc">

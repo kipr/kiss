@@ -35,7 +35,7 @@ QStringList TargetManager::targets()
 
 	// Choke if we can't find the target directory
 	if(!targetDir.exists()) {
-		qWarning("ChooseTargetDialog::scanTargetDirectory: Could not find targets directory");
+		qWarning("TargetManager::scanTargetDirectory: Could not find targets directory");
 		return QStringList();
 	}
 	
@@ -54,7 +54,7 @@ QStringList TargetManager::targets()
 
 		// If we can't find a target file, skip this directory
 		if(!targetFile.exists()) {
-			qWarning("ChooseTargetDialog::scanTargetDirectory: Invalid target directory %s", qPrintable(targetDir.absolutePath()));
+			qWarning("TargetManager::scanTargetDirectory: Invalid target directory %s", qPrintable(targetDir.absolutePath()));
 			targetDir.cdUp();
 			continue;
 		}
@@ -65,7 +65,7 @@ QStringList TargetManager::targets()
 
 	// Didn't find any targets, quit
 	if(targetList.count() == 0) {
-		qWarning("ChooseTargetDialog::scanTargetDirectory: No targets to display!\n");
+		qWarning("TargetManager::scanTargetDirectory: No targets to display!\n");
 		return QStringList();
 	}
 

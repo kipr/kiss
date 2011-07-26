@@ -31,8 +31,6 @@ void WelcomeTab::completeSetup()
 {	
 	WebTab::completeSetup(); 
 	load("", true); // Hide URL Bar
-	webView()->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks); // Make sure we get to handle special links
-	connect(webView(), SIGNAL(linkClicked(const QUrl&)), this, SLOT(linkClicked(const QUrl&)));
 	
 	QFile file(":/welcome/index.html");
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return;
@@ -43,28 +41,4 @@ void WelcomeTab::completeSetup()
 	webView()->setHtml(data.data());
 	
 	actionOpenInBrowser->setEnabled(false);
-}
-
-void WelcomeTab::linkClicked(const QUrl& url)
-{
-	if(url.scheme() != "kiss") load(url.toString());
-	QString auth = url.authority();
-	if(auth == "new") {
-		MainWindow::ref().newFile();
-		return;
-	}
-	if(auth == "open") {
-		MainWindow::ref().on_actionOpen_triggered();
-		return;
-	}
-	if(auth == "newbrowser") {
-		WebTab* tab = new WebTab();
-		qWarning() << url.fragment();
-		tab->load(url.fragment());
-		MainWindow::ref().addTab(tab);
-		return;
-	}
-	if(auth == "help") {
-		return;
-	}
 }

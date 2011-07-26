@@ -35,30 +35,30 @@ Lexer::Lexer(LexerSpec* spec, QString api) : QsciLexer(0), m_lexerSpec(spec), m_
 	else m_apis.prepare();
 }
 
-const char *Lexer::language() const { return m_lexerSpec->language.toLocal8Bit().data(); }
-const char *Lexer::lexer() const { return m_lexerSpec->lexer.toLocal8Bit().data(); }
+const char* Lexer::language() const { return m_lexerSpec->language.toLocal8Bit().data(); }
+const char* Lexer::lexer() const { return m_lexerSpec->lexer.toLocal8Bit().data(); }
 QStringList Lexer::autoCompletionWordSeparators() const { return m_lexerSpec->autoCompletionWordSeparators; }
 
-const char *Lexer::blockStartKeyword(int* style) const
+const char* Lexer::blockStartKeyword(int* style) const
 {
     if (style) *style = m_lexerSpec->blockStartKeywordStyle;
     return m_lexerSpec->blockStartKeyword.toLocal8Bit().data();
 }
 
-const char *Lexer::blockStart(int* style) const
+const char* Lexer::blockStart(int* style) const
 {
     if (style) *style = m_lexerSpec->blockStartStyle;
     return m_lexerSpec->blockStart.toLocal8Bit().data();
 }
 
-const char *Lexer::blockEnd(int* style) const
+const char* Lexer::blockEnd(int* style) const
 {
     if (style) *style = m_lexerSpec->blockEndStyle;
     return m_lexerSpec->blockEnd.toLocal8Bit().data();
 }
 
 int Lexer::braceStyle() const { return m_lexerSpec->braceStyle; }
-const char *Lexer::wordCharacters() const { return m_lexerSpec->wordCharacters.toLocal8Bit().data(); }
+const char* Lexer::wordCharacters() const { return m_lexerSpec->wordCharacters.toLocal8Bit().data(); }
 
 QColor Lexer::defaultColor(int style) const
 {

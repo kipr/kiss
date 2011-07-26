@@ -72,6 +72,9 @@ private slots:
 
 protected:
 	QWebView* webView();
+	
+private slots:
+	void linkClicked(const QUrl& url);
 
 private:
 };

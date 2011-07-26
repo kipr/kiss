@@ -27,7 +27,6 @@
 #include "WelcomeTab.h"
 #include "KissArchive.h"
 #include "ChoosePortDialog.h"
-#include "FindDialog.h"
 #include "Repository.h"
 
 #include <QToolTip>

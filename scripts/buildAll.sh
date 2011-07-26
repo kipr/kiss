@@ -6,18 +6,18 @@ fi
 
 rm -Rf deploy/*
 
-qmake
+qmake CONFIG+=kiss
 make
 make install
 
 cd $1
-qmake
+qmake -r
 make
 make install
 cd -
 
 cd $2
-qmake
+qmake -r
 make
 make install
 cd -

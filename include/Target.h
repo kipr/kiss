@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QSettings>
+#include <QMap>
 
 /*! \class Target
  * \brief Handles loading the TargetInterface through TargetManager.
@@ -44,7 +45,7 @@ public:
 
 	// Sets the current target file (and loads the QPluginLoader object)
 	bool setTargetFile(const QString& filename);
-	QString targetManualPath();
+	QMap<QString, QString> targetManualPaths();
 
 	// These pass straight through to the TargetInterface if it is loaded
 	QStringList 	errorMessages();
@@ -56,6 +57,7 @@ public:
 	// These two load some settings from the target file
 	QStringList sourceExtensions();
 	QString defaultExtension();
+	bool cStyleBlocks();
 
 	/*! \return True if the TargetInterface exists and supports downloading */
 	bool hasDownload();
@@ -105,6 +107,11 @@ public:
 	 */
 	DebuggerInterface* debug(const QString& filename);
 	Tab* ui();
+	
+	bool error();
+	
+	//! \return true if target expects port
+	bool hasPort();
 
 	//! \param port Port to associate with Target
 	void setPort(const QString& port);

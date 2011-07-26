@@ -42,6 +42,8 @@
 #include <math.h>
 #include <QDate>
 #include <QPixmap>
+#include <QDesktopServices>
+#include <QUrl>
 
 #define KISS_LEXER "KISS_LEXER"
 #define KISS_DATE "KISS_DATE"
@@ -108,7 +110,10 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 	connect(actionIndentAll, SIGNAL(triggered()), this, SLOT(indentAll()));
 	
 	ui_findFrame->hide();
+	
+	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
 }
+
 
 
 void SourceFile::activate()
@@ -134,7 +139,15 @@ void SourceFile::addActionsEdit(QMenu* edit)
 	edit->addAction(actionRedo);
 }
 
-void SourceFile::addActionsHelp(QMenu* help) { help->addAction(actionManual); }
+void SourceFile::addActionsHelp(QMenu* help) 
+{
+	const QMap<QString, QString>& manuals = m_target.targetManualPaths();
+	foreach(const QString& manual, manuals.keys()) {
+		QAction* action = help->addAction(QIcon(":/shortcuts/target/icon_set/icons/report.png"), manual);
+		action->setData(manuals[manual]);
+		connect(action, SIGNAL(triggered()), this, SLOT(openManual()));
+	}
+}
 
 void SourceFile::addOtherActions(QMenuBar* menuBar)
 {
@@ -143,8 +156,10 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	source->addAction(actionZoomIn);
 	source->addAction(actionZoomOut);
 	source->addAction(actionResetZoomLevel);
-	source->addSeparator();
-	source->addAction(actionIndentAll);
+	if(m_target.cStyleBlocks()) {
+		source->addSeparator();
+		source->addAction(actionIndentAll);
+	}
 	source->addSeparator();
 	source->addAction(actionFind);
 	if(m_target.hasCompile()) target->addAction(actionCompile);
@@ -165,7 +180,7 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	const QList<QAction*>& actionList = m_target.actionList();
 	for(int i = 0; i < actionList.size(); ++i) target->insertAction(0, actionList[i]);
 	if(actionList.size() > 0) target->addSeparator();
-	target->addAction(actionManual);
+	addActionsHelp(target);
 }
 
 void SourceFile::addToolbarActions(QToolBar* toolbar) 
@@ -186,7 +201,7 @@ void SourceFile::addToolbarActions(QToolBar* toolbar)
 	if(m_target.hasDebug()) toolbar->addAction(actionDebug);
 }
 
-bool SourceFile::beginSetup() { return changeTarget(isNewFile()); }
+bool SourceFile::beginSetup() { return changeTarget(isNewFile()) && !m_target.error(); }
 void SourceFile::completeSetup() { MainWindow::ref().setTabName(this, m_fileInfo.fileName()); updateMargins(); }
 
 bool SourceFile::close()
@@ -279,7 +294,8 @@ bool SourceFile::fileOpen(const QString& filePath)
 void SourceFile::indentAll()
 {
 	if(!ui_editor->lexer()) return;
-		
+	if(!m_target.cStyleBlocks()) return;
+	
 	setUpdatesEnabled(false);
 
 	int indentLevel = 0;
@@ -620,14 +636,19 @@ void SourceFile::on_actionUndo_triggered() 	{ ui_editor->undo(); }
 void SourceFile::on_actionRedo_triggered() 	{ ui_editor->redo(); }
 void SourceFile::on_actionFind_triggered() 	{ showFind(); }
 
-void SourceFile::on_actionManual_triggered()
+void SourceFile::openManual()
 {
+	const QString& location = qobject_cast<QAction*>(sender())->data().toString();
+	if(location.endsWith("pdf")) {
+		QDesktopServices::openUrl(QUrl::fromUserInput(location));
+		return;
+	}
 	WebTab* tab = new WebTab(&MainWindow::ref());
 	MainWindow::ref().addTab(tab);
 	#ifdef Q_OS_WIN
-	tab->load("file:///" + m_target.targetManualPath(), true);
+	tab->load("file:///" + location, true);
 	#else
-	tab->load("file://" + m_target.targetManualPath(), true);
+	tab->load("file://" + location, true);
 	#endif
 }
 
@@ -705,7 +726,7 @@ void SourceFile::showFind()
 
 bool SourceFile::checkPort()
 {
-	if(m_target.port().isEmpty()) {
+	if(m_target.hasPort() && m_target.port().isEmpty()) {
 		on_actionChoosePort_triggered();
 		if(m_target.port().isEmpty()) return false;
 	}
@@ -776,7 +797,7 @@ bool SourceFile::changeTarget(bool _template)
 	m_target.setTargetFile(targetPath);
 	
 	/* Pops up a port select dialog if the target should have a port set */
-	if(targetSettings.value("port_dialog").toBool()) {
+	if(m_target.hasPort()) {
 		on_actionChoosePort_triggered();
 		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
 	}

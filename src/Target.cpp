@@ -32,7 +32,9 @@
 #define DEFAULT_EXTENSION "default_extension"
 #define DELIM "|"
 #define NAME "name"
-#define MANUAL "manual"
+#define MANUALS "Manuals"
+#define PORT_DIALOG "port_dialog"
+#define C_STYLE_BLOCKS "c_style_blocks"
 
 Target::Target(QObject *parent) : QObject(parent), m_plugin(0) {}
 
@@ -48,11 +50,16 @@ bool Target::setTargetFile(const QString& filename)
 	return true;
 }
 
-QString Target::targetManualPath()
+QMap<QString, QString> Target::targetManualPaths()
 {
-	const QString& filePath = TARGET_SETTINGS.value(MANUAL).toString();
-	return filePath.isEmpty() ? QString() :
-		(QDir::isAbsolutePath(filePath) ? filePath : (QDir::currentPath() + "/" + filePath));
+	QSettings settings(m_targetFileName, QSettings::IniFormat);
+	settings.beginGroup(MANUALS);
+	QMap<QString, QString> ret;
+	foreach(const QString& str, settings.childKeys()) {
+		const QString& f = settings.value(str).toString();
+		ret[str] = f.isEmpty() ? QString() : (QDir::isAbsolutePath(f) ? f : (QDir::currentPath() + "/" + f));
+	}
+	return ret;
 }
 
 QStringList Target::errorMessages() { return get() ? get()->getErrorMessages() : QStringList(); }
@@ -62,6 +69,7 @@ QStringList Target::verboseMessages() { return get() ? get()->getVerboseMessages
 QList<QAction*> Target::actionList() { return get() ? get()->getActionList() : QList<QAction*>(); }
 QStringList Target::sourceExtensions() { return TARGET_SETTINGS.value(EXTENSIONS).toString().split(DELIM); }
 QString Target::defaultExtension() { return TARGET_SETTINGS.value(DEFAULT_EXTENSION).toString(); }
+bool Target::cStyleBlocks() { return TARGET_SETTINGS.value(C_STYLE_BLOCKS).toBool(); }
 bool Target::hasDownload() { return get() && get()->hasDownload(); }
 bool Target::hasCompile() { return get() && get()->hasCompile(); }
 bool Target::hasRun() { return get() && get()->hasRun(); }
@@ -76,6 +84,8 @@ void Target::stop() { if(!hasStop()) return; get()->stop(m_port); }
 bool Target::simulate(const QString& filename) { return hasSimulate() ? get()->simulate(filename, m_port) : false; }
 DebuggerInterface* Target::debug(const QString& filename) { return hasDebug() ? get()->debug(filename, m_port) : 0; }
 Tab* Target::ui() { return hasUi() ? get()->ui(m_port) : 0; }
+bool Target::error() { return get() ? get()->error() : true; }
+bool Target::hasPort() { return TARGET_SETTINGS.value(PORT_DIALOG).toBool(); }
 void Target::setPort(const QString& port) { m_port = port; }
 const QString& Target::port() const { return m_port; }
 

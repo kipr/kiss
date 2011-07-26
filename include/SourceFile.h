@@ -115,7 +115,7 @@ private slots:
 	void on_actionRedo_triggered();
 	void on_actionFind_triggered();
 	
-	void on_actionManual_triggered();
+	void openManual();
 	void on_actionPrint_triggered();
 	
 	void on_actionZoomIn_triggered();

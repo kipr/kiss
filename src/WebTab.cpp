@@ -26,6 +26,7 @@
 #include <QWebHistory>
 #include <QDesktopServices>
 #include <QDebug>
+#include <QDir>
 
 WebTab::WebTab(QWidget* parent) : QWidget(parent)
 {
@@ -33,6 +34,9 @@ WebTab::WebTab(QWidget* parent) : QWidget(parent)
 	
 	connect(ui_webView, SIGNAL(titleChanged(const QString&)), this, SLOT(updateTitle(const QString&)));
 	connect(ui_webView, SIGNAL(urlChanged(const QUrl&)), this, SLOT(updateUrl(const QUrl&)));
+	
+	webView()->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks); // Make sure we get to handle special links
+	connect(webView(), SIGNAL(linkClicked(const QUrl&)), this, SLOT(linkClicked(const QUrl&)));
 	
 	ui_frameFind->hide();
 }
@@ -132,3 +136,32 @@ void WebTab::on_actionOpenInBrowser_triggered() { QDesktopServices::openUrl(ui_w
 
 void WebTab::refreshSettings() {}
 QWebView* WebTab::webView() { return ui_webView; }
+
+void WebTab::linkClicked(const QUrl& url)
+{
+	if(url.scheme() != "kiss") load(url.toString());
+	
+	QString auth = url.authority();
+	if(auth == "new") {
+		MainWindow::ref().newFile();
+		return;
+	}
+	if(auth == "open") {
+		MainWindow::ref().on_actionOpen_triggered();
+		return;
+	}
+	
+	QString fragment = url.fragment();
+	fragment.replace("KISS_CWD", QDir::currentPath());
+	qWarning() << fragment;
+	if(auth == "newbrowser") {
+		WebTab* tab = new WebTab();
+		tab->load(fragment);
+		MainWindow::ref().addTab(tab);
+		return;
+	}
+	if(auth == "external") {
+		QDesktopServices::openUrl(QUrl::fromUserInput(fragment));	
+		return;
+	}
+}

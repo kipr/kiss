@@ -34,6 +34,8 @@
 class TargetInterface 
 {
 public:
+	TargetInterface() : m_error(false) {}
+	
 	// These methods will be called when their
 	// respective editor buttons are activated
 	virtual bool compile(const QString&, const QString&) { return false; }
@@ -58,12 +60,17 @@ public:
 	const QStringList& 	getLinkerMessages() const 	{ return m_linkerMessages; }
 	const QStringList& 	getVerboseMessages() const 	{ return m_verboseMessages; }
 	
+	bool error() { return m_error; }
+	
 	void setTargetFile(const QString& filename) { m_targetFile = filename; }
 	
 protected:
+	void setError(bool error) { m_error = error; }
 	QString m_targetFile;
 	QStringList m_warningMessages, m_errorMessages, m_linkerMessages, m_verboseMessages;
 	QList<QAction*> m_actionList;
+private:
+	bool m_error;
 };
 
 Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/2.2");

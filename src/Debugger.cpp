@@ -38,6 +38,7 @@ void Debugger::on_ui_consoleEnter_clicked()
 void Debugger::startDebug(DebuggerInterface* interface)
 {
 	if(m_interface) {
+		qWarning() << "Deleted during start.";
 		m_interface->stop();
 		delete m_interface;
 		m_interface = 0;
@@ -45,6 +46,7 @@ void Debugger::startDebug(DebuggerInterface* interface)
 	
 	m_interface = interface;
 	m_interface->setResponder(this);
+	qWarning() << m_interface;
 	
 	programStopped();
 	
@@ -127,7 +129,7 @@ void Debugger::stack(const QList<Frame>& frames)
 		
 		ui_stack->addItem(frame.file + ":" + 
 			QString::number(frame.line) + "::" + 
-			frame.function + "(" + vars.join(",") + ")");
+			frame.function + "(" + vars.join(", ") + ")");
 	}
 }
 
@@ -142,11 +144,14 @@ void Debugger::variables(const QList<Variable>& vars)
 
 void Debugger::breakpoints(const QList<Breakpoint>& bkpts) {}
 
-void Debugger::closeEvent(QCloseEvent *event)
+void Debugger::closeEvent(QCloseEvent* event)
 {
+	qWarning() << m_interface;
 	if(m_interface) {
+		qWarning() << "Deleted during close.";
+		m_interface->setResponder(0);
 		m_interface->stop();
-		delete m_interface;
+		// delete m_interface; Yes, we are leaking memory. Problem with Lion I think. Let's wait for Qt 4.8
 		m_interface = 0;
 	}
 	event->accept();

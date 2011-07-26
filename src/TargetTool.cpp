@@ -32,7 +32,7 @@ void warning() { cout << "KIPR is not responsible for damages caused by this too
 
 
 void usage(char* location) {
-	cout << "Usage: %s [target_name] [port|none] [action] [action params]" << endl;
+	cout << "Usage: " << location << " [target_name] [port|none] [action] [action params]" << endl;
 	warning();
 	exit(1);
 }
@@ -47,7 +47,7 @@ int main (int argc, char* argv[])
 	QString targetPath(TargetManager::ref().targetPath(targetName) + "/" + targetName + "." + TARGET_EXT);
 	Target target;
 	if(target.setTargetFile(targetPath)) {
-		cerr << "Unable to load " << targetName.toStdString() << " from " << targetPath << endl;
+		cerr << "Unable to load " << targetName.toStdString() << " from " << targetPath.toStdString() << endl;
 		exit(1);
 	}
 	
@@ -62,16 +62,14 @@ int main (int argc, char* argv[])
 		cout << "Stop:     " << boolRet(target.hasStop()).toStdString() << endl;
 	} else if(action == "download") {
 		if(argc < 5) cerr << "Download expects file name as param" << endl;
-		else cout << "Success? " << boolRet(target.download(argv[4])) << endl;
+		else cout << "Success? " << boolRet(target.download(argv[4])).toStdString() << endl;
 	} else if(action == "compile") {
 		if(argc < 5) cerr << "Compile expects file name as param" << endl;
-		else cout << "Success? " << boolRet(target.compile(argv[4])) << endl;
+		else cout << "Success? " << boolRet(target.compile(argv[4])).toStdString() << endl;
 	} else if(action == "run") {
 		if(argc < 5) cerr << "Run expects file name as param" << endl;
-		else cout << "Success? " << boolRet(target.run(argv[4])) << endl;
-	} else if(action == "stop") {
-		target.stop();
-	}
+		else cout << "Success? " << boolRet(target.run(argv[4])).toStdString() << endl;
+	} else if(action == "stop") target.stop();
 	
 	return 0;
 }

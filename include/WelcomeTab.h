@@ -30,9 +30,6 @@ public:
 	WelcomeTab(QWidget* parent = 0);
 	
 	virtual void completeSetup();
-	
-private slots:
-	void linkClicked(const QUrl& url);
 };
 
 #endif
