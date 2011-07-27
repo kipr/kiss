@@ -1,8 +1,13 @@
 CONFIG -= release release_and_debug
 CONFIG += debug
-
-mac:CONFIG += x86
-#QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.6.sdk
+!ppc {
+	mac:CONFIG += x86
+	QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.6.sdk
+}
+ppc {
+	mac:CONFIG += x86 ppc
+	QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.4u.sdk
+}
 unix:QMAKE_DEL_FILE=rm -rf
 win32:CONFIG -= embed_manifest_dll
 
