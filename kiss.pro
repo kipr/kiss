@@ -22,7 +22,6 @@ kiss {
 	HEADERS += 	include/MainWindow.h \
 				include/dialogs/ChoosePortDialog.h \
 				include/dialogs/EditorSettingsDialog.h \
-				include/dialogs/TargetSettingsDialog.h \
 				include/Target.h \
 				include/SourceFile.h \
 				include/Lexer.h \
@@ -44,7 +43,6 @@ kiss {
 				src/MainWindow.cpp \
 				src/dialogs/ChoosePortDialog.cpp \
 				src/dialogs/EditorSettingsDialog.cpp \
-				src/dialogs/TargetSettingsDialog.cpp \
 				src/Target.cpp \
 				src/SourceFile.cpp \
 				src/Lexer.cpp \

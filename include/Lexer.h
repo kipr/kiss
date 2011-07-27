@@ -73,7 +73,7 @@ public:
 	virtual void init() = 0;
 	
 	/*! \return All extensions provided by the lexer provider. Language extensions separated by a space */
-	QString extension() const { return m_extension; }
+	QStringList extensions() const { return m_extension.split(" "); }
 	
 	/*! \return Inited LexerSpec */
 	LexerSpec* lexerSpec() { return &m_lexerSpec; }

@@ -30,8 +30,6 @@
 #include "Repository.h"
 
 #include <QToolTip>
-#include <Qsci/qsciscintilla.h>
-#include <Qsci/qsciprinter.h>
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QInputDialog>
@@ -51,6 +49,8 @@
 #endif
 
 #define TITLE "KIPR's Instructional Software System"
+
+#define OPEN_PATH "openpath"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0)
 {
@@ -144,7 +144,7 @@ void MainWindow::initMenus(Tab* tab)
 	
 	menuFile->addAction(actionNew);
 	menuFile->addAction(actionOpen);
-	QMenu* recentMenu = menuFile->addMenu("Open Recent");
+	QMenu* recentMenu = menuFile->addMenu(tr("Open Recent"));
 	foreach(const QString& recent, QSettings().value(RECENTS).toStringList()) {
 		QAction* action = recentMenu->addAction(recent);
 		action->setData(recent);
@@ -188,7 +188,7 @@ void MainWindow::setTitle(const QString& title) { setWindowTitle(tr(TITLE) + (ti
 void MainWindow::setTabName(QWidget* widget, const QString& string) { ui_tabWidget->setTabText(ui_tabWidget->indexOf(widget), string); }
 void MainWindow::setStatusMessage(const QString& message, int time) { ui_statusbar->showMessage(message, time); }
 
-void MainWindow::setErrors(Tab* tab, 
+void MainWindow::setErrors(SourceFile* tab, 
 	const QStringList& errors, const QStringList& warnings, 
 	const QStringList& linker, const QStringList& verbose)
 {
@@ -305,7 +305,7 @@ void MainWindow::on_actionNew_triggered() { newFile(); }
 void MainWindow::on_actionOpen_triggered()
 {
 	QSettings settings;
-	QString openPath = settings.value("openpath", QDir::homePath()).toString();
+	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = TargetManager::ref().allSupportedExtensions();
 	filters.removeDuplicates();
 	qWarning() << filters;
@@ -315,7 +315,7 @@ void MainWindow::on_actionOpen_triggered()
 		return;
 
 	QFileInfo fileInfo(filePath);
-	settings.setValue("openpath", fileInfo.absolutePath());
+	settings.setValue(OPEN_PATH, fileInfo.absolutePath());
 
 	openFile(filePath);
 }
@@ -384,7 +384,7 @@ void MainWindow::on_actionManagePackages_triggered() { addTab(new Repository(thi
 void MainWindow::on_actionInstallLocalPackage_triggered()
 {
 	QSettings settings;
-	QString openPath = settings.value("openpath", QDir::homePath()).toString();
+	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = TargetManager::ref().allSupportedExtensions();
 	filters.removeDuplicates();
 	qWarning() << filters;
@@ -394,7 +394,7 @@ void MainWindow::on_actionInstallLocalPackage_triggered()
 			continue;
 
 		QFileInfo fileInfo(filePath);
-		settings.setValue("openpath", fileInfo.absolutePath());
+		settings.setValue(OPEN_PATH, fileInfo.absolutePath());
 
 		QFile f(filePath);
 		if(!f.open(QIODevice::ReadOnly)) {

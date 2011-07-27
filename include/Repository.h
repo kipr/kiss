@@ -49,8 +49,6 @@ public:
 	
 	bool close();
 	
-	void moveTo(int line, int pos);
-	
 public slots:
 	void refreshSettings();
 	

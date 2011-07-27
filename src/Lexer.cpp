@@ -41,20 +41,20 @@ QStringList Lexer::autoCompletionWordSeparators() const { return m_lexerSpec->au
 
 const char* Lexer::blockStartKeyword(int* style) const
 {
-    if (style) *style = m_lexerSpec->blockStartKeywordStyle;
-    return m_lexerSpec->blockStartKeyword.toLocal8Bit().data();
+	if (style) *style = m_lexerSpec->blockStartKeywordStyle;
+	return m_lexerSpec->blockStartKeyword.toLocal8Bit().data();
 }
 
 const char* Lexer::blockStart(int* style) const
 {
-    if (style) *style = m_lexerSpec->blockStartStyle;
-    return m_lexerSpec->blockStart.toLocal8Bit().data();
+	if (style) *style = m_lexerSpec->blockStartStyle;
+	return m_lexerSpec->blockStart.toLocal8Bit().data();
 }
 
 const char* Lexer::blockEnd(int* style) const
 {
-    if (style) *style = m_lexerSpec->blockEndStyle;
-    return m_lexerSpec->blockEnd.toLocal8Bit().data();
+	if (style) *style = m_lexerSpec->blockEndStyle;
+	return m_lexerSpec->blockEnd.toLocal8Bit().data();
 }
 
 int Lexer::braceStyle() const { return m_lexerSpec->braceStyle; }
@@ -62,14 +62,13 @@ const char* Lexer::wordCharacters() const { return m_lexerSpec->wordCharacters.t
 
 QColor Lexer::defaultColor(int style) const
 {
-    return m_lexerSpec->defaultColor.contains(style) ? m_lexerSpec->defaultColor[style] 
-	: QsciLexer::defaultColor(style);
+	return m_lexerSpec->defaultColor.contains(style) ? m_lexerSpec->defaultColor[style] 
+		: QsciLexer::defaultColor(style);
 }
 
 bool Lexer::defaultEolFill(int style) const
 {
-    return m_lexerSpec->defaultEolFill.contains(style) ? true 
-	: QsciLexer::defaultEolFill(style);
+	return m_lexerSpec->defaultEolFill.contains(style) ? true : QsciLexer::defaultEolFill(style);
 }
 
 QFont Lexer::defaultFont(int style) const
@@ -91,8 +90,8 @@ const char* Lexer::keywords(int set) const
 
 QColor Lexer::defaultPaper(int style) const
 {
-    return m_lexerSpec->defaultPaper.contains(style) ? m_lexerSpec->defaultPaper[style] 
-	: QsciLexer::defaultPaper(style);
+	return m_lexerSpec->defaultPaper.contains(style) ? m_lexerSpec->defaultPaper[style] 
+		: QsciLexer::defaultPaper(style);
 }
 
 QString Lexer::description(int) const { return " "; }

@@ -72,7 +72,6 @@ void Repository::completeSetup()
 }
 
 bool Repository::close() { return true; }
-void Repository::moveTo(int line, int pos) { Q_UNUSED(line); Q_UNUSED(pos); }
 void Repository::refreshSettings() {}
 
 void Repository::on_ui_mark_clicked()

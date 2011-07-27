@@ -45,6 +45,9 @@
 #include <QDesktopServices>
 #include <QUrl>
 
+#define SAVE_PATH "savepath"
+#define DEFAULT_EXTENSION "default_extension"
+
 #define KISS_LEXER "KISS_LEXER"
 #define KISS_DATE "KISS_DATE"
 #define END_KISS "END_KISS_META"
@@ -110,8 +113,6 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 	connect(actionIndentAll, SIGNAL(triggered()), this, SLOT(indentAll()));
 	
 	ui_findFrame->hide();
-	
-	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
 }
 
 
@@ -426,10 +427,10 @@ void SourceFile::refreshSettings()
 	
 	/* Read font, indent, margin, etc. settings */
 	QSettings settings;
-	settings.beginGroup("Editor");
+	settings.beginGroup(EDITOR);
 
 	/* Set the default font from settings */
-	QFont defFont(settings.value("font").toString(), settings.value("fontsize").toInt());
+	QFont defFont(settings.value(FONT).toString(), settings.value(FONT_SIZE).toInt());
 	
 	if(lexer) {
 		lexer->defaultColor(0);
@@ -437,51 +438,44 @@ void SourceFile::refreshSettings()
 	} else ui_editor->setFont(defFont);
 
 	/* Set other options from settings */
-	settings.beginGroup("autoindent");
-	ui_editor->setAutoIndent(settings.value("enabled").toBool());
-	if(lexer && settings.value("style").toString() == "Maintain")
-		lexer->setAutoIndentStyle(QsciScintilla::AiMaintain);
-	else if(lexer && settings.value("style").toString() == "Intelligent")
-		lexer->setAutoIndentStyle(0);  // for some reason 0 is the intelligent style
-	ui_editor->setTabWidth(settings.value("width").toInt());
+	settings.beginGroup(AUTO_INDENT);
+	ui_editor->setAutoIndent(settings.value(ENABLED).toBool());
+	if(lexer) lexer->setAutoIndentStyle(settings.value(STYLE).toString() == MAINTAIN ? 
+		QsciScintilla::AiMaintain : 0);
+	ui_editor->setTabWidth(settings.value(WIDTH).toInt());
 	settings.endGroup();
 
-	settings.beginGroup("autocompletion");
+	settings.beginGroup(AUTO_COMPLETION);
 	ui_editor->setAutoCompletionSource(QsciScintilla::AcsNone);
-	if(settings.value("enabled").toBool()) {
-		if(settings.value("apisource").toBool())
+	if(settings.value(ENABLED).toBool()) {
+		if(settings.value(API_SOURCE).toBool())
 			ui_editor->setAutoCompletionSource(QsciScintilla::AcsAPIs);
-		if(settings.value("docsource").toBool()) {
+		if(settings.value(DOC_SOURCE).toBool()) {
 			if(ui_editor->autoCompletionSource() == QsciScintilla::AcsAPIs)
 				ui_editor->setAutoCompletionSource(QsciScintilla::AcsAll);
 			else
 				ui_editor->setAutoCompletionSource(QsciScintilla::AcsDocument);
 		}
 	}
-	ui_editor->setAutoCompletionThreshold(settings.value("threshold").toInt());
+	ui_editor->setAutoCompletionThreshold(settings.value(THRESHOLD).toInt());
 	settings.endGroup();
 
-	if(settings.value("linenumbers").toBool()){
-		ui_editor->setMarginLineNumbers(0, true);
-		updateMargins();
-	}
-	else ui_editor->setMarginLineNumbers(0, false);
+	ui_editor->setMarginLineNumbers(0, settings.value(LINE_NUMBERS).toBool());
 	
 	ui_editor->setMarginLineNumbers(1, false);
 	
-	if(settings.value("bracematching").toBool())
-		 ui_editor->setBraceMatching(QsciScintilla::StrictBraceMatch);
-	else ui_editor->setBraceMatching(QsciScintilla::NoBraceMatch);
+	ui_editor->setBraceMatching(settings.value(BRACE_MATCHING).toBool() ? QsciScintilla::StrictBraceMatch : 
+		QsciScintilla::NoBraceMatch);
 	
-	if(settings.value("calltips").toBool())
-		 ui_editor->setCallTipsStyle(QsciScintilla::CallTipsNoContext);
-	else ui_editor->setCallTipsStyle(QsciScintilla::CallTipsNone);
+	ui_editor->setCallTipsStyle(settings.value(CALL_TIPS).toBool() ? QsciScintilla::CallTipsNoContext : 
+		QsciScintilla::CallTipsNone);
 
 	settings.endGroup();
 
 	ui_editor->setLexer(lexer);
 	
 	updateMargins();
+	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
 }
 
 QString SourceFile::fileName() 	{ return m_fileInfo.fileName(); }
@@ -514,7 +508,7 @@ void SourceFile::zoomOut() { ui_editor->zoomOut(); updateMargins(); }
 void SourceFile::on_actionSaveAs_triggered()
 {
 	QSettings settings;
-	QString savePath = settings.value("savepath", QDir::homePath()).toString();
+	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
 	QStringList exts = m_target.sourceExtensions();
 	
 	QRegExp reg("*." + m_target.defaultExtension() + "*");
@@ -538,7 +532,7 @@ void SourceFile::on_actionSaveAs_triggered()
 	QString ext = m_target.defaultExtension();
 	if(!ext.isEmpty() && fileInfo.suffix().isEmpty()) fileInfo.setFile(filePath.section(".", 0, 0) + "." + ext);
 	
-	settings.setValue("savepath", fileInfo.absolutePath());
+	settings.setValue(SAVE_PATH, fileInfo.absolutePath());
 
 	/* Saves the file with the new fileName and updates the tabWidget label */
 	if(fileSaveAs(fileInfo.absoluteFilePath())) {
@@ -663,7 +657,6 @@ void SourceFile::on_actionPrint_triggered()
 void SourceFile::on_actionZoomIn_triggered() { zoomIn(); }
 void SourceFile::on_actionZoomOut_triggered() { zoomOut(); }
 void SourceFile::on_actionResetZoomLevel_triggered() { ui_editor->zoomTo(0); updateMargins(); }
-
 void SourceFile::on_actionChangeTarget_triggered() { changeTarget(false); }
 
 void SourceFile::on_actionChoosePort_triggered()
@@ -674,9 +667,8 @@ void SourceFile::on_actionChoosePort_triggered()
 
 void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
 {
-	if(checked) {
-		m_breakpoints.append(ui_editor->markerAdd(m_currentLine, m_breakIndicator));
-	} else {
+	if(checked) m_breakpoints.append(ui_editor->markerAdd(m_currentLine, m_breakIndicator));
+ 	else {
 		m_breakpoints.removeAll(ui_editor->markerLine(m_currentLine));
 		ui_editor->markerDelete(m_currentLine, m_breakIndicator);
 	}
@@ -686,25 +678,22 @@ void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
 
 void SourceFile::on_actionClearBreakpoints_triggered()
 {	
-	foreach(const int& i, m_breakpoints) {
-		ui_editor->markerDeleteHandle(i);
-	}
+	foreach(const int& i, m_breakpoints) ui_editor->markerDeleteHandle(i);
 	m_breakpoints.clear();
 	
 	actionToggleBreakpoint->setChecked(false);
 }
 
-void SourceFile::on_ui_editor_cursorPositionChanged(int line, int index)
+void SourceFile::on_ui_editor_cursorPositionChanged(int line, int)
 {
-	Q_UNUSED(index);
 	m_currentLine = line;
 	updateBreakpointToggle();
 }
 
 void SourceFile::on_ui_next_clicked()
 {
-	bool found = m_findModified ? ui_editor->findFirst(ui_find->text(), false, ui_matchCase->isChecked(), false, true) : 
-		ui_editor->findNext();
+	if(m_findModified) ui_editor->findFirst(ui_find->text(), false, ui_matchCase->isChecked(), false, true);
+	else ui_editor->findNext();
 	m_findModified = false;
 }
 
@@ -733,7 +722,6 @@ bool SourceFile::checkPort()
 	return true;
 }
 
-/*ADDED BY NB*///2/10/2010-dpm
 void SourceFile::dropEvent(QDropEvent *event) { Q_UNUSED(event); }
 
 void SourceFile::clearProblems()
@@ -774,9 +762,7 @@ void SourceFile::updateErrors()
 void SourceFile::updateBreakpointToggle()
 {
 	bool markerOnLine = false;
-	foreach(const int& i, m_breakpoints) {
-		markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
-	}
+	foreach(const int& i, m_breakpoints) markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
 	actionToggleBreakpoint->setChecked(markerOnLine);
 }
 
@@ -806,7 +792,7 @@ bool SourceFile::changeTarget(bool _template)
 		qWarning() << m_fileInfo.completeSuffix();
 		
 		if(!isNewFile()) m_lexSpec = LexerManager::ref().lexerSpec(m_fileInfo.completeSuffix());
-		else m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
+		else m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value(DEFAULT_EXTENSION, "").toString());
 	} else {
 		QFile tFile(tDialog.templateFile());
 		if(!tFile.open(QIODevice::ReadOnly)) {
@@ -836,7 +822,7 @@ bool SourceFile::changeTarget(bool _template)
 			}
 		} else text = str;
 		ui_editor->setText(text);
-		if(!lexerSet) m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value("default_extension", "").toString());
+		if(!lexerSet) m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value(DEFAULT_EXTENSION, "").toString());
 	}
 	
 	m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");

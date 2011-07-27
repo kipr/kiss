@@ -88,47 +88,47 @@ void EditorSettingsDialog::readSettings()
 {
 	// Open up the applications settings and look in the editor group
 	QSettings settings;
-	settings.beginGroup("Editor");
+	settings.beginGroup(EDITOR);
 
 	// Figure out the font and set it
 	#ifdef Q_OS_WIN32
-	QString fontString = settings.value("font", "Courier New").toString();
+	QString fontString = settings.value(FONT, "Courier New").toString();
 	#elif defined(Q_OS_MAC)
-	QString fontString = settings.value("font", "Monaco").toString();
+	QString fontString = settings.value(FONT, "Monaco").toString();
 	#else
-	QString fontString = settings.value("font", "Monospace").toString();
+	QString fontString = settings.value(FONT, "Monospace").toString();
 	#endif
 	ui_fontBox->setCurrentFont(QFont(fontString));
 	
 	// Figure out the font size and set the widget
 	#ifdef Q_OS_MAC
-	ui_fontSizeSpinBox->setValue(settings.value("fontsize", 12).toInt());
+	ui_fontSizeSpinBox->setValue(settings.value(FONT_SIZE, 12).toInt());
 	#else
-	ui_fontSizeSpinBox->setValue(settings.value("fontsize", 10).toInt());
+	ui_fontSizeSpinBox->setValue(settings.value(FONT_SIZE, 10).toInt());
 	#endif
 
 	// Set the auto completion settings from the application config
-	settings.beginGroup("autocompletion");
-	ui_autoCompletionEnabledCheckBox->setChecked(settings.value("enabled", false).toBool());
-	ui_autoCompletionAPISourceCheckBox->setChecked(settings.value("apisource", false).toBool());
-	ui_autoCompletionDocumentSourceCheckBox->setChecked(settings.value("docsource", false).toBool());
-	ui_autoCompletionThresholdSpinBox->setValue(settings.value("threshold", 4).toInt());
+	settings.beginGroup(AUTO_COMPLETION);
+	ui_autoCompletionEnabledCheckBox->setChecked(settings.value(ENABLED, false).toBool());
+	ui_autoCompletionAPISourceCheckBox->setChecked(settings.value(API_SOURCE, false).toBool());
+	ui_autoCompletionDocumentSourceCheckBox->setChecked(settings.value(DOC_SOURCE, false).toBool());
+	ui_autoCompletionThresholdSpinBox->setValue(settings.value(THRESHOLD, 4).toInt());
 	settings.endGroup();
 
 	// Set the auto indent settings from the application config
-	settings.beginGroup("autoindent");
-	ui_autoIndentEnabledCheckBox->setChecked(settings.value("enabled", true).toBool());
-	if(settings.value("style").toString() == "Maintain")
+	settings.beginGroup(AUTO_INDENT);
+	ui_autoIndentEnabledCheckBox->setChecked(settings.value(ENABLED, true).toBool());
+	if(settings.value(STYLE).toString() == MAINTAIN)
 		ui_autoIndentMaintainStyleRadioButton->setChecked(true);
-	else if(settings.value("style").toString() == "Intelligent")
+	else if(settings.value(STYLE).toString() == INTELLIGENT)
 		ui_autoIndentIntelligentStyleRadioButton->setChecked(true);
-	ui_autoIndentWidthSpinBox->setValue(settings.value("width", 4).toInt());
+	ui_autoIndentWidthSpinBox->setValue(settings.value(WIDTH, 4).toInt());
 	settings.endGroup();
 
 	// Set the misc options from the application config
-	ui_callTipsCheckBox->setChecked(settings.value("calltips", true).toBool());
-	ui_braceMatchingCheckBox->setChecked(settings.value("bracematching", true).toBool());
-	ui_marginLineNumbersCheckBox->setChecked(settings.value("linenumbers", true).toBool());
+	ui_callTipsCheckBox->setChecked(settings.value(CALL_TIPS, true).toBool());
+	ui_braceMatchingCheckBox->setChecked(settings.value(BRACE_MATCHING, true).toBool());
+	ui_marginLineNumbersCheckBox->setChecked(settings.value(LINE_NUMBERS, true).toBool());
 
 	settings.endGroup();
 }

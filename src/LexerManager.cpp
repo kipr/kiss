@@ -35,12 +35,12 @@ LexerSpec* LexerManager::lexerSpec(const QString& ext) { return m_lexers.contain
 void LexerManager::pluginLoaded(LexerProvider* plugin)
 {
 	plugin->init();
-	foreach(const QString& ext, plugin->extension().split(DELIM)) m_lexers[ext] = plugin;
+	foreach(const QString& ext, plugin->extensions()) m_lexers[ext] = plugin;
 }
 
 void LexerManager::pluginUnloaded(LexerProvider* plugin)
 {
-	foreach(const QString& ext, plugin->extension().split(DELIM)) m_lexers.remove(ext);
+	foreach(const QString& ext, plugin->extensions()) m_lexers.remove(ext);
 }
 
 void LexerManager::loadLexers()
@@ -53,4 +53,4 @@ void LexerManager::loadLexers()
 	}
 }
 
-QString LexerManager::getExpectedLocation(const QString& name) const { Q_UNUSED(name); return LEXER_FOLDER; }
+QString LexerManager::getExpectedLocation(const QString&) const { return LEXER_FOLDER; }

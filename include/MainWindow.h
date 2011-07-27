@@ -34,6 +34,7 @@
 #define RECENTS "recents"
 
 class QListWidgetItem;
+class SourceFile;
 
 /*! \class MainWindow
  * \brief Holds tabs to display
@@ -81,7 +82,7 @@ public:
 	void setStatusMessage(const QString& message, int time = 0);
 	
 	/*! Shows given errors in Error View */
-	void setErrors(Tab* tab, 
+	void setErrors(SourceFile* tab, 
 		const QStringList& errors, const QStringList& warnings, 
 		const QStringList& linker, const QStringList& verbose);
 		
@@ -133,7 +134,7 @@ private slots:
 	
 private:
 	Tab* m_currentTab;
-	Tab* m_errorTab;
+	SourceFile* m_errorTab;
 	EditorSettingsDialog m_editorSettingsDialog;
 	QListWidget m_errorList, m_warningList, m_linkErrorList, m_verboseList;
 

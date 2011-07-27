@@ -68,7 +68,6 @@ void ChoosePortDialog::refreshPortList()
 	clearPortButtonList();
 
 #ifdef Q_OS_WIN32
-	/* WINDOWS ONLY */
 
 	// Sets the timeouts so that operations are non-blocking
 	COMMTIMEOUTS cto;
@@ -80,7 +79,7 @@ void ChoosePortDialog::refreshPortList()
 
 
 	// Scan through ports 1-32	
-	for(int i = 1;i <= 32;i++) {
+	for(int i = 2; i <= 32; ++i) {
 		QString portName = "com" + QString::number(i);
 		QString realPortName = "\\\\.\\com" + QString::number(i);
 
@@ -94,21 +93,16 @@ void ChoosePortDialog::refreshPortList()
 			portList << portName;
 		}
 	}
-	/* END WINDOWS ONLY */
 #else
-	/* LINUX/MAC ONLY */
 	QDir devDirectory("/dev");
 	QStringList devListFilter;
 
-// Determines how to look for serial port files
-//     depending on your platform
 #ifdef Q_OS_MAC
 	devListFilter << "tty.usb*";
 #else
 	devListFilter << "ttyUSB*";
 #endif
 
-	// Basically the same as "ls /dev/tty.*" or "ls /dev/ttyS*"
 	QFileInfoList potentialPortList = devDirectory.entryInfoList(devListFilter, QDir::System | QDir::CaseSensitive);
 
 	//Check through the returned ports to see which ones might be valid

@@ -46,9 +46,27 @@ struct KissReturn
 class KissArchive 
 {
 public:
+	/*! 
+	 * Creates a kiss archive
+	 * \param name Name of Package
+	 * \param version Version of Package, for upgrades
+	 * \param platforms 3 character code for platform(s) "osx", "win", "nix"
+	 * \param files files, relatived
+	 * \param out Output IODevice
+	 * \return see KissReturn
+	 *//*! 
+	 * Installs a kiss archive. Stores information in file called "installed"
+	 * \param in kiss archive pointer
+	 * \return see KissReturn
+	 */
 	static KissReturn create(const QString& name, unsigned version, 
 		const QStringList& platforms, const QStringList& files, 
 		QIODevice* out);
+	/*! 
+	 * Installs a kiss archive. Stores information in file called "installed"
+	 * \param in kiss archive pointer
+	 * \return see KissReturn
+	 */
 	static KissReturn install(QIODevice* in);
 	static KissReturn uninstall(const QString& name);
 	static QStringList list(QIODevice* in);

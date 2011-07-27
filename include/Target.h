@@ -121,6 +121,7 @@ public:
 
 private:
 	TargetInterface* get() const;
+	bool m_got;
 	
 	QPluginLoader *m_plugin;
 	QString m_targetFileName;

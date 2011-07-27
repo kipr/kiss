@@ -48,8 +48,6 @@ public:
 	//! Loads an unformatted URL
 	void load(QString url, bool hideUrl = false);
 	
-	void moveTo(int line, int pos);
-	
 private slots:
 	void updateTitle(const QString& title);
 	void updateUrl(const QUrl& url);

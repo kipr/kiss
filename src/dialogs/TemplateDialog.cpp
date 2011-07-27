@@ -67,9 +67,8 @@ QString TemplateDialog::templateFile()
 	return TargetManager::ref().targetPath(target) + "/templates/" + _template;
 }
 
-void TemplateDialog::on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev)
+void TemplateDialog::on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem*)
 {
-	Q_UNUSED(prev);
 	ui_templates->clear();
 	const QString& target = current->data(Qt::UserRole).toString();
 	const QStringList& templates = TargetManager::ref().templates(target);

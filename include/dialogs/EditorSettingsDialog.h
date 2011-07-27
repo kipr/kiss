@@ -26,6 +26,23 @@
 #include <QDialog>
 #include <QObject>
 
+#define EDITOR "Editor"
+#define FONT "font"
+#define ENABLED "enabled"
+#define FONT_SIZE "fontsize"
+#define AUTO_COMPLETION "autocompletion"
+#define API_SOURCE "apisource"
+#define DOC_SOURCE "docsource"
+#define THRESHOLD "threshold"
+#define STYLE "style"
+#define MAINTAIN "Maintain"
+#define INTELLIGENT "Intelligent"
+#define CALL_TIPS "calltips"
+#define LINE_NUMBERS "linenumbers"
+#define WIDTH "width"
+#define AUTO_INDENT "autoindent"
+#define BRACE_MATCHING "bracematching"
+
 class EditorSettingsDialog : public QDialog, private Ui::EditorSettingsDialog
 {
 Q_OBJECT

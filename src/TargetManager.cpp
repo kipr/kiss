@@ -95,10 +95,14 @@ QStringList TargetManager::templates(const QString& target, const QString& folde
 }
 
 QIcon TargetManager::templateIcon(const QString& target, const QString& _template, const QString& folder)
-{	
-	return QIcon(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + 
-		target + "/" + TEMPLATES_FOLDER + "/" + (folder.isEmpty() ? "" : (folder + "/")) + 
-		_template + ".png");
+{
+	const QString& base = QDir::currentPath() + "/" + TARGET_FOLDER + "/" + 
+		target + "/" + TEMPLATES_FOLDER + "/" + (folder.isEmpty() ? "" : (folder + "/"));
+	QFileInfo file(base + _template + ".png");
+	if(!file.exists()) {
+		file.setFile(base + "Default.png");
+	}
+	return QIcon(file.filePath());
 }
 
 QStringList TargetManager::allSupportedExtensions()

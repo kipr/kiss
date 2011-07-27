@@ -25,7 +25,6 @@
 #include "TemplateDialog.h"
 #include "ChoosePortDialog.h"
 #include "EditorSettingsDialog.h"
-#include "TargetSettingsDialog.h"
 #include "Target.h"
 #include "ui_SourceFile.h"
 #include "Tab.h"

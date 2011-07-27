@@ -87,7 +87,6 @@ public:
 	virtual bool close() = 0;
 	
 	virtual void refreshSettings() = 0;
-	virtual void moveTo(int line, int pos) = 0;
 protected:
 };
 
