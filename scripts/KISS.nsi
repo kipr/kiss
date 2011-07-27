@@ -6,13 +6,13 @@
 
 
 ; Standard Release app name and version
-!define VERSION "${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER}"
-!define INSTALL_FILENAME "KISS-IDE-${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER}"
+;!define VERSION "${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER}"
+;!define INSTALL_FILENAME "KISS-IDE-${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER}"
 
 ;; Beta release app name and version
 ;; uncomment this section for beta releases
-;!define VERSION "${APPMAJORVERSION}.${APPMINORVERSION}-BETA"
-;!define INSTALL_FILENAME "KISS-IDE-${APPMAJORVERSION}-${APPMINORVERSION}-BETA"
+!define VERSION "${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER} Beta"
+!define INSTALL_FILENAME "KISS IDE ${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER} Beta"
 
 !define APPNAMEANDVERSION "KISS IDE ${VERSION}"
 
@@ -71,33 +71,46 @@ Section "KISS-IDE" KISSIDE
 	SetOutPath "$INSTDIR\lexers"
 	SetOutPath "$INSTDIR\"
 	File "C:\Projects\kiss\deploy\KISS.exe"
-	File "C:\Projects\kiss\deploy\libgcc_s_dw2-1.dll"
-	File "C:\Projects\kiss\deploy\mingwm10.dll"
-	File "C:\Projects\kiss\deploy\QtCore4.dll"
-	File "C:\Projects\kiss\deploy\QtWebKit4.dll"
-	File "C:\Projects\kiss\deploy\QtNetwork4.dll"
-	File "C:\Projects\kiss\deploy\QtGui4.dll"
-	File "C:\Projects\kiss\deploy\phonon4.dll"
+	File "C:\Projects\kiss\depends\libgcc_s_dw2-1.dll"
+	File "C:\Projects\kiss\depends\mingwm10.dll"
+	File "C:\Projects\kiss\depends\QtCore4.dll"
+	File "C:\Projects\kiss\depends\QtWebKit4.dll"
+	File "C:\Projects\kiss\depends\QtNetwork4.dll"
+	File "C:\Projects\kiss\depends\QtGui4.dll"
+	File "C:\Projects\kiss\depends\phonon4.dll"
+	File "C:\Projects\kiss\depends\qscintilla2.dll"
 	File "C:\Projects\kiss-targets\root\gcc_target_win.kiss"
 	File "C:\Projects\kiss-targets\root\cbc2_target_win.kiss"
 	File "C:\Projects\kiss-targets\root\java_target_win.kiss"
+	File "C:\Projects\kiss-targets\root\python_target_win.kiss"
+	File "C:\Projects\kiss-targets\root\shell_target_win.kiss"
 	File "C:\Projects\kiss-lexers\root\c_lexer_win.kiss"
 	File "C:\Projects\kiss-lexers\root\cpp_lexer_win.kiss"
 	File "C:\Projects\kiss-lexers\root\java_lexer_win.kiss"
+	File "C:\Projects\kiss-lexers\root\python_lexer_win.kiss"
+	File "C:\Projects\kiss-lexers\root\bash_lexer_win.kiss"
 	
 	ExecWait '"$INSTDIR\KISS.exe" --install gcc_target_win.kiss'
 	ExecWait '"$INSTDIR\KISS.exe" --install cbc2_target_win.kiss'
 	ExecWait '"$INSTDIR\KISS.exe" --install java_target_win.kiss'
+	ExecWait '"$INSTDIR\KISS.exe" --install python_target_win.kiss'
+	ExecWait '"$INSTDIR\KISS.exe" --install shell_target_win.kiss'
 	ExecWait '"$INSTDIR\KISS.exe" --install c_lexer_win.kiss'
 	ExecWait '"$INSTDIR\KISS.exe" --install cpp_lexer_win.kiss'
 	ExecWait '"$INSTDIR\KISS.exe" --install java_lexer_win.kiss'
+	ExecWait '"$INSTDIR\KISS.exe" --install python_lexer_win.kiss'
+	ExecWait '"$INSTDIR\KISS.exe" --install bash_lexer_win.kiss'
 	
 	Delete "$INSTDIR\gcc_target_win.kiss"
 	Delete "$INSTDIR\cbc2_target_win.kiss"
 	Delete "$INSTDIR\java_target_win.kiss"
+	Delete "$INSTDIR\python_target_win.kiss"
+	Delete "$INSTDIR\shell_target_win.kiss"
 	Delete "$INSTDIR\c_lexer_win.kiss"
 	Delete "$INSTDIR\cpp_lexer_win.kiss"
 	Delete "$INSTDIR\java_lexer_win.kiss"
+	Delete "$INSTDIR\python_lexer_win.kiss"
+	Delete "$INSTDIR\bash_lexer_win.kiss"
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;End of KISS Files 
 	
@@ -114,6 +127,7 @@ Section "KISS-IDE" KISSIDE
 	SetFileAttributes "$INSTDIR\phonon4.dll" FILE_ATTRIBUTE_HIDDEN
 	SetFileAttributes "$INSTDIR\mingwm10.dll" FILE_ATTRIBUTE_HIDDEN
 	SetFileAttributes "$INSTDIR\libgcc_s_dw2-1.dll" FILE_ATTRIBUTE_HIDDEN
+	SetFileAttributes "$INSTDIR\qscintilla2.dll" FILE_ATTRIBUTE_HIDDEN
 	
 	; Set Up Start Menu Entry and Desktop Short Cut
 	
