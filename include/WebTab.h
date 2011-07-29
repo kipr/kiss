@@ -32,7 +32,7 @@ class WebTab : public QWidget, public Tab, protected Ui::WebTab
 public:
 	WebTab(QWidget* parent = 0);
 	
-	void activate();
+	virtual void activate();
 	
 	void addActionsFile(QMenu* file);
 	void addActionsEdit(QMenu* edit);

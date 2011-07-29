@@ -27,6 +27,12 @@
 
 WelcomeTab::WelcomeTab(QWidget* parent) : WebTab(parent) {}
 
+void WelcomeTab::activate()
+{
+	WebTab::activate();
+	MainWindow::ref().hideErrors();
+}
+
 void WelcomeTab::completeSetup()
 {	
 	WebTab::completeSetup(); 

@@ -27,6 +27,7 @@
 #include <QList>
 #include <QAction>
 #include <QWidget>
+#include <QByteArray>
 
 #include "DebuggerInterface.h"
 #include "Tab.h"
@@ -45,6 +46,10 @@ public:
 	virtual bool simulate(const QString&, const QString&) { return false; }
 	virtual DebuggerInterface* debug(const QString&, const QString&) { return 0; }
 	virtual Tab* ui(const QString&) { return 0; }
+	
+	virtual bool hasFileRequest() 	{ return false; }
+	virtual QStringList requestDir(const QString&, const QString&) { return QStringList(); }
+	virtual QByteArray requestFile(const QString&, const QString&) { return QByteArray(); }
 
 	virtual bool hasDownload() 	{ return false; }
 	virtual bool hasCompile() 	{ return false; }

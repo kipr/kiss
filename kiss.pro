@@ -8,7 +8,7 @@ kiss {
 	TARGET = KISS
 	DEPENDPATH += src
 	INCLUDEPATH += include include/dialogs
-	QT += webkit network
+	QT += webkit network phonon
 
 	win32 {
 		INCLUDEPATH += Qsci
@@ -37,7 +37,9 @@ kiss {
 				include/Repository.h \
 				include/KissArchive.h \
 				include/dialogs/TemplateDialog.h \
-				include/dialogs/SourceDialog.h
+				include/dialogs/SourceDialog.h \
+				include/dialogs/RequestFileDialog.h \
+				include/VideoPlayer.h
 
 	SOURCES += 	src/main.cpp \
 				src/MainWindow.cpp \
@@ -54,7 +56,9 @@ kiss {
 				src/Repository.cpp \
 				src/KissArchive.cpp \
 				src/dialogs/TemplateDialog.cpp \
-				src/dialogs/SourceDialog.cpp 
+				src/dialogs/SourceDialog.cpp \
+				src/dialogs/RequestFileDialog.cpp \
+				src/VideoPlayer.cpp
 
 	FORMS += 	ui/MainWindow.ui \
 				ui/ChoosePortDialog.ui \
@@ -66,7 +70,9 @@ kiss {
 				ui/Debugger.ui \
 				ui/Repository.ui \
 				ui/TemplateDialog.ui \
-				ui/SourceDialog.ui
+				ui/SourceDialog.ui \
+				ui/RequestFileDialog.ui \
+				ui/VideoPlayer.ui
 
 	RESOURCES += rc/rc.qrc
 

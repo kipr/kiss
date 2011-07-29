@@ -35,6 +35,7 @@
 #define MANUALS "Manuals"
 #define PORT_DIALOG "port_dialog"
 #define C_STYLE_BLOCKS "c_style_blocks"
+#define REQUEST_FILE_PATH "request_file_path"
 
 Target::Target(QObject *parent) : QObject(parent), m_got(false), m_plugin(0) {}
 
@@ -62,6 +63,7 @@ QMap<QString, QString> Target::targetManualPaths()
 	return ret;
 }
 
+QString Target::requestFilePath() { return TARGET_SETTINGS.value(REQUEST_FILE_PATH).toString(); }
 QStringList Target::errorMessages() { return m_got ? get()->getErrorMessages() : QStringList(); }
 QStringList Target::warningMessages() { return m_got ? get()->getWarningMessages() : QStringList(); }
 QStringList Target::linkerMessages() { return m_got ? get()->getLinkerMessages() : QStringList(); }
@@ -84,6 +86,9 @@ void Target::stop() { if(!hasStop()) return; get()->stop(m_port); }
 bool Target::simulate(const QString& filename) { return hasSimulate() ? get()->simulate(filename, m_port) : false; }
 DebuggerInterface* Target::debug(const QString& filename) { return hasDebug() ? get()->debug(filename, m_port) : 0; }
 Tab* Target::ui() { return hasUi() ? get()->ui(m_port) : 0; }
+bool Target::hasRequestFile() { return m_got && get()->hasFileRequest(); }
+QStringList Target::requestDir(const QString& filename) { return hasRequestFile() ? get()->requestDir(filename, m_port) : QStringList(); }
+QByteArray Target::requestFile(const QString& filename) { return hasRequestFile() ? get()->requestFile(filename, m_port) : QByteArray(); }
 bool Target::error() { return m_got ? get()->error() : true; }
 bool Target::hasPort() { return TARGET_SETTINGS.value(PORT_DIALOG).toBool(); }
 void Target::setPort(const QString& port) { m_port = port; }

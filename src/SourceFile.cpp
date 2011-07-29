@@ -23,7 +23,9 @@
 #include "MainWindow.h"
 #include "WebTab.h"
 #include "LexerManager.h"
+#include "TargetManager.h"
 #include "Singleton.h"
+#include "RequestFileDialog.h"
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
@@ -120,6 +122,7 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 void SourceFile::activate()
 {
 	MainWindow::ref().setTitle(m_targetName + (!m_target.port().isEmpty() ? (" - " + m_target.port()) : ""));
+	MainWindow::ref().showErrors(this);
 }
 
 void SourceFile::addActionsFile(QMenu* file) 
@@ -144,6 +147,7 @@ void SourceFile::addActionsHelp(QMenu* help)
 {
 	const QMap<QString, QString>& manuals = m_target.targetManualPaths();
 	foreach(const QString& manual, manuals.keys()) {
+		if(!QFileInfo(manuals[manual]).exists()) continue;
 		QAction* action = help->addAction(QIcon(":/shortcuts/target/icon_set/icons/report.png"), manual);
 		action->setData(manuals[manual]);
 		connect(action, SIGNAL(triggered()), this, SLOT(openManual()));
@@ -181,6 +185,10 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	const QList<QAction*>& actionList = m_target.actionList();
 	for(int i = 0; i < actionList.size(); ++i) target->insertAction(0, actionList[i]);
 	if(actionList.size() > 0) target->addSeparator();
+	if(m_target.hasRequestFile()) {
+		target->addAction(actionRequestFile);
+		target->addSeparator();
+	}
 	addActionsHelp(target);
 }
 
@@ -665,6 +673,24 @@ void SourceFile::on_actionChoosePort_triggered()
 	if(pDialog.exec()) m_target.setPort(pDialog.getSelectedPortName());
 }
 
+void SourceFile::on_actionRequestFile_triggered()
+{
+	if(!checkPort()) return;
+	RequestFileDialog dialog(&m_target);
+	if(!dialog.exec()) return;
+	QByteArray file = m_target.requestFile(m_target.requestFilePath() + "/" + dialog.selectedFile());
+	QSettings settings;
+	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
+	QString filePath = QFileDialog::getExistingDirectory(&MainWindow::ref(), "Save Remote File", savePath, QFileDialog::ShowDirsOnly);
+	if(filePath.isEmpty()) return;
+	QString saveFilePath = filePath + "/" + dialog.selectedFile();
+	QFile f(saveFilePath);
+	if(!f.open(QIODevice::WriteOnly)) return;
+	f.write(file);
+	f.close();
+	MainWindow::ref().openFile(saveFilePath);
+}
+
 void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
 {
 	if(checked) m_breakpoints.append(ui_editor->markerAdd(m_currentLine, m_breakIndicator));
@@ -719,6 +745,7 @@ bool SourceFile::checkPort()
 		on_actionChoosePort_triggered();
 		if(m_target.port().isEmpty()) return false;
 	}
+	MainWindow::ref().refreshMenus();
 	return true;
 }
 
@@ -755,6 +782,8 @@ void SourceFile::updateErrors()
 	MainWindow::ref().setErrors(this, errors, warnings,
 				m_target.linkerMessages(),
 				m_target.verboseMessages());
+		
+	MainWindow::ref().showErrors(this);
 				
 	markProblems(errors, warnings);
 }

@@ -29,6 +29,7 @@ class WelcomeTab : public WebTab
 public:
 	WelcomeTab(QWidget* parent = 0);
 	
+	virtual void activate();
 	virtual void completeSetup();
 };
 

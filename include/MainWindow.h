@@ -36,6 +36,19 @@
 class QListWidgetItem;
 class SourceFile;
 
+struct Messages
+{
+	Messages() {}
+	
+	Messages(QStringList errors, QStringList warnings, QStringList linker, QStringList verbose)
+		: errors(errors), warnings(warnings), linker(linker), verbose(verbose) {}
+	
+	QStringList errors;
+	QStringList warnings;
+	QStringList linker;
+	QStringList verbose;
+};
+
 /*! \class MainWindow
  * \brief Holds tabs to display
  *
@@ -82,10 +95,12 @@ public:
 	void setStatusMessage(const QString& message, int time = 0);
 	
 	/*! Shows given errors in Error View */
-	void setErrors(SourceFile* tab, 
+	void setErrors(Tab* tab, 
 		const QStringList& errors, const QStringList& warnings, 
 		const QStringList& linker, const QStringList& verbose);
 		
+	void showErrors(Tab* tab);
+
 	void hideErrors();
 	
 	/*! 
@@ -134,8 +149,9 @@ private slots:
 	
 private:
 	Tab* m_currentTab;
-	SourceFile* m_errorTab;
+	Tab* m_errorTab;
 	EditorSettingsDialog m_editorSettingsDialog;
+	QMap<Tab*, Messages> m_messages;
 	QListWidget m_errorList, m_warningList, m_linkErrorList, m_verboseList;
 
 	void showErrorMessages(bool verbose = false);

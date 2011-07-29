@@ -46,6 +46,7 @@ public:
 	// Sets the current target file (and loads the QPluginLoader object)
 	bool setTargetFile(const QString& filename);
 	QMap<QString, QString> targetManualPaths();
+	QString requestFilePath();
 
 	// These pass straight through to the TargetInterface if it is loaded
 	QStringList 	errorMessages();
@@ -107,6 +108,10 @@ public:
 	 */
 	DebuggerInterface* debug(const QString& filename);
 	Tab* ui();
+	
+	bool hasRequestFile();
+	QStringList requestDir(const QString&);
+	QByteArray requestFile(const QString&);
 	
 	bool error();
 	

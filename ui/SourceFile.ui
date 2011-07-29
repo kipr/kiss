@@ -398,6 +398,11 @@
     <string>Ui</string>
    </property>
   </action>
+  <action name="actionRequestFile">
+   <property name="text">
+    <string>Request File</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

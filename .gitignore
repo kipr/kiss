@@ -5,6 +5,7 @@ moc_*
 ui_*
 qrc_*
 KISS
+TargetTool*
 targets/gcc/libgcc_plugin.so
 targets/gcc/lib/
 targets/gcc/include/

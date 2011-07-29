@@ -20,6 +20,7 @@
 
 #include "WebTab.h"
 #include "MainWindow.h"
+#include "VideoPlayer.h"
 
 #include <QUrl>
 #include <QToolBar>
@@ -155,6 +156,16 @@ void WebTab::linkClicked(const QUrl& url)
 	qWarning() << fragment;
 	if(auth == "newbrowser") {
 		WebTab* tab = new WebTab();
+		tab->load(fragment);
+		MainWindow::ref().addTab(tab);
+		return;
+	}
+	if(auth == "openfile") {
+		MainWindow::ref().openFile(fragment);
+		return;
+	}
+	if(auth == "video") {
+		VideoPlayer* tab = new VideoPlayer();
 		tab->load(fragment);
 		MainWindow::ref().addTab(tab);
 		return;

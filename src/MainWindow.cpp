@@ -188,10 +188,14 @@ void MainWindow::setTitle(const QString& title) { setWindowTitle(tr(TITLE) + (ti
 void MainWindow::setTabName(QWidget* widget, const QString& string) { ui_tabWidget->setTabText(ui_tabWidget->indexOf(widget), string); }
 void MainWindow::setStatusMessage(const QString& message, int time) { ui_statusbar->showMessage(message, time); }
 
-void MainWindow::setErrors(SourceFile* tab, 
+void MainWindow::setErrors(Tab* tab, 
 	const QStringList& errors, const QStringList& warnings, 
 	const QStringList& linker, const QStringList& verbose)
 {
+	m_messages.insert(tab, Messages(errors, warnings, linker, verbose));
+}
+
+void MainWindow::showErrors(Tab* tab) {
 	m_errorTab = tab;
 	
 	ui_errorView->hide();
@@ -202,10 +206,10 @@ void MainWindow::setErrors(SourceFile* tab,
 	m_linkErrorList.clear();
 	m_verboseList.clear();
 	
-	m_errorList.addItems(errors);
-	m_warningList.addItems(warnings);
-	m_linkErrorList.addItems(linker);
-	m_verboseList.addItems(verbose);
+	m_errorList.addItems(m_messages[tab].errors);
+	m_warningList.addItems(m_messages[tab].warnings);
+	m_linkErrorList.addItems(m_messages[tab].linker);
+	m_verboseList.addItems(m_messages[tab].verbose);
 	
 	errorViewShowSimple();
 }
@@ -241,11 +245,13 @@ void MainWindow::closeEvent(QCloseEvent *e)
 
 void MainWindow::deleteTab(int index)
 {
-	QWidget *w = ui_tabWidget->widget(index);
-	if(m_errorTab == dynamic_cast<Tab*>(w)) {
+	QWidget* w = ui_tabWidget->widget(index);
+	Tab* tab = 0;
+	if(m_errorTab == (tab = dynamic_cast<Tab*>(w))) {
 		ui_errorView->hide();
 		m_errorTab = 0;
 	}
+	m_messages.remove(tab);
 	ui_tabWidget->removeTab(index);
 	delete w;
 }
@@ -432,7 +438,7 @@ void MainWindow::errorClicked(QListWidgetItem* item)
 	int line = item->text().section(":", 1, 1).toInt();
 	
 	if(line > 0) {
-		m_errorTab->moveTo(line, 0);
+		// m_errorTab->moveTo(line, 0);
 	}
 	
 	ui_tabWidget->setCurrentIndex(i);
