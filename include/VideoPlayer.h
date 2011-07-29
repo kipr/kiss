@@ -6,14 +6,6 @@
 
 #include <QWidget>
 
-struct Annotation
-{
-	Annotation(const QString& text, quint64 time) : text(text), time(time) {}
-	
-	QString text;
-	qint64 time;
-};
-
 class VideoPlayer : public QWidget, public Tab, public Ui::VideoPlayer
 {
 	Q_OBJECT
