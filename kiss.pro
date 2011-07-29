@@ -39,7 +39,7 @@ kiss {
 				include/dialogs/TemplateDialog.h \
 				include/dialogs/SourceDialog.h \
 				include/dialogs/RequestFileDialog.h \
-				include/VideoPlayer.h
+				include/VideoPlayerTab.h
 
 	SOURCES += 	src/main.cpp \
 				src/MainWindow.cpp \
@@ -58,7 +58,7 @@ kiss {
 				src/dialogs/TemplateDialog.cpp \
 				src/dialogs/SourceDialog.cpp \
 				src/dialogs/RequestFileDialog.cpp \
-				src/VideoPlayer.cpp
+				src/VideoPlayerTab.cpp
 
 	FORMS += 	ui/MainWindow.ui \
 				ui/ChoosePortDialog.ui \
@@ -72,7 +72,7 @@ kiss {
 				ui/TemplateDialog.ui \
 				ui/SourceDialog.ui \
 				ui/RequestFileDialog.ui \
-				ui/VideoPlayer.ui
+				ui/VideoPlayerTab.ui
 
 	RESOURCES += rc/rc.qrc
 

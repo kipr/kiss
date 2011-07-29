@@ -1,41 +1,41 @@
-#include "VideoPlayer.h"
+#include "VideoPlayerTab.h"
 #include "MainWindow.h"
 
 #include <MediaSource>
 #include <MediaObject>
 #include <VideoPlayer>
 
-VideoPlayer::VideoPlayer(QWidget* parent) : QWidget(parent)
+VideoPlayerTab::VideoPlayerTab(QWidget* parent) : QWidget(parent)
 {
 	setupUi(this);
 	actionPlay->setEnabled(true);
 	actionPause->setEnabled(false);
 }
 
-void VideoPlayer::activate() { MainWindow::ref().hideErrors(); }
+void VideoPlayerTab::activate() { MainWindow::ref().hideErrors(); }
 
-void VideoPlayer::addActionsFile(QMenu*) {}
-void VideoPlayer::addActionsEdit(QMenu*) {}
-void VideoPlayer::addActionsHelp(QMenu*) {}
+void VideoPlayerTab::addActionsFile(QMenu*) {}
+void VideoPlayerTab::addActionsEdit(QMenu*) {}
+void VideoPlayerTab::addActionsHelp(QMenu*) {}
 
-void VideoPlayer::addOtherActions(QMenuBar* menuBar)
+void VideoPlayerTab::addOtherActions(QMenuBar* menuBar)
 {
 	QMenu* video = menuBar->addMenu(tr("Video"));
 	video->addAction(actionPlay);
 	video->addAction(actionPause);
 }
 
-void VideoPlayer::addToolbarActions(QToolBar* toolbar)
+void VideoPlayerTab::addToolbarActions(QToolBar* toolbar)
 {
 	toolbar->addAction(actionPlay);
 	toolbar->addAction(actionPause);
 }
 
-bool VideoPlayer::beginSetup() { return true; }
-void VideoPlayer::completeSetup() { MainWindow::ref().setTabName(this, "Video Player"); }
-bool VideoPlayer::close() { return true; }
+bool VideoPlayerTab::beginSetup() { return true; }
+void VideoPlayerTab::completeSetup() { MainWindow::ref().setTabName(this, "Video Player"); }
+bool VideoPlayerTab::close() { return true; }
 
-void VideoPlayer::load(const QString& file) 
+void VideoPlayerTab::load(const QString& file) 
 {
 	ui_video->load(Phonon::MediaSource(file));
 	ui_seek->setMediaObject(ui_video->mediaObject());
@@ -44,7 +44,7 @@ void VideoPlayer::load(const QString& file)
 		this, SLOT(stateChange(Phonon::State, Phonon::State)));
 }
 
-void VideoPlayer::stateChange(Phonon::State state, Phonon::State)
+void VideoPlayerTab::stateChange(Phonon::State state, Phonon::State)
 {
 	actionPlay->setEnabled(state != Phonon::PlayingState);
 	actionPause->setEnabled(state == Phonon::PlayingState);

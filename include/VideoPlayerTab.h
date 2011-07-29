@@ -1,16 +1,16 @@
-#ifndef __VIDEOPLAYER_H__
-#define __VIDEOPLAYER_H__
+#ifndef __VIDEOPLAYERTAB_H__
+#define __VIDEOPLAYERTAB_H__
 
 #include "ui_VideoPlayer.h"
 #include "Tab.h"
 
 #include <QWidget>
 
-class VideoPlayer : public QWidget, public Tab, public Ui::VideoPlayer
+class VideoPlayerTab : public QWidget, public Tab, public Ui::VideoPlayer
 {
 	Q_OBJECT
 public:
-	VideoPlayer(QWidget* parent = 0);
+	VideoPlayerTab(QWidget* parent = 0);
 	
 	void activate();
 	
