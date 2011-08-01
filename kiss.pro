@@ -13,7 +13,6 @@ kiss {
 	win32 {
 		INCLUDEPATH += Qsci
 		CONFIG -= embed_manifest_exe
-		CONFIG += console
 	}
 
 	LIBS += -lqscintilla2
