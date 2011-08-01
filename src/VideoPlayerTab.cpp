@@ -32,7 +32,7 @@ void VideoPlayerTab::addToolbarActions(QToolBar* toolbar)
 }
 
 bool VideoPlayerTab::beginSetup() { return true; }
-void VideoPlayerTab::completeSetup() { MainWindow::ref().setTabName(this, "Video Player"); }
+void VideoPlayerTab::completeSetup() { MainWindow::ref().setTabName(this, tr("Video Player")); }
 bool VideoPlayerTab::close() { return true; }
 
 void VideoPlayerTab::load(const QString& file) 

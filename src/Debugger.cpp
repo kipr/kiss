@@ -84,9 +84,7 @@ void Debugger::programStopped()
 	ui_stop->setEnabled(false);
 	
 	ui_stack->clear();
-	//ui_breakpoints->clear();
 	ui_variables->clear();
-	//ui_libs->clear();
 }
 
 void Debugger::programStarted()
@@ -95,6 +93,9 @@ void Debugger::programStarted()
 	ui_step->setEnabled(false);
 	ui_pause->setEnabled(true);
 	ui_stop->setEnabled(true);
+	
+	ui_stack->clear();
+	ui_variables->clear();
 }
 
 void Debugger::programPaused()
@@ -151,7 +152,7 @@ void Debugger::closeEvent(QCloseEvent* event)
 		qWarning() << "Deleted during close.";
 		m_interface->setResponder(0);
 		m_interface->stop();
-		// delete m_interface; Yes, we are leaking memory. Problem with Lion I think. Let's wait for Qt 4.8
+		delete m_interface;
 		m_interface = 0;
 	}
 	event->accept();
