@@ -28,9 +28,13 @@ class WelcomeTab : public WebTab
 	Q_OBJECT
 public:
 	WelcomeTab(QWidget* parent = 0);
+
+	void addActionsEdit(QMenu* edit);
+	void addOtherActions(QMenuBar* menuBar);
+	void addToolbarActions(QToolBar* toolbar);
 	
-	virtual void activate();
-	virtual void completeSetup();
+	void activate();
+	void completeSetup();
 };
 
 #endif

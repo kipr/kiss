@@ -34,11 +34,11 @@ public:
 	
 	virtual void activate();
 	
-	void addActionsFile(QMenu* file);
-	void addActionsEdit(QMenu* edit);
-	void addActionsHelp(QMenu* help);
-	void addOtherActions(QMenuBar* menuBar);
-	void addToolbarActions(QToolBar* toolbar);
+	virtual void addActionsFile(QMenu* file);
+	virtual void addActionsEdit(QMenu* edit);
+	virtual void addActionsHelp(QMenu* help);
+	virtual void addOtherActions(QMenuBar* menuBar);
+	virtual void addToolbarActions(QToolBar* toolbar);
 	
 	bool beginSetup();
 	virtual void completeSetup();
