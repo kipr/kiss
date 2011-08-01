@@ -27,16 +27,6 @@
 #include <QRadioButton>
 #include <QList>
 
-/* ChoosePortDialog Class inherits QDialog and Ui::ChoosePortDialog
- *
- * List of Ui::ChoosePortDialog inherited widgets:
- *	QPushButton	ui_cancelButton
- *  QPushButton	ui_okButton
- *	QPushButton ui_refreshButton
- *	QGroupBox	ui_portGroupBox
- *
- */
-
 class ChoosePortDialog : public QDialog, private Ui::ChoosePortDialog
 {
 Q_OBJECT
