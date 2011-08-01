@@ -838,7 +838,8 @@ bool SourceFile::changeTarget(bool _template)
 			QString meta = str.section(END_KISS, 0, 0);
 			text = str.section(END_KISS, 1, 1).trimmed() + "\n";
 			foreach(const QString& metaLine, meta.split("\n")) {
-				const QStringList& parts = metaLine.split(" ");
+				QStringList parts;
+				foreach(const QString& part, metaLine.split(" ")) parts << part.trimmed();
 				if(parts.size() < 1) continue;
 				// Perhaps something here in the future
 				if(parts.size() < 2) continue;
