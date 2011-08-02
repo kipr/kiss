@@ -63,6 +63,9 @@ void VideoPlayerTab::load(const QString& file)
 	connect(ui_video->mediaObject(), SIGNAL(stateChanged(Phonon::State, Phonon::State)), 
 		this, SLOT(stateChange(Phonon::State, Phonon::State)));
 	ui_video->mediaObject()->play();
+	if(ui_video->mediaObject()->errorType() != Phonon::NoError) {
+		QMessageBox::critical(0, QString("Error loading ") + file, ui_video->mediaObject()->errorString());
+	}
 }
 
 void VideoPlayerTab::stateChange(Phonon::State state, Phonon::State)
