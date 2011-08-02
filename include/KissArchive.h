@@ -72,7 +72,6 @@ public:
 	static QStringList list(QIODevice* in);
 	static const unsigned version(const QString& name);
 	static QStringList installed();
-private:
 };
 
 #endif

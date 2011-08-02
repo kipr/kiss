@@ -25,6 +25,8 @@
 #include <MediaObject>
 #include <VideoPlayer>
 
+#include <QMessageBox>
+
 VideoPlayerTab::VideoPlayerTab(QWidget* parent) : QWidget(parent)
 {
 	setupUi(this);
