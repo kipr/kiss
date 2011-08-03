@@ -26,6 +26,7 @@
 #include "KissArchive.h"
 #include <QTimer>
 #include <QDebug>
+#include <BackendCapabilities>
 
 void createArchive(const QString& name, const unsigned version, const QString& platforms, const QString& fileList, const QString& out) {
 	QFile f(fileList);
@@ -109,6 +110,8 @@ int main(int argc, char **argv)
 	QApplication::setOrganizationDomain("kipr.org");
 	QApplication::setApplicationName("KISS");
 	QApplication::setWindowIcon(QIcon(":/icon.png"));
+	
+	qWarning() << "Phonon Mime Types Available:" << Phonon::BackendCapabilities::availableMimeTypes();
 	
 	QPixmap splashPixmap(":/splash_screen.png");
 	QSplashScreen splash(splashPixmap);
