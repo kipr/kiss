@@ -51,6 +51,7 @@
         <file>welcome/document-open.png</file>
         <file>welcome/help-browser.png</file>
         <file>welcome/internet-web-browser.png</file>
+		<file>welcome/preferences-desktop.png</file>
 		<file>welcome/beta.html</file>
     </qresource>
     <qresource prefix="/sourcefile">

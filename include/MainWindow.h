@@ -126,6 +126,8 @@ public:
 	/*! Reinits menus for current tab */
 	void refreshMenus();
 	
+	bool eventFilter(QObject* target, QEvent* event);
+	
 public slots:
 	void on_actionNew_triggered();
 	void on_actionOpen_triggered();
@@ -146,6 +148,7 @@ private slots:
 	void errorClicked(QListWidgetItem* item);
 	
 	void showContextMenuForError(const QPoint &pos);
+	
 	
 private:
 	Tab* m_currentTab;

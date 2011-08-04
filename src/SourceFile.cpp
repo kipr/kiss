@@ -94,7 +94,7 @@ SourceFileShared::SourceFileShared() :
 
 
 SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), 
- 	m_targetName("?"), m_runTab(0), m_findModified(false)
+ 	m_targetName("?"), m_debugger(false), m_runTab(0), m_findModified(false)
 {
 	setupUi(this);
 	
@@ -172,7 +172,7 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	if(m_target.hasSimulate()) target->addAction(actionSimulate);
 	if(m_target.hasRun()) target->addAction(actionRun);
 	if(m_target.hasStop()) target->addAction(actionStop);
-	if(m_target.hasDebug()) {
+	if(m_debugger && m_target.hasDebug()) {
 		target->addAction(actionDebug);
 		source->addSeparator();
 		source->addAction(actionToggleBreakpoint);
@@ -207,7 +207,7 @@ void SourceFile::addToolbarActions(QToolBar* toolbar)
 	if(m_target.hasSimulate()) toolbar->addAction(actionSimulate);
 	if(m_target.hasRun()) toolbar->addAction(actionRun);
 	if(m_target.hasStop()) toolbar->addAction(actionStop);
-	if(m_target.hasDebug()) toolbar->addAction(actionDebug);
+	if(m_debugger && m_target.hasDebug()) toolbar->addAction(actionDebug);
 }
 
 bool SourceFile::beginSetup() { return changeTarget(isNewFile()) && !m_target.error(); }
@@ -477,6 +477,8 @@ void SourceFile::refreshSettings()
 	
 	ui_editor->setCallTipsStyle(settings.value(CALL_TIPS).toBool() ? QsciScintilla::CallTipsNoContext : 
 		QsciScintilla::CallTipsNone);
+		
+	m_debugger = settings.value(DEBUGGER_ENABLED).toBool();
 
 	settings.endGroup();
 
@@ -484,6 +486,8 @@ void SourceFile::refreshSettings()
 	
 	updateMargins();
 	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
+	
+	MainWindow::ref().refreshMenus();
 }
 
 QString SourceFile::fileName() 	{ return m_fileInfo.fileName(); }

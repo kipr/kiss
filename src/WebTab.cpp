@@ -150,6 +150,10 @@ void WebTab::linkClicked(const QUrl& url)
 		MainWindow::ref().on_actionOpen_triggered();
 		return;
 	}
+	if(auth == "settings") {
+		MainWindow::ref().on_actionEditor_Settings_triggered();
+		return;
+	}
 	
 	QString fragment = url.fragment();
 	fragment.replace("KISS_CWD", QDir::currentPath());

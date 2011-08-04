@@ -79,6 +79,7 @@ void EditorSettingsDialog::saveSettings()
 	settings.setValue("calltips", ui_callTipsCheckBox->isChecked());
 	settings.setValue("bracematching", ui_braceMatchingCheckBox->isChecked());
 	settings.setValue("linenumbers", ui_marginLineNumbersCheckBox->isChecked());
+	settings.setValue(DEBUGGER_ENABLED, ui_debugger->isChecked());
 	settings.endGroup();
 	settings.sync();
 }
@@ -129,6 +130,7 @@ void EditorSettingsDialog::readSettings()
 	ui_callTipsCheckBox->setChecked(settings.value(CALL_TIPS, true).toBool());
 	ui_braceMatchingCheckBox->setChecked(settings.value(BRACE_MATCHING, true).toBool());
 	ui_marginLineNumbersCheckBox->setChecked(settings.value(LINE_NUMBERS, true).toBool());
+	ui_debugger->setChecked(settings.value(DEBUGGER_ENABLED, false).toBool());
 
 	settings.endGroup();
 }

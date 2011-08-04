@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 	/* The Following lines just set up the application object */
 	QApplication application(argc, argv);
 	
-	if(QApplication::arguments().size() > 1) {
+	if(QApplication::arguments().size() > 1 && QApplication::arguments()[1].startsWith("--")) {
 		handleArgs();
 		return 0;
 	}
@@ -117,6 +117,10 @@ int main(int argc, char **argv)
 	QSplashScreen splash(splashPixmap);
 	splash.show();
 	MainWindow::ref().addTab(new WelcomeTab(&MainWindow::ref()));
+	qWarning() << "Args:" << QApplication::arguments();
+	foreach(const QString& arg, QApplication::arguments().mid(1)) {
+		MainWindow::ref().openFile(arg);
+	}
 	QTimer::singleShot(1500, &splash, SLOT(hide()));
 	QTimer::singleShot(1000, &MainWindow::ref(), SLOT(show()));
 	int ret = application.exec();

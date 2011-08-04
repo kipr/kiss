@@ -42,6 +42,7 @@
 #define WIDTH "width"
 #define AUTO_INDENT "autoindent"
 #define BRACE_MATCHING "bracematching"
+#define DEBUGGER_ENABLED "debugger_enabled"
 
 class EditorSettingsDialog : public QDialog, private Ui::EditorSettingsDialog
 {

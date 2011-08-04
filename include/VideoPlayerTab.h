@@ -25,6 +25,7 @@
 #include "Tab.h"
 
 #include <QWidget>
+#include <Phonon>
 
 class VideoPlayerTab : public QWidget, public Tab, public Ui::VideoPlayer
 {
