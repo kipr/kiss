@@ -21,13 +21,13 @@
 #ifndef __VIDEOPLAYERTAB_H__
 #define __VIDEOPLAYERTAB_H__
 
-#include "ui_VideoPlayer.h"
+#include "ui_VideoPlayerTab.h"
 #include "Tab.h"
 
 #include <QWidget>
 #include <Phonon>
 
-class VideoPlayerTab : public QWidget, public Tab, public Ui::VideoPlayer
+class VideoPlayerTab : public QWidget, public Tab, public Ui::VideoPlayerTab
 {
 	Q_OBJECT
 public:
