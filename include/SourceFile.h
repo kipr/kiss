@@ -151,6 +151,8 @@ private:
 	QString m_targetName;
 	QString m_templateExt;
 	
+	bool m_debugger;
+	
 	// These are handles for the markers shown in the margin
 	int m_errorIndicator;
 	int m_warningIndicator;

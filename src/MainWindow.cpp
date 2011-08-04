@@ -42,6 +42,7 @@
 #include <QDebug>
 #include <QPrintDialog>
 #include <QNetworkProxyFactory>
+#include <QFileOpenEvent>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -448,3 +449,14 @@ void MainWindow::errorClicked(QListWidgetItem* item)
 
 // TODO: Make Error Googlable
 void MainWindow::showContextMenuForError(const QPoint &pos) { Q_UNUSED(pos); }
+
+bool MainWindow::eventFilter(QObject * target, QEvent * event) {
+        if(event->type() == QEvent::FileOpen) {
+                QString fileName = dynamic_cast<QFileOpenEvent *>(event)->file();
+                openFile(fileName);
+                event->accept();
+                return true;
+        } else {
+                return QMainWindow::eventFilter(target, event);
+        }
+}
