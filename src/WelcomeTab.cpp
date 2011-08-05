@@ -49,7 +49,11 @@ void WelcomeTab::completeSetup()
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return;
 
 	QByteArray data = file.readAll();
+#ifndef Q_OS_WIN
 	data.replace("KISS_BACKGROUND", palette().color(QPalette::Background).name().toAscii());
+#else
+	data.replace("KISS_BACKGROUND", "0xFFFFFF");
+#endif
 	
 	webView()->setHtml(data.data());
 	
