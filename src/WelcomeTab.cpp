@@ -52,7 +52,7 @@ void WelcomeTab::completeSetup()
 #ifndef Q_OS_WIN
 	data.replace("KISS_BACKGROUND", palette().color(QPalette::Background).name().toAscii());
 #else
-	data.replace("KISS_BACKGROUND", "0xFFFFFF");
+	data.replace("KISS_BACKGROUND", "#FFFFFF");
 #endif
 	
 	webView()->setHtml(data.data());
