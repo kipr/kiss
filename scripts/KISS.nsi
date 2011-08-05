@@ -11,8 +11,8 @@
 
 ;; Beta release app name and version
 ;; uncomment this section for beta releases
-!define VERSION "${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER} Beta"
-!define INSTALL_FILENAME "KISS IDE ${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER} Beta"
+!define VERSION "${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER} Beta 3"
+!define INSTALL_FILENAME "KISS IDE ${APPMAJORVERSION}.${APPMINORVERSION}.${BUILDNUMBER} Beta 3"
 
 !define APPNAMEANDVERSION "KISS IDE ${VERSION}"
 
@@ -69,6 +69,8 @@ Section "KISS-IDE" KISSIDE
 	
 	SetOutPath "$INSTDIR\targets"
 	SetOutPath "$INSTDIR\lexers"
+	SetOutPath "$INSTDIR\phonon_backend"
+	File "C:\Projects\kiss\depends\phonon_ds94.dll"
 	SetOutPath "$INSTDIR\"
 	File "C:\Projects\kiss\deploy\KISS.exe"
 	File "C:\Projects\kiss\depends\libgcc_s_dw2-1.dll"
@@ -90,11 +92,12 @@ Section "KISS-IDE" KISSIDE
 	File "C:\Projects\kiss-lexers\root\python_lexer_win.kiss"
 	File "C:\Projects\kiss-lexers\root\bash_lexer_win.kiss"
 	
+	
 	ExecWait '"$INSTDIR\KISS.exe" --install gcc_target_win.kiss'
 	ExecWait '"$INSTDIR\KISS.exe" --install cbc2_target_win.kiss'
 	ExecWait '"$INSTDIR\KISS.exe" --install java_target_win.kiss'
-	ExecWait '"$INSTDIR\KISS.exe" --install python_target_win.kiss'
-	ExecWait '"$INSTDIR\KISS.exe" --install shell_target_win.kiss'
+	#ExecWait '"$INSTDIR\KISS.exe" --install python_target_win.kiss'
+	#ExecWait '"$INSTDIR\KISS.exe" --install shell_target_win.kiss'
 	ExecWait '"$INSTDIR\KISS.exe" --install c_lexer_win.kiss'
 	ExecWait '"$INSTDIR\KISS.exe" --install cpp_lexer_win.kiss'
 	ExecWait '"$INSTDIR\KISS.exe" --install java_lexer_win.kiss'
@@ -128,6 +131,7 @@ Section "KISS-IDE" KISSIDE
 	SetFileAttributes "$INSTDIR\mingwm10.dll" FILE_ATTRIBUTE_HIDDEN
 	SetFileAttributes "$INSTDIR\libgcc_s_dw2-1.dll" FILE_ATTRIBUTE_HIDDEN
 	SetFileAttributes "$INSTDIR\qscintilla2.dll" FILE_ATTRIBUTE_HIDDEN
+	SetFileAttributes "$INSTDIR\phonon_backend" FILE_ATTRIBUTE_HIDDEN
 	
 	; Set Up Start Menu Entry and Desktop Short Cut
 	
