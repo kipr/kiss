@@ -44,6 +44,7 @@ public:
 	virtual void stop(const QString&) {}
 	virtual bool download(const QString&, const QString&) { return false; }
 	virtual bool simulate(const QString&, const QString&) { return false; }
+	virtual bool debugConsole(const QString&, const QString&, const QList<Location>&) { return false; }
 	virtual DebuggerInterface* debug(const QString&, const QString&) { return 0; }
 	virtual Tab* ui(const QString&) { return 0; }
 	

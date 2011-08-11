@@ -33,7 +33,7 @@
  */
 struct Location 
 {
-	Location(QString file, int line) : file(file), line(line) {}
+	Location(const QString& file, const int& line) : file(file), line(line) {}
 	
 	QString file;
 	int line;
@@ -46,7 +46,7 @@ struct Location
  */
 struct Variable 
 {
-	Variable(QString name, QString value) : name(name), value(value) {}
+	Variable(const QString& name, const QString& value) : name(name), value(value) {}
 	
 	QString name;
 	QString value;

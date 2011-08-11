@@ -146,7 +146,7 @@
       <item>
        <widget class="QCheckBox" name="ui_debugger">
         <property name="text">
-         <string>Experimental Debugger Support</string>
+         <string>Experimental Debugger GUI</string>
         </property>
        </widget>
       </item>

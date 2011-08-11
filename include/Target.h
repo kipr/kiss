@@ -102,6 +102,8 @@ public:
 	 */
 	bool simulate(const QString& filename);
 	
+	bool debugConsole(const QString& filename, const QList<Location>& bkpts);
+	
 	/*! Sets up a debugger for a file
 	 * \param filename Absolute path to a file
 	 * \return Pointer to DebuggerInterface if the TargetInterface exists and debug setup was successful.

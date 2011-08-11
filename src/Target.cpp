@@ -84,6 +84,7 @@ bool Target::download(const QString& filename) { return hasDownload() ? get()->d
 bool Target::run(const QString& filename) { return hasRun() ? get()->run(filename, m_port) : false; }
 void Target::stop() { if(!hasStop()) return; get()->stop(m_port); }
 bool Target::simulate(const QString& filename) { return hasSimulate() ? get()->simulate(filename, m_port) : false; }
+bool Target::debugConsole(const QString& filename, const QList<Location>& bkpts) { return hasDebug() ? get()->debugConsole(filename, m_port, bkpts) : false; }
 DebuggerInterface* Target::debug(const QString& filename) { return hasDebug() ? get()->debug(filename, m_port) : 0; }
 Tab* Target::ui() { return hasUi() ? get()->ui(m_port) : 0; }
 bool Target::hasRequestFile() { return m_got && get()->hasFileRequest(); }

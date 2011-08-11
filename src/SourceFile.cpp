@@ -172,7 +172,7 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	if(m_target.hasSimulate()) target->addAction(actionSimulate);
 	if(m_target.hasRun()) target->addAction(actionRun);
 	if(m_target.hasStop()) target->addAction(actionStop);
-	if(m_debugger && m_target.hasDebug()) {
+	if(m_target.hasDebug()) {
 		target->addAction(actionDebug);
 		source->addSeparator();
 		source->addAction(actionToggleBreakpoint);
@@ -207,7 +207,7 @@ void SourceFile::addToolbarActions(QToolBar* toolbar)
 	if(m_target.hasSimulate()) toolbar->addAction(actionSimulate);
 	if(m_target.hasRun()) toolbar->addAction(actionRun);
 	if(m_target.hasStop()) toolbar->addAction(actionStop);
-	if(m_debugger && m_target.hasDebug()) toolbar->addAction(actionDebug);
+	if(m_target.hasDebug()) toolbar->addAction(actionDebug);
 }
 
 bool SourceFile::beginSetup() { return changeTarget(isNewFile()) && !m_target.error(); }
@@ -622,11 +622,17 @@ void SourceFile::on_actionDebug_triggered()
 {
 	fileSave();
 	MainWindow::ref().hideErrors();
-	DebuggerInterface* interface = m_target.debug(filePath());
-	MainWindow::ref().setStatusMessage(interface ? tr("Debug Succeeded") : tr("Debug Failed"));
+	DebuggerInterface* interface = 0;
+	QList<Location> bkpts;
+	if(!m_debugger) {
+		foreach(const int& i, m_breakpoints) {
+			bkpts.append(Location(m_fileInfo.fileName(), ui_editor->markerLine(i) + 1));
+		}
+	}
+	bool success = m_debugger ? !(interface = m_target.debug(filePath())) : m_target.debugConsole(filePath(), bkpts);
+	MainWindow::ref().setStatusMessage(success ? tr("Debug Succeeded") : tr("Debug Failed"));
 	updateErrors();
 	if(!interface) return;
-	
 	foreach(const int& i, m_breakpoints) {
 		// QScintilla starts at 0, while gdb starts at 1, + 1
 		interface->addBreakpoint(m_fileInfo.fileName(), ui_editor->markerLine(i) + 1); 
