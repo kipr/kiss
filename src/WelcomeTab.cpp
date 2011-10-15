@@ -26,12 +26,8 @@
 #include "MainWindow.h"
 
 WelcomeTab::WelcomeTab(QWidget* parent) : WebTab(parent) {}
-
-
 void WelcomeTab::addActionsEdit(QMenu*) {}
-
 void WelcomeTab::addOtherActions(QMenuBar*) {}
-
 void WelcomeTab::addToolbarActions(QToolBar*) {}
 
 void WelcomeTab::activate()

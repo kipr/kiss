@@ -1,4 +1,4 @@
-kiss {
+!tt {
 	include(config.pri)
 	include(trademarks/branding.pri)
 

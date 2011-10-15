@@ -86,11 +86,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 
 MainWindow::~MainWindow()
 {
-	delete ui_toolBar;
-	ui_toolBar = 0;
-	
-	delete ui_menubar;
-	ui_menubar = 0;
+	delete ui_toolBar; ui_toolBar = 0;
+	delete ui_menubar; ui_menubar = 0;
 	
 	while(ui_tabWidget->count() > 0) deleteTab(0);
 }
@@ -315,11 +312,9 @@ void MainWindow::on_actionOpen_triggered()
 	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = TargetManager::ref().allSupportedExtensions();
 	filters.removeDuplicates();
-	qWarning() << filters;
 	QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), openPath, filters.join(";;") + ";;All Files (*)");
 		
-	if(filePath.isEmpty())
-		return;
+	if(filePath.isEmpty()) return;
 
 	QFileInfo fileInfo(filePath);
 	settings.setValue(OPEN_PATH, fileInfo.absolutePath());
@@ -394,7 +389,6 @@ void MainWindow::on_actionInstallLocalPackage_triggered()
 	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = TargetManager::ref().allSupportedExtensions();
 	filters.removeDuplicates();
-	qWarning() << filters;
 	QStringList filePaths = QFileDialog::getOpenFileNames(this, tr("Open Packages"), openPath, "KISS Archives (*.kiss)");
 	foreach(const QString& filePath, filePaths) {
 		if(filePath.isEmpty())
@@ -456,7 +450,5 @@ bool MainWindow::eventFilter(QObject * target, QEvent * event) {
                 openFile(fileName);
                 event->accept();
                 return true;
-        } else {
-                return QMainWindow::eventFilter(target, event);
-        }
+        } else return QMainWindow::eventFilter(target, event);
 }
