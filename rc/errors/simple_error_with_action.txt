@@ -1,0 +1,10 @@
+<b>Cause</b><br />
+${1}<br />
+<br />
+<b>Information</b><br />
+${2}<br />
+<br />
+<b>Action</b><br />
+${3}<br />
+<br />
+If you need additional assistance, please email <a href="mailto:support@kipr.org">support@kipr.org</a> or call (405) 579-4609 <br />

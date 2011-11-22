@@ -40,8 +40,8 @@ public:
 	QStringList allSupportedExtensions();
 	QString getExpectedLocation(const QString& name) const;
 	
-	virtual void pluginLoaded(TargetInterface* plugin) { Q_UNUSED(plugin) }
-	virtual void pluginUnloaded(TargetInterface* plugin) { Q_UNUSED(plugin) }
+	virtual void pluginLoaded(TargetInterface* plugin);
+	virtual void pluginUnloaded(TargetInterface*) {}
 };
 
 #endif

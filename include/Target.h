@@ -111,6 +111,9 @@ public:
 	DebuggerInterface* debug(const QString& filename);
 	Tab* ui();
 	
+	bool hasScreenGrab();
+	QByteArray screenGrab();
+	
 	bool hasRequestFile();
 	QStringList requestDir(const QString&);
 	QByteArray requestFile(const QString&);

@@ -131,8 +131,7 @@ KissReturn KissArchive::install(QIODevice* in)
 	unsigned version = 0;
 	in->read((char*)&version, sizeof(unsigned));
 	if(kissVersion != version) {
-		qWarning() << "Version mismatch. Expected:" << kissVersion << ", got" << version;
-		return false;
+		return KissReturn(true, QObject::tr("Version mismatch. Expected: ")  + kissVersion + QOBject::tr(", got ") + version;
 	}
 	
 	// Reads archive name and internal version

@@ -32,6 +32,8 @@
 #include "DebuggerInterface.h"
 #include "Tab.h"
 
+#include <QStringList>
+
 class TargetInterface 
 {
 public:
@@ -47,6 +49,9 @@ public:
 	virtual bool debugConsole(const QString&, const QString&, const QList<Location>&) { return false; }
 	virtual DebuggerInterface* debug(const QString&, const QString&) { return 0; }
 	virtual Tab* ui(const QString&) { return 0; }
+	
+	virtual bool hasScreenGrab() { return false; }
+	virtual QByteArray screenGrab(const QString&) { return QByteArray(); }
 	
 	virtual bool hasFileRequest() 	{ return false; }
 	virtual QStringList requestDir(const QString&, const QString&) { return QStringList(); }
@@ -67,16 +72,29 @@ public:
 	const QStringList& 	getVerboseMessages() const 	{ return m_verboseMessages; }
 	
 	bool error() { return m_error; }
+	const QString& errorTemplate() { return m_errorTemplate; } 
+	const QStringList& errorArgs() { return m_errorArgs; } 
 	
 	void setTargetFile(const QString& filename) { m_targetFile = filename; }
 	
 protected:
-	void setError(bool error) { m_error = error; }
+	void setError(bool error, const QString& errorTemplate, const QStringList& args)
+	{
+		m_error = error;
+		m_errorTemplate = errorTemplate;
+		m_errorArgs = args;
+	}
+	
+	//! Simplifies includes by providing a proxy for plugins to create errors with
+	void errorDialogProxy(QWidget* parent, const QString& error, const QStringList& args = QStringList());
+	
 	QString m_targetFile;
 	QStringList m_warningMessages, m_errorMessages, m_linkerMessages, m_verboseMessages;
 	QList<QAction*> m_actionList;
 private:
 	bool m_error;
+	QString m_errorTemplate;
+	QStringList m_errorArgs;
 };
 
 Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/2.2");

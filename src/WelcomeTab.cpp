@@ -25,6 +25,8 @@
 #include <QWebPage>
 #include "MainWindow.h"
 
+#define KISS_BACKGROUND "KISS_BACKGROUND"
+
 WelcomeTab::WelcomeTab(QWidget* parent) : WebTab(parent) {}
 void WelcomeTab::addActionsEdit(QMenu*) {}
 void WelcomeTab::addOtherActions(QMenuBar*) {}
@@ -46,9 +48,9 @@ void WelcomeTab::completeSetup()
 
 	QByteArray data = file.readAll();
 #ifndef Q_OS_WIN
-	data.replace("KISS_BACKGROUND", palette().color(QPalette::Background).name().toAscii());
+	data.replace(KISS_BACKGROUND, palette().color(QPalette::Background).name().toAscii());
 #else
-	data.replace("KISS_BACKGROUND", "#FFFFFF");
+	data.replace(KISS_BACKGROUND, "#FFFFFF");
 #endif
 	
 	webView()->setHtml(data.data());

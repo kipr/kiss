@@ -38,7 +38,8 @@ public:
 	QString selectedTargetFilePath();
 	QString templateFile();
 private slots:
-	void on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);	
+	void on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);
+	void on_ui_templates_itemDoubleClicked(QTreeWidgetItem* current);
 };
 
 #endif

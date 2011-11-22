@@ -28,6 +28,7 @@
 #include "KissArchive.h"
 #include "ChoosePortDialog.h"
 #include "Repository.h"
+#include "ErrorDialog.h"
 
 #include <QToolTip>
 #include <QMessageBox>
@@ -112,7 +113,9 @@ bool MainWindow::openFile(const QString& file)
 	/* Attempt to open the selected file */
 	SourceFile *sourceFile = new SourceFile(this);
 	if(!sourceFile->fileOpen(file)) {
-		QMessageBox::critical(this, tr("Error"), tr("Error: Could not open file ") + sourceFile->fileName() + tr(" for reading"));
+		ErrorDialog::showError(this, "simple_error", QStringList() <<
+			tr("Could not open ") + sourceFile->fileName() <<
+			tr("Unable to open file for reading."));
 		delete sourceFile;
 		return false;
 	}	
@@ -399,17 +402,21 @@ void MainWindow::on_actionInstallLocalPackage_triggered()
 
 		QFile f(filePath);
 		if(!f.open(QIODevice::ReadOnly)) {
-			QMessageBox::critical(this, tr("Install failed!") + fileInfo.fileName(), tr("Unable to open package"));
+			ErrorDialog::showError(this, "simple_error", QStringList() << 
+				tr("Installation of KISS Archive ") + fileInfo.fileName() + tr(" failed.") <<
+				tr("Unable to open package file for reading."));
 			return;
 		}
 	
 		KissReturn ret(KissArchive::install(&f));
 		if(ret.error) {
-			QMessageBox::critical(this, tr("Install failed!") + fileInfo.fileName(), ret.message);
+			ErrorDialog::showError(this, "simple_error", QStringList() << 
+				tr("Installation of KISS Archive ") + fileInfo.fileName() + tr(" failed.") <<
+				ret.message);
 			return;
 		} 
 	}
-	QMessageBox::information(this, tr("Install Complete!"), tr("Please restart KISS"));
+	if(filePaths.size() > 0) QMessageBox::information(this, tr("Install Complete!"), tr("Please restart KISS"));
 }
 
 void MainWindow::openRecent()

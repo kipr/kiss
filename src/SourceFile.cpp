@@ -26,6 +26,7 @@
 #include "TargetManager.h"
 #include "Singleton.h"
 #include "RequestFileDialog.h"
+#include "ErrorDialog.h"
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
@@ -43,6 +44,7 @@
 #include <QShortcut>
 #include <math.h>
 #include <QDate>
+#include <QDateTime>
 #include <QPixmap>
 #include <QDesktopServices>
 #include <QUrl>
@@ -185,10 +187,16 @@ void SourceFile::addOtherActions(QMenuBar* menuBar)
 	const QList<QAction*>& actionList = m_target.actionList();
 	for(int i = 0; i < actionList.size(); ++i) target->insertAction(0, actionList[i]);
 	if(actionList.size() > 0) target->addSeparator();
+	bool hasExtra = false;
+	if(m_target.hasRequestFile()) {
+		target->addAction(actionScreenGrab);
+		hasExtra = true;
+	}
 	if(m_target.hasRequestFile()) {
 		target->addAction(actionRequestFile);
-		target->addSeparator();
+		hasExtra = true;
 	}
+	if(hasExtra) target->addSeparator();
 	addActionsHelp(target);
 }
 
@@ -683,6 +691,22 @@ void SourceFile::on_actionChoosePort_triggered()
 	if(pDialog.exec()) m_target.setPort(pDialog.getSelectedPortName());
 }
 
+void SourceFile::on_actionScreenGrab_triggered()
+{
+	if(!checkPort()) return;
+	QByteArray file = m_target.screenGrab();
+	QSettings settings;
+	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
+	QString filePath = QFileDialog::getExistingDirectory(&MainWindow::ref(), "Save Screen Grab", savePath, QFileDialog::ShowDirsOnly);
+	if(filePath.isEmpty()) return;
+	QString saveFilePath = filePath + "/Screen Grab on " + QDateTime::currentDateTime().toString() + ".jpg";
+	QFile f(saveFilePath);
+	if(!f.open(QIODevice::WriteOnly)) return;
+	f.write(file);
+	f.close();
+	QDesktopServices::openUrl(QUrl::fromUserInput(saveFilePath));
+}
+
 void SourceFile::on_actionRequestFile_triggered()
 {
 	if(!checkPort()) return;
@@ -811,7 +835,9 @@ bool SourceFile::changeTarget(bool _template)
 	if((_template ? tDialog.exec() : tDialog.execTarget()) == QDialog::Rejected) return false;
 	const QString& targetPath = tDialog.selectedTargetFilePath();
 	if(!m_target.setTargetFile(targetPath)) {
-		QMessageBox::critical(this, tr("Error"), tr("Error loading target!"));
+		ErrorDialog::showError(this, "simple_error", QStringList() << 
+			tr("Error loading target at for ") + targetPath <<
+			tr("Target plugin was probably installed incorrectly"));
 		return false;
 	}
 	
@@ -820,6 +846,8 @@ bool SourceFile::changeTarget(bool _template)
 	
 	/* Tells the settings dialog which target file to use */
 	m_target.setTargetFile(targetPath);
+	
+	if(m_target.error()) return false;
 	
 	/* Pops up a port select dialog if the target should have a port set */
 	if(m_target.hasPort()) {
@@ -835,7 +863,10 @@ bool SourceFile::changeTarget(bool _template)
 	} else {
 		QFile tFile(tDialog.templateFile());
 		if(!tFile.open(QIODevice::ReadOnly)) {
-			QMessageBox::critical(this, tr("Error"), tr("Error loading template!"));
+			ErrorDialog::showError(this, "simple_error_with_action", QStringList() <<
+				tr("Error loading template file ") + tDialog.templateFile() <<
+				tr("Unable to open file for reading.") <<
+				tr("Continuing without selected template."));
 			return true;
 		}
 	

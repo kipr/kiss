@@ -124,6 +124,7 @@ private slots:
 	void on_actionChangeTarget_triggered();
 	void on_actionChoosePort_triggered();
 	
+	void on_actionScreenGrab_triggered();
 	void on_actionRequestFile_triggered();
 	
 	void on_actionToggleBreakpoint_triggered(bool checked);

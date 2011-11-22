@@ -1,6 +1,6 @@
 !tt {
 	include(config.pri)
-	include(trademarks/branding.pri)
+	include(rc/branding.pri)
 
 	TEMPLATE = app
 	INSTALL_BASE = deploy
@@ -40,7 +40,8 @@
 				include/dialogs/TemplateDialog.h \
 				include/dialogs/SourceDialog.h \
 				include/dialogs/RequestFileDialog.h \
-				include/VideoPlayerTab.h
+				include/VideoPlayerTab.h \
+				include/dialogs/ErrorDialog.h
 
 	SOURCES += 	src/main.cpp \
 				src/MainWindow.cpp \
@@ -59,7 +60,8 @@
 				src/dialogs/TemplateDialog.cpp \
 				src/dialogs/SourceDialog.cpp \
 				src/dialogs/RequestFileDialog.cpp \
-				src/VideoPlayerTab.cpp
+				src/VideoPlayerTab.cpp \
+				src/dialogs/ErrorDialog.cpp
 
 	FORMS += 	ui/MainWindow.ui \
 				ui/ChoosePortDialog.ui \
@@ -73,11 +75,12 @@
 				ui/TemplateDialog.ui \
 				ui/SourceDialog.ui \
 				ui/RequestFileDialog.ui \
-				ui/VideoPlayerTab.ui
+				ui/VideoPlayerTab.ui \
+				ui/ErrorDialog.ui
 
 	RESOURCES += rc/rc.qrc
 
-	QMAKE_INFO_PLIST = Info.plist
+	QMAKE_INFO_PLIST = rc/Info.plist
 
 	#### Install Directives ####
 
@@ -91,7 +94,7 @@
 		install_libs.extra = macdeployqt $${INSTALL_BASE}/KISS.app
 		install_libs.path = $${INSTALL_BASE}
 	
-		install_plist.extra = cp Info.plist $${INSTALL_BASE}/KISS.app/Contents
+		install_plist.extra = cp rc/Info.plist $${INSTALL_BASE}/KISS.app/Contents
 		install_plist.path = $${INSTALL_BASE}/..
 
 		INSTALLS += install_libs install_plist

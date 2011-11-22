@@ -403,6 +403,11 @@
     <string>Request File</string>
    </property>
   </action>
+  <action name="actionScreenGrab">
+   <property name="text">
+    <string>Screen Grab</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

@@ -105,3 +105,8 @@ void TemplateDialog::on_ui_targets_currentItemChanged(QListWidgetItem* current, 
 		}
 	}
 }
+
+void TemplateDialog::on_ui_templates_itemDoubleClicked(QTreeWidgetItem* current)
+{
+	if(current->childCount() == 0) accept();
+}

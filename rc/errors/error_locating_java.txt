@@ -1,0 +1,10 @@
+<b>Cause</b><br />
+Could not locate the ${1} executable<br />
+<br />
+<b>Solutions</b><br />
+Download Java SE from <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a><br />
+<br />
+<b>Technical</b><br />
+KISS IDE expects the executable to be located at "${2}"<br />
+<br />
+If you need additional assistance, please email <a href="mailto:support@kipr.org">support@kipr.org</a> or call (405) 579-4609 <br />

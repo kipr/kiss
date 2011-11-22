@@ -87,6 +87,8 @@ bool Target::simulate(const QString& filename) { return hasSimulate() ? get()->s
 bool Target::debugConsole(const QString& filename, const QList<Location>& bkpts) { return hasDebug() ? get()->debugConsole(filename, m_port, bkpts) : false; }
 DebuggerInterface* Target::debug(const QString& filename) { return hasDebug() ? get()->debug(filename, m_port) : 0; }
 Tab* Target::ui() { return hasUi() ? get()->ui(m_port) : 0; }
+bool Target::hasScreenGrab() { return m_got && get()->hasScreenGrab(); }
+QByteArray Target::screenGrab() { return hasScreenGrab() ? get()->screenGrab(m_port) : QByteArray(); }
 bool Target::hasRequestFile() { return m_got && get()->hasFileRequest(); }
 QStringList Target::requestDir(const QString& filename) { return hasRequestFile() ? get()->requestDir(filename, m_port) : QStringList(); }
 QByteArray Target::requestFile(const QString& filename) { return hasRequestFile() ? get()->requestFile(filename, m_port) : QByteArray(); }

@@ -20,6 +20,7 @@
 
 #include "TargetManager.h"
 #include "Kiss.h"
+#include "ErrorDialog.h"
 
 #include <QSettings>
 #include <QDir>
@@ -132,3 +133,10 @@ QStringList TargetManager::allSupportedExtensions()
 }
 
 QString TargetManager::getExpectedLocation(const QString& name) const { return QString(TARGET_FOLDER) + "/" + name; }
+
+void TargetManager::pluginLoaded(TargetInterface* plugin)
+{
+	if(!plugin->error()) return;
+	
+	ErrorDialog::showError(0, plugin->errorTemplate(), plugin->errorArgs());
+}
