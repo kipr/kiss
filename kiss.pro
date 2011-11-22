@@ -13,7 +13,7 @@
 	win32 {
 		INCLUDEPATH += Qsci
 		CONFIG -= embed_manifest_exe
-		CONFIG += console
+		CONFIG -= console
 	}
 
 	LIBS += -lqscintilla2
