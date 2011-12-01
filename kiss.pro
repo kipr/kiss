@@ -41,7 +41,8 @@
 				include/dialogs/SourceDialog.h \
 				include/dialogs/RequestFileDialog.h \
 				include/VideoPlayerTab.h \
-				include/dialogs/ErrorDialog.h
+				include/dialogs/ErrorDialog.h \
+				include/MacroString.h
 
 	SOURCES += 	src/main.cpp \
 				src/MainWindow.cpp \

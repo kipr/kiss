@@ -27,6 +27,7 @@
 #include "Singleton.h"
 #include "RequestFileDialog.h"
 #include "ErrorDialog.h"
+#include "MacroString.h"
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
@@ -65,13 +66,15 @@ public:
 	const QPixmap& blueBullet() const;
 	const QPixmap& redBullet() const; 
 	const QPixmap& yellowBullet() const;
-	
+	const MacroString* templateMacro() const;
 	Debugger* debugger();
 private:
 	QPixmap m_blackBullet;
 	QPixmap m_blueBullet;
 	QPixmap m_redBullet;
 	QPixmap m_yellowBullet;
+	
+	MacroString m_templateMacro;
 	
 	Debugger m_debugger;
 
@@ -81,6 +84,8 @@ const QPixmap& SourceFileShared::blackBullet() const 	{ return m_blackBullet; }
 const QPixmap& SourceFileShared::blueBullet() const 	{ return m_blueBullet; }
 const QPixmap& SourceFileShared::redBullet() const 	{ return m_redBullet; }
 const QPixmap& SourceFileShared::yellowBullet() const 	{ return m_yellowBullet; }
+
+const MacroString* SourceFileShared::templateMacro() const { return &m_templateMacro; }
 
 Debugger* SourceFileShared::debugger() { return &m_debugger; }
 
@@ -92,6 +97,8 @@ SourceFileShared::SourceFileShared() :
 	m_debugger(&MainWindow::ref())
 {
 	m_debugger.hide();
+
+	m_templateMacro["KISS_DATE"] = new DateMacro();
 }
 
 
@@ -871,28 +878,20 @@ bool SourceFile::changeTarget(bool _template)
 		}
 	
 		QString str = QTextStream(&tFile).readAll();
-		// Move this?
-		str.replace(KISS_DATE, QDate::currentDate().toString(Qt::TextDate));
-		QString text;
+
+		const MacroString* templateMacro = SourceFileShared::ref().templateMacro();
+		str = templateMacro->apply(str);
 		bool lexerSet = false;
-		if(str.contains(END_KISS)) {
-			QString meta = str.section(END_KISS, 0, 0);
-			text = str.section(END_KISS, 1, 1).trimmed() + "\n";
-			foreach(const QString& metaLine, meta.split("\n")) {
-				QStringList parts;
-				foreach(const QString& part, metaLine.split(" ")) parts << part.trimmed();
-				if(parts.size() < 1) continue;
-				// Perhaps something here in the future
-				if(parts.size() < 2) continue;
-				if(parts[0] == KISS_LEXER) {
-					qWarning() << "Template specified" << parts[1];
-					m_lexSpec = LexerManager::ref().lexerSpec(parts[1]);
-					m_templateExt = parts[1];
-					lexerSet = true;
-				}
-			}
-		} else text = str;
-		ui_editor->setText(text);
+		
+		if(templateMacro->macroExists(str, KISS_LEXER, END_KISS)) {
+			QString lex = templateMacro->macroArguments(str, KISS_LEXER, END_KISS)[0];
+			qWarning() << "Template Lexer specified" << lex;
+			m_lexSpec = LexerManager::ref().lexerSpec(lex);
+			m_templateExt = lex;
+			lexerSet = true;
+		}
+		ui_editor->setText(templateMacro->nonMeta(str, END_KISS).trimmed() + "\n");
+		
 		if(!lexerSet) m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value(DEFAULT_EXTENSION, "").toString());
 	}
 	
