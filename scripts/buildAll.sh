@@ -10,10 +10,9 @@ qmake CONFIG+=kiss
 make
 make install
 
+KISS=$PWD
 cd $1
-qmake -r
-make
-make install
+sh build.sh $KISS
 cd -
 
 cd $2

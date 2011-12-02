@@ -34,12 +34,43 @@
 #include <qplugin.h>
 #include <QString>
 
+struct LexerCPP
+{
+	enum {
+		Default = 0,
+		Comment = 1,
+		CommentLine = 2,
+		CommentDoc = 3,
+		Number = 4,
+		Keyword = 5,
+		String = 6,
+		Character = 7,
+		UUID = 8,
+		PreProcessor = 9,
+		Operator = 10,
+		Identifier = 11,
+		StringEol = 12,
+		Verbatim = 13,
+		Regex = 14,
+		CommentLineDoc = 15,
+		Keyword2 = 16,
+		CommentDocKeyword = 17,
+		CommentDocKeywordError = 18,
+		GlobalClass = 19,
+		StyleCount = 20
+	};
+
+	static const char* lexerName() { return "cpp";};
+};
+
 /*! \struct LexerSpec
  * \brief Contains everything necessary to highlight a language
  * 
  * These are to be implemented by a LexerProvider, then loaded at runtime
  */
 struct LexerSpec {
+	QStringList extensions;
+	
 	QString language;
 	/*! Internal lexer as identified by QScintilla */
 	QString lexer;
@@ -58,32 +89,6 @@ struct LexerSpec {
 	QMap<int, QColor> defaultPaper;
 	QMap<int, QString> keywords;
 };
-
-/*! \class LexerProvider
- * \brief Interface for Lexer Plugins.
- *
- * A LexerProvider is loaded by the LexerManager, and provides one LexerSpec for a number of languages.
- */
-class LexerProvider
-{
-public:
-	LexerProvider(const QString& extension) : m_lexerSpec(), m_extension(extension) {}
-	
-	/*! Init sets up a LexerSpec. This should be the only function needed in a plugin */
-	virtual void init() = 0;
-	
-	/*! \return All extensions provided by the lexer provider. Language extensions separated by a space */
-	QStringList extensions() const { return m_extension.split(" "); }
-	
-	/*! \return Inited LexerSpec */
-	LexerSpec* lexerSpec() { return &m_lexerSpec; }
-	
-protected:
-	LexerSpec m_lexerSpec;
-	QString m_extension;
-};
-
-Q_DECLARE_INTERFACE(LexerProvider, "com.kipr.kiss-c.LexerProvider/3.0");
 
 /*! \class Lexer 
  * \brief Interfaces LexerSpec with QScintilla's QsciLexer.

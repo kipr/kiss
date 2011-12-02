@@ -27,6 +27,8 @@
 #include <Qsci/qsciapis.h>
 #include <string.h>
 
+
+
 Lexer::Lexer(LexerSpec* spec, QString api) : QsciLexer(0), m_lexerSpec(spec), m_apis(this)
 {
 	connect(&m_apis, SIGNAL(apiPreparationFinished()), this, SLOT(prepFinished()));

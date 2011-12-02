@@ -8,7 +8,7 @@
 	TARGET = KISS
 	DEPENDPATH += src
 	INCLUDEPATH += include include/dialogs
-	QT += webkit network phonon
+	QT += webkit network phonon script
 
 	win32 {
 		INCLUDEPATH += Qsci
@@ -42,7 +42,8 @@
 				include/dialogs/RequestFileDialog.h \
 				include/VideoPlayerTab.h \
 				include/dialogs/ErrorDialog.h \
-				include/MacroString.h
+				include/MacroString.h \
+				include/JavaScript.h
 
 	SOURCES += 	src/main.cpp \
 				src/MainWindow.cpp \
@@ -62,7 +63,8 @@
 				src/dialogs/SourceDialog.cpp \
 				src/dialogs/RequestFileDialog.cpp \
 				src/VideoPlayerTab.cpp \
-				src/dialogs/ErrorDialog.cpp
+				src/dialogs/ErrorDialog.cpp \
+				src/JavaScript.cpp
 
 	FORMS += 	ui/MainWindow.ui \
 				ui/ChoosePortDialog.ui \

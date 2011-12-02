@@ -29,6 +29,13 @@
 #include <QDebug>
 #include <QDir>
 
+struct CurrentDirectoryMacro : Macro
+{
+	QString macro(const QString& with) const {
+		return QDir::currentPath();
+	}
+};
+
 WebTab::WebTab(QWidget* parent) : QWidget(parent)
 {
 	setupUi(this);
@@ -40,6 +47,8 @@ WebTab::WebTab(QWidget* parent) : QWidget(parent)
 	connect(webView(), SIGNAL(linkClicked(const QUrl&)), this, SLOT(linkClicked(const QUrl&)));
 	
 	ui_frameFind->hide();
+	
+	m_fragmentMacro["KISS_CWD"] = new CurrentDirectoryMacro();
 }
 
 void WebTab::activate() {}
@@ -155,8 +164,7 @@ void WebTab::linkClicked(const QUrl& url)
 		return;
 	}
 	
-	QString fragment = url.fragment();
-	fragment.replace("KISS_CWD", QDir::currentPath());
+	QString fragment = m_fragmentMacro.apply(url.fragment());
 	qWarning() << fragment;
 	if(auth == "newbrowser") {
 		WebTab* tab = new WebTab();

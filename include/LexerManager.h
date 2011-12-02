@@ -22,9 +22,12 @@
 #define __LEXER_SPEC_MANAGER_H__
 
 #include "Lexer.h"
-#include "PluginManager.h"
+#include "Singleton.h"
 
-class LexerManager : public PluginManager<LexerManager, LexerProvider>
+#include <QList>
+#include <QMap>
+
+class LexerManager : public Singleton<LexerManager>
 {
 public:
 	LexerManager();
@@ -32,13 +35,12 @@ public:
 	
 	LexerSpec* lexerSpec(const QString& ext);
 	QString getExpectedLocation(const QString& name) const;
-	
-	void pluginLoaded(LexerProvider* plugin);
-	void pluginUnloaded(LexerProvider* plugin);
 private:
+	void loadLexer(const QString& str);
 	void loadLexers();
 	
-	QMap<QString, LexerProvider*> m_lexers;
+	QMap<QString, LexerSpec*> m_lexerMap;
+	QList<LexerSpec*> m_lexers;
 };
 
 #endif

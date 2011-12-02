@@ -23,6 +23,7 @@
 
 #include "Tab.h"
 #include "ui_WebTab.h"
+#include "MacroString.h"
 
 class MainWindow;
 
@@ -75,6 +76,7 @@ private slots:
 	void linkClicked(const QUrl& url);
 
 private:
+	MacroString m_fragmentMacro;
 };
 
 #endif
