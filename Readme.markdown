@@ -9,10 +9,11 @@ Building this software is very simple, make sure you have the following pieces o
 * QScintilla 2 Dev
 
 Once those are set, run the following commands:
+
 	mkdir -p build
 	cd build
 	cmake ..
 	make
-    make install
+	make install
 
 You should now have KISS ready to go in the deploy/ directory.
