@@ -52,7 +52,6 @@
         <file>welcome/help-browser.png</file>
         <file>welcome/internet-web-browser.png</file>
 		<file>welcome/preferences-desktop.png</file>
-		<file>welcome/beta.html</file>
     </qresource>
     <qresource prefix="/sourcefile">
         <file>icon_set/icons/bullet_red.png</file>

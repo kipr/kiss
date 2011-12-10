@@ -50,7 +50,7 @@
 #include <shellapi.h>
 #endif
 
-#define TITLE "KIPR's Instructional Software System"
+#define TITLE "KIPR's Instructional Software System - Beta 7"
 
 #define OPEN_PATH "openpath"
 
