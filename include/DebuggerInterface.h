@@ -119,6 +119,8 @@ public:
 	virtual void variables() = 0;
 	virtual void threads() = 0;
 	virtual QStringList libs() = 0;
+	
+	virtual void free() = 0;
 
 protected:
 	Responder* m_responder;

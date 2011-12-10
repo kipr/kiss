@@ -35,7 +35,6 @@
 #define TYPE_INSTALLED 	1002
 #define DEFAULT_SOURCE "http://files.kipr.org/kiss/"
 
-
 Repository::Repository(QWidget* parent) : QWidget(parent), m_source(DEFAULT_SOURCE) { setupUi(this); }
 
 void Repository::activate()  { MainWindow::ref().setTitle(m_source); }

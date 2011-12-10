@@ -25,6 +25,8 @@
 #include "ui_WebTab.h"
 #include "MacroString.h"
 
+#define KISS_BACKGROUND "KISS_BACKGROUND"
+
 class MainWindow;
 
 class WebTab : public QWidget, public Tab, protected Ui::WebTab
@@ -76,6 +78,7 @@ private slots:
 	void linkClicked(const QUrl& url);
 
 private:
+	QUrl m_prevUrl;
 	MacroString m_fragmentMacro;
 };
 

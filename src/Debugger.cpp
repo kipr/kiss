@@ -152,7 +152,7 @@ void Debugger::closeEvent(QCloseEvent* event)
 		qWarning() << "Deleted during close.";
 		m_interface->setResponder(0);
 		m_interface->stop();
-		delete m_interface;
+		m_interface->free();
 		m_interface = 0;
 	}
 	event->accept();

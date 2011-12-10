@@ -126,8 +126,6 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 	ui_findFrame->hide();
 }
 
-
-
 void SourceFile::activate()
 {
 	MainWindow::ref().setTitle(m_targetName + (!m_target.port().isEmpty() ? (" - " + m_target.port()) : ""));

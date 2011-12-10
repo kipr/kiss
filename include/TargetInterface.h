@@ -77,6 +77,9 @@ public:
 	
 	void setTargetFile(const QString& filename) { m_targetFile = filename; }
 	
+	template<typename T>
+	void free(T* ptr) { delete ptr; }
+	
 protected:
 	void setError(bool error, const QString& errorTemplate, const QStringList& args)
 	{

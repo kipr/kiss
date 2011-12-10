@@ -28,11 +28,15 @@
 #define DISPLAY_NAME "display_name"
 #define EXTENSIONS "extensions"
 
+#define __ QString("/")
+#define _ + __ +
+#define CP QDir::currentPath()
+
 TargetManager::~TargetManager() { unloadAll(); }
 
 QStringList TargetManager::targets()
 {
-	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER);
+	QDir targetDir(CP _ TARGET_FOLDER);
 
 	// Choke if we can't find the target directory
 	if(!targetDir.exists()) {
@@ -79,36 +83,32 @@ QString TargetManager::displayName(const QString& target)
 		QSettings::IniFormat).value(DISPLAY_NAME).toString();
 }
 
-QString TargetManager::targetPath(const QString& target) { return QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target; }
+QString TargetManager::targetPath(const QString& target) { return CP _ TARGET_FOLDER _ target; }
 
 QStringList TargetManager::templateFolders(const QString& target)
 {
-	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/" + TEMPLATES_FOLDER);
+	QDir targetDir(CP _ TARGET_FOLDER _ target _ TEMPLATES_FOLDER);
 	return targetDir.exists() ? targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) : QStringList();
 }
 
 QStringList TargetManager::templates(const QString& target, const QString& folder)
 {
-	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/" + TEMPLATES_FOLDER + 
-		(folder.isEmpty() ? "" : (QString("/") + folder)));
+	QDir targetDir(CP _ TARGET_FOLDER _ target _ TEMPLATES_FOLDER + (folder.isEmpty() ? "" : (__ + folder)));
 	
 	return targetDir.entryList(QStringList() << (QString("*.") + TEMPLATE_EXT), QDir::Files); 
 }
 
 QIcon TargetManager::templateIcon(const QString& target, const QString& _template, const QString& folder)
 {
-	const QString& base = QDir::currentPath() + "/" + TARGET_FOLDER + "/" + 
-		target + "/" + TEMPLATES_FOLDER + "/" + (folder.isEmpty() ? "" : (folder + "/"));
+	const QString& base = CP _ TARGET_FOLDER _ target _ TEMPLATES_FOLDER _ (folder.isEmpty() ? "" : (folder + __));
 	QFileInfo file(base + _template + ".png");
-	if(!file.exists()) {
-		file.setFile(base + "Default.png");
-	}
+	if(!file.exists()) file.setFile(base + "Default.png");
 	return QIcon(file.filePath());
 }
 
 QStringList TargetManager::allSupportedExtensions()
 {
-	QDir targetDir(QDir::currentPath() + "/" + TARGET_FOLDER);
+	QDir targetDir(CP _ TARGET_FOLDER);
 	QStringList extensionList;
 
 	// Choke if we can't find the target directory
@@ -132,7 +132,7 @@ QStringList TargetManager::allSupportedExtensions()
 	return extensionList;
 }
 
-QString TargetManager::getExpectedLocation(const QString& name) const { return QString(TARGET_FOLDER) + "/" + name; }
+QString TargetManager::getExpectedLocation(const QString& name) const { return QString(TARGET_FOLDER) _ name; }
 
 void TargetManager::pluginLoaded(TargetInterface* plugin)
 {

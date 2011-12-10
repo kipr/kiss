@@ -25,8 +25,6 @@
 #include <QWebPage>
 #include "MainWindow.h"
 
-#define KISS_BACKGROUND "KISS_BACKGROUND"
-
 WelcomeTab::WelcomeTab(QWidget* parent) : WebTab(parent) {}
 void WelcomeTab::addActionsEdit(QMenu*) {}
 void WelcomeTab::addOtherActions(QMenuBar*) {}

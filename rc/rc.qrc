@@ -66,4 +66,7 @@
 		<file>errors/simple_error.txt</file>
 		<file>errors/simple_error_with_action.txt</file>
 	</qresource>
+	<qresource prefix="/">
+		<file>webtab_fail/index.html</file>
+	</qresource>
 </RCC>

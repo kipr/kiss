@@ -111,6 +111,7 @@ void WebTab::updateTitle(const QString& title)
 
 void WebTab::updateUrl(const QUrl& url)
 {
+	
 	actionBack->setEnabled(ui_webView->history()->canGoBack());
 	actionForward->setEnabled(ui_webView->history()->canGoForward());
 	
@@ -126,6 +127,7 @@ bool WebTab::close() { return true; }
 
 void WebTab::load(QString url, bool hideUrl)
 {
+	m_prevUrl = QUrl::fromUserInput(url);
 	ui_webView->load(QUrl::fromUserInput(url));
 	actionGo->setEnabled(!hideUrl);
 	ui_urlBar->setVisible(!hideUrl);
@@ -138,7 +140,26 @@ void WebTab::on_ui_nextFind_clicked() { ui_webView->findText(ui_find->text()); }
 void WebTab::on_ui_webView_loadFinished(bool ok)
 {
 	ui_load->hide();
-	if(!ok) ui_webView->setHtml("Error loading page");
+	
+	if(ok) return;
+	
+	actionGo->setEnabled(false);
+	ui_urlBar->setVisible(false);
+	ui_goButton->setVisible(false);
+	
+	QFile file(":/webtab_fail/index.html");
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return;
+
+	QByteArray data = file.readAll();
+	#ifndef Q_OS_WIN
+	data.replace(KISS_BACKGROUND, palette().color(QPalette::Background).name().toAscii());
+	#else
+	data.replace(KISS_BACKGROUND, "#FFFFFF");
+	#endif
+
+	ui_webView->setHtml(data.data());
+
+	actionOpenInBrowser->setEnabled(false);
 }
 
 void WebTab::on_actionOpenInBrowser_triggered() { QDesktopServices::openUrl(ui_webView->url()); }
@@ -148,9 +169,15 @@ QWebView* WebTab::webView() { return ui_webView; }
 
 void WebTab::linkClicked(const QUrl& url)
 {
-	if(url.scheme() != "kiss") load(url.toString());
+	qWarning() << "Prev URL:" << m_prevUrl;
+	if(url.scheme() != "kiss") {
+		m_prevUrl = ui_webView->url();
+		
+		load(url.toString());
+	}
 	
 	QString auth = url.authority();
+	qWarning() << "Auth" << auth;
 	if(auth == "new") {
 		MainWindow::ref().newFile();
 		return;
@@ -161,6 +188,14 @@ void WebTab::linkClicked(const QUrl& url)
 	}
 	if(auth == "settings") {
 		MainWindow::ref().on_actionEditor_Settings_triggered();
+		return;
+	}
+	if(auth == "openinbrowser") {
+		on_actionOpenInBrowser_triggered();
+		return;
+	}
+	if(auth == "openprevinbrowser") {
+		QDesktopServices::openUrl(m_prevUrl);
 		return;
 	}
 	
