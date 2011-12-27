@@ -50,7 +50,7 @@
 #include <shellapi.h>
 #endif
 
-#define TITLE "KIPR's Instructional Software System - Beta 7"
+#define TITLE "KIPR's Instructional Software System - Beta 8"
 
 #define OPEN_PATH "openpath"
 
@@ -133,6 +133,11 @@ bool MainWindow::openFile(const QString& file)
 
 void MainWindow::initMenus(Tab* tab)
 {
+	menuBar()->setUpdatesEnabled(false);
+	ui_toolBar->setUpdatesEnabled(false);
+	
+	ui_toolBar->hide();
+	
 	menuBar()->clear();
 	menuFile->clear();
 	menuEdit->clear();
@@ -145,6 +150,7 @@ void MainWindow::initMenus(Tab* tab)
 	
 	menuFile->addAction(actionNew);
 	menuFile->addAction(actionOpen);
+	
 	QMenu* recentMenu = menuFile->addMenu(tr("Open Recent"));
 	foreach(const QString& recent, QSettings().value(RECENTS).toStringList()) {
 		QAction* action = recentMenu->addAction(recent);
@@ -158,6 +164,7 @@ void MainWindow::initMenus(Tab* tab)
 	menuFile->addAction(actionPrevious);
 	menuFile->addAction(actionClose);
 	menuFile->addSeparator();
+	
 	QMenu* menuPackages = menuFile->addMenu(tr("Packages"));
 	menuPackages->addAction(actionInstallLocalPackage);
 	menuPackages->addAction(actionManagePackages);
@@ -183,6 +190,11 @@ void MainWindow::initMenus(Tab* tab)
 	ui_toolBar->addAction(actionNew);
 	ui_toolBar->addAction(actionOpen);
 	if(tab) tab->addToolbarActions(ui_toolBar);
+	
+	ui_toolBar->show();
+	
+	ui_toolBar->setUpdatesEnabled(true);
+	menuBar()->setUpdatesEnabled(true);
 }
 
 void MainWindow::setTitle(const QString& title) { setWindowTitle(tr(TITLE) + (title.isEmpty() ? "" : (" - " + title))); }

@@ -27,8 +27,6 @@
 #include <Qsci/qsciapis.h>
 #include <string.h>
 
-
-
 Lexer::Lexer(LexerSpec* spec, QString api) : QsciLexer(0), m_lexerSpec(spec), m_apis(this)
 {
 	connect(&m_apis, SIGNAL(apiPreparationFinished()), this, SLOT(prepFinished()));
@@ -38,7 +36,9 @@ Lexer::Lexer(LexerSpec* spec, QString api) : QsciLexer(0), m_lexerSpec(spec), m_
 }
 
 const char* Lexer::language() const { return m_lexerSpec->language.toLocal8Bit().data(); }
+
 const char* Lexer::lexer() const { return m_lexerSpec->lexer.toLocal8Bit().data(); }
+
 QStringList Lexer::autoCompletionWordSeparators() const { return m_lexerSpec->autoCompletionWordSeparators; }
 
 const char* Lexer::blockStartKeyword(int* style) const
@@ -97,4 +97,5 @@ QColor Lexer::defaultPaper(int style) const
 }
 
 QString Lexer::description(int) const { return " "; }
+
 void Lexer::prepFinished() { setAPIs(&m_apis); }

@@ -44,7 +44,8 @@ public:
 	virtual bool compile(const QString&, const QString&) { return false; }
 	virtual bool run(const QString&, const QString&) { return false; }
 	virtual void stop(const QString&) {}
-	virtual bool download(const QString&, const QString&) { return false; }
+	virtual int download(const QString&, const QString&) { return TargetInterface::UnknownError; }
+	virtual bool rawDownload(const QString&, const QString&) { return false; }
 	virtual bool simulate(const QString&, const QString&) { return false; }
 	virtual bool debugConsole(const QString&, const QString&, const QList<Location>&) { return false; }
 	virtual DebuggerInterface* debug(const QString&, const QString&) { return 0; }
@@ -58,6 +59,7 @@ public:
 	virtual QByteArray requestFile(const QString&, const QString&) { return QByteArray(); }
 
 	virtual bool hasDownload() 	{ return false; }
+	virtual bool hasRawDownload() 	{ return false; }
 	virtual bool hasCompile() 	{ return false; }
 	virtual bool hasRun() 		{ return false; }
 	virtual bool hasStop() 		{ return false; }
@@ -80,6 +82,12 @@ public:
 	template<typename T>
 	void free(T* ptr) { delete ptr; }
 	
+	enum {
+		NoError = 0,
+		CompileFailed,
+		DownloadFailed,
+		UnknownError
+	};
 protected:
 	void setError(bool error, const QString& errorTemplate, const QStringList& args)
 	{

@@ -150,9 +150,7 @@ void LexerManager::loadLexer(const QString& str)
 
 void LexerManager::loadLexers()
 {
-	QStringList ext;
-	ext << "*.js";
-	foreach(const QString& str, QDir(LEXER_FOLDER).entryList(ext)) loadLexer(str);
+	foreach(const QString& str, QDir(LEXER_FOLDER).entryList(QStringList() << "*.js")) loadLexer(str);
 }
 
 QString LexerManager::getExpectedLocation(const QString&) const { return LEXER_FOLDER; }

@@ -137,6 +137,12 @@ private slots:
 	void on_ui_matchCase_stateChanged(int state);
 	void on_ui_replaceNext_clicked();
 	void on_ui_replaceAll_clicked();
+	
+	// The following pertain to the compile failed, still download option
+	void on_ui_always_clicked();
+	void on_ui_yes_clicked();
+	void on_ui_no_clicked();
+	void on_ui_never_clicked();
 private:
 	void showFind();
 	bool checkPort();
@@ -164,6 +170,14 @@ private:
 	int m_currentLine;
 	QWidget* m_runTab;
 	bool m_findModified;
+	
+	int m_alwaysDownload;
+	
+	enum {
+		Always,
+		Ask,
+		Never
+	};
 	
 	void clearProblems();
 	void markProblems(const QStringList& errors, const QStringList& warnings);

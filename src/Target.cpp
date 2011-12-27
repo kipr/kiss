@@ -73,6 +73,7 @@ QStringList Target::sourceExtensions() { return TARGET_SETTINGS.value(EXTENSIONS
 QString Target::defaultExtension() { return TARGET_SETTINGS.value(DEFAULT_EXTENSION).toString(); }
 bool Target::cStyleBlocks() { return TARGET_SETTINGS.value(C_STYLE_BLOCKS).toBool(); }
 bool Target::hasDownload() { return m_got && get()->hasDownload(); }
+bool Target::hasRawDownload() { return m_got && get()->hasRawDownload(); }
 bool Target::hasCompile() { return m_got && get()->hasCompile(); }
 bool Target::hasRun() { return m_got && get()->hasRun(); }
 bool Target::hasStop() { return m_got && get()->hasStop(); }
@@ -80,7 +81,8 @@ bool Target::hasSimulate() { return m_got && get()->hasSimulate(); }
 bool Target::hasDebug() { return m_got && get()->hasDebug(); }
 bool Target::hasUi() { return m_got && get()->hasUi(); }
 bool Target::compile(const QString& filename) {	return hasCompile() ? get()->compile(filename, m_port) : false; }
-bool Target::download(const QString& filename) { return hasDownload() ? get()->download(filename, m_port) : false; }
+int Target::download(const QString& filename) { return hasDownload() ? get()->download(filename, m_port) : false; }
+bool Target::rawDownload(const QString& filename) { return hasRawDownload() ? get()->rawDownload(filename, m_port) : false; }
 bool Target::run(const QString& filename) { return hasRun() ? get()->run(filename, m_port) : false; }
 void Target::stop() { if(!hasStop()) return; get()->stop(m_port); }
 bool Target::simulate(const QString& filename) { return hasSimulate() ? get()->simulate(filename, m_port) : false; }

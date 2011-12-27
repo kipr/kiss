@@ -62,6 +62,8 @@ public:
 
 	/*! \return True if the TargetInterface exists and supports downloading */
 	bool hasDownload();
+	/*! \return True if the TargetInterface exists and supports downloading without check */
+	bool hasRawDownload();
 	/*! \return True if the TargetInterface exists and supports compiling */
 	bool hasCompile();
 	/*! \return True if the TargetInterface exists and supports running */
@@ -85,7 +87,13 @@ public:
 	 * \param filename Absolute path to a file
 	 * \return true if the TargetInterface exists and download was successful
 	 */
-	bool download(const QString& filename);
+	int download(const QString& filename);
+	
+	/*! Downloads a file without checking it's validity
+	 * \param filename Absolute path to a file
+	 * \return true if the TargetInterface exists and download was successful
+	 */
+	bool rawDownload(const QString& filename);
 	
 	/*! Runs a file
 	 * \param filename Absolute path to a file

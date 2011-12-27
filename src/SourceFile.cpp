@@ -103,7 +103,7 @@ SourceFileShared::SourceFileShared() :
 
 
 SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), 
- 	m_targetName("?"), m_debugger(false), m_runTab(0), m_findModified(false)
+ 	m_targetName("?"), m_debugger(false), m_runTab(0), m_findModified(false), m_alwaysDownload(Ask)
 {
 	setupUi(this);
 	
@@ -124,6 +124,7 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 	connect(actionIndentAll, SIGNAL(triggered()), this, SLOT(indentAll()));
 	
 	ui_findFrame->hide();
+	ui_localCompileFailed->hide();
 }
 
 void SourceFile::activate()
@@ -275,7 +276,7 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 	MainWindow::ref().setTabName(this, m_fileInfo.fileName());
 	
 	// Update the lexer to the new spec for that extension
-	LexerSpec* lexerSpec = LexerManager::ref().lexerSpec(m_fileInfo.completeSuffix());
+	LexerSpec* lexerSpec = LexerManager::ref().lexerSpec(m_fileInfo.suffix());
 	if(lexerSpec != m_lexSpec) {
 		m_lexSpec = lexerSpec;
 		refreshSettings();
@@ -579,15 +580,24 @@ void SourceFile::on_actionDownload_triggered()
 	
 	if(!checkPort()) return;
 	
+	ui_localCompileFailed->hide();
+	
 	MainWindow::ref().setStatusMessage("Downloading...");
 	QApplication::flush();
-	MainWindow::ref().setStatusMessage(m_target.download(filePath()) ? tr("Download Succeeded") : tr("Download Failed"));
+	int message = m_target.download(filePath());
+	MainWindow::ref().setStatusMessage(!message ? tr("Download Succeeded") : tr("Download Failed"));
+	if(message == TargetInterface::CompileFailed) {
+		if(m_alwaysDownload == Always && m_target.hasRawDownload()) m_target.rawDownload(filePath());
+		else ui_localCompileFailed->show();
+	}
 	
 	updateErrors();
 }
 
 void SourceFile::on_actionCompile_triggered()
 {
+	ui_localCompileFailed->hide();
+	
 	fileSave();
 	MainWindow::ref().hideErrors();
 	MainWindow::ref().setStatusMessage(m_target.compile(filePath()) ? tr("Compile Succeeded") : tr("Compile Failed"));
@@ -600,6 +610,8 @@ void SourceFile::on_actionRun_triggered()
 	fileSave();
 	
 	if(!checkPort()) return;
+	
+	ui_localCompileFailed->hide();
 	
 	MainWindow::ref().hideErrors();
 	bool success = false;
@@ -623,7 +635,9 @@ void SourceFile::on_actionRun_triggered()
 void SourceFile::on_actionStop_triggered() { m_target.stop(); }
 
 void SourceFile::on_actionSimulate_triggered()
-{	
+{
+	ui_localCompileFailed->hide();
+	
 	fileSave();
 	MainWindow::ref().hideErrors();
 	MainWindow::ref().setStatusMessage(m_target.simulate(filePath()) ? tr("Simulation Succeeded") : tr("Simulation Failed"));
@@ -633,6 +647,8 @@ void SourceFile::on_actionSimulate_triggered()
 
 void SourceFile::on_actionDebug_triggered()
 {
+	ui_localCompileFailed->hide();
+	
 	fileSave();
 	MainWindow::ref().hideErrors();
 	DebuggerInterface* interface = 0;
@@ -771,6 +787,29 @@ void SourceFile::on_ui_replaceAll_clicked()
 	ui_editor->setText(ui_editor->text().replace(ui_find->text(), ui_replace->text()));
 }
 
+void SourceFile::on_ui_always_clicked()
+{
+	on_ui_yes_clicked();
+	m_alwaysDownload = Always;
+}
+
+void SourceFile::on_ui_yes_clicked()
+{
+	ui_localCompileFailed->hide();
+	MainWindow::ref().setStatusMessage("Downloading Anyway...");
+	QApplication::flush();
+	MainWindow::ref().setStatusMessage(m_target.rawDownload(filePath()) ? tr("Download Succeeded") : tr("Download Failed"));
+	
+}
+
+void SourceFile::on_ui_no_clicked() { ui_localCompileFailed->hide(); }
+
+void SourceFile::on_ui_never_clicked()
+{
+	on_ui_no_clicked();
+	m_alwaysDownload = Never;
+}
+
 void SourceFile::showFind()
 {
 	ui_find->clear();
@@ -863,7 +902,7 @@ bool SourceFile::changeTarget(bool _template)
 	if(!_template) {
 		qWarning() << m_fileInfo.completeSuffix();
 		
-		if(!isNewFile()) m_lexSpec = LexerManager::ref().lexerSpec(m_fileInfo.completeSuffix());
+		if(!isNewFile()) m_lexSpec = LexerManager::ref().lexerSpec(m_fileInfo.suffix());
 		else m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value(DEFAULT_EXTENSION, "").toString());
 	} else {
 		QFile tFile(tDialog.templateFile());
