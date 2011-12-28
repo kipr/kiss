@@ -20,7 +20,6 @@
 
 #include "MainWindow.h"
 #include "Kiss.h"
-#include "Lexer.h"
 #include "SourceFile.h"
 #include "WebTab.h"
 #include "TargetManager.h"

@@ -52,6 +52,7 @@
         <file>welcome/help-browser.png</file>
         <file>welcome/internet-web-browser.png</file>
 		<file>welcome/preferences-desktop.png</file>
+		<file>welcome/beta.html</file>
     </qresource>
     <qresource prefix="/sourcefile">
         <file>icon_set/icons/bullet_red.png</file>
@@ -64,16 +65,5 @@
 		<file>errors/error_locating_java.txt</file>
 		<file>errors/simple_error.txt</file>
 		<file>errors/simple_error_with_action.txt</file>
-	</qresource>
-	<qresource prefix="/">
-		<file>webtab_fail/index.html</file>
-	</qresource>
-	<qresource prefix="/">
-		<file>fonts/Inconsolata.otf</file>
-		<file>fonts/DejaVuSansMono-BoldOblique.ttf</file>
-		<file>fonts/DejaVuSansMono-Bold.ttf</file>
-		<file>fonts/DejaVuSansMono-Oblique.ttf</file>
-		<file>fonts/DejaVuSansMono.ttf</file>
-		
 	</qresource>
 </RCC>

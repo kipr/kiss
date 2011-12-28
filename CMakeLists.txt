@@ -17,6 +17,8 @@ INCLUDE_DIRECTORIES(
 	${KISS_BINARY_DIR} 
 	${INCLUDE} 
 	${INCLUDE}/dialogs
+	${INCLUDE}/lexer
+	${INCLUDE}/widgets
 )
 
 SET(QT_USE_QTNETWORK TRUE)
@@ -28,11 +30,10 @@ INCLUDE(${QT_USE_FILE})
 SET(KISS_SRCS_CXX
 	${SRC}/Debugger.cpp
 	${SRC}/KissArchive.cpp
-	${SRC}/Lexer.cpp
-	${SRC}/LexerManager.cpp
 	${SRC}/MainWindow.cpp
 	${SRC}/Repository.cpp
 	${SRC}/SourceFile.cpp
+	${SRC}/SourceFileShared.cpp
 	${SRC}/Target.cpp
 	${SRC}/TargetManager.cpp
 	${SRC}/WebTab.cpp
@@ -42,10 +43,16 @@ SET(KISS_SRCS_CXX
 	${SRC}/dialogs/SourceDialog.cpp
 	${SRC}/dialogs/TemplateDialog.cpp
 	${SRC}/dialogs/RequestFileDialog.cpp
+	${SRC}/lexer/LexerC.cpp
+	${SRC}/lexer/LexerCPP.cpp
+	${SRC}/lexer/LexerJava.cpp
+	${SRC}/lexer/LexerFactory.cpp
 	${SRC}/VideoPlayerTab.cpp
 	${SRC}/dialogs/ErrorDialog.cpp
 	${SRC}/JavaScript.cpp
 	${SRC}/main.cpp
+	${SRC}/widgets/SourceFindWidget.cpp
+	${SRC}/widgets/SourceLocalFailed.cpp
 )
 
 SET(KISS_UI
@@ -66,14 +73,16 @@ SET(KISS_UI
 	${UI}/RequestFileDialog.ui
 	${UI}/VideoPlayerTab.ui
 	${UI}/ErrorDialog.ui
+	${UI}/SourceFindWidget.ui
+	${UI}/SourceLocalFailed.ui
 )
 
 SET(KISS_MOC_SRCS
 	${INCLUDE}/Debugger.h
-	${INCLUDE}/Lexer.h
 	${INCLUDE}/MainWindow.h
 	${INCLUDE}/Repository.h
 	${INCLUDE}/SourceFile.h
+	${INCLUDE}/SourceFileShared.h
 	${INCLUDE}/Target.h
 	${INCLUDE}/WebTab.h
 	${INCLUDE}/WelcomeTab.h
@@ -82,10 +91,16 @@ SET(KISS_MOC_SRCS
 	${INCLUDE}/dialogs/SourceDialog.h
 	${INCLUDE}/dialogs/TemplateDialog.h
 	${INCLUDE}/dialogs/RequestFileDialog.h
+	${INCLUDE}/lexer/LexerC.h
+	${INCLUDE}/lexer/LexerCPP.h
+	${INCLUDE}/lexer/LexerJava.h
+	${INCLUDE}/lexer/LexerFactory.h
 	${INCLUDE}/VideoPlayerTab.h
 	${INCLUDE}/dialogs/ErrorDialog.h
 	${INCLUDE}/MacroString.h
 	${INCLUDE}/JavaScript.h
+	${INCLUDE}/widgets/SourceFindWidget.h
+	${INCLUDE}/widgets/SourceLocalFailed.h
 )
 
 SET(KISS_QRC_FILES
@@ -99,8 +114,6 @@ QT4_ADD_RESOURCES(KISS_SRCS_CXX ${KISS_QRC_FILES})
 
 IF(APPLE)
 	SET(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.7.sdk")
-	SET(CMAKE_CXX_FLAGS "-arch i386")
-	SET(LINK_FLAGS "-arch i386")
 	LINK_DIRECTORIES(/Library/Frameworks/)
 	ADD_EXECUTABLE(KISS MACOSX_BUNDLE ${KISS_SRCS_CXX})
 ELSEIF(UNIX)

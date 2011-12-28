@@ -43,7 +43,7 @@ WebTab::WebTab(QWidget* parent) : QWidget(parent)
 	connect(ui_webView, SIGNAL(titleChanged(const QString&)), this, SLOT(updateTitle(const QString&)));
 	connect(ui_webView, SIGNAL(urlChanged(const QUrl&)), this, SLOT(updateUrl(const QUrl&)));
 	
-	webView()->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks); // Make sure we get to handle special links
+	ui_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
 	connect(webView(), SIGNAL(linkClicked(const QUrl&)), this, SLOT(linkClicked(const QUrl&)));
 	
 	ui_frameFind->hide();
@@ -172,8 +172,6 @@ void WebTab::linkClicked(const QUrl& url)
 	qWarning() << "Prev URL:" << m_prevUrl;
 	if(url.scheme() != "kiss") {
 		m_prevUrl = ui_webView->url();
-		
-		load(url.toString());
 	}
 	
 	QString auth = url.authority();

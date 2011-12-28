@@ -22,12 +22,14 @@
 
 #include "MainWindow.h"
 #include "WebTab.h"
-#include "LexerManager.h"
 #include "TargetManager.h"
 #include "Singleton.h"
 #include "RequestFileDialog.h"
 #include "ErrorDialog.h"
 #include "MacroString.h"
+#include "LexerFactory.h"
+
+#include "SourceFileShared.h"
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
@@ -49,6 +51,7 @@
 #include <QPixmap>
 #include <QDesktopServices>
 #include <QUrl>
+#include <Qsci/qscilexercpp.h>
 
 #define SAVE_PATH "savepath"
 #define DEFAULT_EXTENSION "default_extension"
@@ -57,55 +60,13 @@
 #define KISS_DATE "KISS_DATE"
 #define END_KISS "END_KISS_META"
 
-class SourceFileShared : public Singleton<SourceFileShared>
-{
-public:	
-	SourceFileShared();
-	
-	const QPixmap& blackBullet() const;
-	const QPixmap& blueBullet() const;
-	const QPixmap& redBullet() const; 
-	const QPixmap& yellowBullet() const;
-	const MacroString* templateMacro() const;
-	Debugger* debugger();
-private:
-	QPixmap m_blackBullet;
-	QPixmap m_blueBullet;
-	QPixmap m_redBullet;
-	QPixmap m_yellowBullet;
-	
-	MacroString m_templateMacro;
-	
-	Debugger m_debugger;
-
-};
-
-const QPixmap& SourceFileShared::blackBullet() const 	{ return m_blackBullet; }
-const QPixmap& SourceFileShared::blueBullet() const 	{ return m_blueBullet; }
-const QPixmap& SourceFileShared::redBullet() const 	{ return m_redBullet; }
-const QPixmap& SourceFileShared::yellowBullet() const 	{ return m_yellowBullet; }
-
-const MacroString* SourceFileShared::templateMacro() const { return &m_templateMacro; }
-
-Debugger* SourceFileShared::debugger() { return &m_debugger; }
-
-SourceFileShared::SourceFileShared() :
-	m_blackBullet(":/sourcefile/icon_set/icons/bullet_black.png"), 
-	m_blueBullet(":/sourcefile/icon_set/icons/bullet_blue.png"), 
-	m_redBullet(":/sourcefile/icon_set/icons/bullet_red.png"), 
-	m_yellowBullet(":/sourcefile/icon_set/icons/bullet_yellow.png"),
-	m_debugger(&MainWindow::ref())
-{
-	m_debugger.hide();
-
-	m_templateMacro["KISS_DATE"] = new DateMacro();
-}
-
-
 SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), 
- 	m_targetName("?"), m_debugger(false), m_runTab(0), m_findModified(false), m_alwaysDownload(Ask)
+ 	m_targetName("?"), m_debugger(false), m_runTab(0)
 {
 	setupUi(this);
+	
+	ui_localCompileFailed->setSourceFile(this);
+	ui_find->setSourceFile(this);
 	
 	m_errorIndicator = ui_editor->markerDefine(SourceFileShared::ref().redBullet());
 	m_warningIndicator = ui_editor->markerDefine(SourceFileShared::ref().yellowBullet());
@@ -123,8 +84,10 @@ SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Unti
 	connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
 	connect(actionIndentAll, SIGNAL(triggered()), this, SLOT(indentAll()));
 	
-	ui_findFrame->hide();
+	ui_find->hide();
 	ui_localCompileFailed->hide();
+	
+	refreshSettings();
 }
 
 void SourceFile::activate()
@@ -276,12 +239,9 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 	MainWindow::ref().setTabName(this, m_fileInfo.fileName());
 	
 	// Update the lexer to the new spec for that extension
-	LexerSpec* lexerSpec = LexerManager::ref().lexerSpec(m_fileInfo.suffix());
-	if(lexerSpec != m_lexSpec) {
-		m_lexSpec = lexerSpec;
-		refreshSettings();
-		updateMargins();
-	}
+	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(m_fileInfo.suffix());
+	if(Lexer::Factory::isLexerFromConstructor((Lexer::LexerBase*)ui_editor->lexer(), constructor))
+		setLexer(constructor);
 	
 	return true;
 }
@@ -303,14 +263,10 @@ bool SourceFile::fileOpen(const QString& filePath)
 
 	MainWindow::ref().setTabName(this, m_fileInfo.fileName());
 
-	// Update the lexer to the new spec for that extension
-	LexerSpec* lexerSpec = LexerManager::ref().lexerSpec(m_fileInfo.completeSuffix());
-	if(lexerSpec != m_lexSpec) {
-		m_lexSpec = lexerSpec;
-		refreshSettings();
-		updateMargins();
-	}
-
+	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(m_fileInfo.suffix());
+	if(Lexer::Factory::isLexerFromConstructor((Lexer::LexerBase*)ui_editor->lexer(), constructor))
+		setLexer(constructor);
+		
 	return true;
 }
 
@@ -440,13 +396,6 @@ void SourceFile::keyPressEvent(QKeyEvent *event)
 
 void SourceFile::refreshSettings()
 {
-	/* Get rid of the old lexer */
-	QsciLexer *lexer = ui_editor->lexer();
-	ui_editor->setLexer(0); delete lexer; lexer = 0;
-	
-	/* Get a new lexer if a spec is defined */
-	if(m_lexSpec) lexer = new Lexer(m_lexSpec, m_lexAPI);
-	
 	/* Read font, indent, margin, etc. settings */
 	QSettings settings;
 	settings.beginGroup(EDITOR);
@@ -454,15 +403,12 @@ void SourceFile::refreshSettings()
 	/* Set the default font from settings */
 	QFont defFont(settings.value(FONT).toString(), settings.value(FONT_SIZE).toInt());
 	
-	if(lexer) {
-		lexer->defaultColor(0);
-		lexer->setDefaultFont(defFont);
-	} else ui_editor->setFont(defFont);
+	Lexer::Factory::ref().setFont(defFont);
 
 	/* Set other options from settings */
 	settings.beginGroup(AUTO_INDENT);
 	ui_editor->setAutoIndent(settings.value(ENABLED).toBool());
-	if(lexer) lexer->setAutoIndentStyle(settings.value(STYLE).toString() == MAINTAIN ? 
+	if(ui_editor->lexer()) ui_editor->lexer()->setAutoIndentStyle(settings.value(STYLE).toString() == MAINTAIN ? 
 		QsciScintilla::AiMaintain : 0);
 	ui_editor->setTabWidth(settings.value(WIDTH).toInt());
 	settings.endGroup();
@@ -495,8 +441,8 @@ void SourceFile::refreshSettings()
 	m_debugger = settings.value(DEBUGGER_ENABLED).toBool();
 
 	settings.endGroup();
-
-	ui_editor->setLexer(lexer);
+	
+	ui_editor->setLexer(ui_editor->lexer());
 	
 	updateMargins();
 	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
@@ -527,6 +473,9 @@ void SourceFile::updateMargins()
 int SourceFile::getZoom() { return ui_editor->SendScintilla(QsciScintilla::SCI_GETZOOM); }
 QsciScintilla* SourceFile::getEditor() { return ui_editor; }
 void SourceFile::moveTo(int line, int pos)  { if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos); }
+
+Target* SourceFile::target() { return &m_target; }
+QsciScintilla* SourceFile::editor() { return ui_editor; }
 
 void SourceFile::zoomIn() { ui_editor->zoomIn(); updateMargins(); }
 void SourceFile::zoomOut() { ui_editor->zoomOut(); updateMargins(); }
@@ -572,7 +521,7 @@ void SourceFile::on_actionSaveAs_triggered()
 	settings.setValue(RECENTS, current);
 }
 
-void SourceFile::sourceModified(bool m) { Q_UNUSED(m); MainWindow::ref().setTabName(this, "* " + m_fileInfo.fileName()); }
+void SourceFile::sourceModified(bool) { MainWindow::ref().setTabName(this, "* " + m_fileInfo.fileName()); }
 
 void SourceFile::on_actionDownload_triggered()
 {	
@@ -587,8 +536,7 @@ void SourceFile::on_actionDownload_triggered()
 	int message = m_target.download(filePath());
 	MainWindow::ref().setStatusMessage(!message ? tr("Download Succeeded") : tr("Download Failed"));
 	if(message == TargetInterface::CompileFailed) {
-		if(m_alwaysDownload == Always && m_target.hasRawDownload()) m_target.rawDownload(filePath());
-		else ui_localCompileFailed->show();
+		ui_localCompileFailed->performAction(filePath());
 	}
 	
 	updateErrors();
@@ -621,6 +569,7 @@ void SourceFile::on_actionRun_triggered()
 		int i = MainWindow::ref().tabWidget()->indexOf(m_runTab);
 		if(i >= 0) MainWindow::ref().deleteTab(i);
 	}
+	
 	Tab* ui = success ? m_target.ui() : 0;
 	m_runTab = !ui ? 0 : dynamic_cast<QWidget*>(ui);
 	if(ui) {
@@ -771,51 +720,7 @@ void SourceFile::on_ui_editor_cursorPositionChanged(int line, int)
 	updateBreakpointToggle();
 }
 
-void SourceFile::on_ui_next_clicked()
-{
-	if(m_findModified) ui_editor->findFirst(ui_find->text(), false, ui_matchCase->isChecked(), false, true);
-	else ui_editor->findNext();
-	m_findModified = false;
-}
-
-void SourceFile::on_ui_find_textChanged(const QString&) { m_findModified = true; }
-void SourceFile::on_ui_matchCase_stateChanged(int) { m_findModified = true; }
-void SourceFile::on_ui_replaceNext_clicked() { ui_editor->replace(ui_replace->text()); on_ui_next_clicked(); }
-
-void SourceFile::on_ui_replaceAll_clicked()
-{
-	ui_editor->setText(ui_editor->text().replace(ui_find->text(), ui_replace->text()));
-}
-
-void SourceFile::on_ui_always_clicked()
-{
-	on_ui_yes_clicked();
-	m_alwaysDownload = Always;
-}
-
-void SourceFile::on_ui_yes_clicked()
-{
-	ui_localCompileFailed->hide();
-	MainWindow::ref().setStatusMessage("Downloading Anyway...");
-	QApplication::flush();
-	MainWindow::ref().setStatusMessage(m_target.rawDownload(filePath()) ? tr("Download Succeeded") : tr("Download Failed"));
-	
-}
-
-void SourceFile::on_ui_no_clicked() { ui_localCompileFailed->hide(); }
-
-void SourceFile::on_ui_never_clicked()
-{
-	on_ui_no_clicked();
-	m_alwaysDownload = Never;
-}
-
-void SourceFile::showFind()
-{
-	ui_find->clear();
-	ui_replace->clear();
-	ui_findFrame->show();
-}
+void SourceFile::showFind() { ui_find->show(); }
 
 bool SourceFile::checkPort()
 {
@@ -825,6 +730,16 @@ bool SourceFile::checkPort()
 	}
 	MainWindow::ref().refreshMenus();
 	return true;
+}
+
+void SourceFile::setLexer(Lexer::Constructor* constructor)
+{
+	delete ui_editor->lexer();
+	Lexer::LexerBase* lex = constructor->construct();
+	ui_editor->setLexer(lex);
+	Lexer::Factory::setAPIsForLexer(lex, m_lexAPI);
+	refreshSettings();
+	updateMargins();
 }
 
 void SourceFile::dropEvent(QDropEvent *event) { Q_UNUSED(event); }
@@ -862,7 +777,7 @@ void SourceFile::updateErrors()
 				m_target.verboseMessages());
 		
 	MainWindow::ref().showErrors(this);
-				
+
 	markProblems(errors, warnings);
 }
 
@@ -898,12 +813,14 @@ bool SourceFile::changeTarget(bool _template)
 		on_actionChoosePort_triggered();
 		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
 	}
+	
+	Lexer::Constructor* constructor = 0;
 
 	if(!_template) {
 		qWarning() << m_fileInfo.completeSuffix();
 		
-		if(!isNewFile()) m_lexSpec = LexerManager::ref().lexerSpec(m_fileInfo.suffix());
-		else m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value(DEFAULT_EXTENSION, "").toString());
+		if(!isNewFile()) constructor = Lexer::Factory::ref().constructor(m_fileInfo.suffix());
+		else constructor = Lexer::Factory::ref().constructor(targetSettings.value(DEFAULT_EXTENSION, "").toString());
 	} else {
 		QFile tFile(tDialog.templateFile());
 		if(!tFile.open(QIODevice::ReadOnly)) {
@@ -923,19 +840,21 @@ bool SourceFile::changeTarget(bool _template)
 		if(templateMacro->macroExists(str, KISS_LEXER, END_KISS)) {
 			QString lex = templateMacro->macroArguments(str, KISS_LEXER, END_KISS)[0];
 			qWarning() << "Template Lexer specified" << lex;
-			m_lexSpec = LexerManager::ref().lexerSpec(lex);
+			constructor = Lexer::Factory::ref().constructor(lex);
 			m_templateExt = lex;
 			lexerSet = true;
 		}
 		ui_editor->setText(templateMacro->nonMeta(str, END_KISS).trimmed() + "\n");
 		
-		if(!lexerSet) m_lexSpec = LexerManager::ref().lexerSpec(targetSettings.value(DEFAULT_EXTENSION, "").toString());
+		if(!lexerSet) constructor = Lexer::Factory::ref().constructor(targetSettings.value(DEFAULT_EXTENSION, "").toString());
 	}
 	
 	m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
 	m_targetName = QFileInfo(targetPath).baseName();
+	
+	setLexer(constructor);
+	
 	refreshSettings();
-	MainWindow::ref().refreshMenus();
 	
 	return true;
 }

@@ -74,7 +74,7 @@ struct LexerScript : JavaScriptEnvironment
 		for(QMap<QString, QScriptValue>::iterator it = defaultFont.begin(); it != defaultFont.end(); ++it) {
 			QMap<QString, QScriptValue> font = JavaScript::objectMap(it.value());
 			spec->defaultFont[it.key().toInt()] = QFont(font["name"].toString(), font["size"].toInt32(),
-				font["weight"].toUInt32(), font["italic"].toBool());
+				QFont::Bold, font["italic"].toBool());
 		}
 		
 		QMap<QString, QString> defaultPaper = JavaScript::objectStringMap(global.property("defaultPaper"));

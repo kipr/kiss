@@ -98,4 +98,4 @@ QColor Lexer::defaultPaper(int style) const
 
 QString Lexer::description(int) const { return " "; }
 
-void Lexer::prepFinished() { setAPIs(&m_apis); }
+void Lexer::prepFinished() { }

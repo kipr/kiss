@@ -24,7 +24,6 @@
 #include "MainWindow.h"
 #include "Kiss.h"
 #include "TargetManager.h"
-#include "LexerManager.h"
 #include "SourceDialog.h"
 
 #include <QCoreApplication>

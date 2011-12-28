@@ -21,7 +21,6 @@
 #ifndef __SourceFile_H__
 #define __SourceFile_H__
 
-#include "Lexer.h"
 #include "TemplateDialog.h"
 #include "ChoosePortDialog.h"
 #include "EditorSettingsDialog.h"
@@ -30,9 +29,13 @@
 #include "Tab.h"
 #include "Debugger.h"
 
+#include "SourceFindWidget.h"
+#include "SourceLocalFailed.h"
+
 #include <QtGlobal>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexer.h>
+#include <Qsci/qsciapis.h>
 #include <QString>
 #include <QFile>
 #include <QFileInfo>
@@ -45,6 +48,8 @@
 
 class FindDialog;
 class MainWindow;
+
+namespace Lexer { class Constructor; }
 
 class SourceFile : public QWidget, public Tab, private Ui::SourceFile
 {
@@ -80,7 +85,10 @@ public:
 	QsciScintilla* getEditor();
 	
 	void moveTo(int line, int pos);
-
+	
+	Target* target();
+	QsciScintilla* editor();
+	
 public slots:
 	void indentAll();
 	void refreshSettings();
@@ -98,13 +106,6 @@ public slots:
 	bool fileSave();
 
 	void sourceModified(bool m);
-	
-	void on_actionDownload_triggered();
-	void on_actionCompile_triggered();
-	void on_actionRun_triggered();
-	void on_actionStop_triggered();
-	void on_actionSimulate_triggered();
-	void on_actionDebug_triggered();
 	
 private slots:
 	void on_actionCopy_triggered();
@@ -124,6 +125,12 @@ private slots:
 	void on_actionChangeTarget_triggered();
 	void on_actionChoosePort_triggered();
 	
+	void on_actionDownload_triggered();
+	void on_actionCompile_triggered();
+	void on_actionRun_triggered();
+	void on_actionStop_triggered();
+	void on_actionSimulate_triggered();
+	void on_actionDebug_triggered();
 	void on_actionScreenGrab_triggered();
 	void on_actionRequestFile_triggered();
 	
@@ -131,21 +138,11 @@ private slots:
 	void on_actionClearBreakpoints_triggered();
 	
 	void on_ui_editor_cursorPositionChanged(int line, int index);
-	
-	void on_ui_next_clicked();
-	void on_ui_find_textChanged(const QString& text);
-	void on_ui_matchCase_stateChanged(int state);
-	void on_ui_replaceNext_clicked();
-	void on_ui_replaceAll_clicked();
-	
-	// The following pertain to the compile failed, still download option
-	void on_ui_always_clicked();
-	void on_ui_yes_clicked();
-	void on_ui_no_clicked();
-	void on_ui_never_clicked();
 private:
 	void showFind();
 	bool checkPort();
+	
+	void setLexer(Lexer::Constructor* constructor);
 	
 	QFile m_fileHandle;
 	QFileInfo m_fileInfo;
@@ -153,7 +150,6 @@ private:
 	int m_zoomLevel;
         void dropEvent(QDropEvent *event);
 	Target m_target;
-	LexerSpec* m_lexSpec;
 	QString m_lexAPI;
 	QString m_targetName;
 	QString m_templateExt;
@@ -169,15 +165,8 @@ private:
 	
 	int m_currentLine;
 	QWidget* m_runTab;
-	bool m_findModified;
 	
-	int m_alwaysDownload;
-	
-	enum {
-		Always,
-		Ask,
-		Never
-	};
+	//QsciAPIs m_apis;
 	
 	void clearProblems();
 	void markProblems(const QStringList& errors, const QStringList& warnings);

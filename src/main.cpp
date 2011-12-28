@@ -111,7 +111,11 @@ int main(int argc, char **argv)
 	QApplication::setApplicationName("KISS");
 	QApplication::setWindowIcon(QIcon(":/icon.png"));
 	
-	qWarning() << "Phonon Mime Types Available:" << Phonon::BackendCapabilities::availableMimeTypes();
+	// qWarning() << "Phonon Mime Types Available:" << Phonon::BackendCapabilities::availableMimeTypes();
+	
+	QFontDatabase::addApplicationFont(":/fonts/Inconsolata.otf");
+	QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono-Bold.ttf");
+	QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
 	
 	QPixmap splashPixmap(":/splash_screen.png");
 	QSplashScreen splash(splashPixmap);
