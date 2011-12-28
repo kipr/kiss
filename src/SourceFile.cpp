@@ -403,6 +403,7 @@ void SourceFile::refreshSettings()
 	/* Set the default font from settings */
 	QFont defFont(settings.value(FONT).toString(), settings.value(FONT_SIZE).toInt());
 	
+	if(ui_editor->lexer()) ui_editor->lexer()->setFont(defFont, -1);
 	Lexer::Factory::ref().setFont(defFont);
 
 	/* Set other options from settings */
