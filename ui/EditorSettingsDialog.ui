@@ -51,6 +51,14 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="currentFont">
+           <font>
+            <family>Academy Engraved LET</family>
+            <pointsize>14</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
          </widget>
         </item>
         <item>

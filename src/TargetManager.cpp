@@ -20,7 +20,7 @@
 
 #include "TargetManager.h"
 #include "Kiss.h"
-#include "ErrorDialog.h"
+#include "MessageDialog.h"
 
 #include <QSettings>
 #include <QDir>
@@ -85,27 +85,6 @@ QString TargetManager::displayName(const QString& target)
 
 QString TargetManager::targetPath(const QString& target) { return CP _ TARGET_FOLDER _ target; }
 
-QStringList TargetManager::templateFolders(const QString& target)
-{
-	QDir targetDir(CP _ TARGET_FOLDER _ target _ TEMPLATES_FOLDER);
-	return targetDir.exists() ? targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) : QStringList();
-}
-
-QStringList TargetManager::templates(const QString& target, const QString& folder)
-{
-	QDir targetDir(CP _ TARGET_FOLDER _ target _ TEMPLATES_FOLDER + (folder.isEmpty() ? "" : (__ + folder)));
-	
-	return targetDir.entryList(QStringList() << (QString("*.") + TEMPLATE_EXT), QDir::Files); 
-}
-
-QIcon TargetManager::templateIcon(const QString& target, const QString& _template, const QString& folder)
-{
-	const QString& base = CP _ TARGET_FOLDER _ target _ TEMPLATES_FOLDER _ (folder.isEmpty() ? "" : (folder + __));
-	QFileInfo file(base + _template + ".png");
-	if(!file.exists()) file.setFile(base + "Default.png");
-	return QIcon(file.filePath());
-}
-
 QStringList TargetManager::allSupportedExtensions()
 {
 	QDir targetDir(CP _ TARGET_FOLDER);
@@ -138,5 +117,5 @@ void TargetManager::pluginLoaded(TargetInterface* plugin)
 {
 	if(!plugin->error()) return;
 	
-	ErrorDialog::showError(0, plugin->errorTemplate(), plugin->errorArgs());
+	MessageDialog::showError(0, plugin->errorTemplate(), plugin->errorArgs());
 }

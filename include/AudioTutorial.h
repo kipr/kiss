@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,35 +18,56 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef __TEMPLATEDIALOG_H__
-#define __TEMPLATEDIALOG_H__
+#ifndef _AUDIOTUTORIAL_H_
+#define _AUDIOTUTORIAL_H_
 
-#include "ui_TemplateDialog.h"
-#include <QDialog>
-#include <QFile>
+#include "UiEventManager.h"
 
-class TemplateDialog : public QDialog, private Ui::TemplateDialog
+#include <QList>
+#include <phonon>
+
+struct TutorialState;
+
+class AudioTutorial : public QObject, public UiEventListener
 {
-	Q_OBJECT
+Q_OBJECT
 public:
-	TemplateDialog(QWidget* parent = 0);
+	AudioTutorial(const QString& path);
+	~AudioTutorial();
 	
-	int exec();
-	int execTarget();
+	const bool start();
+	void resume();
+	void stop();
 	
-	// Returns to the path of the target file for the selected target
-	QString selectedTargetFilePath();
-	QString templateFile();
+	const int state() const;
+	const bool loaded() const;
+	
+	void event(const QString& name, const QStringList& args);
+
+	enum {
+		Playing,
+		Waiting,
+		Off
+	};
+
 private slots:
-	void on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);
-	void on_ui_templates_itemDoubleClicked(QTreeWidgetItem* current);
-	
-	void on_ui_templates_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem*);
-	void on_ui_remove_clicked();
-	
+	void finished();
+
 private:
-	void addTemplates(const QString& target, QTreeWidgetItem* parentItem, const QString& parent);
-	void addUserTemplates(const QString& target);
+	void load();
+	bool m_loaded;
+	
+	bool fastForward(const QString& name);
+	
+	int m_state;
+	int m_currentIndex;
+	
+	Phonon::MediaObject* m_current;
+	QString m_path;
+	
+	TutorialState* m_exit;
+	
+	QList<TutorialState*> m_states;
 };
 
 #endif

@@ -27,7 +27,9 @@
 #include "KissArchive.h"
 #include "ChoosePortDialog.h"
 #include "Repository.h"
-#include "ErrorDialog.h"
+#include "MessageDialog.h"
+
+#include "UiEventManager.h"
 
 #include <QToolTip>
 #include <QMessageBox>
@@ -49,7 +51,7 @@
 #include <shellapi.h>
 #endif
 
-#define TITLE "KIPR's Instructional Software System - Beta 8"
+#define TITLE "KIPR's Instructional Software System"
 
 #define OPEN_PATH "openpath"
 
@@ -92,7 +94,7 @@ MainWindow::~MainWindow()
 	while(ui_tabWidget->count() > 0) deleteTab(0);
 }
 
-void MainWindow::newFile() { addTab(new SourceFile(this)); }
+void MainWindow::newFile() { UiEventManager::ref().sendEvent(UI_EVENT_NEW_FILE); addTab(new SourceFile(this)); }
 
 bool MainWindow::openFile(const QString& file)
 {
@@ -112,7 +114,7 @@ bool MainWindow::openFile(const QString& file)
 	/* Attempt to open the selected file */
 	SourceFile *sourceFile = new SourceFile(this);
 	if(!sourceFile->fileOpen(file)) {
-		ErrorDialog::showError(this, "simple_error", QStringList() <<
+		MessageDialog::showError(this, "simple_error", QStringList() <<
 			tr("Could not open ") + sourceFile->fileName() <<
 			tr("Unable to open file for reading."));
 		delete sourceFile;
@@ -126,6 +128,8 @@ bool MainWindow::openFile(const QString& file)
 	settings.setValue(RECENTS, current);
 	
 	addTab(sourceFile);
+	
+	UiEventManager::ref().sendEvent(UI_EVENT_OPEN_FILE);
 
 	return true;
 }
@@ -349,6 +353,8 @@ void MainWindow::on_actionClose_triggered()
 	ui_errorView->hide();
 	
 	actionClose->setEnabled(ui_tabWidget->count() > 0);
+	
+	UiEventManager::ref().sendEvent(UI_EVENT_CLOSE_TAB);
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -413,7 +419,7 @@ void MainWindow::on_actionInstallLocalPackage_triggered()
 
 		QFile f(filePath);
 		if(!f.open(QIODevice::ReadOnly)) {
-			ErrorDialog::showError(this, "simple_error", QStringList() << 
+			MessageDialog::showError(this, "simple_error", QStringList() << 
 				tr("Installation of KISS Archive ") + fileInfo.fileName() + tr(" failed.") <<
 				tr("Unable to open package file for reading."));
 			return;
@@ -421,7 +427,7 @@ void MainWindow::on_actionInstallLocalPackage_triggered()
 	
 		KissReturn ret(KissArchive::install(&f));
 		if(ret.error) {
-			ErrorDialog::showError(this, "simple_error", QStringList() << 
+			MessageDialog::showError(this, "simple_error", QStringList() << 
 				tr("Installation of KISS Archive ") + fileInfo.fileName() + tr(" failed.") <<
 				ret.message);
 			return;

@@ -46,6 +46,29 @@
 #include <QMenuBar>
 #include <QToolBar>
 
+#define UI_EVENT_FILE_SAVE "save"
+#define UI_EVENT_FILE_SAVE_AS "saveAs"
+#define UI_EVENT_ZOOM_IN "zoomIn"
+#define UI_EVENT_ZOOM_OUT "zoomOut"
+#define UI_EVENT_ZOOM_RESET "zoomReset"
+
+#define UI_EVENT_COMPILE "compile"
+#define UI_EVENT_DOWNLOAD "download"
+#define UI_EVENT_SIMULATE "simulate"
+#define UI_EVENT_RUN "run"
+#define UI_EVENT_STOP "stop"
+#define UI_EVENT_DEBUG "debug"
+
+#define UI_EVENT_MAKE_TEMPLATE "makeTemplate"
+#define UI_EVENT_MAKE_TEMPLATE2 "makeTemplate2"
+
+#define UI_EVENT_CHANGE_PORT "changePort"
+#define UI_EVENT_CHANGE_TARGET "changeTarget"
+
+#define UI_EVENT_TEMPLATE_SELECTED "templateSelected"
+
+#define UI_EVENT_OPEN_MANUAL "openManual"
+
 class FindDialog;
 class MainWindow;
 
@@ -74,6 +97,10 @@ public:
 
 	//! \return File's Name
 	QString fileName();
+	//! \return File's Base Name. Ex: test.c -> test
+	QString fileBaseName();
+	//! \return File's Suffix. Ex: test.c -> c
+	QString fileSuffix();
 	//! \return Absolute path to current file
 	QString filePath();
 	//! \return true if file is new
@@ -133,6 +160,8 @@ private slots:
 	void on_actionDebug_triggered();
 	void on_actionScreenGrab_triggered();
 	void on_actionRequestFile_triggered();
+	
+	void on_actionMakeTemplate_triggered();
 	
 	void on_actionToggleBreakpoint_triggered(bool checked);
 	void on_actionClearBreakpoints_triggered();

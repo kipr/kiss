@@ -24,8 +24,10 @@
 #define LEXER_FOLDER "lexers"
 #define TARGET_FOLDER "targets"
 #define TEMPLATES_FOLDER "templates"
+#define COMPILERS_FOLDER "compilers"
 #define TEMPLATE_EXT "template"
 #define TARGET_EXT "target"
+#define USER_FOLDER "user"
 
 #ifdef Q_OS_WIN
 #define OS_NAME "win"

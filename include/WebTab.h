@@ -24,6 +24,7 @@
 #include "Tab.h"
 #include "ui_WebTab.h"
 #include "MacroString.h"
+#include "AudioTutorial.h"
 
 #define KISS_BACKGROUND "KISS_BACKGROUND"
 
@@ -34,6 +35,7 @@ class WebTab : public QWidget, public Tab, protected Ui::WebTab
 	Q_OBJECT
 public:
 	WebTab(QWidget* parent = 0);
+	~WebTab();
 	
 	virtual void activate();
 	
@@ -80,6 +82,7 @@ private slots:
 private:
 	QUrl m_prevUrl;
 	MacroString m_fragmentMacro;
+	AudioTutorial* m_audioTutorial;
 };
 
 #endif

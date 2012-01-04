@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ErrorDialog</class>
- <widget class="QDialog" name="ErrorDialog">
+ <class>MessageDialog</class>
+ <widget class="QDialog" name="MessageDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QTextBrowser" name="ui_error">
+    <widget class="QTextBrowser" name="ui_message">
      <property name="openExternalLinks">
       <bool>true</bool>
      </property>
@@ -59,7 +59,7 @@
   <connection>
    <sender>ui_buttons</sender>
    <signal>accepted()</signal>
-   <receiver>ErrorDialog</receiver>
+   <receiver>MessageDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -75,7 +75,7 @@
   <connection>
    <sender>ui_buttons</sender>
    <signal>rejected()</signal>
-   <receiver>ErrorDialog</receiver>
+   <receiver>MessageDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -23,7 +23,10 @@
 #include <QFile>
 #include <QDebug>
 #include <QWebPage>
+#include <QSettings>
 #include "MainWindow.h"
+
+#define FIRST_RUN "First Run"
 
 WelcomeTab::WelcomeTab(QWidget* parent) : WebTab(parent) {}
 void WelcomeTab::addActionsEdit(QMenu*) {}

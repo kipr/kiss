@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,35 +18,37 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef __TEMPLATEDIALOG_H__
-#define __TEMPLATEDIALOG_H__
+#ifndef _TEMPLATEMANAGER_H_
+#define _TEMPLATEMANAGER_H_
 
-#include "ui_TemplateDialog.h"
-#include <QDialog>
-#include <QFile>
+#include <QString>
+#include <QIcon>
 
-class TemplateDialog : public QDialog, private Ui::TemplateDialog
+#include "Kiss.h"
+#include "Singleton.h"
+
+class TemplateManager : public Singleton<TemplateManager>
 {
-	Q_OBJECT
 public:
-	TemplateDialog(QWidget* parent = 0);
+	QStringList templateFolders(const QString& target, const QString& _template);
+	QStringList templates(const QString& target, const QString& _template);
+	QIcon templateIcon(const QString& target, const QString& _template);
 	
-	int exec();
-	int execTarget();
+	QStringList userTemplates(const QString& target);
+	bool addUserTemplate(const QString& target, const QString& name, const QString& content);
+	bool deleteUserTemplate(const QString& target, const QString& name);
 	
-	// Returns to the path of the target file for the selected target
-	QString selectedTargetFilePath();
-	QString templateFile();
-private slots:
-	void on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);
-	void on_ui_templates_itemDoubleClicked(QTreeWidgetItem* current);
+	QString pathForUserTemplate(const QString& target, const QString& _template);
+	QString pathForTemplate(const QString& target, const QString& _template);
 	
-	void on_ui_templates_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem*);
-	void on_ui_remove_clicked();
+	bool isTemplateDirectory(const QString& target, const QString& _template);
+	bool isTemplateDirectory(const QString& path);
 	
+	static const QString& defaultTemplateName();
 private:
-	void addTemplates(const QString& target, QTreeWidgetItem* parentItem, const QString& parent);
-	void addUserTemplates(const QString& target);
+	void ensureUserTemplateDirExists(const QString& target);
+	
+	static QString m_defaultName;
 };
 
 #endif

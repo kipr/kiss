@@ -20,7 +20,7 @@
 
 #include "VideoPlayerTab.h"
 #include "MainWindow.h"
-#include "ErrorDialog.h"
+#include "MessageDialog.h"
 
 #include <MediaSource>
 #include <MediaObject>
@@ -67,7 +67,7 @@ void VideoPlayerTab::load(const QString& file)
 		this, SLOT(stateChange(Phonon::State, Phonon::State)));
 	ui_video->mediaObject()->play();
 	if(ui_video->mediaObject()->errorType() != Phonon::NoError) {
-		ErrorDialog::showError(0, "simple_error", QStringList() << 
+		MessageDialog::showError(0, "simple_error", QStringList() << 
 			QString("Unable to load ") + file <<
 			ui_video->mediaObject()->errorString());
 	}

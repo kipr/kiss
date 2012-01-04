@@ -24,6 +24,7 @@
 #include "MainWindow.h"
 #include "WelcomeTab.h"
 #include "KissArchive.h"
+#include "AudioTutorial.h"
 #include <QTimer>
 #include <QDebug>
 #include <BackendCapabilities>
@@ -89,7 +90,6 @@ void handleArgs()
 
 int main(int argc, char **argv)
 {
-	
 	/* The Following lines just set up the application object */
 	QApplication application(argc, argv);
 	
@@ -111,12 +111,6 @@ int main(int argc, char **argv)
 	QApplication::setApplicationName("KISS");
 	QApplication::setWindowIcon(QIcon(":/icon.png"));
 	
-	// qWarning() << "Phonon Mime Types Available:" << Phonon::BackendCapabilities::availableMimeTypes();
-	
-	QFontDatabase::addApplicationFont(":/fonts/Inconsolata.otf");
-	QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono-Bold.ttf");
-	QFontDatabase::addApplicationFont(":/fonts/DejaVuSansMono.ttf");
-	
 	QPixmap splashPixmap(":/splash_screen.png");
 	QSplashScreen splash(splashPixmap);
 	splash.show();
@@ -127,6 +121,7 @@ int main(int argc, char **argv)
 	}
 	QTimer::singleShot(1500, &splash, SLOT(hide()));
 	QTimer::singleShot(1000, &MainWindow::ref(), SLOT(show()));
+
 	int ret = application.exec();
 	return ret;
 }

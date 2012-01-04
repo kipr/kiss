@@ -33,6 +33,11 @@
 
 #define RECENTS "recents"
 
+#define UI_EVENT_NEW_FILE "newFile"
+#define UI_EVENT_OPEN_FILE "openFile"
+#define UI_EVENT_CLOSE_TAB "closeTab"
+#define UI_EVENT_ADD_TAB "addTab"
+
 class QListWidgetItem;
 class SourceFile;
 

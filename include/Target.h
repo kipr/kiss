@@ -135,7 +135,9 @@ public:
 	void setPort(const QString& port);
 	
 	//! \return currently set port
-	const QString& port() const;
+	QString port() const;
+	
+	QString name() const;
 
 private:
 	TargetInterface* get() const;

@@ -18,40 +18,27 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#include "ErrorDialog.h"
+#ifndef _MESSAGEDIALOG_H_
+#define _MESSAGEDIALOG_H_
 
-#include <QClipboard>
-#include <QDesktopServices>
-#include <QFile>
+#include "ui_MessageDialog.h"
 
-ErrorDialog::ErrorDialog(QWidget* widget) : QDialog(widget) { setupUi(this); }
-
-void ErrorDialog::setMessage(const QString& error, const QStringList& args)
+class MessageDialog : public QDialog, public Ui::MessageDialog
 {
-	ui_error->clear();
+	Q_OBJECT
+public:
+	MessageDialog(QWidget* parent = 0);
 	
-	QString message = QString("Error template ") + error + " does not exist.";
-	QFile file(QString(":/errors/") + error + ".txt");
-	if(file.open(QIODevice::ReadOnly)) {
-		message = file.readAll();
-	}
-	for(int i = 0; i < args.size(); ++i) {
-		message = message.replace(QString("${") + QString::number(i + 1) + "}", args.at(i));
-	}
-	ui_error->setText(message);
-}
+	void setMessage(const QString& message, const QStringList& args = QStringList());
+	void setLabel(const QString& label);
+	
+	static void showMessage(QWidget* parent, const QString& label,
+		const QString& message, const QStringList& args = QStringList());
 
-void ErrorDialog::on_ui_copy_clicked()
-{
-	QClipboard* clipboard = QApplication::clipboard();
-	clipboard->setText(ui_error->toPlainText());
-}
+	static void showError(QWidget* parent, const QString& error, const QStringList& args = QStringList());
+private slots:
+	void on_ui_message_anchorClicked(const QUrl& link);
+	void on_ui_copy_clicked();
+};
 
-void ErrorDialog::on_ui_error_anchorClicked(const QUrl& link) { QDesktopServices::openUrl(link); }
-
-void ErrorDialog::showError(QWidget* parent, const QString& error, const QStringList& args)
-{
-	ErrorDialog dialog(parent);
-	dialog.setMessage(error, args);
-	dialog.exec();
-}
+#endif

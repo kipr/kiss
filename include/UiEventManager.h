@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007,2008,2009 KISS Institute for Practical Robotics        *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,23 +18,28 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef _ERRORDIALOG_H_
-#define _ERRORDIALOG_H_
+#ifndef _UIEVENTMANAGER_H_
+#define _UIEVENTMANAGER_H_
 
-#include "ui_ErrorDialog.h"
+#include "Singleton.h"
 
-class ErrorDialog : public QDialog, public Ui::ErrorDialog
+#include <QList>
+#include <QStringList>
+
+struct UiEventListener
 {
-	Q_OBJECT
+	virtual void event(const QString& name, const QStringList& args) = 0;
+};
+
+class UiEventManager : public Singleton<UiEventManager>
+{
 public:
-	ErrorDialog(QWidget* parent = 0);
+	void addListener(UiEventListener* listener);
+	void removeListener(UiEventListener* listener);
 	
-	void setMessage(const QString& error, const QStringList& args = QStringList());
-	
-	static void showError(QWidget* parent, const QString& error, const QStringList& args = QStringList());
-private slots:
-	void on_ui_error_anchorClicked(const QUrl& link);
-	void on_ui_copy_clicked();
+	void sendEvent(const QString& name, const QStringList& args = QStringList());
+private:
+	QList<UiEventListener*> m_listeners;
 };
 
 #endif

@@ -21,6 +21,7 @@
 #include "EditorSettingsDialog.h"
 
 #include <QSettings>
+#include <QDebug>
 
 EditorSettingsDialog::EditorSettingsDialog(QWidget *parent) : QDialog(parent)
 {
@@ -55,30 +56,29 @@ int EditorSettingsDialog::exec()
 // Save the settings from the dialog
 void EditorSettingsDialog::saveSettings()
 {
+	qWarning() << "Font" << ui_fontBox->currentFont().family();
 	QSettings settings;
-	settings.beginGroup("Editor");
-	settings.setValue("font", ui_fontBox->currentFont().family());
-	settings.setValue("fontsize", ui_fontSizeSpinBox->value());
+	settings.beginGroup(EDITOR);
+	settings.setValue(FONT, ui_fontBox->currentFont().family());
+	settings.setValue(FONT_SIZE, ui_fontSizeSpinBox->value());
 	
-	settings.beginGroup("autocompletion");
-	settings.setValue("enabled", ui_autoCompletionEnabledCheckBox->isChecked());
-	settings.setValue("apisource", ui_autoCompletionAPISourceCheckBox->isChecked());
-	settings.setValue("docsource", ui_autoCompletionDocumentSourceCheckBox->isChecked());
-	settings.setValue("threshold", ui_autoCompletionThresholdSpinBox->value());
+	settings.beginGroup(AUTO_COMPLETION);
+	settings.setValue(ENABLED, ui_autoCompletionEnabledCheckBox->isChecked());
+	settings.setValue(API_SOURCE, ui_autoCompletionAPISourceCheckBox->isChecked());
+	settings.setValue(DOC_SOURCE, ui_autoCompletionDocumentSourceCheckBox->isChecked());
+	settings.setValue(THRESHOLD, ui_autoCompletionThresholdSpinBox->value());
 	settings.endGroup();
 
-	settings.beginGroup("autoindent");
-	settings.setValue("enabled", ui_autoIndentEnabledCheckBox->isChecked());
-	if(ui_autoIndentMaintainStyleRadioButton->isChecked())
-		settings.setValue("style", "Maintain");
-	else if (ui_autoIndentIntelligentStyleRadioButton->isChecked())
-		settings.setValue("style", "Intelligent");
-	settings.setValue("width", ui_autoIndentWidthSpinBox->value());
+	settings.beginGroup(AUTO_INDENT);
+	settings.setValue(ENABLED, ui_autoIndentEnabledCheckBox->isChecked());
+	if(ui_autoIndentMaintainStyleRadioButton->isChecked()) settings.setValue(STYLE, MAINTAIN);
+	else if (ui_autoIndentIntelligentStyleRadioButton->isChecked()) settings.setValue(STYLE, INTELLIGENT);
+	settings.setValue(WIDTH, ui_autoIndentWidthSpinBox->value());
 	settings.endGroup();
 
-	settings.setValue("calltips", ui_callTipsCheckBox->isChecked());
-	settings.setValue("bracematching", ui_braceMatchingCheckBox->isChecked());
-	settings.setValue("linenumbers", ui_marginLineNumbersCheckBox->isChecked());
+	settings.setValue(CALL_TIPS, ui_callTipsCheckBox->isChecked());
+	settings.setValue(BRACE_MATCHING, ui_braceMatchingCheckBox->isChecked());
+	settings.setValue(LINE_NUMBERS, ui_marginLineNumbersCheckBox->isChecked());
 	settings.setValue(DEBUGGER_ENABLED, ui_debugger->isChecked());
 	settings.endGroup();
 	settings.sync();
@@ -99,6 +99,7 @@ void EditorSettingsDialog::readSettings()
 	#else
 	QString fontString = settings.value(FONT, "Monospace").toString();
 	#endif
+	
 	ui_fontBox->setCurrentFont(QFont(fontString));
 	
 	// Figure out the font size and set the widget
@@ -119,10 +120,8 @@ void EditorSettingsDialog::readSettings()
 	// Set the auto indent settings from the application config
 	settings.beginGroup(AUTO_INDENT);
 	ui_autoIndentEnabledCheckBox->setChecked(settings.value(ENABLED, true).toBool());
-	if(settings.value(STYLE).toString() == MAINTAIN)
-		ui_autoIndentMaintainStyleRadioButton->setChecked(true);
-	else if(settings.value(STYLE).toString() == INTELLIGENT)
-		ui_autoIndentIntelligentStyleRadioButton->setChecked(true);
+	if(settings.value(STYLE).toString() == MAINTAIN) ui_autoIndentMaintainStyleRadioButton->setChecked(true);
+	else if(settings.value(STYLE).toString() == INTELLIGENT) ui_autoIndentIntelligentStyleRadioButton->setChecked(true);
 	ui_autoIndentWidthSpinBox->setValue(settings.value(WIDTH, 4).toInt());
 	settings.endGroup();
 

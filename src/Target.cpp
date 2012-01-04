@@ -97,7 +97,7 @@ QByteArray Target::requestFile(const QString& filename) { return hasRequestFile(
 bool Target::error() { return m_got ? get()->error() : true; }
 bool Target::hasPort() { return TARGET_SETTINGS.value(PORT_DIALOG).toBool(); }
 void Target::setPort(const QString& port) { m_port = port; }
-const QString& Target::port() const { return m_port; }
-
+QString Target::port() const { return m_port; }
+QString Target::name() const { return m_targetName; }
 // For cleaner syntax in rest of file
 inline TargetInterface* Target::get() const { return TargetManager::ref().get(m_targetName); }

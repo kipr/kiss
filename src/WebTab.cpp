@@ -21,6 +21,7 @@
 #include "WebTab.h"
 #include "MainWindow.h"
 #include "VideoPlayerTab.h"
+#include "AudioTutorial.h"
 
 #include <QUrl>
 #include <QToolBar>
@@ -36,7 +37,7 @@ struct CurrentDirectoryMacro : Macro
 	}
 };
 
-WebTab::WebTab(QWidget* parent) : QWidget(parent)
+WebTab::WebTab(QWidget* parent) : QWidget(parent), m_audioTutorial(0)
 {
 	setupUi(this);
 	
@@ -49,6 +50,11 @@ WebTab::WebTab(QWidget* parent) : QWidget(parent)
 	ui_frameFind->hide();
 	
 	m_fragmentMacro["KISS_CWD"] = new CurrentDirectoryMacro();
+}
+
+WebTab::~WebTab()
+{
+	if(m_audioTutorial) delete m_audioTutorial;
 }
 
 void WebTab::activate() {}
@@ -172,6 +178,7 @@ void WebTab::linkClicked(const QUrl& url)
 	qWarning() << "Prev URL:" << m_prevUrl;
 	if(url.scheme() != "kiss") {
 		m_prevUrl = ui_webView->url();
+		ui_webView->load(url);
 	}
 	
 	QString auth = url.authority();
@@ -214,6 +221,11 @@ void WebTab::linkClicked(const QUrl& url)
 		tab->load(fragment);
 		MainWindow::ref().addTab(tab);
 		return;
+	}
+	if(auth == "audiotutorial") {
+		if(m_audioTutorial) delete m_audioTutorial;
+		m_audioTutorial = new AudioTutorial(fragment);
+		m_audioTutorial->start();
 	}
 	if(auth == "external") {
 		QDesktopServices::openUrl(QUrl::fromUserInput(fragment));	

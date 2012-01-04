@@ -6,8 +6,6 @@ const QPixmap& SourceFileShared::blueBullet() const 	{ return m_blueBullet; }
 const QPixmap& SourceFileShared::redBullet() const 	{ return m_redBullet; }
 const QPixmap& SourceFileShared::yellowBullet() const 	{ return m_yellowBullet; }
 
-const MacroString* SourceFileShared::templateMacro() const { return &m_templateMacro; }
-
 Debugger* SourceFileShared::debugger() { return &m_debugger; }
 
 SourceFileShared::SourceFileShared() :
@@ -18,6 +16,4 @@ SourceFileShared::SourceFileShared() :
 	m_debugger(&MainWindow::ref())
 {
 	m_debugger.hide();
-
-	m_templateMacro["KISS_DATE"] = new DateMacro();
 }

@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,35 +18,55 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef __TEMPLATEDIALOG_H__
-#define __TEMPLATEDIALOG_H__
+#ifndef _TEMPLATEFORMAT_H_
+#define _TEMPLATEFORMAT_H_
 
-#include "ui_TemplateDialog.h"
-#include <QDialog>
-#include <QFile>
+#include "MacroString.h"
 
-class TemplateDialog : public QDialog, private Ui::TemplateDialog
+class QTextStream;
+
+struct TemplateFormatReader;
+struct TemplateFormatWriter;
+
+class TemplateFormat
 {
-	Q_OBJECT
 public:
-	TemplateDialog(QWidget* parent = 0);
+	virtual void update() = 0;
 	
-	int exec();
-	int execTarget();
+	bool hasMetaData() const;
+	bool hasLexerName() const;
+	QString lexerName() const;
+	QString content() const;
 	
-	// Returns to the path of the target file for the selected target
-	QString selectedTargetFilePath();
-	QString templateFile();
-private slots:
-	void on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);
-	void on_ui_templates_itemDoubleClicked(QTreeWidgetItem* current);
+	void setHasMetaData(bool hasMetaData);
+	void setHasLexerName(bool hasLexerName);
+	void setLexerName(const QString& lexerName);
+	void setContent(const QString& content);
 	
-	void on_ui_templates_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem*);
-	void on_ui_remove_clicked();
-	
+	TemplateFormatReader* newTemplateReader() const;
+	TemplateFormatWriter* newTemplateWriter() const;
+protected:
+	TemplateFormat(QTextStream* stream);
+	QTextStream* m_stream;
+	MacroString m_templateMacro;
+
 private:
-	void addTemplates(const QString& target, QTreeWidgetItem* parentItem, const QString& parent);
-	void addUserTemplates(const QString& target);
+	bool m_hasMetaData;
+	bool m_hasLexerName;
+	QString m_lexerName;
+	QString m_content;
+};
+
+struct TemplateFormatReader : TemplateFormat
+{
+	TemplateFormatReader(QTextStream* in);
+	virtual void update();
+};
+
+struct TemplateFormatWriter : TemplateFormat
+{
+	TemplateFormatWriter(QTextStream* out);
+	virtual void update();
 };
 
 #endif

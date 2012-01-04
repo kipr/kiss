@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,35 +18,12 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef __TEMPLATEDIALOG_H__
-#define __TEMPLATEDIALOG_H__
+#include "MakeTemplateDialog.h"
 
-#include "ui_TemplateDialog.h"
-#include <QDialog>
-#include <QFile>
+MakeTemplateDialog::MakeTemplateDialog(QWidget* parent) : QDialog(parent) { setupUi(this); }
 
-class TemplateDialog : public QDialog, private Ui::TemplateDialog
-{
-	Q_OBJECT
-public:
-	TemplateDialog(QWidget* parent = 0);
-	
-	int exec();
-	int execTarget();
-	
-	// Returns to the path of the target file for the selected target
-	QString selectedTargetFilePath();
-	QString templateFile();
-private slots:
-	void on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);
-	void on_ui_templates_itemDoubleClicked(QTreeWidgetItem* current);
-	
-	void on_ui_templates_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem*);
-	void on_ui_remove_clicked();
-	
-private:
-	void addTemplates(const QString& target, QTreeWidgetItem* parentItem, const QString& parent);
-	void addUserTemplates(const QString& target);
-};
+void MakeTemplateDialog::setName(const QString& name) { ui_name->setText(name); }
+void MakeTemplateDialog::setExtension(const QString& extension) { ui_extension->setText(extension); }
 
-#endif
+QString MakeTemplateDialog::name() { return ui_name->text(); }
+QString MakeTemplateDialog::extension() { return ui_extension->text(); }

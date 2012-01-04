@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,35 +18,80 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef __TEMPLATEDIALOG_H__
-#define __TEMPLATEDIALOG_H__
+// Note: This file actually isn't used yet. It is in preparation for KISS IDE 3.1.0
 
-#include "ui_TemplateDialog.h"
-#include <QDialog>
-#include <QFile>
+#ifndef _TRANSACTION_H_
+#define _TRANSACTION_H_
 
-class TemplateDialog : public QDialog, private Ui::TemplateDialog
+#include <QList>
+#include <QVariant>
+
+#define CREATED_PROJECT_PATH QString("CREATED_PROJECT_PATH")
+
+typedef QList<QVariant> QVariantList;
+
+class Transaction
 {
-	Q_OBJECT
 public:
-	TemplateDialog(QWidget* parent = 0);
+	Transaction(const QString& name, int type);
 	
-	int exec();
-	int execTarget();
+	const QString& name() const;
+	const int type() const;
+	const QVariantList& data() const;
 	
-	// Returns to the path of the target file for the selected target
-	QString selectedTargetFilePath();
-	QString templateFile();
-private slots:
-	void on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);
-	void on_ui_templates_itemDoubleClicked(QTreeWidgetItem* current);
+	virtual QString successMessage() const;
+	virtual QString failureMessage() const;
 	
-	void on_ui_templates_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem*);
-	void on_ui_remove_clicked();
+	enum {
+		Unknown = 0,
+		CreateProject,
+		MakeDirectory,
+		SendToDirectory,
+		CompileFile,
+		RunFile
+	};
 	
+protected:
+	QVariantList m_data;
+
 private:
-	void addTemplates(const QString& target, QTreeWidgetItem* parentItem, const QString& parent);
-	void addUserTemplates(const QString& target);
+	QString m_name;
+	int m_type;
 };
+
+namespace TransactionType
+{
+	struct Unknown : Transaction
+	{
+		Unknown();
+	};
+
+	struct CreateProject : Transaction
+	{
+		CreateProject(const QString& name);
+	};
+	
+	struct MakeDirectory : Transaction
+	{
+		MakeDirectory(const QString& path);
+	};
+	
+	struct SendToDirectory : Transaction
+	{
+		SendToDirectory(const QString& path, const QString& directory);
+	};
+	
+	struct CompileFile : Transaction
+	{
+		CompileFile(const QString& path, const QString& options);
+	};
+	
+	struct RunFile : Transaction
+	{
+		RunFile(const QString& path, const QString& options);
+	};
+}
+
+typedef QList<Transaction*> TransactionList;
 
 #endif

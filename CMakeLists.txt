@@ -42,17 +42,23 @@ SET(KISS_SRCS_CXX
 	${SRC}/dialogs/EditorSettingsDialog.cpp
 	${SRC}/dialogs/SourceDialog.cpp
 	${SRC}/dialogs/TemplateDialog.cpp
+	${SRC}/dialogs/MakeTemplateDialog.cpp
 	${SRC}/dialogs/RequestFileDialog.cpp
 	${SRC}/lexer/LexerC.cpp
 	${SRC}/lexer/LexerCPP.cpp
 	${SRC}/lexer/LexerJava.cpp
 	${SRC}/lexer/LexerFactory.cpp
 	${SRC}/VideoPlayerTab.cpp
-	${SRC}/dialogs/ErrorDialog.cpp
+	${SRC}/dialogs/MessageDialog.cpp
 	${SRC}/JavaScript.cpp
 	${SRC}/main.cpp
 	${SRC}/widgets/SourceFindWidget.cpp
 	${SRC}/widgets/SourceLocalFailed.cpp
+	${SRC}/TemplateManager.cpp
+	${SRC}/TemplateFormat.cpp
+	${SRC}/Transaction.cpp
+	${SRC}/UiEventManager.cpp
+	${SRC}/AudioTutorial.cpp
 )
 
 SET(KISS_UI
@@ -68,11 +74,12 @@ SET(KISS_UI
 	${UI}/SourceFile.ui
 	${UI}/TargetSettingsDialog.ui
 	${UI}/TemplateDialog.ui
+	${UI}/MakeTemplateDialog.ui
 	${UI}/WebTab.ui
 	${UI}/SourceDialog.ui
 	${UI}/RequestFileDialog.ui
 	${UI}/VideoPlayerTab.ui
-	${UI}/ErrorDialog.ui
+	${UI}/MessageDialog.ui
 	${UI}/SourceFindWidget.ui
 	${UI}/SourceLocalFailed.ui
 )
@@ -91,16 +98,23 @@ SET(KISS_MOC_SRCS
 	${INCLUDE}/dialogs/SourceDialog.h
 	${INCLUDE}/dialogs/TemplateDialog.h
 	${INCLUDE}/dialogs/RequestFileDialog.h
+	${INCLUDE}/dialogs/MakeTemplateDialog.h
 	${INCLUDE}/lexer/LexerC.h
 	${INCLUDE}/lexer/LexerCPP.h
 	${INCLUDE}/lexer/LexerJava.h
 	${INCLUDE}/lexer/LexerFactory.h
 	${INCLUDE}/VideoPlayerTab.h
-	${INCLUDE}/dialogs/ErrorDialog.h
+	${INCLUDE}/dialogs/MessageDialog.h
 	${INCLUDE}/MacroString.h
 	${INCLUDE}/JavaScript.h
 	${INCLUDE}/widgets/SourceFindWidget.h
 	${INCLUDE}/widgets/SourceLocalFailed.h
+	${INCLUDE}/TemplateManager.h
+	${INCLUDE}/TemplateFormat.h
+	${INCLUDE}/Transaction.h
+	${INCLUDE}/CompilerInterface.h
+	${INCLUDE}/UiEventManager.h
+	${INCLUDE}/AudioTutorial.h
 )
 
 SET(KISS_QRC_FILES
@@ -123,7 +137,10 @@ ELSEIF(WIN32)
   ADD_EXECUTABLE(KISS WIN32 ${KISS_SRCS_CXX} rc/logos/kiss.rc)
 ENDIF()
 
+# ADD_LIBRARY(kisside STATIC ${KISS_SRCS_CXX})
+
 SET(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
+SET(LIBRARY_OUTPUT_PATH ${KISS_SOURCE_DIR}/lib)
 TARGET_LINK_LIBRARIES(KISS ${QT_LIBRARIES} qscintilla2)
 
 IF(APPLE)

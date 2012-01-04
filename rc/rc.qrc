@@ -51,7 +51,7 @@
         <file>welcome/document-open.png</file>
         <file>welcome/help-browser.png</file>
         <file>welcome/internet-web-browser.png</file>
-		<file>welcome/preferences-desktop.png</file>
+	<file>welcome/preferences-desktop.png</file>
     </qresource>
     <qresource prefix="/sourcefile">
         <file>icon_set/icons/bullet_red.png</file>
@@ -75,5 +75,8 @@
 		<file>fonts/DejaVuSansMono-Oblique.ttf</file>
 		<file>fonts/DejaVuSansMono.ttf</file>
 		
+	</qresource>
+	<qresource prefix="/">
+		<file>icon_set/icons/empty.png</file>
 	</qresource>
 </RCC>
