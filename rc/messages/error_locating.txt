@@ -1,0 +1,11 @@
+<b>Cause</b><br />
+Could not locate the ${1} executable<br />
+<br />
+<b>Information</b><br />
+On Mac OS X, this probably means you don't have XCode installed<br />
+On Windows, try reinstalling KISS IDE or the GCC Target<br />
+<br />
+<b>Technical</b><br />
+KISS IDE expects the executable to be located at "${2}"<br />
+<br />
+If you need additional assistance, please email <a href="mailto:support@kipr.org">support@kipr.org</a> or call (405) 579-4609 <br />
