@@ -60,10 +60,10 @@
         <file>icon_set/icons/bullet_black.png</file>
     </qresource>
 	<qresource prefix="/">
-		<file>errors/error_locating.txt</file>
-		<file>errors/error_locating_java.txt</file>
-		<file>errors/simple_error.txt</file>
-		<file>errors/simple_error_with_action.txt</file>
+		<file>messages/error_locating.txt</file>
+		<file>messages/error_locating_java.txt</file>
+		<file>messages/simple_error.txt</file>
+		<file>messages/simple_error_with_action.txt</file>
 	</qresource>
 	<qresource prefix="/">
 		<file>webtab_fail/index.html</file>

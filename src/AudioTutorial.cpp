@@ -50,7 +50,13 @@ AudioTutorial::AudioTutorial(const QString& path)
 {
 	load();
 }
-AudioTutorial::~AudioTutorial() { delete m_exit; foreach(TutorialState* state, m_states) delete state; }
+
+AudioTutorial::~AudioTutorial()
+{
+	stop();
+	delete m_exit;
+	foreach(TutorialState* state, m_states) delete state;
+}
 
 const bool AudioTutorial::start()
 {

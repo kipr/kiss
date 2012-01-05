@@ -108,6 +108,6 @@ private:
 	QStringList m_errorArgs;
 };
 
-Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/2.2");
+Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/3.0");
 
 #endif

@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>901</width>
-    <height>650</height>
+    <height>595</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1,0">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="10,0,0">
      <item>
@@ -90,7 +90,7 @@
    <item>
     <widget class="QFrame" name="ui_frameFind">
      <property name="frameShape">
-      <enum>QFrame::WinPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>

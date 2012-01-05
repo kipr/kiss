@@ -39,7 +39,5 @@ void UiEventManager::removeListener(UiEventListener* listener)
 
 void UiEventManager::sendEvent(const QString& name, const QStringList& args)
 {
-	foreach(UiEventListener* listener, m_listeners) {
-		listener->event(name, args);
-	}
+	foreach(UiEventListener* l, m_listeners) l->event(name, args);
 }
