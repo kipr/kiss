@@ -24,7 +24,7 @@
 #include "UiEventManager.h"
 
 #include <QList>
-#include <phonon>
+#include <Phonon>
 
 struct TutorialState;
 

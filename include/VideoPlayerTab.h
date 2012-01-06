@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -25,7 +25,7 @@
 #include "Tab.h"
 
 #include <QWidget>
-#include <phonon>
+#include <Phonon>
 
 class VideoPlayerTab : public QWidget, public Tab, public Ui::VideoPlayerTab
 {

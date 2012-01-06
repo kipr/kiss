@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -33,7 +33,7 @@
 /*! \class Target
  * \brief Handles loading the TargetInterface through TargetManager.
  *
- * This class also has methods to check the availability offered by the currently loaded plugin.					 
+ * This class also has methods to check the availability offered by the currently loaded plugin.
  */
 class Target : public QObject
 {
