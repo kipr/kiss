@@ -42,6 +42,6 @@
 
 #define KISS_C_VERSION_MAJOR 3
 #define KISS_C_VERSION_MINOR 0
-#define KISS_C_VERSION_BUILD 0
+#define KISS_C_VERSION_BUILD 1
 
 #endif
