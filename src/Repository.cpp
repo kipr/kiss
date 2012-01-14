@@ -34,6 +34,8 @@
 #define TYPE_INSTALLED 	1002
 #define DEFAULT_SOURCE "http://files.kipr.org/kiss/"
 
+#define AVAILABLE_LST "available.lst"
+
 Repository::Repository(QWidget* parent) : QWidget(parent), m_source(DEFAULT_SOURCE) { setupUi(this); }
 
 void Repository::activate()  { MainWindow::ref().setTitle(m_source); }
@@ -54,7 +56,7 @@ void Repository::completeSetup()
 	
 	connect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
 	
-	m_network.get(QNetworkRequest(QUrl(m_source + "available.lst")));
+	m_network.get(QNetworkRequest(QUrl(m_source + AVAILABLE_LST)));
 	
 	ui_list->clear();
 	m_locations.clear();

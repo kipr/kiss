@@ -24,11 +24,7 @@
 
 void UiEventManager::addListener(UiEventListener* listener)
 {
-	if(m_listeners.contains(listener)) {
-		qWarning() << "UiEventManger already has listener" << listener << ". Ignoring request to add.";
-		return;
-	}
-	
+	if(m_listeners.contains(listener)) return;
 	m_listeners.append(listener);
 }
 

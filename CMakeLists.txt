@@ -59,6 +59,8 @@ SET(KISS_SRCS_CXX
 	${SRC}/Transaction.cpp
 	${SRC}/UiEventManager.cpp
 	${SRC}/AudioTutorial.cpp
+	${SRC}/Project.cpp
+	${SRC}/ProjectManager.cpp
 )
 
 SET(KISS_UI
@@ -115,6 +117,8 @@ SET(KISS_MOC_SRCS
 	${INCLUDE}/CompilerInterface.h
 	${INCLUDE}/UiEventManager.h
 	${INCLUDE}/AudioTutorial.h
+	${INCLUDE}/Project.h
+	${INCLUDE}/ProjectManager.h
 )
 
 SET(KISS_QRC_FILES

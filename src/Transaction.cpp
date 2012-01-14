@@ -29,7 +29,7 @@ const int Transaction::type() const { return m_type; }
 
 const QVariantList& Transaction::data() const { return m_data; }
 
-QString Transaction::successMessage() const { return m_name + ": success!"; }
+QString Transaction::successMessage() const { return m_name + ": success."; }
 QString Transaction::failureMessage() const { return m_name + ": FAILURE!"; }
 
 Unknown::Unknown() : Transaction("Unknown", Transaction::Unknown) {}
