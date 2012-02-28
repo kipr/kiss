@@ -19,6 +19,8 @@ INCLUDE_DIRECTORIES(
 	${INCLUDE}/dialogs
 	${INCLUDE}/lexer
 	${INCLUDE}/widgets
+	${INCLUDE}/menus
+	${INCLUDE}/js
 )
 
 SET(QT_USE_QTNETWORK TRUE)
@@ -27,99 +29,13 @@ SET(QT_USE_QTSCRIPT TRUE)
 SET(QT_USE_PHONON TRUE)
 INCLUDE(${QT_USE_FILE})
 
-SET(KISS_SRCS_CXX
-	${SRC}/Debugger.cpp
-	${SRC}/KissArchive.cpp
-	${SRC}/MainWindow.cpp
-	${SRC}/Repository.cpp
-	${SRC}/SourceFile.cpp
-	${SRC}/SourceFileShared.cpp
-	${SRC}/Target.cpp
-	${SRC}/TargetManager.cpp
-	${SRC}/WebTab.cpp
-	${SRC}/WelcomeTab.cpp
-	${SRC}/dialogs/ChoosePortDialog.cpp
-	${SRC}/dialogs/EditorSettingsDialog.cpp
-	${SRC}/dialogs/SourceDialog.cpp
-	${SRC}/dialogs/TemplateDialog.cpp
-	${SRC}/dialogs/MakeTemplateDialog.cpp
-	${SRC}/dialogs/RequestFileDialog.cpp
-	${SRC}/lexer/LexerC.cpp
-	${SRC}/lexer/LexerCPP.cpp
-	${SRC}/lexer/LexerJava.cpp
-	${SRC}/lexer/LexerFactory.cpp
-	${SRC}/VideoPlayerTab.cpp
-	${SRC}/dialogs/MessageDialog.cpp
-	${SRC}/JavaScript.cpp
-	${SRC}/main.cpp
-	${SRC}/widgets/SourceFindWidget.cpp
-	${SRC}/widgets/SourceLocalFailed.cpp
-	${SRC}/TemplateManager.cpp
-	${SRC}/TemplateFormat.cpp
-	${SRC}/Transaction.cpp
-	${SRC}/UiEventManager.cpp
-	${SRC}/AudioTutorial.cpp
-	${SRC}/Project.cpp
-	${SRC}/ProjectManager.cpp
-)
+FILE(GLOB INCLUDES ${INCLUDE}/* ${INCLUDE}/lexer/* ${INCLUDE}/dialogs/* ${INCLUDE}/widgets/* ${INCLUDE}/menus/* ${INCLUDE}/js/*)
+FILE(GLOB SOURCES ${SRC}/* ${SRC}/lexer/* ${SRC}/dialogs/* ${SRC}/widgets/* ${SRC}/menus/* ${SRC}/js/*)
+FILE(GLOB UIS ${UI}/*)
 
-SET(KISS_UI
-	${UI}/ChoosePortDialog.ui
-	${UI}/Debugger.ui
-	${UI}/EditorSettingsDialog.ui
-	${UI}/FindDialog.ui
-	${UI}/Interaction.ui
-	${UI}/MainWindow.ui
-	${UI}/Repository.ui
-	${UI}/RepositoryDialog.ui
-	${UI}/SourceDialog.ui
-	${UI}/SourceFile.ui
-	${UI}/TargetSettingsDialog.ui
-	${UI}/TemplateDialog.ui
-	${UI}/MakeTemplateDialog.ui
-	${UI}/WebTab.ui
-	${UI}/SourceDialog.ui
-	${UI}/RequestFileDialog.ui
-	${UI}/VideoPlayerTab.ui
-	${UI}/MessageDialog.ui
-	${UI}/SourceFindWidget.ui
-	${UI}/SourceLocalFailed.ui
-)
-
-SET(KISS_MOC_SRCS
-	${INCLUDE}/Debugger.h
-	${INCLUDE}/MainWindow.h
-	${INCLUDE}/Repository.h
-	${INCLUDE}/SourceFile.h
-	${INCLUDE}/SourceFileShared.h
-	${INCLUDE}/Target.h
-	${INCLUDE}/WebTab.h
-	${INCLUDE}/WelcomeTab.h
-	${INCLUDE}/dialogs/ChoosePortDialog.h
-	${INCLUDE}/dialogs/EditorSettingsDialog.h
-	${INCLUDE}/dialogs/SourceDialog.h
-	${INCLUDE}/dialogs/TemplateDialog.h
-	${INCLUDE}/dialogs/RequestFileDialog.h
-	${INCLUDE}/dialogs/MakeTemplateDialog.h
-	${INCLUDE}/lexer/LexerC.h
-	${INCLUDE}/lexer/LexerCPP.h
-	${INCLUDE}/lexer/LexerJava.h
-	${INCLUDE}/lexer/LexerFactory.h
-	${INCLUDE}/VideoPlayerTab.h
-	${INCLUDE}/dialogs/MessageDialog.h
-	${INCLUDE}/MacroString.h
-	${INCLUDE}/JavaScript.h
-	${INCLUDE}/widgets/SourceFindWidget.h
-	${INCLUDE}/widgets/SourceLocalFailed.h
-	${INCLUDE}/TemplateManager.h
-	${INCLUDE}/TemplateFormat.h
-	${INCLUDE}/Transaction.h
-	${INCLUDE}/CompilerInterface.h
-	${INCLUDE}/UiEventManager.h
-	${INCLUDE}/AudioTutorial.h
-	${INCLUDE}/Project.h
-	${INCLUDE}/ProjectManager.h
-)
+SET(KISS_SRCS_CXX ${SOURCES})
+SET(KISS_UI ${UIS})
+SET(KISS_MOC_SRCS ${INCLUDES})
 
 SET(KISS_QRC_FILES
 	${RC}/rc.qrc
@@ -132,7 +48,7 @@ QT4_ADD_RESOURCES(KISS_SRCS_CXX ${KISS_QRC_FILES})
 
 IF(APPLE)
 	SET(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.7.sdk")
-	SET(CMAKE_CXX_FLAGS "-arch i386 -arch x86_64")
+	SET(CMAKE_CXX_FLAGS "-arch x86_64")
 	LINK_DIRECTORIES(/Library/Frameworks/)
 	ADD_EXECUTABLE(KISS MACOSX_BUNDLE ${KISS_SRCS_CXX})
 ELSEIF(UNIX)

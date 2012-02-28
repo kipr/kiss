@@ -24,6 +24,7 @@
 #include "MainWindow.h"
 #include "WelcomeTab.h"
 #include "KissArchive.h"
+#include "TargetMenu.h"
 #include "AudioTutorial.h"
 #include <QTimer>
 #include <QDebug>
@@ -93,6 +94,7 @@ int main(int argc, char **argv)
 	/* The Following lines just set up the application object */
 	QApplication application(argc, argv);
 	
+	
 	if(QApplication::arguments().size() > 1 && QApplication::arguments()[1].startsWith("--")) {
 		handleArgs();
 		return 0;
@@ -113,14 +115,17 @@ int main(int argc, char **argv)
 	
 	QPixmap splashPixmap(":/splash_screen.png");
 	QSplashScreen splash(splashPixmap);
+	splash.raise();
 	splash.show();
-	MainWindow::ref().addTab(new WelcomeTab(&MainWindow::ref()));
+	MainWindow mainWindow;
+	mainWindow.addTab(new WelcomeTab(&mainWindow));
 	qWarning() << "Args:" << QApplication::arguments();
 	foreach(const QString& arg, QApplication::arguments().mid(1)) {
-		MainWindow::ref().openFile(arg);
+		mainWindow.openFile(arg);
 	}
 	QTimer::singleShot(1500, &splash, SLOT(hide()));
-	QTimer::singleShot(1000, &MainWindow::ref(), SLOT(show()));
+	QTimer::singleShot(1000, &mainWindow, SLOT(show()));
+	QTimer::singleShot(1000, &mainWindow, SLOT(raise()));
 
 	int ret = application.exec();
 	return ret;

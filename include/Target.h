@@ -45,7 +45,7 @@ public:
 
 	// Sets the current target file (and loads the QPluginLoader object)
 	bool setTargetFile(const QString& filename);
-	QMap<QString, QString> targetManualPaths();
+	static QMap<QString, QString> targetManualPaths(const QString& filename);
 	QString requestFilePath();
 
 	// These pass straight through to the TargetInterface if it is loaded
@@ -117,7 +117,7 @@ public:
 	 * \return Pointer to DebuggerInterface if the TargetInterface exists and debug setup was successful.
 	 */
 	DebuggerInterface* debug(const QString& filename);
-	Tab* ui();
+	TabbedWidget* ui();
 	
 	bool hasScreenGrab();
 	QByteArray screenGrab();

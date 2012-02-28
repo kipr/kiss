@@ -26,9 +26,11 @@
 #include <QSettings>
 #include "MainWindow.h"
 
+#include "WebTabMenu.h"
+
 #define FIRST_RUN "First Run"
 
-WelcomeTab::WelcomeTab(QWidget* parent) : WebTab(parent) {}
+WelcomeTab::WelcomeTab(MainWindow* parent) : WebTab(parent) {}
 void WelcomeTab::addActionsEdit(QMenu*) {}
 void WelcomeTab::addOtherActions(QMenuBar*) {}
 void WelcomeTab::addToolbarActions(QToolBar*) {}
@@ -36,7 +38,8 @@ void WelcomeTab::addToolbarActions(QToolBar*) {}
 void WelcomeTab::activate()
 {
 	WebTab::activate();
-	MainWindow::ref().hideErrors();
+	mainWindow()->activateMenuable(WebTabMenu::menuName(), 0);
+	mainWindow()->hideErrors();
 }
 
 void WelcomeTab::completeSetup()

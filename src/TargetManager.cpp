@@ -85,6 +85,22 @@ QString TargetManager::displayName(const QString& target)
 
 QString TargetManager::targetPath(const QString& target) { return CP _ TARGET_FOLDER _ target; }
 
+QStringList TargetManager::targetPaths()
+{
+	QStringList targets = TargetManager::targets();
+	QStringList ret;
+	foreach(const QString& target, targets) ret << targetPath(target);
+	return ret;
+}
+
+QStringList TargetManager::targetFiles()
+{
+	QStringList files = targetPaths();
+	QStringList ret;
+	foreach(const QString& file, files) ret << file + "/" + QDir(file).dirName() + "." + TARGET_EXT;
+	return ret;
+}
+
 QStringList TargetManager::allSupportedExtensions()
 {
 	QDir targetDir(CP _ TARGET_FOLDER);

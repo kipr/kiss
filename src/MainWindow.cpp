@@ -29,6 +29,8 @@
 #include "Repository.h"
 #include "MessageDialog.h"
 
+#include "Menus.h"
+
 #include "UiEventManager.h"
 
 #include <QToolTip>
@@ -60,14 +62,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	
 	setupUi(this);
+	ui_projects->hide(); // Disabled for now
+	
 	/* Turns off updates so all of these things are drawn at once */
 	setUpdatesEnabled(false);
-
-	/* Sets up the QTabWidget that handles the editor windows */
-	QToolButton *cornerButton = new QToolButton(ui_tabWidget);
-	cornerButton->setDefaultAction(actionClose);
-	cornerButton->setAutoRaise(true);
-	ui_tabWidget->setCornerWidget(cornerButton);
 
 	/* Deletes the tab that QTabWidget starts with by default */
 	deleteTab(0);
@@ -79,7 +77,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	connect(&m_linkErrorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	connect(&m_verboseList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
 	
-	initMenus(0);
+	
+	initMenus();
 	
 	setTitle("");
 	
@@ -134,84 +133,59 @@ bool MainWindow::openFile(const QString& file)
 	return true;
 }
 
-void MainWindow::initMenus(Tab* tab)
+void MainWindow::initMenus()
 {
-	menuBar()->setUpdatesEnabled(false);
-	ui_toolBar->setUpdatesEnabled(false);
-	
-	ui_toolBar->hide();
-	
 	menuBar()->clear();
-	menuFile->clear();
-	menuEdit->clear();
-	menuSettings->clear();
-	menuHelp->clear();
-	ui_toolBar->clear();
 	
-	menuBar()->addMenu(menuFile);
-	menuBar()->addMenu(menuEdit);
+	MainWindowMenu* mainWindowMenu = new MainWindowMenu(this);
+	m_menuManager.registerMenus(mainWindowMenu);
+	mainWindowMenu->setActive(this);
+	m_menuManager.addActivation(mainWindowMenu);
+	m_menuables.append(mainWindowMenu);
 	
-	menuFile->addAction(actionNew);
-	menuFile->addAction(actionOpen);
+	SourceFileMenu* sourceFileMenu = new SourceFileMenu(this);
+	m_menuManager.registerMenus(sourceFileMenu);
 	
-	QMenu* recentMenu = menuFile->addMenu(tr("Open Recent"));
-	foreach(const QString& recent, QSettings().value(RECENTS).toStringList()) {
-		QAction* action = recentMenu->addAction(recent);
-		action->setData(recent);
-		connect(action, SIGNAL(triggered()), this, SLOT(openRecent()));
-	}
+	TargetMenu* targetMenu = new TargetMenu;
+	m_menuManager.registerMenus(targetMenu);
+	m_menuables.append(targetMenu);
 	
-	if(tab) tab->addActionsFile(menuFile);
-	menuFile->addSeparator();
-	menuFile->addAction(actionNext);
-	menuFile->addAction(actionPrevious);
-	menuFile->addAction(actionClose);
-	menuFile->addSeparator();
+	WebTabMenu* webTabMenu = new WebTabMenu;
+	m_menuManager.registerMenus(webTabMenu);
+	m_menuables.append(webTabMenu);
 	
-	QMenu* menuPackages = menuFile->addMenu(tr("Packages"));
-	menuPackages->addAction(actionInstallLocalPackage);
-	menuPackages->addAction(actionManagePackages);
-	menuFile->addAction(actionHideErrors);
-	menuFile->addSeparator();
-	menuFile->addAction(actionQuit);
+	DeveloperMenu* developerMenu = new DeveloperMenu;
+	m_menuManager.registerMenus(developerMenu);
+	m_menuManager.addActivation(developerMenu);
+	m_menuables.append(developerMenu);
 	
-	if(tab) {
-		tab->addActionsEdit(menuEdit);
-		menuEdit->addSeparator();
-		tab->addActionsHelp(menuHelp);
-		menuHelp->addSeparator();
-	}
+	DocumentationMenu* documentationMenu = new DocumentationMenu(this);
+	m_menuManager.registerMenus(documentationMenu);
+	m_menuManager.addActivation(documentationMenu);
+	m_menuables.append(documentationMenu);
 	
-	menuEdit->addAction(actionEditor_Settings);
-	menuHelp->addSeparator();
-	menuHelp->addAction(actionAbout);
+	m_menuManager.construct(ui_menubar, ui_toolBar);
 	
-	if(tab) tab->addOtherActions(menuBar());
-	
-	menuBar()->addMenu(menuHelp);
-	
-	ui_toolBar->addAction(actionNew);
-	ui_toolBar->addAction(actionOpen);
-	if(tab) tab->addToolbarActions(ui_toolBar);
-	
-	ui_toolBar->show();
-	
-	ui_toolBar->setUpdatesEnabled(true);
-	menuBar()->setUpdatesEnabled(true);
+	/* Sets up the QTabWidget that handles the editor windows */
+	QToolButton *cornerButton = new QToolButton(ui_tabWidget);
+	cornerButton->setDefaultAction(mainWindowMenu->closeNode()->rawAction);
+	cornerButton->setAutoRaise(true);
+	ui_tabWidget->setCornerWidget(cornerButton);
+	connect(cornerButton, SIGNAL(clicked()), this, SLOT(close()));
 }
 
 void MainWindow::setTitle(const QString& title) { setWindowTitle(tr(TITLE) + (title.isEmpty() ? "" : (" - " + title))); }
 void MainWindow::setTabName(QWidget* widget, const QString& string) { ui_tabWidget->setTabText(ui_tabWidget->indexOf(widget), string); }
 void MainWindow::setStatusMessage(const QString& message, int time) { ui_statusbar->showMessage(message, time); }
 
-void MainWindow::setErrors(Tab* tab, 
+void MainWindow::setErrors(TabbedWidget* tab, 
 	const QStringList& errors, const QStringList& warnings, 
 	const QStringList& linker, const QStringList& verbose)
 {
 	m_messages.insert(tab, Messages(errors, warnings, linker, verbose));
 }
 
-void MainWindow::showErrors(Tab* tab) {
+void MainWindow::showErrors(TabbedWidget* tab) {
 	m_errorTab = tab;
 	
 	ui_errorView->hide();
@@ -239,8 +213,9 @@ void MainWindow::closeEvent(QCloseEvent *e)
 	
 	while(ui_tabWidget->count() > 0) {
 		ui_tabWidget->setCurrentIndex(0);
-		on_actionClose_triggered();
+		closeTab();
 		if(ui_tabWidget->count() == widgetCount) {
+			qWarning() << "Ignoring close event.";
 			e->ignore();
 			return;
 		}
@@ -262,41 +237,51 @@ void MainWindow::closeEvent(QCloseEvent *e)
 void MainWindow::deleteTab(int index)
 {
 	QWidget* w = ui_tabWidget->widget(index);
-	Tab* tab = 0;
-	if(m_errorTab == (tab = dynamic_cast<Tab*>(w))) {
+	TabbedWidget* tab = 0;
+	if(m_errorTab == (tab = lookup(w))) {
 		ui_errorView->hide();
 		m_errorTab = 0;
 	}
 	m_messages.remove(tab);
 	ui_tabWidget->removeTab(index);
+	removeLookup(w);
 	delete w;
 }
 
-void MainWindow::addTab(Tab* tab)
+void MainWindow::addTab(TabbedWidget* tab)
 {
 	if(!tab->beginSetup()) return;
+	addLookup(tab);
 	setUpdatesEnabled(false);
-	int tabNum = ui_tabWidget->addTab(dynamic_cast<QWidget*>(tab), QString::fromAscii(""));
+	int tabNum = ui_tabWidget->addTab(tab->widget(), QString::fromAscii(""));
 	ui_tabWidget->setCurrentIndex(tabNum);
 	setUpdatesEnabled(true);
 	tab->completeSetup();
+	moveToTab(tab);
 	
-	QObject::connect(this, SIGNAL(settingsUpdated()), dynamic_cast<QWidget*>(tab), SLOT(refreshSettings()));
+	QObject::connect(this, SIGNAL(settingsUpdated()), tab->widget(), SLOT(refreshSettings()));
 	
-	actionClose->setEnabled(ui_tabWidget->count() > 0);
+	if(m_menuManager.isConstructed())
+		dynamic_cast<MainWindowMenu*>(menuable(MainWindowMenu::menuName()))->closeNode()->rawAction->setEnabled(ui_tabWidget->count() > 0);
+}
+
+void MainWindow::moveToTab(TabbedWidget* tab)
+{
+	ui_tabWidget->setCurrentWidget(tab->widget());
 }
 
 QTabWidget* MainWindow::tabWidget() { return ui_tabWidget; }
-void MainWindow::closeAllOthers(Tab* tab)
+QList<TabbedWidget*> MainWindow::tabs() { return m_lookup.values(); }
+void MainWindow::closeAllOthers(TabbedWidget* tab)
 {
 	int i = 0;
 	while(ui_tabWidget->count() > 1) {
-		if(dynamic_cast<Tab*>(ui_tabWidget->widget(i)) == tab) ++i;
+		if(lookup(ui_tabWidget->widget(i)) == tab) ++i;
 		deleteTab(i);
 	}
 }
 
-void MainWindow::refreshMenus() { initMenus(dynamic_cast<Tab*>(ui_tabWidget->currentWidget())); }
+void MainWindow::refreshMenus() { /* initMenus(dynamic_cast<Tab*>(ui_tabWidget->currentWidget())); */ }
 
 void MainWindow::showErrorMessages(bool verbose)
 {
@@ -322,9 +307,7 @@ void MainWindow::showErrorMessages(bool verbose)
 	}
 }
 
-void MainWindow::on_actionNew_triggered() { newFile(); }
-
-void MainWindow::on_actionOpen_triggered()
+void MainWindow::open()
 {
 	QSettings settings;
 	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
@@ -340,19 +323,19 @@ void MainWindow::on_actionOpen_triggered()
 	openFile(filePath);
 }
 
-void MainWindow::on_actionNext_triggered() { ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() + 1); }
-void MainWindow::on_actionPrevious_triggered() { ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() - 1); }
+void MainWindow::next() { ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() + 1); }
+void MainWindow::previous() { ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() - 1); }
 
-void MainWindow::on_actionClose_triggered()
+void MainWindow::closeTab()
 {	
 	if(ui_tabWidget->count() == 0) return;
 	
-	if(!dynamic_cast<Tab*>(ui_tabWidget->currentWidget())->close()) return;
+	if(!lookup(ui_tabWidget->currentWidget())->close()) return;
 	
 	deleteTab(ui_tabWidget->currentIndex());
 	ui_errorView->hide();
 	
-	actionClose->setEnabled(ui_tabWidget->count() > 0);
+	if(m_menuManager.isConstructed()) dynamic_cast<MainWindowMenu*>(menuable(MainWindowMenu::menuName()))->closeNode()->rawAction->setEnabled(ui_tabWidget->count() > 0);
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_CLOSE_TAB);
 }
@@ -364,7 +347,7 @@ void MainWindow::on_actionAbout_triggered()
 		QString::number(KISS_C_VERSION_BUILD) + "\n\n";
 	aboutString += tr("Copyright (C) 2007-2011 KISS Institute for Practical Robotics\n\n");
 	aboutString += tr("http://www.kipr.org/\nhttp://www.botball.org/\n\n");
-	aboutString += tr("KISS is a project of the KISS Institute for Practical Robotics. ");
+	aboutString += tr("KISS is a project of the KISS Institute for Practical Robotics.");
 	QMessageBox::about(this, tr("KIPR's Instructional Software System"), aboutString);
 }
 
@@ -391,19 +374,24 @@ void MainWindow::on_actionEditor_Settings_triggered() { if(m_editorSettingsDialo
 
 void MainWindow::on_ui_tabWidget_currentChanged(int i) 
 {
+	if(i < 0) return;
+	
 	setUpdatesEnabled(false);
-	m_currentTab = dynamic_cast<Tab*>(ui_tabWidget->widget(i));
-	initMenus(m_currentTab);
+	m_currentTab = lookup(ui_tabWidget->widget(i));
 	setTitle("");
-	if(m_currentTab) m_currentTab->activate();
-	actionNext->setEnabled(m_currentTab && i != ui_tabWidget->count() - 1);
-	actionPrevious->setEnabled(m_currentTab && i != 0);
+	if(m_currentTab) {
+		m_currentTab->activate();
+	}
+	if(m_menuManager.isConstructed()) {
+		dynamic_cast<MainWindowMenu*>(menuable(MainWindowMenu::menuName()))->nextNode()->rawAction->setEnabled(m_currentTab && i != ui_tabWidget->count() - 1);
+		dynamic_cast<MainWindowMenu*>(menuable(MainWindowMenu::menuName()))->prevNode()->rawAction->setEnabled(m_currentTab && i != 0);
+	}
 	setUpdatesEnabled(true);
 }
 
-void MainWindow::on_actionManagePackages_triggered() { addTab(new Repository(this)); }
+void MainWindow::managePackages() { addTab(new Repository(this)); }
 
-void MainWindow::on_actionInstallLocalPackage_triggered()
+void MainWindow::installLocalPackage()
 {
 	QSettings settings;
 	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
@@ -451,7 +439,7 @@ void MainWindow::openRecent()
 void MainWindow::errorClicked(QListWidgetItem* item)
 {
 	if(!m_errorTab) return;
-	int i = ui_tabWidget->indexOf(dynamic_cast<QWidget*>(m_errorTab));
+	int i = ui_tabWidget->indexOf(m_errorTab->widget());
 	QWidget* widget = ui_tabWidget->widget(i);
 	
 	int line = item->text().section(":", 1, 1).toInt();
@@ -465,6 +453,23 @@ void MainWindow::errorClicked(QListWidgetItem* item)
 	widget->setFocus(Qt::OtherFocusReason); // For some reason this isn't working?
 }
 
+void MainWindow::addLookup(TabbedWidget* tab)
+{
+	if(lookup(tab->widget())) return;
+	m_lookup.insert(tab->widget(), tab);
+}
+
+void MainWindow::removeLookup(QWidget* widget)
+{
+	m_lookup.remove(widget);
+}
+
+TabbedWidget* MainWindow::lookup(QWidget* widget)
+{
+	QMap<QWidget*, TabbedWidget*>::iterator it = m_lookup.find(widget);
+	return it == m_lookup.end() ? 0 : *it;
+}
+
 // TODO: Make Error Googlable
 void MainWindow::showContextMenuForError(const QPoint &pos) { Q_UNUSED(pos); }
 
@@ -475,4 +480,37 @@ bool MainWindow::eventFilter(QObject * target, QEvent * event) {
                 event->accept();
                 return true;
         } else return QMainWindow::eventFilter(target, event);
+}
+
+MenuManager* MainWindow::menuManager()
+{
+	return &m_menuManager;
+}
+
+Menuable* MainWindow::menuable(const QString& name)
+{
+	foreach(Menuable* menuable, m_menuables) {
+		if(menuable->name() == name) return menuable;
+	}
+	return 0;
+}
+
+QList<Menuable*> MainWindow::menuablesExcept(const QStringList& names)
+{
+	QList<Menuable*> ret;
+	foreach(Menuable* menuable, m_menuables) {
+		if(!names.contains(menuable->name())) ret.append(menuable);
+	}
+	return ret;
+}
+
+QList<Menuable*> MainWindow::menuables()
+{
+	return m_menuables;
+}
+
+void MainWindow::activateMenuable(const QString& name, QObject* on)
+{
+	ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menuable(name));
+	activatable->setActive(on);
 }

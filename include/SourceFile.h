@@ -67,25 +67,18 @@
 
 #define UI_EVENT_TEMPLATE_SELECTED "templateSelected"
 
-#define UI_EVENT_OPEN_MANUAL "openManual"
-
 class FindDialog;
 class MainWindow;
 
 namespace Lexer { class Constructor; }
 
-class SourceFile : public QWidget, public Tab, private Ui::SourceFile
+class SourceFile : public QWidget, public TabbedWidget, private Ui::SourceFile
 {
 Q_OBJECT
 public:
-	SourceFile(QWidget* parent = 0);
+	SourceFile(MainWindow* parent = 0);
 	
 	void activate();
-	void addActionsFile(QMenu* file);
-	void addActionsEdit(QMenu* edit);
-	void addActionsHelp(QMenu* help);
-	void addOtherActions(QMenuBar* menuBar);
-	void addToolbarActions(QToolBar* toolbar);
 	
 	bool beginSetup();
 	void completeSetup();
@@ -109,14 +102,39 @@ public:
 	//! \return Current zoom level
 	int getZoom();
 	
-	QsciScintilla* getEditor();
-	
 	void moveTo(int line, int pos);
 	
 	Target* target();
 	QsciScintilla* editor();
 	
 public slots:
+	bool saveAs();
+
+	void copy();
+	void cut();
+	void paste();
+	void undo();
+	void redo();
+	void find();
+	void print();
+
+	void changeTarget();
+	void choosePort();
+
+	void download();
+	void compile();
+	void run();
+	void stop();
+	void simulate();
+	void debug();
+	void screenGrab();
+	void requestFile();
+
+	void makeTemplate();
+
+	void toggleBreakpoint(bool checked);
+	void clearBreakpoints();
+
 	void indentAll();
 	void refreshSettings();
 	void updateMargins();
@@ -125,48 +143,18 @@ public slots:
 	void zoomIn();
 	//! Decreate editor's zoom level
 	void zoomOut();
-
-	//! Promps user to save file to a browsed location
-	void on_actionSaveAs_triggered();
+	
+	void zoomReset();
 	
 	//! Save current file
-	bool fileSave();
+	bool save();
 
 	void sourceModified(bool m);
-	
+
+		
 private slots:
-	void on_actionCopy_triggered();
-	void on_actionCut_triggered();
-	void on_actionPaste_triggered();
-	void on_actionUndo_triggered();
-	void on_actionRedo_triggered();
-	void on_actionFind_triggered();
-	
-	void openManual();
-	void on_actionPrint_triggered();
-	
-	void on_actionZoomIn_triggered();
-	void on_actionZoomOut_triggered();
-	void on_actionResetZoomLevel_triggered();
-	
-	void on_actionChangeTarget_triggered();
-	void on_actionChoosePort_triggered();
-	
-	void on_actionDownload_triggered();
-	void on_actionCompile_triggered();
-	void on_actionRun_triggered();
-	void on_actionStop_triggered();
-	void on_actionSimulate_triggered();
-	void on_actionDebug_triggered();
-	void on_actionScreenGrab_triggered();
-	void on_actionRequestFile_triggered();
-	
-	void on_actionMakeTemplate_triggered();
-	
-	void on_actionToggleBreakpoint_triggered(bool checked);
-	void on_actionClearBreakpoints_triggered();
-	
 	void on_ui_editor_cursorPositionChanged(int line, int index);
+	
 private:
 	void showFind();
 	bool checkPort();
@@ -183,7 +171,7 @@ private:
 	QString m_targetName;
 	QString m_templateExt;
 	
-	bool m_debugger;
+	bool m_debuggerEnabled;
 	
 	// These are handles for the markers shown in the margin
 	int m_errorIndicator;
@@ -201,7 +189,9 @@ private:
 	void markProblems(const QStringList& errors, const QStringList& warnings);
 	void updateErrors();
 	void updateBreakpointToggle();
-	bool changeTarget(bool _template = true);
+	bool changeTarget(bool _template);
+	
+	Debugger m_debugger;
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

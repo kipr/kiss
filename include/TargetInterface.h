@@ -49,7 +49,7 @@ public:
 	virtual bool simulate(const QString&, const QString&) { return false; }
 	virtual bool debugConsole(const QString&, const QString&, const QList<Location>&) { return false; }
 	virtual DebuggerInterface* debug(const QString&, const QString&) { return 0; }
-	virtual Tab* ui(const QString&) { return 0; }
+	virtual TabbedWidget* ui(const QString&) { return 0; }
 	
 	virtual bool hasScreenGrab() { return false; }
 	virtual QByteArray screenGrab(const QString&) { return QByteArray(); }
@@ -108,6 +108,6 @@ private:
 	QStringList m_errorArgs;
 };
 
-Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/3.0");
+Q_DECLARE_INTERFACE(TargetInterface, "com.kipr.kiss-c.TargetInterface/3.1");
 
 #endif

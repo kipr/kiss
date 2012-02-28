@@ -28,14 +28,14 @@
 
 #include <QMessageBox>
 
-VideoPlayerTab::VideoPlayerTab(QWidget* parent) : QWidget(parent)
+VideoPlayerTab::VideoPlayerTab(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent)
 {
 	setupUi(this);
 	actionPlay->setEnabled(false);
 	actionPause->setEnabled(false);
 }
 
-void VideoPlayerTab::activate() { MainWindow::ref().hideErrors(); }
+void VideoPlayerTab::activate() { mainWindow()->hideErrors(); }
 
 void VideoPlayerTab::addActionsFile(QMenu*) {}
 void VideoPlayerTab::addActionsEdit(QMenu*) {}
@@ -55,7 +55,7 @@ void VideoPlayerTab::addToolbarActions(QToolBar* toolbar)
 }
 
 bool VideoPlayerTab::beginSetup() { return true; }
-void VideoPlayerTab::completeSetup() { MainWindow::ref().setTabName(this, tr("Video Player")); }
+void VideoPlayerTab::completeSetup() { mainWindow()->setTabName(this, tr("Video Player")); }
 bool VideoPlayerTab::close() { return true; }
 
 void VideoPlayerTab::load(const QString& file) 
@@ -67,7 +67,7 @@ void VideoPlayerTab::load(const QString& file)
 		this, SLOT(stateChange(Phonon::State, Phonon::State)));
 	ui_video->mediaObject()->play();
 	if(ui_video->mediaObject()->errorType() != Phonon::NoError) {
-		MessageDialog::showError(&MainWindow::ref(), "simple_error", QStringList() << 
+		MessageDialog::showError(mainWindow(), "simple_error", QStringList() << 
 			QString("Unable to load ") + file <<
 			ui_video->mediaObject()->errorString());
 	}

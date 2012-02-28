@@ -51,9 +51,9 @@ bool Target::setTargetFile(const QString& filename)
 	return true;
 }
 
-QMap<QString, QString> Target::targetManualPaths()
+QMap<QString, QString> Target::targetManualPaths(const QString& filename)
 {
-	QSettings settings(m_targetFileName, QSettings::IniFormat);
+	QSettings settings(filename, QSettings::IniFormat);
 	settings.beginGroup(MANUALS);
 	QMap<QString, QString> ret;
 	foreach(const QString& str, settings.childKeys()) {
@@ -88,7 +88,7 @@ void Target::stop() { if(!hasStop()) return; get()->stop(m_port); }
 bool Target::simulate(const QString& filename) { return hasSimulate() ? get()->simulate(filename, m_port) : false; }
 bool Target::debugConsole(const QString& filename, const QList<Location>& bkpts) { return hasDebug() ? get()->debugConsole(filename, m_port, bkpts) : false; }
 DebuggerInterface* Target::debug(const QString& filename) { return hasDebug() ? get()->debug(filename, m_port) : 0; }
-Tab* Target::ui() { return hasUi() ? get()->ui(m_port) : 0; }
+TabbedWidget* Target::ui() { return hasUi() ? get()->ui(m_port) : 0; }
 bool Target::hasScreenGrab() { return m_got && get()->hasScreenGrab(); }
 QByteArray Target::screenGrab() { return hasScreenGrab() ? get()->screenGrab(m_port) : QByteArray(); }
 bool Target::hasRequestFile() { return m_got && get()->hasFileRequest(); }

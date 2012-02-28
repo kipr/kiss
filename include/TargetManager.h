@@ -34,6 +34,8 @@ public:
 	QStringList targets();
 	QString displayName(const QString& target);
 	QString targetPath(const QString& target);
+	QStringList targetPaths();
+	QStringList targetFiles();
 	QStringList allSupportedExtensions();
 	QString getExpectedLocation(const QString& name) const;
 	

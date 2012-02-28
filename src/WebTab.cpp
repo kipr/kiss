@@ -30,6 +30,9 @@
 #include <QDebug>
 #include <QDir>
 
+#include "WebTabMenu.h"
+#include "MainWindowMenu.h"
+
 struct CurrentDirectoryMacro : Macro
 {
 	QString macro(const QString& with) const {
@@ -37,7 +40,7 @@ struct CurrentDirectoryMacro : Macro
 	}
 };
 
-WebTab::WebTab(QWidget* parent) : QWidget(parent), m_audioTutorial(0)
+WebTab::WebTab(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent), m_audioTutorial(0)
 {
 	setupUi(this);
 	
@@ -57,44 +60,14 @@ WebTab::~WebTab()
 	if(m_audioTutorial) delete m_audioTutorial;
 }
 
-void WebTab::activate() {}
-void WebTab::addActionsFile(QMenu*) {}
-
-void WebTab::addActionsEdit(QMenu* edit)
-{	
-	edit->addAction(actionCopy);
-	edit->addAction(actionCut);
-	edit->addAction(actionPaste);
-	edit->addSeparator();
-	edit->addAction(actionFind);
-}
-
-void WebTab::addActionsHelp(QMenu*) {}
-
-void WebTab::addOtherActions(QMenuBar* menuBar)
+void WebTab::activate()
 {
-	QMenu* browser = menuBar->addMenu(tr("Browser"));
-	browser->addAction(actionBack);
-	browser->addAction(actionForward);
-	browser->addAction(actionReload);
-	browser->addAction(actionGo);
-	browser->addAction(actionOpenInBrowser);
-}
-
-void WebTab::addToolbarActions(QToolBar* toolbar)
-{
-	toolbar->addSeparator();
-	toolbar->addAction(actionCopy);
-	toolbar->addAction(actionCut);
-	toolbar->addAction(actionPaste);
-	toolbar->addAction(actionFind);
-	toolbar->addSeparator();
-	toolbar->addAction(actionBack);
-	toolbar->addAction(actionForward);
-	toolbar->addAction(actionReload);
-	toolbar->addAction(actionGo);
-	toolbar->addAction(actionOpenInBrowser);
-	
+	QList<Menuable*> menus = mainWindow()->menuablesExcept(QStringList() << MainWindowMenu::menuName());
+	foreach(Menuable* menu, menus) {
+		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
+		if(activatable) activatable->setActive(0);
+	}
+	mainWindow()->activateMenuable(WebTabMenu::menuName(), this);
 }
 
 bool WebTab::beginSetup() { return true; }
@@ -112,7 +85,7 @@ void WebTab::updateTitle(const QString& title)
 		local.truncate(40);
 		local += "...";
 	}
-	MainWindow::ref().setTabName(this, local.length() == 0 ? tr("Untitled Browser") : local);
+	mainWindow()->setTabName(this, local.length() == 0 ? tr("Untitled Browser") : local);
 }
 
 void WebTab::updateUrl(const QUrl& url)
@@ -122,22 +95,30 @@ void WebTab::updateUrl(const QUrl& url)
 	actionForward->setEnabled(ui_webView->history()->canGoForward());
 	
 	ui_urlBar->setText(url.toString());
-	MainWindow::ref().setStatusMessage(tr("Loaded ") + url.toString(), 5000);
+	mainWindow()->setStatusMessage(tr("Loaded ") + url.toString(), 5000);
 }
 
 void WebTab::on_actionGo_triggered() { ui_webView->load(QUrl::fromUserInput(ui_urlBar->text())); }
-void WebTab::on_actionCopy_triggered() { ui_webView->triggerPageAction(QWebPage::Copy); }
-void WebTab::on_actionCut_triggered() { ui_webView->triggerPageAction(QWebPage::Cut); }
-void WebTab::on_actionPaste_triggered() { ui_webView->triggerPageAction(QWebPage::Paste); }
+void WebTab::copy() { ui_webView->triggerPageAction(QWebPage::Copy); }
+void WebTab::cut() { ui_webView->triggerPageAction(QWebPage::Cut); }
+void WebTab::paste() { ui_webView->triggerPageAction(QWebPage::Paste); }
+void WebTab::go() { on_actionGo_triggered(); }
 bool WebTab::close() { return true; }
 
 void WebTab::load(QString url, bool hideUrl)
 {
+	mainWindow()->setTabName(this, tr("Loading..."));
 	m_prevUrl = QUrl::fromUserInput(url);
 	ui_webView->load(QUrl::fromUserInput(url));
 	actionGo->setEnabled(!hideUrl);
 	ui_urlBar->setVisible(!hideUrl);
 	ui_goButton->setVisible(!hideUrl);
+	ui_load->setVisible(!hideUrl);
+}
+
+QString WebTab::current()
+{
+	return ui_urlBar->text();
 }
 
 void WebTab::on_ui_prevFind_clicked() { ui_webView->findText(ui_find->text(), QWebPage::FindBackward); }
@@ -168,7 +149,8 @@ void WebTab::on_ui_webView_loadFinished(bool ok)
 	actionOpenInBrowser->setEnabled(false);
 }
 
-void WebTab::on_actionOpenInBrowser_triggered() { QDesktopServices::openUrl(ui_webView->url()); }
+void WebTab::openInBrowser() { QDesktopServices::openUrl(ui_webView->url()); }
+void WebTab::refresh() { ui_webView->reload(); }
 
 void WebTab::refreshSettings() {}
 QWebView* WebTab::webView() { return ui_webView; }
@@ -184,19 +166,19 @@ void WebTab::linkClicked(const QUrl& url)
 	QString auth = url.authority();
 	qWarning() << "Auth" << auth;
 	if(auth == "new") {
-		MainWindow::ref().newFile();
+		mainWindow()->newFile();
 		return;
 	}
 	if(auth == "open") {
-		MainWindow::ref().on_actionOpen_triggered();
+		mainWindow()->open();
 		return;
 	}
 	if(auth == "settings") {
-		MainWindow::ref().on_actionEditor_Settings_triggered();
+		mainWindow()->on_actionEditor_Settings_triggered();
 		return;
 	}
 	if(auth == "openinbrowser") {
-		on_actionOpenInBrowser_triggered();
+		openInBrowser();
 		return;
 	}
 	if(auth == "openprevinbrowser") {
@@ -209,17 +191,17 @@ void WebTab::linkClicked(const QUrl& url)
 	if(auth == "newbrowser") {
 		WebTab* tab = new WebTab();
 		tab->load(fragment);
-		MainWindow::ref().addTab(tab);
+		mainWindow()->addTab(tab);
 		return;
 	}
 	if(auth == "openfile") {
-		MainWindow::ref().openFile(fragment);
+		mainWindow()->openFile(fragment);
 		return;
 	}
 	if(auth == "video") {
 		VideoPlayerTab* tab = new VideoPlayerTab();
 		tab->load(fragment);
-		MainWindow::ref().addTab(tab);
+		mainWindow()->addTab(tab);
 		return;
 	}
 	if(auth == "audiotutorial") {

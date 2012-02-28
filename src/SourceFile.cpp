@@ -29,12 +29,14 @@
 #include "MacroString.h"
 #include "LexerFactory.h"
 #include "TemplateManager.h"
-
-#include "SourceFileShared.h"
 #include "TemplateFormat.h"
 #include "MakeTemplateDialog.h"
+#include "SourceFileMenu.h"
+#include "TargetMenu.h"
+#include "MainWindowMenu.h"
 
 #include "UiEventManager.h"
+#include "ResourceHelper.h"
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
@@ -61,138 +63,51 @@
 #define SAVE_PATH "savepath"
 #define DEFAULT_EXTENSION "default_extension"
 
-SourceFile::SourceFile(QWidget* parent) : QWidget(parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), 
- 	m_targetName("?"), m_debugger(false), m_runTab(0)
+SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), 
+ 	m_targetName("?"), m_debuggerEnabled(false), m_runTab(0), m_debugger(parent)
 {
 	setupUi(this);
 	
 	ui_localCompileFailed->setSourceFile(this);
 	ui_find->setSourceFile(this);
 	
-	m_errorIndicator = ui_editor->markerDefine(SourceFileShared::ref().redBullet());
-	m_warningIndicator = ui_editor->markerDefine(SourceFileShared::ref().yellowBullet());
-	m_breakIndicator = ui_editor->markerDefine(SourceFileShared::ref().blueBullet());
+	m_errorIndicator = ui_editor->markerDefine(ResourceHelper::ref().pixmap("bullet_red"));
+	m_warningIndicator = ui_editor->markerDefine(ResourceHelper::ref().pixmap("bullet_yellow"));
+	m_breakIndicator = ui_editor->markerDefine(ResourceHelper::ref().pixmap("bullet_blue"));
 	
 	ui_editor->setModified(false);
 	ui_editor->setEolMode(QsciScintilla::EolUnix);
 	ui_editor->setWrapMode(QsciScintilla::WrapWord);
 	
 	m_fileInfo.setFile(m_fileHandle);
-	MainWindow::ref().setStatusMessage("");
+	mainWindow()->setStatusMessage("");
 	
-	connect(actionSave, SIGNAL(triggered()), this, SLOT(fileSave()));
 	connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
 	connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
-	connect(actionIndentAll, SIGNAL(triggered()), this, SLOT(indentAll()));
 	
 	ui_find->hide();
 	ui_localCompileFailed->hide();
+	
+	m_debugger.hide();
 	
 	refreshSettings();
 }
 
 void SourceFile::activate()
 {
-	MainWindow::ref().setTitle(m_targetName + (!m_target.port().isEmpty() ? (" - " + m_target.port()) : ""));
-	MainWindow::ref().showErrors(this);
-	MainWindow::ref().setStatusMessage("");
-}
-
-void SourceFile::addActionsFile(QMenu* file) 
-{
-	file->addAction(actionSave);
-	file->addAction(actionSaveAs);
-	file->addSeparator();
-	file->addAction(actionPrint);
-	file->addSeparator();
-	file->addAction(actionMakeTemplate);
-}
-
-void SourceFile::addActionsEdit(QMenu* edit)
-{
-	edit->addAction(actionCopy);
-	edit->addAction(actionCut);
-	edit->addAction(actionPaste);
-	edit->addSeparator();
-	edit->addAction(actionUndo);
-	edit->addAction(actionRedo);
-}
-
-void SourceFile::addActionsHelp(QMenu* help) 
-{
-	const QMap<QString, QString>& manuals = m_target.targetManualPaths();
-	foreach(const QString& manual, manuals.keys()) {
-		if(!QFileInfo(manuals[manual]).exists()) continue;
-		QAction* action = help->addAction(QIcon(":/shortcuts/target/icon_set/icons/report.png"), manual);
-		action->setData(manuals[manual]);
-		connect(action, SIGNAL(triggered()), this, SLOT(openManual()));
-	}
-}
-
-void SourceFile::addOtherActions(QMenuBar* menuBar)
-{
-	QMenu* source = menuBar->addMenu(tr("Source"));
-	QMenu* target = menuBar->addMenu(tr("Target"));
-	source->addAction(actionZoomIn);
-	source->addAction(actionZoomOut);
-	source->addAction(actionResetZoomLevel);
-	if(m_target.cStyleBlocks()) {
-		source->addSeparator();
-		source->addAction(actionIndentAll);
-	}
-	source->addSeparator();
-	source->addAction(actionFind);
-	if(m_target.hasCompile()) target->addAction(actionCompile);
-	if(m_target.hasDownload()) target->addAction(actionDownload);
-	if(m_target.hasSimulate()) target->addAction(actionSimulate);
-	if(m_target.hasRun()) target->addAction(actionRun);
-	if(m_target.hasStop()) target->addAction(actionStop);
-	if(m_target.hasDebug()) {
-		target->addAction(actionDebug);
-		source->addSeparator();
-		source->addAction(actionToggleBreakpoint);
-		source->addAction(actionClearBreakpoints);
-	}
-	target->addSeparator();
-	target->addAction(actionChangeTarget);
-	target->addAction(actionChoosePort);
-	target->addSeparator();
-	const QList<QAction*>& actionList = m_target.actionList();
-	for(int i = 0; i < actionList.size(); ++i) target->insertAction(0, actionList[i]);
-	if(actionList.size() > 0) target->addSeparator();
-	bool hasExtra = false;
-	if(m_target.hasScreenGrab()) {
-		target->addAction(actionScreenGrab);
-		hasExtra = true;
-	}
-	if(m_target.hasRequestFile()) {
-		target->addAction(actionRequestFile);
-		hasExtra = true;
-	}
-	if(hasExtra) target->addSeparator();
-	addActionsHelp(target);
-}
-
-void SourceFile::addToolbarActions(QToolBar* toolbar) 
-{
-	toolbar->addAction(actionSave);
-	toolbar->addSeparator();
-	toolbar->addAction(actionCopy);
-	toolbar->addAction(actionCut);
-	toolbar->addAction(actionPaste);
-	toolbar->addAction(actionFind);
-	toolbar->addSeparator();
+	mainWindow()->setTitle(m_targetName + (!m_target.port().isEmpty() ? (" - " + m_target.port()) : ""));
+	mainWindow()->showErrors(this);
+	mainWindow()->setStatusMessage("");
 	
-	if(m_target.hasCompile()) toolbar->addAction(actionCompile);
-	if(m_target.hasDownload()) toolbar->addAction(actionDownload);
-	if(m_target.hasSimulate()) toolbar->addAction(actionSimulate);
-	if(m_target.hasRun()) toolbar->addAction(actionRun);
-	if(m_target.hasStop()) toolbar->addAction(actionStop);
-	if(m_target.hasDebug()) toolbar->addAction(actionDebug);
+	QList<Menuable*> menus = mainWindow()->menuablesExcept(QStringList() << MainWindowMenu::menuName() << TargetMenu::menuName());
+	foreach(Menuable* menu, menus) {
+		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
+		if(activatable) activatable->setActive(0);
+	}
 }
 
 bool SourceFile::beginSetup() { return changeTarget(isNewFile()) && !m_target.error(); }
-void SourceFile::completeSetup() { MainWindow::ref().setTabName(this, m_fileInfo.fileName()); updateMargins(); }
+void SourceFile::completeSetup() { mainWindow()->setTabName(this, m_fileInfo.fileName()); updateMargins(); }
 
 bool SourceFile::close()
 {
@@ -204,19 +119,19 @@ bool SourceFile::close()
 
 	if(ret == QMessageBox::Cancel) return false;
 	if(ret == QMessageBox::Yes) {
-		fileSave();
+		save();
 		if(ui_editor->isModified()) return false;
 	}
+	
+	mainWindow()->activateMenuable(SourceFileMenu::menuName(), 0);
+	mainWindow()->activateMenuable(TargetMenu::menuName(), 0);
 	
 	return true;
 }
 
-bool SourceFile::fileSave()
+bool SourceFile::save()
 {
-	if(m_isNewFile) {
-		on_actionSaveAs_triggered();
-		return true;
-	}
+	if(m_isNewFile) return saveAs();
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_FILE_SAVE);
 	
@@ -243,7 +158,7 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 
 	m_isNewFile = false;
 	
-	MainWindow::ref().setTabName(this, fileName());
+	mainWindow()->setTabName(this, fileName());
 	
 	// Update the lexer to the new spec for that extension
 	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(fileSuffix());
@@ -268,7 +183,7 @@ bool SourceFile::fileOpen(const QString& filePath)
 
 	m_isNewFile = false;
 
-	MainWindow::ref().setTabName(this, fileName());
+	mainWindow()->setTabName(this, fileName());
 
 	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(fileSuffix());
 	if(Lexer::Factory::isLexerFromConstructor((Lexer::LexerBase*)ui_editor->lexer(), constructor))
@@ -439,7 +354,7 @@ void SourceFile::refreshSettings()
 	ui_editor->setCallTipsStyle(settings.value(CALL_TIPS).toBool() ? QsciScintilla::CallTipsNoContext : 
 		QsciScintilla::CallTipsNone);
 		
-	m_debugger = settings.value(DEBUGGER_ENABLED).toBool();
+	m_debuggerEnabled = settings.value(DEBUGGER_ENABLED).toBool();
 
 	settings.endGroup();
 	
@@ -448,7 +363,7 @@ void SourceFile::refreshSettings()
 	updateMargins();
 	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
 	
-	MainWindow::ref().refreshMenus();
+	TargetMenu::ref().refresh();
 }
 
 QString SourceFile::fileName() 	{ return m_fileInfo.fileName(); }
@@ -474,16 +389,16 @@ void SourceFile::updateMargins()
 }
 
 int SourceFile::getZoom() { return ui_editor->SendScintilla(QsciScintilla::SCI_GETZOOM); }
-QsciScintilla* SourceFile::getEditor() { return ui_editor; }
 void SourceFile::moveTo(int line, int pos)  { if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos); }
 
 Target* SourceFile::target() { return &m_target; }
 QsciScintilla* SourceFile::editor() { return ui_editor; }
 
-void SourceFile::zoomIn() { ui_editor->zoomIn(); updateMargins(); }
-void SourceFile::zoomOut() { ui_editor->zoomOut(); updateMargins(); }
+void SourceFile::zoomIn() { ui_editor->zoomIn(); updateMargins(); UiEventManager::ref().sendEvent(UI_EVENT_ZOOM_IN); }
+void SourceFile::zoomOut() { ui_editor->zoomOut(); updateMargins(); UiEventManager::ref().sendEvent(UI_EVENT_ZOOM_OUT); }
+void SourceFile::zoomReset() { ui_editor->zoomTo(0); updateMargins(); UiEventManager::ref().sendEvent(UI_EVENT_ZOOM_RESET); }
 
-void SourceFile::on_actionSaveAs_triggered()
+bool SourceFile::saveAs()
 {
 	QSettings settings;
 	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
@@ -501,9 +416,9 @@ void SourceFile::on_actionSaveAs_triggered()
 		if(i != -1) exts.swap(0, i);
 	}
 	
-	QString filePath = QFileDialog::getSaveFileName(&MainWindow::ref(), "Save File", savePath, 
+	QString filePath = QFileDialog::getSaveFileName(mainWindow(), "Save File", savePath, 
 		exts.join(";;") + (exts.size() < 1 ? "" : ";;") + "All Files (*)");
-	if(filePath.isEmpty()) return;
+	if(filePath.isEmpty()) return false;
 
 	QFileInfo fileInfo(filePath);
 	
@@ -514,9 +429,9 @@ void SourceFile::on_actionSaveAs_triggered()
 
 	/* Saves the file with the new fileName and updates the tabWidget label */
 	if(fileSaveAs(fileInfo.absoluteFilePath())) {
-		MainWindow::ref().setTabName(this, fileName());
-		MainWindow::ref().setStatusMessage("Saved file \"" + fileName() + "\"");
-	} else QMessageBox::critical(&MainWindow::ref(), "Error", "Error: Could not write file " + fileName());
+		mainWindow()->setTabName(this, fileName());
+		mainWindow()->setStatusMessage("Saved file \"" + fileName() + "\"");
+	} else QMessageBox::critical(mainWindow(), "Error", "Error: Could not write file " + fileName());
 
 	QStringList current = settings.value(RECENTS).toStringList().mid(0, 5);
 	current.push_front(fileInfo.absoluteFilePath());
@@ -524,22 +439,23 @@ void SourceFile::on_actionSaveAs_triggered()
 	settings.setValue(RECENTS, current);
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_FILE_SAVE);
+	
+	return true;
 }
 
-void SourceFile::sourceModified(bool) { MainWindow::ref().setTabName(this, "* " + m_fileInfo.fileName()); }
+void SourceFile::sourceModified(bool) { mainWindow()->setTabName(this, "* " + m_fileInfo.fileName()); }
 
-void SourceFile::on_actionDownload_triggered()
+void SourceFile::download()
 {	
-	fileSave();
-	
+	if(!save()) return;
 	if(!checkPort()) return;
 	
 	ui_localCompileFailed->hide();
 	
-	MainWindow::ref().setStatusMessage("Downloading...");
+	mainWindow()->setStatusMessage("Downloading...");
 	QApplication::flush();
 	int message = m_target.download(filePath());
-	MainWindow::ref().setStatusMessage(!message ? tr("Download Succeeded") : tr("Download Failed"));
+	mainWindow()->setStatusMessage(!message ? tr("Download Succeeded") : tr("Download Failed"));
 	if(message == TargetInterface::CompileFailed) ui_localCompileFailed->performAction(filePath());
 	
 	updateErrors();
@@ -547,79 +463,80 @@ void SourceFile::on_actionDownload_triggered()
 	UiEventManager::ref().sendEvent(UI_EVENT_DOWNLOAD);
 }
 
-void SourceFile::on_actionCompile_triggered()
+void SourceFile::compile()
 {
 	ui_localCompileFailed->hide();
 	
-	fileSave();
-	MainWindow::ref().hideErrors();
-	MainWindow::ref().setStatusMessage(m_target.compile(filePath()) ? tr("Compile Succeeded") : tr("Compile Failed"));
+	if(!save()) return;
+	
+	mainWindow()->hideErrors();
+	mainWindow()->setStatusMessage(m_target.compile(filePath()) ? tr("Compile Succeeded") : tr("Compile Failed"));
 
 	updateErrors();
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_COMPILE);
 }
 
-void SourceFile::on_actionRun_triggered()
+void SourceFile::run()
 {	
-	fileSave();
-	
+	if(!save()) return;
 	if(!checkPort()) return;
 	
 	ui_localCompileFailed->hide();
 	
-	MainWindow::ref().hideErrors();
+	mainWindow()->hideErrors();
 	bool success = false;
-	MainWindow::ref().setStatusMessage((success = m_target.run(filePath())) ? tr("Run Succeeded") : tr("Run Failed"));
+	mainWindow()->setStatusMessage((success = m_target.run(filePath())) ? tr("Run Succeeded") : tr("Run Failed"));
 	
-	if(m_runTab) {
-		int i = MainWindow::ref().tabWidget()->indexOf(m_runTab);
-		if(i >= 0) MainWindow::ref().deleteTab(i);
+	/* if(m_runTab) {
+		int i = mainWindow()->tabWidget()->indexOf(m_runTab);
+		if(i >= 0) mainWindow()->deleteTab(i);
 	}
 	
-	Tab* ui = success ? m_target.ui() : 0;
+	TabbedWidget* ui = success ? m_target.ui() : 0;
 	m_runTab = !ui ? 0 : dynamic_cast<QWidget*>(ui);
 	if(ui) {
-		MainWindow::ref().addTab(ui);
+		mainWindow()->addTab(ui);
 		const QString& port = m_target.port();
-		MainWindow::ref().setTabName(dynamic_cast<QWidget*>(ui), QString("Running") + (port.isEmpty() ? "" : (" on " + port)));
+		mainWindow()->setTabName(dynamic_cast<QWidget*>(ui), QString("Running") + (port.isEmpty() ? "" : (" on " + port)));
 	}
-	
+	*/ 
 	updateErrors();
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_RUN);
 }
 
-void SourceFile::on_actionStop_triggered() { m_target.stop(); UiEventManager::ref().sendEvent(UI_EVENT_STOP); }
+void SourceFile::stop() { m_target.stop(); UiEventManager::ref().sendEvent(UI_EVENT_STOP); }
 
-void SourceFile::on_actionSimulate_triggered()
+void SourceFile::simulate()
 {
 	ui_localCompileFailed->hide();
 	
-	fileSave();
-	MainWindow::ref().hideErrors();
-	MainWindow::ref().setStatusMessage(m_target.simulate(filePath()) ? tr("Simulation Succeeded") : tr("Simulation Failed"));
+	if(!save()) return;
+	
+	mainWindow()->hideErrors();
+	mainWindow()->setStatusMessage(m_target.simulate(filePath()) ? tr("Simulation Succeeded") : tr("Simulation Failed"));
 
 	updateErrors();
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_SIMULATE);
 }
 
-void SourceFile::on_actionDebug_triggered()
+void SourceFile::debug()
 {
 	ui_localCompileFailed->hide();
 	
-	fileSave();
-	MainWindow::ref().hideErrors();
+	if(!save()) return;
+	mainWindow()->hideErrors();
 	DebuggerInterface* interface = 0;
 	QList<Location> bkpts;
-	if(!m_debugger) {
+	if(!m_debuggerEnabled) {
 		foreach(const int& i, m_breakpoints) {
 			bkpts.append(Location(m_fileInfo.fileName(), ui_editor->markerLine(i) + 1));
 		}
 	}
-	bool success = m_debugger ? !(interface = m_target.debug(filePath())) : m_target.debugConsole(filePath(), bkpts);
-	MainWindow::ref().setStatusMessage(success ? tr("Debug Succeeded") : tr("Debug Failed"));
+	bool success = m_debuggerEnabled ? !(interface = m_target.debug(filePath())) : m_target.debugConsole(filePath(), bkpts);
+	mainWindow()->setStatusMessage(success ? tr("Debug Succeeded") : tr("Debug Failed"));
 	updateErrors();
 	if(!interface) return;
 	foreach(const int& i, m_breakpoints) {
@@ -627,37 +544,19 @@ void SourceFile::on_actionDebug_triggered()
 		interface->addBreakpoint(m_fileInfo.fileName(), ui_editor->markerLine(i) + 1); 
 	}
 	
-	SourceFileShared::ref().debugger()->startDebug(interface);
+	m_debugger.startDebug(interface);
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_DEBUG);
 }
 
-void SourceFile::on_actionCopy_triggered() 	{ ui_editor->copy(); }
-void SourceFile::on_actionCut_triggered() 	{ ui_editor->cut(); }
-void SourceFile::on_actionPaste_triggered() 	{ ui_editor->paste(); }
-void SourceFile::on_actionUndo_triggered() 	{ ui_editor->undo(); }
-void SourceFile::on_actionRedo_triggered() 	{ ui_editor->redo(); }
-void SourceFile::on_actionFind_triggered() 	{ showFind(); }
+void SourceFile::copy() { ui_editor->copy(); }
+void SourceFile::cut() { ui_editor->cut(); }
+void SourceFile::paste() { ui_editor->paste(); }
+void SourceFile::undo() { ui_editor->undo(); }
+void SourceFile::redo() { ui_editor->redo(); }
+void SourceFile::find() { showFind(); }
 
-void SourceFile::openManual()
-{
-	const QString& location = qobject_cast<QAction*>(sender())->data().toString();
-	if(location.endsWith("pdf")) {
-		QDesktopServices::openUrl(QUrl::fromUserInput(location));
-		return;
-	}
-	WebTab* tab = new WebTab(&MainWindow::ref());
-	MainWindow::ref().addTab(tab);
-	#ifdef Q_OS_WIN
-	tab->load("file:///" + location, true);
-	#else
-	tab->load("file://" + location, true);
-	#endif
-	
-	UiEventManager::ref().sendEvent(UI_EVENT_OPEN_MANUAL);
-}
-
-void SourceFile::on_actionPrint_triggered()
+void SourceFile::print()
 {
 	QsciPrinter printer;
 	QPrintDialog printDialog(&printer, this);
@@ -665,25 +564,22 @@ void SourceFile::on_actionPrint_triggered()
 	if(printDialog.exec()) printer.printRange(ui_editor);
 }
 
-void SourceFile::on_actionZoomIn_triggered() { zoomIn(); UiEventManager::ref().sendEvent(UI_EVENT_ZOOM_IN); }
-void SourceFile::on_actionZoomOut_triggered() { zoomOut(); UiEventManager::ref().sendEvent(UI_EVENT_ZOOM_OUT); }
-void SourceFile::on_actionResetZoomLevel_triggered() { ui_editor->zoomTo(0); updateMargins(); UiEventManager::ref().sendEvent(UI_EVENT_ZOOM_RESET); }
-void SourceFile::on_actionChangeTarget_triggered() { changeTarget(false); }
+void SourceFile::changeTarget() { changeTarget(false); }
 
-void SourceFile::on_actionChoosePort_triggered()
+void SourceFile::choosePort()
 {
 	ChoosePortDialog pDialog(this);
 	if(pDialog.exec()) m_target.setPort(pDialog.getSelectedPortName());
 	UiEventManager::ref().sendEvent(UI_EVENT_CHANGE_PORT);
 }
 
-void SourceFile::on_actionScreenGrab_triggered()
+void SourceFile::screenGrab()
 {
 	if(!checkPort()) return;
 	QByteArray file = m_target.screenGrab();
 	QSettings settings;
 	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
-	QString filePath = QFileDialog::getExistingDirectory(&MainWindow::ref(), "Save Screen Grab", savePath, QFileDialog::ShowDirsOnly);
+	QString filePath = QFileDialog::getExistingDirectory(mainWindow(), "Save Screen Grab", savePath, QFileDialog::ShowDirsOnly);
 	if(filePath.isEmpty()) return;
 	QString saveFilePath = filePath + "/Screen Grab on " + QDateTime::currentDateTime().toString() + ".jpg";
 	QFile f(saveFilePath);
@@ -693,7 +589,7 @@ void SourceFile::on_actionScreenGrab_triggered()
 	QDesktopServices::openUrl(QUrl::fromUserInput(saveFilePath));
 }
 
-void SourceFile::on_actionRequestFile_triggered()
+void SourceFile::requestFile()
 {
 	if(!checkPort()) return;
 	RequestFileDialog dialog(&m_target);
@@ -701,19 +597,19 @@ void SourceFile::on_actionRequestFile_triggered()
 	QByteArray file = m_target.requestFile(m_target.requestFilePath() + "/" + dialog.selectedFile());
 	QSettings settings;
 	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
-	QString filePath = QFileDialog::getExistingDirectory(&MainWindow::ref(), "Save Remote File", savePath, QFileDialog::ShowDirsOnly);
+	QString filePath = QFileDialog::getExistingDirectory(mainWindow(), "Save Remote File", savePath, QFileDialog::ShowDirsOnly);
 	if(filePath.isEmpty()) return;
 	QString saveFilePath = filePath + "/" + dialog.selectedFile();
 	QFile f(saveFilePath);
 	if(!f.open(QIODevice::WriteOnly)) return;
 	f.write(file);
 	f.close();
-	MainWindow::ref().openFile(saveFilePath);
+	mainWindow()->openFile(saveFilePath);
 }
 
-void SourceFile::on_actionMakeTemplate_triggered()
+void SourceFile::makeTemplate()
 {
-	fileSave();
+	save();
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_MAKE_TEMPLATE);
 	
@@ -739,7 +635,7 @@ void SourceFile::on_actionMakeTemplate_triggered()
 	UiEventManager::ref().sendEvent(UI_EVENT_MAKE_TEMPLATE2);
 }
 
-void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
+void SourceFile::toggleBreakpoint(bool checked)
 {
 	if(checked) m_breakpoints.append(ui_editor->markerAdd(m_currentLine, m_breakIndicator));
  	else {
@@ -750,12 +646,13 @@ void SourceFile::on_actionToggleBreakpoint_triggered(bool checked)
 	updateBreakpointToggle();
 }
 
-void SourceFile::on_actionClearBreakpoints_triggered()
+void SourceFile::clearBreakpoints()
 {	
 	foreach(const int& i, m_breakpoints) ui_editor->markerDeleteHandle(i);
 	m_breakpoints.clear();
 	
-	actionToggleBreakpoint->setChecked(false);
+	SourceFileMenu* sourceFileMenu = dynamic_cast<SourceFileMenu*>(mainWindow()->menuable(SourceFileMenu::menuName()));
+	sourceFileMenu->breakpointToggle()->rawAction->setChecked(false);
 }
 
 void SourceFile::on_ui_editor_cursorPositionChanged(int line, int)
@@ -769,10 +666,10 @@ void SourceFile::showFind() { ui_find->show(); }
 bool SourceFile::checkPort()
 {
 	if(m_target.hasPort() && m_target.port().isEmpty()) {
-		on_actionChoosePort_triggered();
+		choosePort();
 		if(m_target.port().isEmpty()) return false;
 	}
-	MainWindow::ref().refreshMenus();
+	mainWindow()->refreshMenus();
 	return true;
 }
 
@@ -816,11 +713,11 @@ void SourceFile::updateErrors()
 	const QStringList& errors = m_target.errorMessages();
 	const QStringList& warnings = m_target.warningMessages();
 	
-	MainWindow::ref().setErrors(this, errors, warnings,
+	mainWindow()->setErrors(this, errors, warnings,
 				m_target.linkerMessages(),
 				m_target.verboseMessages());
 		
-	MainWindow::ref().showErrors(this);
+	mainWindow()->showErrors(this);
 
 	markProblems(errors, warnings);
 }
@@ -829,7 +726,7 @@ void SourceFile::updateBreakpointToggle()
 {
 	bool markerOnLine = false;
 	foreach(const int& i, m_breakpoints) markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
-	actionToggleBreakpoint->setChecked(markerOnLine);
+	dynamic_cast<SourceFileMenu*>(mainWindow()->menuable(SourceFileMenu::menuName()))->breakpointToggle()->rawAction->setChecked(markerOnLine);
 }
 
 bool SourceFile::changeTarget(bool _template)
@@ -855,32 +752,34 @@ bool SourceFile::changeTarget(bool _template)
 	if(m_target.error()) return false;
 	
 	if(m_target.hasPort()) {
-		on_actionChoosePort_triggered();
-		connect(&m_target, SIGNAL(requestPort()), SLOT(on_actionChangePort_triggered()));
+		choosePort();
+		connect(&m_target, SIGNAL(requestPort()), SLOT(choosePort()));
 	}
 	
 	Lexer::Constructor* constructor = 0;
 
 	if(!_template && !isNewFile()) constructor = Lexer::Factory::ref().constructor(fileSuffix());
 	else {
-		QFile tFile(tDialog.templateFile());
-		if(!tFile.open(QIODevice::ReadOnly)) {
-			MessageDialog::showError(this, "simple_error_with_action", QStringList() <<
-				tr("Error loading template file ") + tDialog.templateFile() <<
-				tr("Unable to open file for reading.") <<
-				tr("Continuing without selected template."));
-			return true;
-		}
-		QTextStream stream(&tFile);
-		TemplateFormatReader templateReader(&stream);
+		if(_template) {
+			QFile tFile(tDialog.templateFile());
+			if(!tFile.open(QIODevice::ReadOnly)) {
+				MessageDialog::showError(this, "simple_error_with_action", QStringList() <<
+					tr("Error loading template file ") + tDialog.templateFile() <<
+					tr("Unable to open file for reading.") <<
+					tr("Continuing without selected template."));
+				return true;
+			}
+			QTextStream stream(&tFile);
+			TemplateFormatReader templateReader(&stream);
 		
-		if(templateReader.hasLexerName()) {
-			QString lex = templateReader.lexerName();
-			qWarning() << "Template Lexer specified" << lex;
-			constructor = Lexer::Factory::ref().constructor(lex);
-			m_templateExt = lex;
+			if(templateReader.hasLexerName()) {
+				QString lex = templateReader.lexerName();
+				qWarning() << "Template Lexer specified" << lex;
+				constructor = Lexer::Factory::ref().constructor(lex);
+				m_templateExt = lex;
+			}
+			ui_editor->setText(templateReader.content());
 		}
-		ui_editor->setText(templateReader.content());
 	}
 	
 	if(!constructor) constructor = Lexer::Factory::ref().constructor(targetSettings.value(DEFAULT_EXTENSION, "").toString());

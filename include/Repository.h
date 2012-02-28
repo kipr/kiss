@@ -31,18 +31,15 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 
-class Repository : public QWidget, public Tab, private Ui::Repository
+class MainWindow;
+
+class Repository : public QWidget, public TabbedWidget, private Ui::Repository
 {
 	Q_OBJECT
 public:
-	Repository(QWidget* parent = 0);
+	Repository(MainWindow* parent = 0);
 	
 	void activate();
-	void addActionsFile(QMenu* file);
-	void addActionsEdit(QMenu* edit);
-	void addActionsHelp(QMenu* help);
-	void addOtherActions(QMenuBar* menuBar);
-	void addToolbarActions(QToolBar* toolbar);
 	
 	bool beginSetup();
 	void completeSetup();

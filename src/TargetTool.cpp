@@ -18,6 +18,8 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
+#ifdef COMPILE_TARGET_TOOL
+
 #include "TargetManager.h"
 #include "Target.h"
 #include "Kiss.h"
@@ -73,3 +75,5 @@ int main (int argc, char* argv[])
 	
 	return 0;
 }
+
+#endif

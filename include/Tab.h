@@ -26,48 +26,22 @@ class QMenu;
 class QMenuBar;
 class QToolBar;
 
-/*! \class Tab
- * \brief Provides an interface all Tabs must implement
- *
- * A Tab must implement both this interface and QWidget, which is expected once passed to MainWindow for processing.
- */
-class Tab
+#include <QWidget>
+#include <QVariant>
+#include <QDebug>
+
+#define TABBED_WIDGET_PROPERTY "_kiss_tabbed_"
+
+class TabbedWidget
 {
-public:	
+public:
+	TabbedWidget(QWidget* widget, MainWindow* mainWindow = 0) : m_widget(widget), m_mainWindow(mainWindow) {}
+	~TabbedWidget() { /* delete m_widget; */ }
+	
 	/*!
 	 * Called every time this Tab is switched to. Useful for setting window title.
 	 */
-	virtual void activate() = 0;
-	
-	/*!
-	 * Allows a Tab to add actions to the "File" menu in the menu bar.
-	 * \param file Pointer to current file menu
-	 */
-	virtual void addActionsFile(QMenu* file) = 0;
-	
-	/*!
-	 * Allows a Tab to add actions to the "Edit" menu in the menu bar.
-	 * \param edit Pointer to current edit menu
-	 */
-	virtual void addActionsEdit(QMenu* edit) = 0;
-	
-	/*!
-	 * Allows a Tab to add actions to the "Help" menu in the menu bar.
-	 * \param help Pointer to current help menu
-	 */
-	virtual void addActionsHelp(QMenu* help) = 0;
-	
-	/*!
-	 * Allows a Tab to create menus and add actions to them.
-	 * \param menuBar Pointer to current menu bar
-	 */
-	virtual void addOtherActions(QMenuBar* menuBar) = 0;
-	
-	/*!
-	 * Allows a Tab to add actions to the tool bar.
-	 * \param toolbar Pointer to current tool bar
-	 */
-	virtual void addToolbarActions(QToolBar* toolbar) = 0;
+	virtual void activate() { qWarning() << "Activated"; }
 	
 	/*!
 	 * Begin setup is called before a Tab is added to the Tab Widget. 
@@ -87,6 +61,15 @@ public:
 	virtual bool close() = 0;
 	
 	virtual void refreshSettings() = 0;
+	
+	QWidget* widget() const { return m_widget; }
+	
+	MainWindow* mainWindow() const { return m_mainWindow; }
+	void setMainWindow(MainWindow* mainWindow) { m_mainWindow = mainWindow; }
+	
+private:
+	QWidget* m_widget;
+	MainWindow* m_mainWindow;
 };
 
 #endif

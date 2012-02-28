@@ -36,19 +36,14 @@
 
 #define AVAILABLE_LST "available.lst"
 
-Repository::Repository(QWidget* parent) : QWidget(parent), m_source(DEFAULT_SOURCE) { setupUi(this); }
+Repository::Repository(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent), m_source(DEFAULT_SOURCE) { setupUi(this); }
 
-void Repository::activate()  { MainWindow::ref().setTitle(m_source); }
-void Repository::addActionsFile(QMenu* file) { Q_UNUSED(file); }
-void Repository::addActionsEdit(QMenu* edit) { Q_UNUSED(edit); }
-void Repository::addActionsHelp(QMenu* help) { Q_UNUSED(help); }
-void Repository::addOtherActions(QMenuBar* menuBar) { Q_UNUSED(menuBar); }
-void Repository::addToolbarActions(QToolBar* toolbar) { Q_UNUSED(toolbar); }
+void Repository::activate()  { mainWindow()->setTitle(m_source); }
 bool Repository::beginSetup() { return true; }
 
 void Repository::completeSetup()
 {
-	MainWindow::ref().setTabName(this, tr("Repository"));
+	mainWindow()->setTabName(this, tr("Repository"));
 	
 	// Just in case this isn't the first call to completeSetup
 	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*)));
@@ -68,7 +63,7 @@ void Repository::completeSetup()
 	}
 	
 	ui_availGroup->setTitle(m_source + "available.lst");
-	MainWindow::ref().setTitle(m_source);
+	mainWindow()->setTitle(m_source);
 }
 
 bool Repository::close() { return true; }
@@ -108,7 +103,7 @@ void Repository::on_ui_uninstall_clicked()
 
 void Repository::on_ui_begin_clicked()
 {
-	MainWindow::ref().closeAllOthers(this);
+	mainWindow()->closeAllOthers(this);
 	TargetManager::ref().unloadAll();
 	
 	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*)));

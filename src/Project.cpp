@@ -1,8 +1,13 @@
 #include "Project.h"
 
-Project* Project::load(QIODevice* in)
+Project::Project(const QString& name)
 {
-	Project* ret = new Project();
+	
+}
+
+Project* Project::load(const QString& path)
+{
+	Project* ret = new Project("");
 	
 	// ...
 	

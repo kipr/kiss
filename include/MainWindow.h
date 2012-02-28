@@ -24,12 +24,12 @@
 #include "ui_MainWindow.h"
 #include "EditorSettingsDialog.h"
 #include "Tab.h"
-#include "Singleton.h"
 
 #include <Qsci/qscilexercpp.h>
 #include <QEvent>
 #include <QToolButton>
 #include <QListWidget>
+#include "MenuManager.h"
 
 #define RECENTS "recents"
 
@@ -59,7 +59,7 @@ struct Messages
  *
  * Very little is actually implemented in MainWindow. Instead, most is in the implementation of every Tab.
  */
-class MainWindow : public QMainWindow, private Ui::MainWindow, public Singleton<MainWindow>
+class MainWindow : public QMainWindow, private Ui::MainWindow
 {
 	Q_OBJECT
 
@@ -69,18 +69,15 @@ public:
 	
 	void closeEvent(QCloseEvent *e);
 	
-	/*! 
-	 * Creates a new SourceFile tab
-	 */
-	void newFile();
-	
 	/*!
 	 * Opens a file with SourceFile tab
 	 * \param filePath Path to file
 	 */
 	bool openFile(const QString& filePath);
 	
-	void initMenus(Tab* tab);
+	void initMenus(TabbedWidget* tab);
+	
+	void initMenus();
 	
 	/*! Sets Window Title
 	 * \param title Title to append to primary window name
@@ -100,11 +97,11 @@ public:
 	void setStatusMessage(const QString& message, int time = 0);
 	
 	/*! Shows given errors in Error View */
-	void setErrors(Tab* tab, 
+	void setErrors(TabbedWidget* tab, 
 		const QStringList& errors, const QStringList& warnings, 
 		const QStringList& linker, const QStringList& verbose);
 		
-	void showErrors(Tab* tab);
+	void showErrors(TabbedWidget* tab);
 
 	void hideErrors();
 	
@@ -118,36 +115,59 @@ public:
 	 * Adds given tab window. Calls tab setup functions.
 	 * \param tab Tab to add
 	 */
-	void addTab(Tab* tab);
+	void addTab(TabbedWidget* tab);
+	
+	void moveToTab(TabbedWidget* tab);
 	
 	QTabWidget* tabWidget();
+	
+	QList<TabbedWidget*> tabs();
+	
+	template<typename T>
+	QList<T*> tabs() {
+		QList<T*> ret;
+		QList<TabbedWidget*> all = tabs();
+		foreach(TabbedWidget* tab, all) {
+			T* t = dynamic_cast<T*>(tab);
+			if(t) ret.append(t);
+		}
+		return ret;
+	}
 	
 	/*! 
 	 * Closes all but given tab 
 	 * \param tab Tab to keep open
 	 */
-	void closeAllOthers(Tab* tab);
+	void closeAllOthers(TabbedWidget* tab);
 	
 	/*! Reinits menus for current tab */
 	void refreshMenus();
 	
 	bool eventFilter(QObject* target, QEvent* event);
 	
+	MenuManager* menuManager();
+	Menuable* menuable(const QString& name);
+	QList<Menuable*> menuablesExcept(const QStringList& name);
+	QList<Menuable*> menuables();
+	void activateMenuable(const QString& name, QObject* on);
+	
+	friend class MainWindowMenu;
+	
 public slots:
-	void on_actionNew_triggered();
-	void on_actionOpen_triggered();
-	void on_actionNext_triggered();
-	void on_actionPrevious_triggered();
-	void on_actionClose_triggered();
+	void newFile();
+	void open();
+	void next();
+	void previous();
+	void closeTab();
 	void on_actionAbout_triggered();
 	void errorViewShowVerbose();
 	void errorViewShowSimple();
 	void on_actionEditor_Settings_triggered();
+	void managePackages();
+	void installLocalPackage();
 	
 private slots:
 	void on_ui_tabWidget_currentChanged(int i);
-	void on_actionManagePackages_triggered();
-	void on_actionInstallLocalPackage_triggered();
 	void openRecent();
 	
 	void errorClicked(QListWidgetItem* item);
@@ -156,11 +176,18 @@ private slots:
 	
 	
 private:
-	Tab* m_currentTab;
-	Tab* m_errorTab;
+	TabbedWidget* m_currentTab;
+	TabbedWidget* m_errorTab;
 	EditorSettingsDialog m_editorSettingsDialog;
-	QMap<Tab*, Messages> m_messages;
+	QMap<TabbedWidget*, Messages> m_messages;
+	QMap<QWidget*, TabbedWidget*> m_lookup;
 	QListWidget m_errorList, m_warningList, m_linkErrorList, m_verboseList;
+	MenuManager m_menuManager;
+	QList<Menuable*> m_menuables;
+
+	void addLookup(TabbedWidget* tab);
+	void removeLookup(QWidget* widget);
+	TabbedWidget* lookup(QWidget* widget);
 
 	void showErrorMessages(bool verbose = false);
 

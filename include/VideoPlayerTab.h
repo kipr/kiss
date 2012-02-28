@@ -27,11 +27,11 @@
 #include <QWidget>
 #include <Phonon>
 
-class VideoPlayerTab : public QWidget, public Tab, public Ui::VideoPlayerTab
+class VideoPlayerTab : public QWidget, public TabbedWidget, public Ui::VideoPlayerTab
 {
 	Q_OBJECT
 public:
-	VideoPlayerTab(QWidget* parent = 0);
+	VideoPlayerTab(MainWindow* parent = 0);
 	
 	void activate();
 	

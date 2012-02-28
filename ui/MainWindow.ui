@@ -29,7 +29,7 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="ui_centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout" stretch="3">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,0">
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -75,6 +75,9 @@
       </widget>
      </widget>
     </item>
+    <item>
+     <widget class="QTreeView" name="ui_projects"/>
+    </item>
    </layout>
   </widget>
   <widget class="QStatusBar" name="ui_statusbar"/>
@@ -87,30 +90,6 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuSettings">
-    <property name="title">
-     <string>Settings</string>
-    </property>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuEdit"/>
-   <addaction name="menuSettings"/>
-   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="ui_toolBar">
    <property name="windowTitle">
@@ -132,174 +111,10 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <action name="actionQuit">
-   <property name="text">
-    <string>Quit KISS</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Q</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::QuitRole</enum>
-   </property>
-  </action>
-  <action name="actionAbout">
-   <property name="text">
-    <string>About KISS</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
-   </property>
-  </action>
-  <action name="actionZoom_In">
-   <property name="text">
-    <string>Zoom In</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl++</string>
-   </property>
-  </action>
-  <action name="actionZoom_Out">
-   <property name="text">
-    <string>Zoom Out</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+-</string>
-   </property>
-  </action>
-  <action name="actionEditor_Settings">
-   <property name="text">
-    <string>Settings</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::PreferencesRole</enum>
-   </property>
-  </action>
-  <action name="actionTarget_Settings">
-   <property name="text">
-    <string>Target Settings</string>
-   </property>
-  </action>
-  <action name="actionSimulate">
-   <property name="icon">
-    <iconset resource="../rc/rc.qrc">
-     <normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</normaloff>:/shortcuts/target/icon_set/icons/bullet_go.png</iconset>
-   </property>
-   <property name="text">
-    <string>Simulate</string>
-   </property>
-  </action>
-  <action name="actionClose">
-   <property name="icon">
-    <iconset resource="../rc/rc.qrc">
-     <normaloff>:/shortcuts/file/icon_set/icons/cross.png</normaloff>:/shortcuts/file/icon_set/icons/cross.png</iconset>
-   </property>
-   <property name="text">
-    <string>Close</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+W</string>
-   </property>
-  </action>
-  <action name="actionNew">
-   <property name="icon">
-    <iconset resource="../rc/rc.qrc">
-     <normaloff>:/shortcuts/file/icon_set/icons/page_white.png</normaloff>:/shortcuts/file/icon_set/icons/page_white.png</iconset>
-   </property>
-   <property name="text">
-    <string>New</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
-   </property>
-  </action>
-  <action name="actionOpen">
-   <property name="icon">
-    <iconset resource="../rc/rc.qrc">
-     <normaloff>:/shortcuts/file/icon_set/icons/folder.png</normaloff>:/shortcuts/file/icon_set/icons/folder.png</iconset>
-   </property>
-   <property name="text">
-    <string>Open...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
-   </property>
-  </action>
-  <action name="actionNext">
-   <property name="text">
-    <string>Next</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Right</string>
-   </property>
-  </action>
-  <action name="actionPrevious">
-   <property name="text">
-    <string>Previous</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Left</string>
-   </property>
-  </action>
-  <action name="actionNewProject">
-   <property name="text">
-    <string>New Project</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+N</string>
-   </property>
-  </action>
-  <action name="actionManagePackages">
-   <property name="text">
-    <string>Manage Packages</string>
-   </property>
-  </action>
-  <action name="actionInstallLocalPackage">
-   <property name="text">
-    <string>Install Local Package...</string>
-   </property>
-  </action>
-  <action name="actionHideErrors">
-   <property name="text">
-    <string>Hide Errors</string>
-   </property>
-  </action>
  </widget>
  <resources>
   <include location="../rc/rc.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>actionQuit</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>396</x>
-     <y>211</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionHideErrors</sender>
-   <signal>triggered()</signal>
-   <receiver>ui_errorView</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>497</x>
-     <y>555</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>

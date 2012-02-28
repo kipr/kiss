@@ -30,20 +30,14 @@
 
 class MainWindow;
 
-class WebTab : public QWidget, public Tab, protected Ui::WebTab
+class WebTab : public QWidget, public TabbedWidget, protected Ui::WebTab
 {
 	Q_OBJECT
 public:
-	WebTab(QWidget* parent = 0);
+	WebTab(MainWindow* parent = 0);
 	~WebTab();
 	
 	virtual void activate();
-	
-	virtual void addActionsFile(QMenu* file);
-	virtual void addActionsEdit(QMenu* edit);
-	virtual void addActionsHelp(QMenu* help);
-	virtual void addOtherActions(QMenuBar* menuBar);
-	virtual void addToolbarActions(QToolBar* toolbar);
 	
 	bool beginSetup();
 	virtual void completeSetup();
@@ -52,24 +46,30 @@ public:
 	
 	//! Loads an unformatted URL
 	void load(QString url, bool hideUrl = false);
+	QString current();
+	
+public slots:
+	void copy();
+	void cut();
+	void paste();
+	
+	void go();
+	void refresh();
+	
+	//! Opens current web page in system's default browser
+	void openInBrowser();
 	
 private slots:
 	void updateTitle(const QString& title);
 	void updateUrl(const QUrl& url);
 	
 	void on_actionGo_triggered();
-	void on_actionCopy_triggered();
-	void on_actionCut_triggered();
-	void on_actionPaste_triggered();
 	
 	void on_ui_prevFind_clicked();
 	void on_ui_nextFind_clicked();
 	
 	//! Check if there was an error loading the page
 	void on_ui_webView_loadFinished(bool ok);
-	
-	//! Opens current web page in system's default browser
-	void on_actionOpenInBrowser_triggered();
 	
 	void refreshSettings();
 

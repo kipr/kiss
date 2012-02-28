@@ -27,7 +27,7 @@ class WelcomeTab : public WebTab
 {
 	Q_OBJECT
 public:
-	WelcomeTab(QWidget* parent = 0);
+	WelcomeTab(MainWindow* parent = 0);
 
 	void addActionsEdit(QMenu* edit);
 	void addOtherActions(QMenuBar* menuBar);
