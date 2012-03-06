@@ -119,6 +119,7 @@ int main(int argc, char **argv)
 	splash.show();
 	MainWindow mainWindow;
 	mainWindow.addTab(new WelcomeTab(&mainWindow));
+	qWarning() << mainWindow.tabs("WelcomeTab");
 	qWarning() << "Args:" << QApplication::arguments();
 	foreach(const QString& arg, QApplication::arguments().mid(1)) {
 		mainWindow.openFile(arg);

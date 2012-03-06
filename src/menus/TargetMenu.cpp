@@ -1,3 +1,23 @@
+/**************************************************************************
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
+ *                                                                        *
+ *  This file is part of KISS (Kipr's Instructional Software System).     *
+ *                                                                        *
+ *  KISS is free software: you can redistribute it and/or modify          *
+ *  it under the terms of the GNU General Public License as published by  *
+ *  the Free Software Foundation, either version 2 of the License, or     *
+ *  (at your option) any later version.                                   *
+ *                                                                        *
+ *  KISS is distributed in the hope that it will be useful,               *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *  GNU General Public License for more details.                          *
+ *                                                                        *
+ *  You should have received a copy of the GNU General Public License     *
+ *  along with KISS.  Check the LICENSE file in the project root.         *
+ *  If not, see <http://www.gnu.org/licenses/>.                           *
+ **************************************************************************/
+
 #include "TargetMenu.h"
 
 #include "Target.h"
@@ -28,7 +48,7 @@ TargetMenu::TargetMenu() : ConcreteMenuable(menuName()), m_additional(MenuNode::
 	targetMenu->children.append(node(activeAction("", "Change Target", QKeySequence("Alt+T"), this, "changeTarget")));
 	targetMenu->children.append(node(activeAction("link", "Choose Port", QKeySequence("Alt+P"), this, "choosePort")));
 	targetMenu->children.append(MenuNode::separator());
-	//targetMenu->children.append(m_additional);
+	targetMenu->children.append(m_additional);
 	
 	m_actions.append(targetMenu);
 	

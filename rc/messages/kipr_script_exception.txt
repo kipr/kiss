@@ -1,0 +1,8 @@
+The script ${1} has thrown an exception. <br />
+While this is a non-fatal error, the script's execution has been halted. <br /> <br />
+
+<b>Exception Information</b> <br />
+${1}: ${2} (line ${3}) <br />
+<br />
+
+If you need additional assistance, please email <a href="mailto:support@kipr.org">support@kipr.org</a> or call (405) 579-4609 <br />

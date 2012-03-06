@@ -59,6 +59,8 @@ public slots:
 	//! Opens current web page in system's default browser
 	void openInBrowser();
 	
+	void find();
+	
 private slots:
 	void updateTitle(const QString& title);
 	void updateUrl(const QUrl& url);

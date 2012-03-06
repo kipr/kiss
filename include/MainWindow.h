@@ -29,7 +29,9 @@
 #include <QEvent>
 #include <QToolButton>
 #include <QListWidget>
+
 #include "MenuManager.h"
+#include "ScriptEnvironment.h"
 
 #define RECENTS "recents"
 
@@ -151,6 +153,10 @@ public:
 	QList<Menuable*> menuables();
 	void activateMenuable(const QString& name, QObject* on);
 	
+	ScriptEnvironment* scriptEnvironment();
+	
+	void restart();
+	
 	friend class MainWindowMenu;
 	
 public slots:
@@ -165,6 +171,10 @@ public slots:
 	void on_actionEditor_Settings_triggered();
 	void managePackages();
 	void installLocalPackage();
+	
+	QList<QObject*> tabs(const QString& type);
+	
+	
 	
 private slots:
 	void on_ui_tabWidget_currentChanged(int i);
@@ -184,6 +194,7 @@ private:
 	QListWidget m_errorList, m_warningList, m_linkErrorList, m_verboseList;
 	MenuManager m_menuManager;
 	QList<Menuable*> m_menuables;
+	ScriptEnvironment m_scriptEnvironment;
 
 	void addLookup(TabbedWidget* tab);
 	void removeLookup(QWidget* widget);

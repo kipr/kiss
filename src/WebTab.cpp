@@ -150,6 +150,7 @@ void WebTab::on_ui_webView_loadFinished(bool ok)
 }
 
 void WebTab::openInBrowser() { QDesktopServices::openUrl(ui_webView->url()); }
+void WebTab::find() { ui_frameFind->show(); }
 void WebTab::refresh() { ui_webView->reload(); }
 
 void WebTab::refreshSettings() {}

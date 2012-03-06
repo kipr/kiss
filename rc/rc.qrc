@@ -64,17 +64,11 @@
 		<file>messages/error_locating_java.txt</file>
 		<file>messages/simple_error.txt</file>
 		<file>messages/simple_error_with_action.txt</file>
+		<file>messages/script_exception.txt</file>
+		<file>messages/kipr_script_exception.txt</file>
 	</qresource>
 	<qresource prefix="/">
 		<file>webtab_fail/index.html</file>
-	</qresource>
-	<qresource prefix="/">
-		<file>fonts/Inconsolata.otf</file>
-		<file>fonts/DejaVuSansMono-BoldOblique.ttf</file>
-		<file>fonts/DejaVuSansMono-Bold.ttf</file>
-		<file>fonts/DejaVuSansMono-Oblique.ttf</file>
-		<file>fonts/DejaVuSansMono.ttf</file>
-		
 	</qresource>
 	<qresource prefix="/">
 		<file>icon_set/icons/text-x-generic.png</file>

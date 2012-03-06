@@ -38,7 +38,7 @@ void MessageDialog::setMessage(const QString& message, const QStringList& args)
 	for(int i = 0; i < args.size(); ++i) {
 		text = text.replace(QString("${") + QString::number(i + 1) + "}", args.at(i));
 	}
-	ui_message->setText(text);
+	ui_message->setHtml(text);
 }
 
 void MessageDialog::setLabel(const QString& label)

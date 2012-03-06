@@ -27,6 +27,7 @@
 #include "SourceDialog.h"
 
 #include <QCoreApplication>
+#include "ResourceHelper.h"
 
 #define DELIM "\t"
 
@@ -73,7 +74,7 @@ void Repository::on_ui_mark_clicked()
 {
 	QListWidgetItem* item = ui_list->currentItem();
 	if(!item) return;
-	QListWidgetItem* nItem = new QListWidgetItem(QIcon(":/shortcuts/target/icon_set/icons/tick.png"), item->text(), ui_stagedList, TYPE_AVAIL);
+	QListWidgetItem* nItem = new QListWidgetItem(ResourceHelper::ref().icon("tick"), item->text(), ui_stagedList, TYPE_AVAIL);
 	nItem->setData(Qt::UserRole, item->data(Qt::UserRole));
 	ui_stagedList->addItem(nItem);
 	delete ui_list->takeItem(ui_list->row(item));
@@ -95,7 +96,7 @@ void Repository::on_ui_uninstall_clicked()
 {
 	QListWidgetItem* item = ui_installList->currentItem();
 	if(!item) return;
-	QListWidgetItem* nItem = new QListWidgetItem(QIcon(":/shortcuts/file/icon_set/icons/cross.png"), item->text(), ui_stagedList, TYPE_INSTALLED);
+	QListWidgetItem* nItem = new QListWidgetItem(ResourceHelper::ref().icon("cross.png"), item->text(), ui_stagedList, TYPE_INSTALLED);
 	nItem->setData(Qt::UserRole, item->data(Qt::UserRole));
 	ui_stagedList->addItem(nItem);
 	delete ui_installList->takeItem(ui_installList->row(item));

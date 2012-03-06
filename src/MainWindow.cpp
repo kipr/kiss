@@ -28,7 +28,7 @@
 #include "ChoosePortDialog.h"
 #include "Repository.h"
 #include "MessageDialog.h"
-
+#include "TargetManager.h"
 #include "Menus.h"
 
 #include "UiEventManager.h"
@@ -57,7 +57,7 @@
 
 #define OPEN_PATH "openpath"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0), m_scriptEnvironment(this)
 {
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	
@@ -145,6 +145,7 @@ void MainWindow::initMenus()
 	
 	SourceFileMenu* sourceFileMenu = new SourceFileMenu(this);
 	m_menuManager.registerMenus(sourceFileMenu);
+	m_menuables.append(sourceFileMenu);
 	
 	TargetMenu* targetMenu = new TargetMenu;
 	m_menuManager.registerMenus(targetMenu);
@@ -154,7 +155,7 @@ void MainWindow::initMenus()
 	m_menuManager.registerMenus(webTabMenu);
 	m_menuables.append(webTabMenu);
 	
-	DeveloperMenu* developerMenu = new DeveloperMenu;
+	DeveloperMenu* developerMenu = new DeveloperMenu(this);
 	m_menuManager.registerMenus(developerMenu);
 	m_menuManager.addActivation(developerMenu);
 	m_menuables.append(developerMenu);
@@ -513,4 +514,34 @@ void MainWindow::activateMenuable(const QString& name, QObject* on)
 {
 	ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menuable(name));
 	activatable->setActive(on);
+}
+
+void MainWindow::restart()
+{
+	TargetManager::ref().unloadAll();
+}
+
+ScriptEnvironment* MainWindow::scriptEnvironment()
+{
+	return &m_scriptEnvironment;
+}
+
+QList<QObject*> MainWindow::tabs(const QString& name)
+{
+	QList<QObject*> ret;
+	QList<TabbedWidget*> all = tabs();
+	foreach(TabbedWidget* tab, all) {
+		QObject* t = dynamic_cast<QObject*>(tab);
+		if(t) {
+			const QMetaObject* meta = t->metaObject();
+			while(meta != 0) {
+				if(name == meta->className()) {
+					ret.append(t);
+					break;
+				}
+				meta = meta->superClass();
+			}
+		}
+	}
+	return ret;
 }

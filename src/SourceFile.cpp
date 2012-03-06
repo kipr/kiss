@@ -99,11 +99,14 @@ void SourceFile::activate()
 	mainWindow()->showErrors(this);
 	mainWindow()->setStatusMessage("");
 	
-	QList<Menuable*> menus = mainWindow()->menuablesExcept(QStringList() << MainWindowMenu::menuName() << TargetMenu::menuName());
+	QList<Menuable*> menus = mainWindow()->menuablesExcept(QStringList() << MainWindowMenu::menuName() << SourceFileMenu::menuName() << TargetMenu::menuName());
 	foreach(Menuable* menu, menus) {
+		qWarning() << "Deactivating" << menu->name();
 		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
 		if(activatable) activatable->setActive(0);
 	}
+	mainWindow()->activateMenuable(SourceFileMenu::menuName(), this);
+	mainWindow()->activateMenuable(TargetMenu::menuName(), this);
 }
 
 bool SourceFile::beginSetup() { return changeTarget(isNewFile()) && !m_target.error(); }
@@ -652,7 +655,7 @@ void SourceFile::clearBreakpoints()
 	m_breakpoints.clear();
 	
 	SourceFileMenu* sourceFileMenu = dynamic_cast<SourceFileMenu*>(mainWindow()->menuable(SourceFileMenu::menuName()));
-	sourceFileMenu->breakpointToggle()->rawAction->setChecked(false);
+	if(sourceFileMenu) sourceFileMenu->breakpointToggle()->rawAction->setChecked(false);
 }
 
 void SourceFile::on_ui_editor_cursorPositionChanged(int line, int)
