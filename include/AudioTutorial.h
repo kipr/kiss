@@ -21,6 +21,14 @@
 #ifndef _AUDIOTUTORIAL_H_
 #define _AUDIOTUTORIAL_H_
 
+#include "BuildOptions.h"
+
+#include <QObject>
+
+class AudioTutorial;
+
+#ifdef BUILD_AUDIO_TUTORIAL
+
 #include "UiEventManager.h"
 
 #include <QList>
@@ -42,7 +50,7 @@ public:
 	const int state() const;
 	const bool loaded() const;
 	
-	void event(const QString& name, const QStringList& args);
+	void uiEvent(const QString& name, const QStringList& args);
 
 	enum {
 		Playing,
@@ -69,5 +77,7 @@ private:
 	
 	QList<TutorialState*> m_states;
 };
+
+#endif
 
 #endif

@@ -19,6 +19,9 @@
  **************************************************************************/
 
 #include "WelcomeTab.h"
+
+#ifdef BUILD_WEB_TAB
+
 #include <QPalette>
 #include <QFile>
 #include <QDebug>
@@ -61,3 +64,5 @@ void WelcomeTab::completeSetup()
 	
 	actionOpenInBrowser->setEnabled(false);
 }
+
+#endif

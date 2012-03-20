@@ -33,7 +33,7 @@
 
 typedef QList<QAction*> QActionList;
 
-struct Menuable;
+class Menuable;
 
 struct MenuableActionPair
 {
@@ -52,20 +52,16 @@ struct MenuNode
 	~MenuNode();
 	
 	static QList<MenuNode*> unify(QList<MenuNode*> nodes);
-	static MenuNode* insertionPoint();
 	static MenuNode* separator();
 	
 	QActionList allActions();
-	
-	QAction* rawAction;
-	
 	QString name;
+	QAction* rawAction;
 	QList<MenuNode*> children;
-	
 	QList<MenuableActionPair> registers;
 	
-	bool _insertionPoint;
 	bool activeControl;
+	bool hideOnDisable;
 	
 private:
 	static QString uniqueName();
@@ -126,8 +122,6 @@ private:
 	void construct(QToolBar* tool, MenuNodeList nodes);
 	void construct(QMenu* menu, MenuNode* node);
 	void construct(QToolBar* toolbar, MenuNode* node);
-	
-	void flattenInsertions(MenuNode* node);
 	
 	void refresh();
 	void refresh(MenuNode* node);

@@ -21,6 +21,14 @@
 #ifndef __REPOSITORY_H__
 #define __REPOSITORY_H__
 
+#include "BuildOptions.h"
+
+#include <QObject>
+
+class Repository;
+
+#ifdef BUILD_REPOSITORY_TAB
+
 #include "ui_Repository.h"
 #include "Tab.h"
 
@@ -67,5 +75,7 @@ private:
 	QMap<QString, QString> m_locations;
 	QString m_source;
 };
+
+#endif
 
 #endif

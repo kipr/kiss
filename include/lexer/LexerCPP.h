@@ -28,7 +28,7 @@
 
 namespace Lexer
 {
-	class CPP : public LexerBase
+	class CPP : public LexerBase, virtual public QsciLexerCPP
 	{
 	public:
 		CPP(const Constructor* constructor);
@@ -36,6 +36,7 @@ namespace Lexer
 		QColor defaultColor(int style) const;
 		QFont font(int style) const;
 		QFont defaultFont(int style) const;
+
 	};
 	
 	struct ConstructorCPP : Constructor

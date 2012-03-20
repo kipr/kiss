@@ -20,6 +20,8 @@
 
 #include "AudioTutorial.h"
 
+#ifdef BUILD_AUDIO_TUTORIAL
+
 #include <QTextStream>
 #include <QFile>
 
@@ -99,7 +101,7 @@ void AudioTutorial::stop()
 const int AudioTutorial::state() const { return m_state; }
 const bool AudioTutorial::loaded() const { return m_loaded; }
 
-void AudioTutorial::event(const QString& name, const QStringList& args)
+void AudioTutorial::uiEvent(const QString& name, const QStringList& args)
 {
 	
 	if(m_states[m_currentIndex]->data != name) {
@@ -141,7 +143,6 @@ void AudioTutorial::load()
 	
 	qWarning() << lines;
 	
-	int i = 0;
 	foreach(const QString& line, lines.split("\n")) {
 		qWarning() << "Processing" << line;
 		const QStringList& parts = line.split(" ");
@@ -171,3 +172,5 @@ bool AudioTutorial::fastForward(const QString& name)
 	}
 	return false;
 }
+
+#endif

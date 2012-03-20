@@ -21,6 +21,14 @@
 #ifndef __WEB_TAB_H__
 #define __WEB_TAB_H__
 
+#include "BuildOptions.h"
+
+#include <QObject>
+
+class WebTab;
+
+#ifdef BUILD_WEB_TAB
+
 #include "Tab.h"
 #include "ui_WebTab.h"
 #include "MacroString.h"
@@ -29,6 +37,8 @@
 #define KISS_BACKGROUND "KISS_BACKGROUND"
 
 class MainWindow;
+class QWebHistory;
+class QWebView;
 
 class WebTab : public QWidget, public TabbedWidget, protected Ui::WebTab
 {
@@ -48,11 +58,16 @@ public:
 	void load(QString url, bool hideUrl = false);
 	QString current();
 	
+	QWebHistory* history();
+	QWebView* webView();
+	
 public slots:
 	void copy();
 	void cut();
 	void paste();
 	
+	void back();
+	void forward();
 	void go();
 	void refresh();
 	
@@ -60,6 +75,9 @@ public slots:
 	void openInBrowser();
 	
 	void find();
+	
+signals:
+	void updateActivatable();
 	
 private slots:
 	void updateTitle(const QString& title);
@@ -74,9 +92,6 @@ private slots:
 	void on_ui_webView_loadFinished(bool ok);
 	
 	void refreshSettings();
-
-protected:
-	QWebView* webView();
 	
 private slots:
 	void linkClicked(const QUrl& url);
@@ -86,5 +101,7 @@ private:
 	MacroString m_fragmentMacro;
 	AudioTutorial* m_audioTutorial;
 };
+
+#endif
 
 #endif

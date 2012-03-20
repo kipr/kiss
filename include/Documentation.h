@@ -1,9 +1,16 @@
 #ifndef _DOCUMENTATION_H_
 #define _DOCUMENTATION_H_
 
+#include "BuildOptions.h"
+
+#include <QObject>
+
+class Documentation;
+
+#ifdef BUILD_DOCUMENTATION_TAB
+
 #include "Tab.h"
 #include <QListWidgetItem>
-
 
 #define UI_EVENT_OPEN_MANUAL "openManual"
 
@@ -23,5 +30,7 @@ public:
 private slots:
 	void itemDoubleClicked(QListWidgetItem* item);
 };
+
+#endif
 
 #endif

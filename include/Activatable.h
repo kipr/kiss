@@ -33,6 +33,8 @@ public:
 	T* active() { return m_active; }
 	bool isActive() { return m_active; }
 	
+	void deactivateIfActive(T* active) { if(m_active == active) setActive(0); }
+	
 protected:
 	virtual void activated() {}
 	virtual void deactivated() {}
@@ -41,6 +43,25 @@ private:
 	T* m_active;
 };
 
-class ActivatableObject : public Activatable<QObject> {};
+
+class ActivatableObject : public Activatable<QObject>
+{
+public:
+	ActivatableObject();
+	ActivatableObject(const char* slot);
+	~ActivatableObject();
+	
+	virtual void activated();
+	virtual void deactivated();
+	
+	friend class ObjectDestroyed;
+	
+private:
+	void destroyed(QObject* obj);
+	
+	QObject* m_connected;
+	
+	const char* m_signature;
+};
 
 #endif

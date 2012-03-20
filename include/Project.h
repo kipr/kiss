@@ -45,6 +45,7 @@ public:
 	const QString& name();
 	
 	static Project* load(const QString& path);
+	static void save(Project* project, const QString& path);
 	static Project* create(const QString& path);
 	
 signals:

@@ -32,6 +32,8 @@ ResourceHelper::ResourceHelper()
 	addSearchLocation(":/browser/icon_set/icons/");
 	addSearchLocation(":/icon_set/icons/");
 	addSearchLocation(":/sourcefile/icon_set/icons/");
+	
+	addSearchLocation("resources"); // For user resources
 }
 
 QString ResourceHelper::lookup(const QString& name)

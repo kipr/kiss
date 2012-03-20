@@ -21,6 +21,14 @@
 #ifndef _WEBTABMENU_H_
 #define _WEBTABMENU_H_
 
+#include "BuildOptions.h"
+
+#include <QObject>
+
+class WebTabMenu;
+
+#ifdef BUILD_WEB_TAB
+
 #include "Activatable.h"
 #include "Singleton.h"
 #include "MenuManager.h"
@@ -39,18 +47,22 @@ protected:
 	void activated();
 	void deactivated();
 	
-protected slots:
-	virtual void triggered();
+	void triggered();
+	
+public slots:
+	void update();
 	
 private:	
-	QAction* copy;
-	QAction* cut;
-	QAction* paste;
+	QAction* zoomOut;
+	QAction* zoomIn;
+	QAction* resetZoom;
 	
-	QAction* back;
-	QAction* forward;
-	QAction* reload;
-	QAction* open;
+	MenuNode* back;
+	MenuNode* forward;
+	MenuNode* reload;
+	MenuNode* open;
 };
+
+#endif
 
 #endif

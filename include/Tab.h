@@ -36,7 +36,7 @@ class TabbedWidget
 {
 public:
 	TabbedWidget(QWidget* widget, MainWindow* mainWindow = 0) : m_widget(widget), m_mainWindow(mainWindow) {}
-	~TabbedWidget() { /* delete m_widget; */ }
+	~TabbedWidget() {}
 	
 	/*!
 	 * Called every time this Tab is switched to. Useful for setting window title.

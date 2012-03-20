@@ -33,25 +33,22 @@ struct MenuNodeSingleton : Singleton<MenuNodeSingleton>
 	QSet<MenuNode*> nodes;
 };
 
-MenuNode::MenuNode() : name(uniqueName()), rawAction(0), _insertionPoint(false), activeControl(false) { MenuNodeSingleton::ref().nodes += this; }
-MenuNode::MenuNode(const QString& name) : name(name), rawAction(0), _insertionPoint(false), activeControl(false) { MenuNodeSingleton::ref().nodes += this; }
+MenuNode::MenuNode() : name(uniqueName()), rawAction(0), activeControl(false), hideOnDisable(true) { MenuNodeSingleton::ref().nodes += this; }
+MenuNode::MenuNode(const QString& name) : name(name), rawAction(0), activeControl(false), hideOnDisable(true) { MenuNodeSingleton::ref().nodes += this; }
 
-MenuNode::MenuNode(const QString& name, Menuable* menuable, QAction* action) : name(name), rawAction(0), _insertionPoint(false), activeControl(false)
+MenuNode::MenuNode(const QString& name, Menuable* menuable, QAction* action) : name(name), rawAction(0), activeControl(false), hideOnDisable(true)
 {
 	registers.append(MenuableActionPair(menuable, action));
 	MenuNodeSingleton::ref().nodes += this;
 }
 
-MenuNode::MenuNode(Menuable* menuable, QAction* action) : name(action->text()), rawAction(0), _insertionPoint(false), activeControl(false)
+MenuNode::MenuNode(Menuable* menuable, QAction* action) : name(action->text()), rawAction(0), activeControl(false), hideOnDisable(true)
 {
 	registers.append(MenuableActionPair(menuable, action));
 	MenuNodeSingleton::ref().nodes += this;
 }
 
-MenuNode::~MenuNode()
-{
-	
-}
+MenuNode::~MenuNode() {}
 
 QList<MenuNode*> MenuNode::unify(QList<MenuNode*> nodes)
 {
@@ -66,13 +63,6 @@ QList<MenuNode*> MenuNode::unify(QList<MenuNode*> nodes)
 	}
 	
 	return unity.values();
-}
-
-MenuNode* MenuNode::insertionPoint()
-{
-	MenuNode* ret = new MenuNode;
-	ret->_insertionPoint = true;
-	return ret;
 }
 
 MenuNode* MenuNode::separator()
@@ -146,23 +136,17 @@ void MenuManager::removeActivation(Menuable* menuable)
 	refresh();
 }
 
-int i;
-
 void MenuManager::construct(QMenuBar* menuBar, QToolBar* toolBar)
 {
-	i = 0; flattenInsertions(m_file);
 	construct(menuBar->addMenu("File"), m_file->children);
-	i = 0; flattenInsertions(m_edit);
+
 	construct(menuBar->addMenu("Edit"), m_edit->children);
-	
-	i = 0; flattenInsertions(m_root);
+
 	foreach(MenuNode* rootChild, m_root->children)
 		construct(menuBar->addMenu(rootChild->name), rootChild->children);
 	
-	flattenInsertions(m_help);
 	construct(menuBar->addMenu("Help"), m_help->children);
 	
-	flattenInsertions(m_tool);
 	construct(toolBar, m_tool->children);
 	
 	m_menuBar = menuBar;
@@ -170,10 +154,7 @@ void MenuManager::construct(QMenuBar* menuBar, QToolBar* toolBar)
 	refresh();
 }
 
-bool MenuManager::isConstructed() const
-{
-	return m_menuBar;
-}
+bool MenuManager::isConstructed() const { return m_menuBar; }
 
 void MenuManager::refreshToolbar()
 {
@@ -183,10 +164,9 @@ void MenuManager::refreshToolbar()
 	QAction* lastSep = 0;
 	for(; it != m_tool->children.end(); ++it) {
 		MenuNode* child = *it;
-		// qWarning() << child->name << "enabled?" << (child->rawAction ? child->rawAction->isEnabled() : false);
 		if(child == MenuNode::separator() && !lastSep) {
 			lastSep = m_toolBar->addSeparator();
-		} else if(isActivatable(child) && child->rawAction->isEnabled()) { m_toolBar->addAction(child->rawAction); lastSep = 0; }
+		} else if(isActivatable(child) && (child->rawAction->isEnabled() || !child->hideOnDisable)) { m_toolBar->addAction(child->rawAction); lastSep = 0; }
 	}
 	if(lastSep) m_toolBar->removeAction(lastSep);
 	m_toolBar->show();
@@ -198,12 +178,15 @@ void MenuManager::triggered()
 	MenuNode* node = (MenuNode*)action->data().value<void*>();
 	// qWarning() << node->name << "triggered (" << node->registers.size() << "registers )";
 	
+	bool called = false;
 	foreach(MenuableActionPair pair, node->registers) {
 		if(m_active.contains(pair.menuable)) {
+			called = true;
 			// qWarning() << "Calling" << pair.action << "on" << pair.menuable;
 			pair.action->trigger();
 		}
 	}
+	if(!called) qWarning() << "Warning: Did not trigger" << node->name << "on any menuables.";
 }
 
 void MenuManager::addChildren(MenuNode* parent, const MenuNodeList& nodes)
@@ -220,6 +203,8 @@ void MenuManager::addChildren(MenuNode* parent, const MenuNodeList& nodes)
 		} else {
 			qWarning() << node->name << "collides";
 			(*it)->registers.append(node->registers);
+			(*it)->children.append(node->children);
+			addChildren(node, node->children);
 		}
 		
 		// qWarning() << "Registered" << node->name;
@@ -271,7 +256,6 @@ void MenuManager::construct(QMenu* menu, MenuNode* node)
 			// qWarning() << "Terminal node" << node->name << "has no registers. Ignoring.";
 			return;
 		}
-		// qWarning() << "Terminal node" << node->name;
 		if(node->rawAction) return;
 		QAction* first = node->registers[0].action;
 		QAction* action = menu->addAction(first->icon(), node->name);
@@ -295,38 +279,16 @@ void MenuManager::construct(QToolBar* toolbar, MenuNode* node)
 			// qWarning() << "Terminal node" << node->name << "has no registers. Ignoring.";
 			return;
 		}
-		// qWarning() << "Terminal node" << node->name;
 		if(node->rawAction) return;
 		QAction* action = new QAction(node->registers[0].action->icon(), node->name, toolbar);
 		action->setShortcut(node->registers[0].action->shortcut());
-		qWarning() << "Checkable?" << node->registers[0].action->isCheckable();
+		// qWarning() << "Checkable?" << node->registers[0].action->isCheckable();
 		action->setCheckable(node->registers[0].action->isCheckable());
 		action->setData(QVariant::fromValue((void*)node));
 		node->rawAction = action;
 	} else  // Non-terminal node
 		qWarning() << "Non-terminal Nodes not supported on toolbar. Ignoring" << node->name;
 	
-}
-
-void MenuManager::flattenInsertions(MenuNode* node)
-{
-	i++;
-	MenuNodeList::iterator it = node->children.begin();
-	for(; it != node->children.end(); ++it) {
-		MenuNode* child = *it;
-		if(!child) continue;
-		QString str;
-		str.fill('\t', i);
-		qWarning() << str << child->name;
-		if(child == MenuNode::separator()) continue;
-		if(child->_insertionPoint) {
-			qWarning() << "Flattening" << child->children.size() << "nodes";
-			while(child->children.size() > 0)
-				it = node->children.insert(it, child->children.takeLast());
-			node->children.removeAll(child);
-		} else flattenInsertions(*it);
-	}
-	i--;
 }
 
 void MenuManager::refresh()
@@ -344,7 +306,6 @@ void MenuManager::refresh()
 void MenuManager::refresh(MenuNode* node)
 {
 	if(node->rawAction && !node->activeControl) node->rawAction->setEnabled(isActivatable(node));
-	// qWarning() << "Refreshing" << node->name;
 	foreach(MenuNode* child, node->children) refresh(child);
 }
 
@@ -352,7 +313,6 @@ bool MenuManager::isActivatable(MenuNode* node) const
 {
 	foreach(MenuableActionPair pair, node->registers)
 		if(m_active.contains(pair.menuable)) return true;
-		
 	
 	return false;
 }

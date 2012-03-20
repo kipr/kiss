@@ -21,6 +21,14 @@
 #ifndef _DOCUMENTATIONMENU_H_
 #define _DOCUMENTATIONMENU_H_
 
+#include "BuildOptions.h"
+
+#include <QObject>
+
+class DocumentationMenu;
+
+#ifdef BUILD_DOCUMENTATION_TAB
+
 #include <QObject>
 #include "MenuManager.h"
 #include "ConcreteMenuable.h"
@@ -39,5 +47,7 @@ protected slots:
 private:
 	MainWindow* m_mainWindow;
 };
+
+#endif
 
 #endif

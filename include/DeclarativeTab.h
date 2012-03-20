@@ -18,36 +18,74 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#include "DocumentationMenu.h"
+#ifndef _DECLARATIVETAB_H_
+#define _DECLARATIVETAB_H_
 
-#ifdef BUILD_DOCUMENTATION_TAB
+#include "BuildOptions.h"
 
-#include "TargetMenu.h"
-#include "MainWindow.h"
-#include "Documentation.h"
+#include <QObject>
 
-DocumentationMenu::DocumentationMenu(MainWindow* mainWindow) : ConcreteMenuable(menuName()), m_mainWindow(mainWindow)
+#ifdef BUILD_DECLARATIVE_TAB
+
+#include "Tab.h"
+
+#include <QUrl>
+
+#ifdef BUILD_DEVELOPER_TOOLS
+#include <QFileSystemWatcher>
+#endif
+
+class DeclarativeTools : public QObject
 {
-	MenuNode* targetMenu = new MenuNode("Target");
-	MenuNode* doc = node(action("report", "Documentation"));
-	targetMenu->children.append(MenuNode::separator());
-	targetMenu->children.append(doc);
-	m_actions.append(targetMenu);
+Q_OBJECT
+public:
+	DeclarativeTools(MainWindow* mainWindow);
 	
-	m_help.append(doc);
-	m_help.append(MenuNode::separator());
-}
+public slots:
+	void newFile();
+	void open();
+	void openWeb(const QString& url);
+	void settings();
+	
+	const QStringList targets();
+	const QStringList templates(const QString& target);
+	
+	void tellActivated();
+	void tellCompletedSetup();
 
-void DocumentationMenu::triggered()
-{
-	QList<Documentation*> docs = m_mainWindow->tabs<Documentation>();
-	if(docs.size() >= 1) m_mainWindow->moveToTab(docs[0]);
-	else m_mainWindow->addTab(new Documentation(m_mainWindow));
-}
+signals:
+	void activated();
+	void completedSetup();
+	
+private:
+	MainWindow* m_mainWindow;
+};
 
-QString DocumentationMenu::menuName()
+class DeclarativeTab : public QObject, public TabbedWidget
 {
-	return "Documentation";
-}
+Q_OBJECT
+public:
+	DeclarativeTab(const QUrl& file, MainWindow* parent);
+	~DeclarativeTab();
+
+	void activate();
+	bool beginSetup();
+	void completeSetup();
+	bool close();
+	
+public slots:
+	void reload();
+	void setTitle(const QString& title);
+	void refreshSettings();
+	
+private:
+#ifdef BUILD_DEVELOPER_TOOLS
+	QFileSystemWatcher m_watcher;
+#endif
+	DeclarativeTools m_kiss;
+
+};
+
+#endif
 
 #endif

@@ -118,8 +118,9 @@ int main(int argc, char **argv)
 	splash.raise();
 	splash.show();
 	MainWindow mainWindow;
+#ifdef BUILD_WEB_TAB
 	mainWindow.addTab(new WelcomeTab(&mainWindow));
-	qWarning() << mainWindow.tabs("WelcomeTab");
+#endif
 	qWarning() << "Args:" << QApplication::arguments();
 	foreach(const QString& arg, QApplication::arguments().mid(1)) {
 		mainWindow.openFile(arg);

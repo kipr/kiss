@@ -21,13 +21,19 @@
 #ifndef _DEVELOPERMENU_H_
 #define _DEVELOPERMENU_H_
 
+#include "BuildOptions.h"
+
+class DeveloperMenu;
+
+#ifdef BUILD_DEVELOPER_TOOLS
+
 #include "Activatable.h"
 #include "MenuManager.h"
 #include "SourceFile.h"
 #include "ConcreteMenuable.h"
 #include "MainWindow.h"
 
-class DeveloperMenu : public ConcreteMenuable
+class DeveloperMenu : public ConcreteMenuable, public ActivatableObject
 {
 Q_OBJECT
 public:
@@ -42,7 +48,10 @@ private:
 	MainWindow* m_mainWindow;
 	
 	QAction* injectScript;
+	QAction* declTab;
 	QAction* uninstallAll;
 };
+
+#endif
 
 #endif

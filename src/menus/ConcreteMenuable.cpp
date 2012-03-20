@@ -33,6 +33,11 @@ MenuNodeList ConcreteMenuable::actionsHelp() { return m_help; }
 MenuNodeList ConcreteMenuable::actions() { return m_actions; }
 MenuNodeList ConcreteMenuable::toolbarActions() { return m_toolbar; }
 
+void ConcreteMenuable::triggered()
+{
+	
+}
+
 void ConcreteMenuable::activeTriggered() {
 	QAction* _ = (QAction*)sender();
 	QMap<QAction*, Invokable>::iterator it = m_activatables.find(_);
@@ -71,6 +76,7 @@ QAction* ConcreteMenuable::activeCheckedAction(const QIcon& icon, const QString&
 	ret->setShortcut(shortcut);
 	QObject::connect(ret, SIGNAL(triggered(bool)), this, SLOT(activeToggled(bool)));
 	m_activatables.insert(ret, Invokable(activatable, slot));
+	m_rawActions += ret;
 	return ret;
 }
 
@@ -86,6 +92,7 @@ QAction* ConcreteMenuable::action(const QIcon& icon, const QString& text, const 
 	QAction* ret = new QAction(icon, text, 0);
 	ret->setShortcut(shortcut);
 	QObject::connect(ret, SIGNAL(triggered()), this, SLOT(triggered()));
+	m_rawActions += ret;
 	return ret;
 }
 
@@ -95,17 +102,4 @@ QAction* ConcreteMenuable::action(const QString& iconRes, const QString& text, c
 
 QAction* ConcreteMenuable::action(const QString& text, const QKeySequence& shortcut) {
 	return action("", text, shortcut);
-}
-
-// Preps for action deletion
-void ConcreteMenuable::finish() {
-	finishList(m_file);
-	finishList(m_edit);
-	finishList(m_help);
-	finishList(m_actions);
-	finishList(m_toolbar);
-}
-
-void ConcreteMenuable::finishList(const MenuNodeList& nodes) {
-	foreach(MenuNode* node, nodes) m_rawActions += QSet<QAction*>::fromList(node->allActions());
 }

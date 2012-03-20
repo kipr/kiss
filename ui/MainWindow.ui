@@ -115,6 +115,5 @@
  <resources>
   <include location="../rc/rc.qrc"/>
  </resources>
- <connections>
- </connections>
+ <connections/>
 </ui>

@@ -1,0 +1,3 @@
+<b>This build of KISS IDE was not configured with ${1} enabled.</b> <br />
+<br />
+To use this feature, please rebuild KISS with it enabled.

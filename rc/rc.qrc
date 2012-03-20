@@ -66,6 +66,8 @@
 		<file>messages/simple_error_with_action.txt</file>
 		<file>messages/script_exception.txt</file>
 		<file>messages/kipr_script_exception.txt</file>
+		<file>messages/about_kiss.txt</file>
+		<file>messages/build_error.txt</file>
 	</qresource>
 	<qresource prefix="/">
 		<file>webtab_fail/index.html</file>

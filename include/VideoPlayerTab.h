@@ -21,6 +21,14 @@
 #ifndef __VIDEOPLAYERTAB_H__
 #define __VIDEOPLAYERTAB_H__
 
+#include "BuildOptions.h"
+
+#include <QObject>
+
+class VideoPlayerTab;
+
+#ifdef BUILD_VIDEO_PLAYER_TAB
+
 #include "ui_VideoPlayerTab.h"
 #include "Tab.h"
 
@@ -53,5 +61,7 @@ public:
 private slots:
 	void stateChange(Phonon::State state, Phonon::State oldState);
 };
+
+#endif
 
 #endif

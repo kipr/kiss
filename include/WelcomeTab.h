@@ -21,6 +21,14 @@
 #ifndef __WELCOME_TAB_H__
 #define __WELCOME_TAB_H__
 
+#include "BuildOptions.h"
+
+#include <QObject>
+
+class WelcomeTab;
+
+#ifdef BUILD_WEB_TAB
+
 #include "WebTab.h"
 
 class WelcomeTab : public WebTab 
@@ -36,5 +44,7 @@ public:
 	void activate();
 	void completeSetup();
 };
+
+#endif
 
 #endif

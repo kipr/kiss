@@ -20,97 +20,73 @@
 
 #include "WebTabMenu.h"
 
-WebTabMenu::WebTabMenu() : ConcreteMenuable(menuName())
+#ifdef BUILD_WEB_TAB
+
+#include <QDebug>
+#include <QWebHistory>
+#include <QWebView>
+
+WebTabMenu::WebTabMenu() : ConcreteMenuable(menuName()), ActivatableObject()
 {
 	m_edit.append(node(activeAction("copy", "Copy", QKeySequence::Copy, this, "copy")));
 	m_edit.append(node(activeAction("cut", "Cut", QKeySequence::Cut, this, "cut")));
 	m_edit.append(node(activeAction("paste", "Paste", QKeySequence::Paste, this, "paste")));
+	m_edit.append(MenuNode::separator());
+	m_edit.append(node(zoomIn = action("Zoom In", QKeySequence::ZoomIn)));
+	m_edit.append(node(zoomOut = action("Zoom Out", QKeySequence::ZoomOut)));
+	m_edit.append(node(resetZoom = action("Reset Zoom", QKeySequence("Ctrl+0"))));
+	m_edit.append(MenuNode::separator());
 	m_edit.append(node(activeAction("find", "Find", QKeySequence::Find, this, "find")));
 	
 	
-	MenuNode* back = node(this->back = action("arrow_left", "Back"));
-	MenuNode* forward = node(this->forward = action("arrow_right", "Forward"));
-	MenuNode* reload = node(this->reload = activeAction("arrow_refresh", "Refresh", QKeySequence::Refresh, this, "refresh"));
-	MenuNode* open = node(this->open = activeAction("resultset_next", "Open in Browser", QKeySequence::UnknownKey, this, "openInBrowser"));
+	back = node(activeAction("arrow_left", "Back", QKeySequence::Back, this, "back"));
+	forward = node(activeAction("arrow_right", "Forward", QKeySequence::Forward, this, "forward"));
+	reload = node(activeAction("arrow_refresh", "Refresh", QKeySequence::Refresh, this, "refresh"));
+	open = node(activeAction("resultset_next", "Open in Browser", QKeySequence::UnknownKey, this, "openInBrowser"));
 	
-	MenuNode* browser = new MenuNode("Browser");
-	browser->children.append(back);
-	browser->children.append(forward);
-	browser->children.append(reload);
-	browser->children.append(open);
-	
-	m_actions.append(browser);
+	back->hideOnDisable = forward->hideOnDisable = false;
 	
 	m_toolbar.append(back);
 	m_toolbar.append(forward);
 	m_toolbar.append(reload);
 	m_toolbar.append(open);
 	m_toolbar.append(MenuNode::separator());
-	
-	finish();
 }
 
 void WebTabMenu::activated()
 {
+	ActivatableObject::activated();
 	menuManager()->addActivation(this);
 }
 
 void WebTabMenu::deactivated()
 {
+	ActivatableObject::deactivated();
 	menuManager()->removeActivation(this);
 }
 
 void WebTabMenu::triggered()
 {
-	if(!isActive()) return;
-	WebTab* source = qobject_cast<WebTab*>(active());
+	WebTab* web = dynamic_cast<WebTab*>(active());
+	if(!web) return;
 	
-	QAction* _ = (QAction*)sender();
-}
-
-
-#if 0
-void WebTab::addActionsFile(QMenu*) {}
-
-void WebTab::addActionsEdit(QMenu* edit)
-{	
-	edit->addAction(actionCopy);
-	edit->addAction(actionCut);
-	edit->addAction(actionPaste);
-	edit->addSeparator();
-	edit->addAction(actionFind);
-}
-
-void WebTab::addActionsHelp(QMenu*) {}
-
-void WebTab::addOtherActions(QMenuBar* menuBar)
-{
-	QMenu* browser = menuBar->addMenu(tr("Browser"));
-	browser->addAction(actionBack);
-	browser->addAction(actionForward);
-	browser->addAction(actionReload);
-	browser->addAction(actionGo);
-	browser->addAction(actionOpenInBrowser);
-}
-
-void WebTab::addToolbarActions(QToolBar* toolbar)
-{
-	toolbar->addSeparator();
-	toolbar->addAction(actionCopy);
-	toolbar->addAction(actionCut);
-	toolbar->addAction(actionPaste);
-	toolbar->addAction(actionFind);
-	toolbar->addSeparator();
-	toolbar->addAction(actionBack);
-	toolbar->addAction(actionForward);
-	toolbar->addAction(actionReload);
-	toolbar->addAction(actionGo);
-	toolbar->addAction(actionOpenInBrowser);
+	QAction* _ = static_cast<QAction*>(sender());
 	
+	QWebView* webView = web->webView();
+	if(_ == zoomIn) webView->setZoomFactor(webView->zoomFactor() * 1.1);
+	else if(_ == zoomOut) webView->setZoomFactor(webView->zoomFactor() * 0.9);
+	else if(_ == resetZoom) webView->setZoomFactor(1.0);
 }
+
+void WebTabMenu::update()
+{
+	WebTab* web = dynamic_cast<WebTab*>(active());
+	if(!web) return;
+	
+	back->rawAction->setEnabled(web->history()->canGoBack());
+	forward->rawAction->setEnabled(web->history()->canGoForward());
+}
+
+QString WebTabMenu::menuName() { return "Web"; }
+
 #endif
-
-QString WebTabMenu::menuName()
-{
-	return "Web";
-}

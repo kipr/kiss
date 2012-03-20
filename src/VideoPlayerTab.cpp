@@ -19,6 +19,9 @@
  **************************************************************************/
 
 #include "VideoPlayerTab.h"
+
+#ifdef BUILD_VIDEO_PLAYER_TAB
+
 #include "MainWindow.h"
 #include "MessageDialog.h"
 
@@ -78,3 +81,5 @@ void VideoPlayerTab::stateChange(Phonon::State state, Phonon::State)
 	actionPlay->setEnabled(state != Phonon::PlayingState);
 	actionPause->setEnabled(state == Phonon::PlayingState);
 }
+
+#endif

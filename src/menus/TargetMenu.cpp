@@ -27,37 +27,35 @@
 #include "Documentation.h"
 #include "MainWindow.h"
 
-TargetMenu::TargetMenu() : ConcreteMenuable(menuName()), m_additional(MenuNode::insertionPoint())
+TargetMenu::TargetMenu() : ConcreteMenuable(menuName())
 {
 	// Put manuals in "Target"
-	MenuNode* targetMenu = new MenuNode("Target");
+	m_targetMenu = new MenuNode("Target");
 	
-	targetMenu->children.append(compileNode = node(activeAction("bricks", "Compile", QKeySequence("Alt+C"), this, "compile")));
-	targetMenu->children.append(downloadNode = node(activeAction("ruby_blue", "Download", QKeySequence("Alt+D"), this, "download")));
-	targetMenu->children.append(simulateNode = node(activeAction("application_go", "Simulate", QKeySequence("Alt+S"), this, "simulate")));
-	targetMenu->children.append(runNode = node(activeAction("arrow_right", "Run", QKeySequence("Alt+R"), this, "run")));
-	targetMenu->children.append(stopNode = node(activeAction("stop.png", "Stop", QKeySequence("Alt+X"), this, "stop")));
-	targetMenu->children.append(debugNode = node(activeAction("bug", "Debug", QKeySequence("Alt+G"), this, "debug")));
+	m_targetMenu->children.append(compileNode = node(activeAction("bricks", "Compile", QKeySequence("Alt+C"), this, "compile")));
+	m_targetMenu->children.append(downloadNode = node(activeAction("ruby_blue", "Download", QKeySequence("Alt+D"), this, "download")));
+	m_targetMenu->children.append(simulateNode = node(activeAction("application_go", "Simulate", QKeySequence("Alt+S"), this, "simulate")));
+	m_targetMenu->children.append(runNode = node(activeAction("arrow_right", "Run", QKeySequence("Alt+R"), this, "run")));
+	m_targetMenu->children.append(stopNode = node(activeAction("stop.png", "Stop", QKeySequence("Alt+X"), this, "stop")));
+	m_targetMenu->children.append(debugNode = node(activeAction("bug", "Debug", QKeySequence("Alt+G"), this, "debug")));
 	
 	compileNode->activeControl = downloadNode->activeControl = true;
 	simulateNode->activeControl = runNode->activeControl = true;
 	stopNode->activeControl = debugNode->activeControl = true;
 	
-	m_toolbar.append(targetMenu->children);
-	targetMenu->children.append(MenuNode::separator());
-	targetMenu->children.append(node(activeAction("", "Change Target", QKeySequence("Alt+T"), this, "changeTarget")));
-	targetMenu->children.append(node(activeAction("link", "Choose Port", QKeySequence("Alt+P"), this, "choosePort")));
-	targetMenu->children.append(MenuNode::separator());
-	targetMenu->children.append(m_additional);
+	m_toolbar.append(m_targetMenu->children);
+	m_targetMenu->children.append(MenuNode::separator());
+	m_targetMenu->children.append(screenNode = node(activeAction("", "Screen Grab", QKeySequence::UnknownKey, this, "screenGrab")));
+	m_targetMenu->children.append(requestNode = node(activeAction("", "Request File", QKeySequence::UnknownKey, this, "requestFile")));
 	
-	m_actions.append(targetMenu);
+	screenNode->activeControl = requestNode->activeControl = true;
 	
-	finish();
-}
-
-MenuNode* TargetMenu::additional()
-{
-	return m_additional;
+	m_targetMenu->children.append(MenuNode::separator());
+	m_targetMenu->children.append(node(activeAction("", "Change Target", QKeySequence("Alt+T"), this, "changeTarget")));
+	m_targetMenu->children.append(node(activeAction("link", "Choose Port", QKeySequence("Alt+P"), this, "choosePort")));
+	m_targetMenu->children.append(MenuNode::separator());
+	
+	m_actions.append(m_targetMenu);
 }
 
 void TargetMenu::refresh()
@@ -71,6 +69,9 @@ void TargetMenu::refresh()
 	runNode->rawAction->setEnabled(target->hasRun());
 	stopNode->rawAction->setEnabled(target->hasStop());
 	debugNode->rawAction->setEnabled(target->hasDebug());
+	
+	requestNode->rawAction->setEnabled(target->hasRequestFile());
+	screenNode->rawAction->setEnabled(target->hasScreenGrab());
 	
 	menuManager()->refreshToolbar();
 }
@@ -91,22 +92,10 @@ void TargetMenu::deactivated()
 	stopNode->rawAction->setEnabled(false);
 	debugNode->rawAction->setEnabled(false);
 	
+	requestNode->rawAction->setEnabled(false);
+	screenNode->rawAction->setEnabled(false);
+	
 	menuManager()->removeActivation(this);
-}
-
-MenuNodeList TargetMenu::manuals()
-{
-	return m_manuals.values();
-}
-
-MenuNodeList TargetMenu::manuals(const QString& target)
-{
-	return m_manuals.values(target);
-}
-
-void TargetMenu::triggered()
-{
-	QAction* _ = (QAction*)sender();
 }
 
 QString TargetMenu::menuName()

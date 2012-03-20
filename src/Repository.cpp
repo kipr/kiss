@@ -19,6 +19,9 @@
  **************************************************************************/
 
 #include "Repository.h"
+
+#ifdef BUILD_REPOSITORY_TAB
+
 #include <QDebug>
 #include "KissArchive.h"
 #include "MainWindow.h"
@@ -198,3 +201,5 @@ void Repository::next()
 	QNetworkReply* reply = m_network.get(QNetworkRequest(QUrl(m_source + m_locations[item->text()])));
 	connect(reply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(downloadProgress(qint64, qint64)));
 }
+
+#endif

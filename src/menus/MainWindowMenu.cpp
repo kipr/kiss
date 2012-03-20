@@ -19,56 +19,37 @@
  **************************************************************************/
 
 #include "MainWindowMenu.h"
+#include "BuildOptions.h"
 
 #include "ResourceHelper.h"
 
 #include "MainWindow.h"
 
 #include <QIcon>
-
 #include <QDebug>
 
-MainWindowMenu::MainWindowMenu(MainWindow* mainWindow) : ConcreteMenuable(menuName()), m_mainWindow(mainWindow)
+MainWindowMenu::MainWindowMenu(MainWindow* mainWindow) : ConcreteMenuable(menuName())
 {	
-	MenuNode* newFileNode = node(newFile = action(QIcon(ResourceHelper::ref().lookup("page_white.png")), "New File", QKeySequence::New));
-	MenuNode* openFileNode = node(open = action(QIcon(ResourceHelper::ref().lookup("folder")), "Open...", QKeySequence::Open));
-	m_file.append(newFileNode);
-	m_file.append(openFileNode);
-	m_file.append(m_fileOperations = MenuNode::insertionPoint());
-	m_file.append(MenuNode::separator());
 	MenuNode* packages = new MenuNode("Packages");
-	packages->children.append(node(repo = action("Manage Packages")));
-	packages->children.append(node(install = action("cog_go", "Install Local Packages...")));
+#ifdef BUILD_REPOSITORY_TAB
+	packages->children.append(node(activeAction("", "Manage Packages", QKeySequence::UnknownKey, this, "managePackages")));
+#endif
+	packages->children.append(node(activeAction("cog_go", "Install Local Packages...", QKeySequence::UnknownKey, this, "installLocalPackage")));
 	m_file.append(packages);
 	m_file.append(MenuNode::separator());
-	m_file.append(m_nextNode = node(next = action(QIcon(ResourceHelper::ref().lookup("arrow_right")), "Next", QKeySequence::NextChild)));
-	m_file.append(m_prevNode = node(prev = action(QIcon(ResourceHelper::ref().lookup("arrow_left")), "Previous", QKeySequence::PreviousChild)));
-	m_file.append(m_closeNode = node(close = activeAction("cross", "Close", QKeySequence::Close, this, "closeTab")));
+	m_file.append(m_nextNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_right")), "Next", QKeySequence::NextChild, this, "next")));
+	m_file.append(m_prevNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_left")), "Previous", QKeySequence::PreviousChild, this, "previous")));
+	m_file.append(m_closeNode = node(activeAction("cross", "Close", QKeySequence::Close, this, "closeTab")));
 	m_file.append(MenuNode::separator());
-	quit = activeAction("cross", "Quit", QKeySequence::Quit, this, "close");
+	QAction* quit = activeAction("cross", "Quit", QKeySequence::Quit, this, "close");
 	quit->setMenuRole(QAction::QuitRole);
 	m_file.append(node(quit));
 	
-	m_toolbar.append(newFileNode);
-	m_toolbar.append(openFileNode);
-	m_toolbar.append(MenuNode::separator());
+	m_edit.append(MenuNode::separator());
+	m_edit.append(node(activeAction("Settings", QKeySequence::Preferences, this, "settings")));
 	
-	finish();
-}
-
-MenuNode* MainWindowMenu::fileOperations() const
-{
-	return m_fileOperations;
-}
-
-MenuNode* MainWindowMenu::nextNode() const
-{
-	return m_nextNode;
-}
-
-MenuNode* MainWindowMenu::prevNode() const
-{
-	return m_prevNode;
+	QAction* about = activeAction("About KISS IDE", QKeySequence::UnknownKey, this, "about");
+	m_help.append(node(about));
 }
 
 MenuNode* MainWindowMenu::closeNode() const
@@ -76,17 +57,14 @@ MenuNode* MainWindowMenu::closeNode() const
 	return m_closeNode;
 }
 
-void MainWindowMenu::triggered()
+void MainWindowMenu::update()
 {
-	QAction* _ = (QAction*)sender();
+	MainWindow* mainWindow = dynamic_cast<MainWindow*>(active());
+	if(!mainWindow || !menuManager()->isConstructed()) return;
 	
-	if(_ == newFile) m_mainWindow->newFile();
-	else if(_ == open) m_mainWindow->open();
-	else if(_ == next) m_mainWindow->next();
-	else if(_ == prev) m_mainWindow->previous();
-	else if(_ == repo) m_mainWindow->managePackages();
-	else if(_ == install) m_mainWindow->installLocalPackage();
-	else qWarning() << "MainWindowMenu cannot respond to" << _->text();
+	m_closeNode->rawAction->setEnabled(mainWindow->canClose());
+	m_nextNode->rawAction->setEnabled(mainWindow->canGoNext());
+	m_prevNode->rawAction->setEnabled(mainWindow->canGoPrevious());
 }
 
 QString MainWindowMenu::menuName()

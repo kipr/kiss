@@ -19,6 +19,9 @@
  **************************************************************************/
 
 #include "WebTab.h"
+
+#ifdef BUILD_WEB_TAB
+
 #include "MainWindow.h"
 #include "VideoPlayerTab.h"
 #include "AudioTutorial.h"
@@ -40,7 +43,10 @@ struct CurrentDirectoryMacro : Macro
 	}
 };
 
-WebTab::WebTab(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent), m_audioTutorial(0)
+WebTab::WebTab(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent)
+#ifdef BUILD_AUDIO_TUTORIAL
+	, m_audioTutorial(0)
+#endif
 {
 	setupUi(this);
 	
@@ -53,21 +59,30 @@ WebTab::WebTab(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent)
 	ui_frameFind->hide();
 	
 	m_fragmentMacro["KISS_CWD"] = new CurrentDirectoryMacro();
+	
+	ui_webView->history()->clear();
 }
 
 WebTab::~WebTab()
 {
+#ifdef BUILD_AUDIO_TUTORIAL
 	if(m_audioTutorial) delete m_audioTutorial;
+#endif
+	ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(mainWindow()->menuable(WebTabMenu::menuName()));
+	if(activatable) activatable->deactivateIfActive(this);
 }
 
 void WebTab::activate()
 {
-	QList<Menuable*> menus = mainWindow()->menuablesExcept(QStringList() << MainWindowMenu::menuName());
+	QList<Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
 	foreach(Menuable* menu, menus) {
 		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
 		if(activatable) activatable->setActive(0);
 	}
-	mainWindow()->activateMenuable(WebTabMenu::menuName(), this);
+	WebTabMenu* webTabMenu = dynamic_cast<WebTabMenu*>(mainWindow()->menuable(WebTabMenu::menuName()));
+	if(webTabMenu) webTabMenu->setActive(this);
+	
+	emit updateActivatable();
 }
 
 bool WebTab::beginSetup() { return true; }
@@ -102,6 +117,8 @@ void WebTab::on_actionGo_triggered() { ui_webView->load(QUrl::fromUserInput(ui_u
 void WebTab::copy() { ui_webView->triggerPageAction(QWebPage::Copy); }
 void WebTab::cut() { ui_webView->triggerPageAction(QWebPage::Cut); }
 void WebTab::paste() { ui_webView->triggerPageAction(QWebPage::Paste); }
+void WebTab::back() { ui_webView->triggerPageAction(QWebPage::Back); }
+void WebTab::forward() { ui_webView->triggerPageAction(QWebPage::Forward); }
 void WebTab::go() { on_actionGo_triggered(); }
 bool WebTab::close() { return true; }
 
@@ -121,12 +138,24 @@ QString WebTab::current()
 	return ui_urlBar->text();
 }
 
+QWebHistory* WebTab::history()
+{
+	return ui_webView->history();
+}
+
+QWebView* WebTab::webView()
+{
+	return ui_webView;
+}
+
 void WebTab::on_ui_prevFind_clicked() { ui_webView->findText(ui_find->text(), QWebPage::FindBackward); }
 void WebTab::on_ui_nextFind_clicked() { ui_webView->findText(ui_find->text()); }
 
 void WebTab::on_ui_webView_loadFinished(bool ok)
 {
 	ui_load->hide();
+	
+	emit updateActivatable();
 	
 	if(ok) return;
 	
@@ -154,7 +183,6 @@ void WebTab::find() { ui_frameFind->show(); }
 void WebTab::refresh() { ui_webView->reload(); }
 
 void WebTab::refreshSettings() {}
-QWebView* WebTab::webView() { return ui_webView; }
 
 void WebTab::linkClicked(const QUrl& url)
 {
@@ -175,7 +203,7 @@ void WebTab::linkClicked(const QUrl& url)
 		return;
 	}
 	if(auth == "settings") {
-		mainWindow()->on_actionEditor_Settings_triggered();
+		mainWindow()->settings();
 		return;
 	}
 	if(auth == "openinbrowser") {
@@ -200,18 +228,28 @@ void WebTab::linkClicked(const QUrl& url)
 		return;
 	}
 	if(auth == "video") {
+#ifndef BUILD_VIDEO_PLAYER_TAB
+		MessageDialog::showError("build_error", QStringList() << "Video Player");
+#else
 		VideoPlayerTab* tab = new VideoPlayerTab();
 		tab->load(fragment);
 		mainWindow()->addTab(tab);
 		return;
+#endif
 	}
 	if(auth == "audiotutorial") {
+#ifndef BUILD_AUDIO_TUTORIAL
+		MessageDialog::showError("build_error", QStringList() << "Audio Tutorial");
+#else
 		if(m_audioTutorial) delete m_audioTutorial;
 		m_audioTutorial = new AudioTutorial(fragment);
 		m_audioTutorial->start();
+#endif
 	}
 	if(auth == "external") {
 		QDesktopServices::openUrl(QUrl::fromUserInput(fragment));	
 		return;
 	}
 }
+
+#endif

@@ -20,19 +20,23 @@
 
 #include "DeveloperMenu.h"
 
-#include "KissArchive.h"
+#ifdef BUILD_DEVELOPER_TOOLS
 
+#include "KissArchive.h"
 #include <QFileDialog>
+
+#include "DeclarativeTab.h"
 
 DeveloperMenu::DeveloperMenu(MainWindow* mainWindow) : ConcreteMenuable(menuName()), m_mainWindow(mainWindow)
 {
 	MenuNode* developer = new MenuNode("Developer");
 	developer->children.append(node(injectScript = action("Inject Script")));
+#ifdef BUILD_DECLARATIVE_TAB
+	developer->children.append(node(declTab = action("Create Declarative Tab")));
+#endif
 	developer->children.append(MenuNode::separator());
 	developer->children.append(node(uninstallAll = action("Uninstall All Packages")));
 	m_actions.append(developer);
-	
-	finish();
 }
 
 void DeveloperMenu::triggered()
@@ -50,9 +54,21 @@ void DeveloperMenu::triggered()
 			m_mainWindow->scriptEnvironment()->execute(path);
 		}
 	}
+#ifdef BUILD_DECLARATIVE_TAB
+	else if(_ == declTab) {
+		QStringList filePaths = QFileDialog::getOpenFileNames(0, tr("Load QML"), QDir::homePath(), "QML (*.qml)");
+		
+		foreach(const QString& path, filePaths) {
+			qWarning() << path;
+			m_mainWindow->addTab(new DeclarativeTab(QUrl::fromLocalFile(path), m_mainWindow));
+		}
+	}
+#endif
 }
 
 QString DeveloperMenu::menuName()
 {
 	return "Developer";
 }
+
+#endif

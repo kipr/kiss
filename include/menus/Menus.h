@@ -28,5 +28,6 @@
 #include "MainWindowMenu.h"
 #include "DeveloperMenu.h"
 #include "DocumentationMenu.h"
+#include "FileOperationsMenu.h"
 
 #endif

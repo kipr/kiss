@@ -36,25 +36,14 @@ public:
 	TargetMenu();
 	void refresh();
 	
-	MenuNode* additional();
-	
-	MenuNodeList manuals();
-	MenuNodeList manuals(const QString& target);
-	
 	static QString menuName();
 	
 protected:
 	void activated();
 	void deactivated();
 	
-protected slots:
-	virtual void triggered();
-	
 private:
-	QMultiMap<QString, MenuNode*> m_manuals;
-	QString m_target;
-	
-	MenuNode* m_additional;
+	MenuNode* m_targetMenu;
 
 	MenuNode* compileNode;
 	MenuNode* downloadNode;
@@ -62,6 +51,9 @@ private:
 	MenuNode* runNode;
 	MenuNode* stopNode;
 	MenuNode* debugNode;
+	
+	MenuNode* screenNode;
+	MenuNode* requestNode;
 };
 
 #endif

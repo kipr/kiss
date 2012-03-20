@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -137,34 +137,44 @@ void MainWindow::initMenus()
 {
 	menuBar()->clear();
 	
+	FileOperationsMenu* fileOpMenu = new FileOperationsMenu();
+	m_menuManager.registerMenus(fileOpMenu);
+	fileOpMenu->setActive(this);
+	m_menuManager.addActivation(fileOpMenu);
+	m_menuables.append(fileOpMenu);
+	
+	SourceFileMenu* sourceFileMenu = new SourceFileMenu(this);
+	m_menuManager.registerMenus(sourceFileMenu);
+	m_menuables.append(sourceFileMenu);
+	
 	MainWindowMenu* mainWindowMenu = new MainWindowMenu(this);
 	m_menuManager.registerMenus(mainWindowMenu);
 	mainWindowMenu->setActive(this);
 	m_menuManager.addActivation(mainWindowMenu);
 	m_menuables.append(mainWindowMenu);
 	
-	SourceFileMenu* sourceFileMenu = new SourceFileMenu(this);
-	m_menuManager.registerMenus(sourceFileMenu);
-	m_menuables.append(sourceFileMenu);
-	
 	TargetMenu* targetMenu = new TargetMenu;
 	m_menuManager.registerMenus(targetMenu);
 	m_menuables.append(targetMenu);
-	
+
+#ifdef BUILD_WEB_TAB
 	WebTabMenu* webTabMenu = new WebTabMenu;
 	m_menuManager.registerMenus(webTabMenu);
 	m_menuables.append(webTabMenu);
-	
+#endif
+#ifdef BUILD_DEVELOPER_TOOLS
 	DeveloperMenu* developerMenu = new DeveloperMenu(this);
 	m_menuManager.registerMenus(developerMenu);
 	m_menuManager.addActivation(developerMenu);
 	m_menuables.append(developerMenu);
-	
+#endif
+#ifdef BUILD_DOCUMENTATION_TAB
 	DocumentationMenu* documentationMenu = new DocumentationMenu(this);
 	m_menuManager.registerMenus(documentationMenu);
 	m_menuManager.addActivation(documentationMenu);
 	m_menuables.append(documentationMenu);
-	
+#endif
+
 	m_menuManager.construct(ui_menubar, ui_toolBar);
 	
 	/* Sets up the QTabWidget that handles the editor windows */
@@ -172,7 +182,6 @@ void MainWindow::initMenus()
 	cornerButton->setDefaultAction(mainWindowMenu->closeNode()->rawAction);
 	cornerButton->setAutoRaise(true);
 	ui_tabWidget->setCornerWidget(cornerButton);
-	connect(cornerButton, SIGNAL(clicked()), this, SLOT(close()));
 }
 
 void MainWindow::setTitle(const QString& title) { setWindowTitle(tr(TITLE) + (title.isEmpty() ? "" : (" - " + title))); }
@@ -239,14 +248,19 @@ void MainWindow::deleteTab(int index)
 {
 	QWidget* w = ui_tabWidget->widget(index);
 	TabbedWidget* tab = 0;
-	if(m_errorTab == (tab = lookup(w))) {
+	tab = lookup(w);
+	if(m_errorTab == tab) {
 		ui_errorView->hide();
 		m_errorTab = 0;
 	}
+	qWarning() << tab;
 	m_messages.remove(tab);
 	ui_tabWidget->removeTab(index);
 	removeLookup(w);
 	delete w;
+	
+	// TODO: We've got  memory leak here...
+	// delete tab;
 }
 
 void MainWindow::addTab(TabbedWidget* tab)
@@ -262,8 +276,7 @@ void MainWindow::addTab(TabbedWidget* tab)
 	
 	QObject::connect(this, SIGNAL(settingsUpdated()), tab->widget(), SLOT(refreshSettings()));
 	
-	if(m_menuManager.isConstructed())
-		dynamic_cast<MainWindowMenu*>(menuable(MainWindowMenu::menuName()))->closeNode()->rawAction->setEnabled(ui_tabWidget->count() > 0);
+	emit updateActivatable();
 }
 
 void MainWindow::moveToTab(TabbedWidget* tab)
@@ -336,20 +349,17 @@ void MainWindow::closeTab()
 	deleteTab(ui_tabWidget->currentIndex());
 	ui_errorView->hide();
 	
-	if(m_menuManager.isConstructed()) dynamic_cast<MainWindowMenu*>(menuable(MainWindowMenu::menuName()))->closeNode()->rawAction->setEnabled(ui_tabWidget->count() > 0);
+	emit updateActivatable();
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_CLOSE_TAB);
 }
 
-void MainWindow::on_actionAbout_triggered()
+void MainWindow::about()
 {
-	QString aboutString = tr("KISS Version ") + QString::number(KISS_C_VERSION_MAJOR) + "." + 
-		QString::number(KISS_C_VERSION_MINOR) + "." +
-		QString::number(KISS_C_VERSION_BUILD) + "\n\n";
-	aboutString += tr("Copyright (C) 2007-2011 KISS Institute for Practical Robotics\n\n");
-	aboutString += tr("http://www.kipr.org/\nhttp://www.botball.org/\n\n");
-	aboutString += tr("KISS is a project of the KISS Institute for Practical Robotics.");
-	QMessageBox::about(this, tr("KIPR's Instructional Software System"), aboutString);
+	MessageDialog::showMessage(this, "About KISS IDE", "about_kiss", QStringList()
+		<< QString::number(KISS_C_VERSION_MAJOR)
+		<< QString::number(KISS_C_VERSION_MINOR)
+		<< QString::number(KISS_C_VERSION_BUILD));
 }
 
 
@@ -371,7 +381,7 @@ void MainWindow::errorViewShowSimple()
 	showErrorMessages(false);
 }
 
-void MainWindow::on_actionEditor_Settings_triggered() { if(m_editorSettingsDialog.exec()) emit settingsUpdated(); }
+void MainWindow::settings() { if(m_editorSettingsDialog.exec()) emit settingsUpdated(); }
 
 void MainWindow::on_ui_tabWidget_currentChanged(int i) 
 {
@@ -383,14 +393,18 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	if(m_currentTab) {
 		m_currentTab->activate();
 	}
-	if(m_menuManager.isConstructed()) {
-		dynamic_cast<MainWindowMenu*>(menuable(MainWindowMenu::menuName()))->nextNode()->rawAction->setEnabled(m_currentTab && i != ui_tabWidget->count() - 1);
-		dynamic_cast<MainWindowMenu*>(menuable(MainWindowMenu::menuName()))->prevNode()->rawAction->setEnabled(m_currentTab && i != 0);
-	}
+	
+	emit updateActivatable();
+	
 	setUpdatesEnabled(true);
 }
 
-void MainWindow::managePackages() { addTab(new Repository(this)); }
+void MainWindow::managePackages()
+{
+#ifdef BUILD_REPOSITORY_TAB
+	addTab(new Repository(this));
+#endif
+}
 
 void MainWindow::installLocalPackage()
 {
@@ -516,6 +530,18 @@ void MainWindow::activateMenuable(const QString& name, QObject* on)
 	activatable->setActive(on);
 }
 
+QStringList MainWindow::standardMenus() const
+{
+	return QStringList() << FileOperationsMenu::menuName() << MainWindowMenu::menuName()
+#ifdef BUILD_DOCUMENTATION_TAB
+	<< DocumentationMenu::menuName()
+#endif
+#ifdef BUILD_DEVELOPER_TOOLS
+	<< DeveloperMenu::menuName()
+#endif
+	;
+}
+
 void MainWindow::restart()
 {
 	TargetManager::ref().unloadAll();
@@ -532,16 +558,30 @@ QList<QObject*> MainWindow::tabs(const QString& name)
 	QList<TabbedWidget*> all = tabs();
 	foreach(TabbedWidget* tab, all) {
 		QObject* t = dynamic_cast<QObject*>(tab);
-		if(t) {
-			const QMetaObject* meta = t->metaObject();
-			while(meta != 0) {
-				if(name == meta->className()) {
-					ret.append(t);
-					break;
-				}
-				meta = meta->superClass();
+		if(!t) continue;
+		const QMetaObject* meta = t->metaObject();
+		while(meta != 0) {
+			if(name == meta->className()) {
+				ret.append(t);
+				break;
 			}
+			meta = meta->superClass();
 		}
 	}
 	return ret;
+}
+
+bool MainWindow::canClose()
+{
+	return ui_tabWidget->count() > 0;
+}
+
+bool MainWindow::canGoPrevious()
+{
+	return m_currentTab && ui_tabWidget->count() > 0 && ui_tabWidget->currentIndex() != 0;
+}
+
+bool MainWindow::canGoNext()
+{
+	return m_currentTab && ui_tabWidget->count() > 0 && ui_tabWidget->currentIndex() != ui_tabWidget->count() - 1;
 }

@@ -55,7 +55,7 @@ LexerBase* Factory::newLexer(const QString& name) const
 LexerBase* Factory::newLexerFromConstructor(const Constructor* constructor) const
 {
 	LexerBase* ret = constructor->_new();
-	ret->setFont(m_font, -1);
+	ret->lexer()->setFont(m_font, -1);
 	return ret;
 }
 

@@ -28,6 +28,7 @@
 
 struct Macro
 {
+	virtual ~Macro() {}
 	virtual QString macro(const QString& with) const = 0;
 };
 
@@ -51,7 +52,7 @@ struct DateMacro : Macro
 
 struct MacroString : QMap<QString, Macro*>
 {
-	~MacroString() {
+	virtual ~MacroString() {
 		while (!isEmpty()) { delete begin().value(); erase(begin()); }
 	}
 	

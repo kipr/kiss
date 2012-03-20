@@ -32,7 +32,7 @@ struct Invokable
 	const char* slot;
 };
 
-struct ConcreteMenuable : virtual QObject, Menuable
+struct ConcreteMenuable : QObject, Menuable
 {
 Q_OBJECT
 public:
@@ -46,7 +46,7 @@ public:
 	MenuNodeList toolbarActions();
 	
 protected slots:
-	virtual void triggered() = 0;
+	virtual void triggered();
 	virtual void activeTriggered();
 	virtual void activeToggled(bool state);
 	
@@ -70,11 +70,7 @@ protected:
 	
 	QAction* action(const QString& text, const QKeySequence& shortcut = QKeySequence::UnknownKey);
 	
-	// Preps for action deletion
-	void finish();
-	
 private:
-	void finishList(const MenuNodeList& nodes);
 	
 	// Sets don't allow duplicates.
 	QSet<QAction*> m_rawActions;

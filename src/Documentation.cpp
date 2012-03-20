@@ -1,5 +1,7 @@
 #include "Documentation.h"
 
+#ifdef BUILD_DOCUMENTATION_TAB
+
 #include "MainWindow.h"
 #include "TargetManager.h"
 #include "Target.h"
@@ -23,7 +25,7 @@ Documentation::Documentation(MainWindow* parent) : TabbedWidget(new QListWidget(
 
 void Documentation::activate()
 {
-	QList<Menuable*> menus = mainWindow()->menuablesExcept(QStringList() << MainWindowMenu::menuName());
+	QList<Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
 	foreach(Menuable* menu, menus) {
 		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
 		if(activatable) activatable->setActive(0);
@@ -60,7 +62,7 @@ void Documentation::completeSetup()
 
 bool Documentation::close()
 {
-	
+	return true;
 }
 
 void Documentation::refreshSettings()
@@ -83,7 +85,8 @@ void Documentation::itemDoubleClicked(QListWidgetItem* item)
 	#endif
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_OPEN_MANUAL);
-	
+
+#ifdef BUILD_WEB_TAB
 	QList<WebTab*> webTabs = mainWindow()->tabs<WebTab>();
 	foreach(WebTab* tab, webTabs) {
 		if(tab->current() == sysLocation) {
@@ -96,4 +99,10 @@ void Documentation::itemDoubleClicked(QListWidgetItem* item)
 	mainWindow()->addTab(tab);
 	
 	tab->load(sysLocation, true);
+#else
+	QDesktopServices::openUrl(QUrl::fromUserInput(sysLocation));
+#endif
 }
+
+#endif
+

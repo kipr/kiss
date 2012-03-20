@@ -152,10 +152,15 @@ public:
 	QList<Menuable*> menuablesExcept(const QStringList& name);
 	QList<Menuable*> menuables();
 	void activateMenuable(const QString& name, QObject* on);
+	QStringList standardMenus() const;
 	
 	ScriptEnvironment* scriptEnvironment();
 	
 	void restart();
+	
+	bool canClose();
+	bool canGoPrevious();
+	bool canGoNext();
 	
 	friend class MainWindowMenu;
 	
@@ -165,17 +170,19 @@ public slots:
 	void next();
 	void previous();
 	void closeTab();
-	void on_actionAbout_triggered();
+	void about();
 	void errorViewShowVerbose();
 	void errorViewShowSimple();
-	void on_actionEditor_Settings_triggered();
+	void settings();
 	void managePackages();
 	void installLocalPackage();
 	
 	QList<QObject*> tabs(const QString& type);
-	
-	
-	
+
+signals:
+	void settingsUpdated();
+	void updateActivatable();
+
 private slots:
 	void on_ui_tabWidget_currentChanged(int i);
 	void openRecent();
@@ -183,7 +190,6 @@ private slots:
 	void errorClicked(QListWidgetItem* item);
 	
 	void showContextMenuForError(const QPoint &pos);
-	
 	
 private:
 	TabbedWidget* m_currentTab;
@@ -201,9 +207,6 @@ private:
 	TabbedWidget* lookup(QWidget* widget);
 
 	void showErrorMessages(bool verbose = false);
-
-signals:
-	void settingsUpdated();
 };
 
 #endif

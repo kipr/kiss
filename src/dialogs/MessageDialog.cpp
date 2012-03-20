@@ -43,7 +43,8 @@ void MessageDialog::setMessage(const QString& message, const QStringList& args)
 
 void MessageDialog::setLabel(const QString& label)
 {
-	ui_label->setText(label);
+	if(label.isEmpty()) ui_label->hide();
+	else ui_label->setText(label);
 }
 
 void MessageDialog::on_ui_copy_clicked()
@@ -56,7 +57,8 @@ void MessageDialog::on_ui_message_anchorClicked(const QUrl& link) { QDesktopServ
 void MessageDialog::showMessage(QWidget* parent, const QString& label, const QString& message, const QStringList& args)
 {
 	MessageDialog dialog(parent);
-	dialog.setLabel(label);
+	dialog.setWindowTitle(label);
+	dialog.setLabel("");
 	dialog.setMessage(message, args);
 	dialog.exec();
 }

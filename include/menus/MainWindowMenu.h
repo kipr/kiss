@@ -35,34 +35,16 @@ public:
 	
 	static QString menuName();
 	
-public slots:
-	MenuNode* fileOperations() const;
-	MenuNode* nextNode() const;
-	MenuNode* prevNode() const;
 	MenuNode* closeNode() const;
 	
-protected slots:
-	virtual void triggered();
+public slots:
+	void update();
 	
 private:
-	QAction* newFile;
-	QAction* open;
-	QAction* next;
-	QAction* prev;
-	QAction* close;
-	
-	QAction* quit;
-	
-	QAction* repo;
-	QAction* install;
-	
 	MenuNode* m_nextNode;
 	MenuNode* m_prevNode;
 	MenuNode* m_closeNode;
-	
-	MenuNode* m_fileOperations;
-	
-	MainWindow* m_mainWindow;
+
 };
 
 #endif

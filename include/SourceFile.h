@@ -70,7 +70,7 @@
 class FindDialog;
 class MainWindow;
 
-namespace Lexer { class Constructor; }
+namespace Lexer { struct Constructor; }
 
 class SourceFile : public QWidget, public TabbedWidget, private Ui::SourceFile
 {
@@ -107,6 +107,9 @@ public:
 	Target* target();
 	QsciScintilla* editor();
 	
+	int currentLine() const;
+	bool breakpointOnLine(int line) const;
+	
 public slots:
 	bool saveAs();
 
@@ -118,7 +121,7 @@ public slots:
 	void find();
 	void print();
 
-	void changeTarget();
+	bool changeTarget(bool _template = false);
 	void choosePort();
 
 	void download();
@@ -151,7 +154,9 @@ public slots:
 
 	void sourceModified(bool m);
 
-		
+signals:
+	void updateActivatable();
+
 private slots:
 	void on_ui_editor_cursorPositionChanged(int line, int index);
 	
@@ -188,8 +193,6 @@ private:
 	void clearProblems();
 	void markProblems(const QStringList& errors, const QStringList& warnings);
 	void updateErrors();
-	void updateBreakpointToggle();
-	bool changeTarget(bool _template);
 	
 	Debugger m_debugger;
 

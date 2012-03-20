@@ -26,7 +26,7 @@
 
 using namespace Lexer;
 
-CPP::CPP(const Constructor* constructor) : LexerBase(constructor)
+CPP::CPP(const Constructor* constructor) : LexerBase(this, constructor)
 {
 }
 
@@ -123,14 +123,13 @@ QFont CPP::font(int style) const
 		f.setBold(true);
 		break;
 	}
-
-
+	
 	return f;
 }
 
 QFont CPP::defaultFont(int style) const
 {
-	QFont f = QsciLexer::font(style);
+	QFont f = QsciLexer::defaultFont(style);
 
 	switch (style)
 	{

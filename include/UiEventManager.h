@@ -28,7 +28,7 @@
 
 struct UiEventListener
 {
-	virtual void event(const QString& name, const QStringList& args) = 0;
+	virtual void uiEvent(const QString& name, const QStringList& args) = 0;
 };
 
 class UiEventManager : public Singleton<UiEventManager>

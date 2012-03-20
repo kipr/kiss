@@ -103,6 +103,7 @@ class DebuggerInterface
 {
 public:
 	DebuggerInterface() : m_responder(0) {}
+	virtual ~DebuggerInterface() {}
 	
 	void setResponder(Responder* resp) { m_responder = resp; }
 	

@@ -32,24 +32,26 @@
 
 namespace Lexer
 {
-	class LexerBase;
+	struct LexerBase;
 	
 	struct Constructor
 	{
+		virtual ~Constructor() {}
 		virtual LexerBase* construct() const = 0;
 		virtual LexerBase* construct(const QString& apis) const = 0;
 		
 		virtual LexerBase* _new() const = 0;
 	};
 
-	struct LexerBase : public QsciLexerCPP
+	struct LexerBase
 	{
-		LexerBase(const Constructor* constructor) : m_constructor(constructor), m_apis(this) {}
+		LexerBase(QsciLexer* lexer, const Constructor* constructor) : m_lexer(lexer), m_constructor(constructor), m_apis(lexer) {}
 		const Constructor* constructor() const { return m_constructor; }
 		
 		void setAPIFile(const QString& apis) { if(m_apis.load(apis)) m_apis.prepare(); }
-		
+		QsciLexer* lexer() const { return m_lexer; }
 	private:
+		QsciLexer* m_lexer;
 		const Constructor* m_constructor;
 		QsciAPIs m_apis;
 	};

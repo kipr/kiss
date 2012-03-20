@@ -63,6 +63,8 @@
 #define SAVE_PATH "savepath"
 #define DEFAULT_EXTENSION "default_extension"
 
+#define MAX(a, b) (a > b ? a : b)
+
 SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent), m_fileHandle(tr("Untitled")), m_isNewFile(true), m_target(this), 
  	m_targetName("?"), m_debuggerEnabled(false), m_runTab(0), m_debugger(parent)
 {
@@ -99,7 +101,7 @@ void SourceFile::activate()
 	mainWindow()->showErrors(this);
 	mainWindow()->setStatusMessage("");
 	
-	QList<Menuable*> menus = mainWindow()->menuablesExcept(QStringList() << MainWindowMenu::menuName() << SourceFileMenu::menuName() << TargetMenu::menuName());
+	QList<Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus() << SourceFileMenu::menuName() << TargetMenu::menuName());
 	foreach(Menuable* menu, menus) {
 		qWarning() << "Deactivating" << menu->name();
 		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
@@ -385,7 +387,7 @@ void SourceFile::updateMargins()
 			font.setPointSize(font.pointSize() + getZoom());
 			charWidth = QFontMetrics(font).width("0");
 		}
-		size = charWidth + charWidth/2 + charWidth * (int)ceil(log10(ui_editor->lines()+1));
+		size = charWidth + charWidth/2 + charWidth * (int)ceil(log10(MAX(ui_editor->lines(), 10) + 1));
 	}
 	ui_editor->setMarginWidth(0, size);
 	ui_editor->setMarginWidth(1, 16);
@@ -396,6 +398,15 @@ void SourceFile::moveTo(int line, int pos)  { if(line > 0 && pos >= 0) ui_editor
 
 Target* SourceFile::target() { return &m_target; }
 QsciScintilla* SourceFile::editor() { return ui_editor; }
+
+int SourceFile::currentLine() const { return m_currentLine; }
+
+bool SourceFile::breakpointOnLine(int line) const
+{
+	bool markerOnLine = false;
+	foreach(const int& i, m_breakpoints) markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
+	return markerOnLine;
+}
 
 void SourceFile::zoomIn() { ui_editor->zoomIn(); updateMargins(); UiEventManager::ref().sendEvent(UI_EVENT_ZOOM_IN); }
 void SourceFile::zoomOut() { ui_editor->zoomOut(); updateMargins(); UiEventManager::ref().sendEvent(UI_EVENT_ZOOM_OUT); }
@@ -567,8 +578,6 @@ void SourceFile::print()
 	if(printDialog.exec()) printer.printRange(ui_editor);
 }
 
-void SourceFile::changeTarget() { changeTarget(false); }
-
 void SourceFile::choosePort()
 {
 	ChoosePortDialog pDialog(this);
@@ -646,7 +655,7 @@ void SourceFile::toggleBreakpoint(bool checked)
 		ui_editor->markerDelete(m_currentLine, m_breakIndicator);
 	}
 	
-	updateBreakpointToggle();
+	emit updateActivatable();
 }
 
 void SourceFile::clearBreakpoints()
@@ -654,14 +663,13 @@ void SourceFile::clearBreakpoints()
 	foreach(const int& i, m_breakpoints) ui_editor->markerDeleteHandle(i);
 	m_breakpoints.clear();
 	
-	SourceFileMenu* sourceFileMenu = dynamic_cast<SourceFileMenu*>(mainWindow()->menuable(SourceFileMenu::menuName()));
-	if(sourceFileMenu) sourceFileMenu->breakpointToggle()->rawAction->setChecked(false);
+	emit updateActivatable();
 }
 
 void SourceFile::on_ui_editor_cursorPositionChanged(int line, int)
 {
 	m_currentLine = line;
-	updateBreakpointToggle();
+	emit updateActivatable();
 }
 
 void SourceFile::showFind() { ui_find->show(); }
@@ -680,7 +688,7 @@ void SourceFile::setLexer(Lexer::Constructor* constructor)
 {
 	delete ui_editor->lexer();
 	Lexer::LexerBase* lex = constructor->construct();
-	ui_editor->setLexer(lex);
+	ui_editor->setLexer(lex->lexer());
 	Lexer::Factory::setAPIsForLexer(lex, m_lexAPI);
 	refreshSettings();
 	updateMargins();
@@ -723,13 +731,6 @@ void SourceFile::updateErrors()
 	mainWindow()->showErrors(this);
 
 	markProblems(errors, warnings);
-}
-
-void SourceFile::updateBreakpointToggle()
-{
-	bool markerOnLine = false;
-	foreach(const int& i, m_breakpoints) markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
-	dynamic_cast<SourceFileMenu*>(mainWindow()->menuable(SourceFileMenu::menuName()))->breakpointToggle()->rawAction->setChecked(markerOnLine);
 }
 
 bool SourceFile::changeTarget(bool _template)

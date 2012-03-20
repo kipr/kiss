@@ -34,16 +34,14 @@ Q_OBJECT
 public:
 	SourceFileMenu(MainWindow* mainWindow);
 	
-	MenuNode* breakpointToggle() const;
-	
 	static QString menuName();
+	
+public slots:
+	void update();
 	
 protected:
 	void activated();
 	void deactivated();
-	
-protected slots:
-	virtual void triggered();
 	
 private:
 	MenuNode* breakpoint;
