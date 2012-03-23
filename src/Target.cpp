@@ -37,7 +37,7 @@
 #define C_STYLE_BLOCKS "c_style_blocks"
 #define REQUEST_FILE_PATH "request_file_path"
 
-Target::Target(QObject *parent) : QObject(parent), m_got(false), m_plugin(0) {}
+Target::Target(QObject *parent) : QObject(parent), m_got(false) {}
 
 // Sets the target file and loads the associated plugin file
 bool Target::setTargetFile(const QString& filename)
@@ -94,10 +94,11 @@ QByteArray Target::screenGrab() { return hasScreenGrab() ? get()->screenGrab(m_p
 bool Target::hasRequestFile() { return m_got && get()->hasFileRequest(); }
 QStringList Target::requestDir(const QString& filename) { return hasRequestFile() ? get()->requestDir(filename, m_port) : QStringList(); }
 QByteArray Target::requestFile(const QString& filename) { return hasRequestFile() ? get()->requestFile(filename, m_port) : QByteArray(); }
-bool Target::error() { return m_got ? get()->error() : true; }
+bool Target::error() const { return m_got ? get()->error() : true; }
 bool Target::hasPort() { return TARGET_SETTINGS.value(PORT_DIALOG).toBool(); }
 void Target::setPort(const QString& port) { m_port = port; }
 QString Target::port() const { return m_port; }
 QString Target::name() const { return m_targetName; }
+bool Target::isValid() const { return m_got; }
 // For cleaner syntax in rest of file
 inline TargetInterface* Target::get() const { return TargetManager::ref().get(m_targetName); }

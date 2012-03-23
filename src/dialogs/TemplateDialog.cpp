@@ -67,6 +67,13 @@ int TemplateDialog::execTarget()
 	return exec();
 }
 
+int TemplateDialog::execTemplate()
+{
+	ui_targets->hide();
+	setWindowTitle(tr("Templates"));
+	return exec();
+}
+
 QString TemplateDialog::selectedTargetFilePath()
 {
 	const QString& target = ui_targets->currentItem()->data(Qt::UserRole).toString();

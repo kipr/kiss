@@ -21,6 +21,7 @@ INCLUDE_DIRECTORIES(
 	${INCLUDE}/widgets
 	${INCLUDE}/menus
 	${INCLUDE}/js
+	${INCLUDE}/project
 )
 
 SET(QT_USE_QTDECLARATIVE TRUE)
@@ -31,8 +32,8 @@ SET(QT_USE_PHONON TRUE)
 
 INCLUDE(${QT_USE_FILE})
 
-FILE(GLOB INCLUDES ${INCLUDE}/*.h ${INCLUDE}/lexer/* ${INCLUDE}/dialogs/* ${INCLUDE}/widgets/* ${INCLUDE}/menus/* ${INCLUDE}/js/* FILES_MATCHING )
-FILE(GLOB SOURCES ${SRC}/* ${SRC}/lexer/* ${SRC}/dialogs/* ${SRC}/widgets/* ${SRC}/menus/* ${SRC}/js/*)
+FILE(GLOB INCLUDES ${INCLUDE}/*.h ${INCLUDE}/lexer/* ${INCLUDE}/dialogs/* ${INCLUDE}/widgets/* ${INCLUDE}/menus/* ${INCLUDE}/js/* ${INCLUDE}/project/*)
+FILE(GLOB SOURCES ${SRC}/* ${SRC}/lexer/* ${SRC}/dialogs/* ${SRC}/widgets/* ${SRC}/menus/* ${SRC}/js/* ${SRC}/project/*)
 FILE(GLOB UIS ${UI}/*)
 
 SET(KISS_SRCS_CXX ${SOURCES})
@@ -84,6 +85,13 @@ IF(APPLE)
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS Info.plist MacDeployQt)
 ENDIF()
+
+# Accessory Programs
+
+LINK_DIRECTORIES(${KISS_SOURCE_DIR}/lib)
+
+# ADD_EXECUTABLE(tinyarchive accessory/tinyarchive.cpp)
+# TARGET_LINK_LIBRARIES(tinyarchive kisside)
 
 
 install(FILES ${INCLUDES} DESTINATION /usr/local/include/kiss/)

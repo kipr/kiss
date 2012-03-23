@@ -81,7 +81,7 @@ void WebTab::activate()
 	}
 	WebTabMenu* webTabMenu = dynamic_cast<WebTabMenu*>(mainWindow()->menuable(WebTabMenu::menuName()));
 	if(webTabMenu) webTabMenu->setActive(this);
-	
+
 	emit updateActivatable();
 }
 

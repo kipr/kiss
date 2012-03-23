@@ -33,6 +33,8 @@
 #include "MenuManager.h"
 #include "ScriptEnvironment.h"
 
+#include "ProjectsModel.h"
+
 #define RECENTS "recents"
 
 #define UI_EVENT_NEW_FILE "newFile"
@@ -76,6 +78,9 @@ public:
 	 * \param filePath Path to file
 	 */
 	bool openFile(const QString& filePath);
+	bool memoryOpen(const QByteArray& ba, const QString& assocPath);
+	bool openProject(const QString& filePath);
+	bool newProject(const QString& filePath);
 	
 	void initMenus(TabbedWidget* tab);
 	
@@ -91,6 +96,12 @@ public:
 	 * \param string String to set tab's text to.
 	 */
 	void setTabName(QWidget* widget, const QString& string);
+	
+	/*! Sets Tab icon
+	 * \param widget Tab to set
+	 * \param icon icon to set
+	 */
+	void setTabIcon(QWidget* widget, const QIcon& icon);
 	
 	/*! Sets Window's status message
 	 * \param message Message to display
@@ -162,11 +173,15 @@ public:
 	bool canGoPrevious();
 	bool canGoNext();
 	
+	Project* activeProject() const;
+	
 	friend class MainWindowMenu;
 	
 public slots:
+	void newProject();
 	void newFile();
 	void open();
+	void openProject();
 	void next();
 	void previous();
 	void closeTab();
@@ -177,19 +192,28 @@ public slots:
 	void managePackages();
 	void installLocalPackage();
 	
+	void showProjectDock(bool show = true);
+	void hideProjectDock();
+	
 	QList<QObject*> tabs(const QString& type);
 
 signals:
 	void settingsUpdated();
 	void updateActivatable();
+	void closeFile(const QString& path);
 
 private slots:
 	void on_ui_tabWidget_currentChanged(int i);
+	void on_ui_addFile_clicked();
+	void on_ui_removeFile_clicked();
 	void openRecent();
 	
 	void errorClicked(QListWidgetItem* item);
 	
 	void showContextMenuForError(const QPoint &pos);
+	
+	void projectClicked(const QModelIndex& index);
+	void projectFileClicked(const QModelIndex& index);
 	
 private:
 	TabbedWidget* m_currentTab;
@@ -201,6 +225,8 @@ private:
 	MenuManager m_menuManager;
 	QList<Menuable*> m_menuables;
 	ScriptEnvironment m_scriptEnvironment;
+	
+	ProjectsModel m_projectsModel;
 
 	void addLookup(TabbedWidget* tab);
 	void removeLookup(QWidget* widget);

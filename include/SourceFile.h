@@ -29,6 +29,8 @@
 #include "Tab.h"
 #include "Debugger.h"
 
+#include "WorkingUnit.h"
+
 #include "SourceFindWidget.h"
 #include "SourceLocalFailed.h"
 
@@ -69,10 +71,11 @@
 
 class FindDialog;
 class MainWindow;
+class Project;
 
 namespace Lexer { struct Constructor; }
 
-class SourceFile : public QWidget, public TabbedWidget, private Ui::SourceFile
+class SourceFile : public QWidget, public TabbedWidget, public WorkingUnit, private Ui::SourceFile
 {
 Q_OBJECT
 public:
@@ -85,6 +88,8 @@ public:
 	
 	bool fileSaveAs(const QString& filePath);
 	bool fileOpen(const QString& filePath);
+	bool memoryOpen(const QByteArray& ba, const QString& assocPath);
+	bool openProjectFile(Project* project, const QString& path);
 	
 	bool close();
 
@@ -104,11 +109,14 @@ public:
 	
 	void moveTo(int line, int pos);
 	
-	Target* target();
 	QsciScintilla* editor();
 	
 	int currentLine() const;
 	bool breakpointOnLine(int line) const;
+	
+	void setAssociatedProject(Project* project);
+	Project* associatedProject() const;
+	bool isAssociatedWithProject() const;
 	
 public slots:
 	bool saveAs();
@@ -120,8 +128,8 @@ public slots:
 	void redo();
 	void find();
 	void print();
-
-	bool changeTarget(bool _template = false);
+	
+	bool changeTarget(bool skipIfValid, bool _template = false);
 	void choosePort();
 
 	void download();
@@ -171,7 +179,7 @@ private:
 	bool m_isNewFile;
 	int m_zoomLevel;
         void dropEvent(QDropEvent *event);
-	Target m_target;
+
 	QString m_lexAPI;
 	QString m_targetName;
 	QString m_templateExt;
@@ -196,6 +204,7 @@ private:
 	
 	Debugger m_debugger;
 
+	Project* m_associatedProject;
 protected:
 	void keyPressEvent(QKeyEvent *event);
 };

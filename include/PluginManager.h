@@ -95,7 +95,7 @@ public:
 		pluginUnloaded(qobject_cast<T*>(m_plugins[name]->instance()));
 		QPluginLoader* plugin = m_plugins.take(name);
 		if(plugin) {
-			qWarning() << "Unloaded" << name;
+			// qWarning() << "Unloaded" << name;
 			plugin->unload();
 			delete plugin;
 		}

@@ -58,6 +58,8 @@
         <file>icon_set/icons/bullet_yellow.png</file>
         <file>icon_set/icons/bullet_blue.png</file>
         <file>icon_set/icons/bullet_black.png</file>
+	<file>icon_set/icons/add.png</file>
+	<file>icon_set/icons/delete.png</file>
     </qresource>
 	<qresource prefix="/">
 		<file>messages/error_locating.txt</file>

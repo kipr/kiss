@@ -33,6 +33,7 @@ public:
 	
 	int exec();
 	int execTarget();
+	int execTemplate();
 	
 	// Returns to the path of the target file for the selected target
 	QString selectedTargetFilePath();

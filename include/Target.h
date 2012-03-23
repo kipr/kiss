@@ -126,7 +126,7 @@ public:
 	QStringList requestDir(const QString&);
 	QByteArray requestFile(const QString&);
 	
-	bool error();
+	bool error() const;
 	
 	//! \return true if target expects port
 	bool hasPort();
@@ -138,12 +138,13 @@ public:
 	QString port() const;
 	
 	QString name() const;
+	
+	bool isValid() const;
 
 private:
 	TargetInterface* get() const;
 	bool m_got;
 	
-	QPluginLoader *m_plugin;
 	QString m_targetFileName;
 	QString m_targetName;
 	QString m_port;

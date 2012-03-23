@@ -30,6 +30,9 @@
 #include "MessageDialog.h"
 #include "TargetManager.h"
 #include "Menus.h"
+#include "Project.h"
+#include "ProjectSettingsTab.h"
+#include "ProjectManager.h"
 
 #include "UiEventManager.h"
 
@@ -62,7 +65,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	
 	setupUi(this);
-	ui_projects->hide(); // Disabled for now
+	m_projectsModel.setProjectManager(&ProjectManager::ref());
+	ui_projects->setModel(&m_projectsModel);
+	
+	// ui_projects->hide(); // Disabled for now
 	
 	/* Turns off updates so all of these things are drawn at once */
 	setUpdatesEnabled(false);
@@ -72,10 +78,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 
 	hideErrors();
 	
-	connect(&m_errorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
-	connect(&m_warningList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
-	connect(&m_linkErrorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
-	connect(&m_verboseList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(errorClicked(QListWidgetItem*)));
+	connect(&m_errorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(errorClicked(QListWidgetItem*)));
+	connect(&m_warningList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(errorClicked(QListWidgetItem*)));
+	connect(&m_linkErrorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(errorClicked(QListWidgetItem*)));
+	connect(&m_verboseList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(errorClicked(QListWidgetItem*)));
+	
+	//connect(ui_projects, SIGNAL(clicked(const QModelIndex&)), SLOT(projectFileClicked(const QModelIndex&)));
+	connect(ui_projects, SIGNAL(doubleClicked(const QModelIndex&)), SLOT(projectClicked(const QModelIndex&)));
 	
 	
 	initMenus();
@@ -91,6 +100,15 @@ MainWindow::~MainWindow()
 	delete ui_menubar; ui_menubar = 0;
 	
 	while(ui_tabWidget->count() > 0) deleteTab(0);
+}
+
+void MainWindow::newProject()
+{
+	QSettings settings;
+	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), openPath, tr("KISS Project (*.kissproj)"));
+	if(fileName.isEmpty()) return;
+	newProject(fileName);
 }
 
 void MainWindow::newFile() { UiEventManager::ref().sendEvent(UI_EVENT_NEW_FILE); addTab(new SourceFile(this)); }
@@ -132,6 +150,58 @@ bool MainWindow::openFile(const QString& file)
 
 	return true;
 }
+
+bool MainWindow::memoryOpen(const QByteArray& ba, const QString& assocPath)
+{
+	QFileInfo fileInfo(assocPath);
+
+	if(!fileInfo.isFile() || !fileInfo.isReadable()) return false;
+
+	for(int i = 0; i < ui_tabWidget->count(); ++i) {
+		SourceFile* sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
+		if(sourceFile && sourceFile->filePath() == assocPath) {
+			ui_tabWidget->setCurrentIndex(i);
+			on_ui_tabWidget_currentChanged(i);
+			return true;
+		}
+	}
+	
+	/* Attempt to open the selected file */
+	SourceFile *sourceFile = new SourceFile(this);
+	if(!sourceFile->memoryOpen(ba, assocPath)) {
+		MessageDialog::showError(this, "simple_error", QStringList() <<
+			tr("Could not open ") + sourceFile->fileName() <<
+			tr("Unable to open file from memory."));
+		delete sourceFile;
+		return false;
+	}	
+
+	addTab(sourceFile);
+	
+	UiEventManager::ref().sendEvent(UI_EVENT_OPEN_FILE);
+
+	hideProjectDock();
+
+	return true;
+}
+
+bool MainWindow::openProject(const QString& filePath)
+{
+	Project* project = Project::load(filePath);
+	qWarning() << "Opening project" << filePath;
+	if(project) ProjectManager::ref().openProject(project);
+	ui_projects->expandAll();
+	return project;
+}
+
+bool MainWindow::newProject(const QString& filePath)
+{
+	Project* project = Project::create(filePath);
+	qWarning() << "Creating project" << filePath;
+	if(project) ProjectManager::ref().openProject(project);
+	return project;
+}
+
 
 void MainWindow::initMenus()
 {
@@ -186,6 +256,7 @@ void MainWindow::initMenus()
 
 void MainWindow::setTitle(const QString& title) { setWindowTitle(tr(TITLE) + (title.isEmpty() ? "" : (" - " + title))); }
 void MainWindow::setTabName(QWidget* widget, const QString& string) { ui_tabWidget->setTabText(ui_tabWidget->indexOf(widget), string); }
+void MainWindow::setTabIcon(QWidget* widget, const QIcon& icon) { ui_tabWidget->setTabIcon(ui_tabWidget->indexOf(widget), icon); }
 void MainWindow::setStatusMessage(const QString& message, int time) { ui_statusbar->showMessage(message, time); }
 
 void MainWindow::setErrors(TabbedWidget* tab, 
@@ -337,6 +408,22 @@ void MainWindow::open()
 	openFile(filePath);
 }
 
+void MainWindow::openProject()
+{
+	QSettings settings;
+	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
+	QStringList filters = TargetManager::ref().allSupportedExtensions();
+	filters.removeDuplicates();
+	QString filePath = QFileDialog::getOpenFileName(this, tr("Open Project"), openPath, tr("KISS Project (*.kissproj)"));
+		
+	if(filePath.isEmpty()) return;
+
+	QFileInfo fileInfo(filePath);
+	settings.setValue(OPEN_PATH, fileInfo.absolutePath());
+
+	openProject(filePath);
+}
+
 void MainWindow::next() { ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() + 1); }
 void MainWindow::previous() { ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() - 1); }
 
@@ -399,6 +486,34 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	setUpdatesEnabled(true);
 }
 
+void MainWindow::on_ui_addFile_clicked()
+{
+	Project* project = activeProject();
+	if(!project) {
+		MessageDialog::showError(this, "simple_error", QStringList() << 
+			tr("Unable to determine active project.") <<
+			tr("Please make sure that you have a project open."));
+		return;
+	} 
+	SourceFile* source = new SourceFile(this);
+	source->setAssociatedProject(project);
+	source->fileSaveAs("untitled");
+	addTab(source);
+	ui_projects->expandAll();
+}
+
+void MainWindow::on_ui_removeFile_clicked()
+{
+	foreach(const QModelIndex& index, ui_projects->selectionModel()->selectedRows()) {
+		const int type = m_projectsModel.indexType(index);
+		Project* project = m_projectsModel.indexToProject(index);
+		if(type == ProjectsModel::FileType) {
+			project->projectFile()->removeFile(m_projectsModel.indexToPath(index));
+		}
+	}
+	ui_projects->expandAll();
+}
+
 void MainWindow::managePackages()
 {
 #ifdef BUILD_REPOSITORY_TAB
@@ -437,6 +552,16 @@ void MainWindow::installLocalPackage()
 		} 
 	}
 	if(filePaths.size() > 0) QMessageBox::information(this, tr("Install Complete!"), tr("Please restart KISS"));
+}
+
+void MainWindow::showProjectDock(bool show)
+{
+	ui_projectFrame->setVisible(show);
+}
+
+void MainWindow::hideProjectDock()
+{
+	showProjectDock(false);
 }
 
 void MainWindow::openRecent()
@@ -487,6 +612,63 @@ TabbedWidget* MainWindow::lookup(QWidget* widget)
 
 // TODO: Make Error Googlable
 void MainWindow::showContextMenuForError(const QPoint &pos) { Q_UNUSED(pos); }
+
+void MainWindow::projectClicked(const QModelIndex& index)
+{
+	Project* project = m_projectsModel.indexToProject(index);
+	qWarning() << "Type" << m_projectsModel.indexType(index);
+	if(m_projectsModel.indexType(index) == ProjectsModel::ProjectType) {
+		for(int i = 0; i < ui_tabWidget->count(); ++i) {
+			ProjectSettingsTab* tab = dynamic_cast<ProjectSettingsTab*>(ui_tabWidget->widget(i));
+			if(tab && tab->projectFile() == project->projectFile()) {
+				ui_tabWidget->setCurrentIndex(i);
+				on_ui_tabWidget_currentChanged(i);
+				return;
+			}
+		}
+	
+		ProjectSettingsTab* tab = new ProjectSettingsTab(this);
+		tab->setProjectFile(project->projectFile());
+		addTab(tab);
+	} else if(m_projectsModel.indexType(index) == ProjectsModel::FileType) {
+		qWarning() << "File!!";
+		const QString& path = m_projectsModel.indexToPath(index);
+		if(!project) {
+			openFile(path);
+			return;
+		}
+
+		SourceFile* sourceFile = new SourceFile(this);
+		for(int i = 0; i < ui_tabWidget->count(); ++i) {
+			SourceFile* sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
+			if(sourceFile && sourceFile->filePath() == path) {
+				ui_tabWidget->setCurrentIndex(i);
+				on_ui_tabWidget_currentChanged(i);
+				return;
+			}
+		}
+		
+		qWarning() << "Asking to open..";
+
+		if(!sourceFile->openProjectFile(project, path)) {
+			delete sourceFile;
+			return;
+		}
+		qWarning() << "Opened!";
+		addTab(sourceFile);
+	}
+}
+
+void MainWindow::projectFileClicked(const QModelIndex& index)
+{
+	Project* project = m_projectsModel.indexToProject(index);
+	
+	#if 0
+	
+	
+	
+	#endif
+}
 
 bool MainWindow::eventFilter(QObject * target, QEvent * event) {
         if(event->type() == QEvent::FileOpen) {
@@ -584,4 +766,17 @@ bool MainWindow::canGoPrevious()
 bool MainWindow::canGoNext()
 {
 	return m_currentTab && ui_tabWidget->count() > 0 && ui_tabWidget->currentIndex() != ui_tabWidget->count() - 1;
+}
+
+Project* MainWindow::activeProject() const
+{
+	// Precedence is like so: Project Manager, Tab, Project Tree
+	const QList<Project*> loadedProjects = ProjectManager::ref().projects();
+	if(loadedProjects.size() == 0) return 0;
+	if(loadedProjects.size() == 1) return loadedProjects[0];
+	
+	SourceFile* current = dynamic_cast<SourceFile*>(m_currentTab);
+	if(current && current->isAssociatedWithProject()) return current->associatedProject();
+	
+	return m_projectsModel.activeProject();
 }
