@@ -23,6 +23,7 @@
 #include "KissScript.h"
 #include "MainWindow.h"
 #include "MessageDialog.h"
+#include "ProjectType.h"
 
 #include <QFile>
 #include <QFileInfo>
@@ -37,6 +38,7 @@ ScriptEnvironment::ScriptEnvironment(MainWindow* mainWindow) : m_engine(new QScr
 {
 	m_engine->globalObject().setProperty(MAIN_WINDOW_PROPERTY, m_engine->newQObject(mainWindow));
 	m_engine->globalObject().setProperty("kiss", m_engine->newQObject(m_kissScript));
+	m_engine->globalObject().setProperty("projectTypes", m_engine->newQObject(&ProjectTypes::ref()));
 }
 
 ScriptEnvironment::~ScriptEnvironment()

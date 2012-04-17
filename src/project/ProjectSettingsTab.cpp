@@ -3,41 +3,24 @@
 #include "MainWindow.h"
 #include "Activatable.h"
 #include "ProjectFile.h"
+#include "Project.h"
 
 #include <QFileInfo>
 
-ProjectSettingsTab::ProjectSettingsTab(MainWindow* mainWindow) : QWidget(mainWindow), TabbedWidget(this, mainWindow), m_projectFile(0)
+ProjectSettingsTab::ProjectSettingsTab(Project* project, MainWindow* mainWindow) : QWidget(mainWindow), TabbedWidget(this, mainWindow)
 {
 	setupUi(this);
-}
-
-void ProjectSettingsTab::setProjectFile(ProjectFile* projectFile)
-{
-	if(m_projectFile) disconnect(this, SIGNAL(settingUpdated(const QString&, const QString&)),
-		m_projectFile, SLOT(settingUpdated(const QString&, const QString&)));
-	m_projectFile = projectFile;
+	
+	setAssociatedProject(project);
+	
+	ProjectFile* projectFile = associatedProject()->projectFile();
+	
 	connect(this, SIGNAL(settingUpdated(const QString&, const QString&)),
-		m_projectFile, SLOT(settingUpdated(const QString&, const QString&)));
-	
-	qWarning() << "Set to" << projectFile->path();
-	
-	
-	QMap<QString, QString> data = projectFile->projectSettings();
-	
-	ui_settingsTable->clearContents();
-	ui_settingsTable->setRowCount(data.keys().size());
-	quint16 i = 0;
-	foreach(const QString& key, data.keys()) {
-		ui_settingsTable->setItem(i, 0, new QTableWidgetItem(key));
-		ui_settingsTable->setItem(i, 1, new QTableWidgetItem(data[key]));
+		projectFile, SLOT(settingUpdated(const QString&, const QString&)));
 		
-		++i;
-	}
-}
-
-ProjectFile* ProjectSettingsTab::projectFile() const
-{
-	return m_projectFile;
+	connect(this, SIGNAL(settingRemoved(const QString&)),
+		projectFile, SLOT(settingRemoved(const QString&)));
+	reload();
 }
 
 void ProjectSettingsTab::activate()
@@ -58,18 +41,33 @@ bool ProjectSettingsTab::beginSetup()
 
 void ProjectSettingsTab::completeSetup()
 {
-	if(m_projectFile) mainWindow()->setTabName(this, QFileInfo(m_projectFile->path()).fileName());
+	mainWindow()->setTabName(this, QFileInfo(associatedProject()->projectFile()->path()).fileName() + " settings");
 }
 
 bool ProjectSettingsTab::close()
 {
-	m_projectFile->sync();
+	associatedProject()->projectFile()->sync();
 	return true;
 }
 
 void ProjectSettingsTab::refreshSettings()
 {
 	
+}
+
+void ProjectSettingsTab::reload()
+{
+	QMap<QString, QString> data = associatedProject()->projectFile()->projectSettings();
+	
+	ui_settingsTable->clearContents();
+	ui_settingsTable->setRowCount(data.keys().size());
+	quint16 i = 0;
+	foreach(const QString& key, data.keys()) {
+		ui_settingsTable->setItem(i, 0, new QTableWidgetItem(key));
+		ui_settingsTable->setItem(i, 1, new QTableWidgetItem(data[key]));
+		
+		++i;
+	}
 }
 
 void ProjectSettingsTab::on_ui_settingsTable_cellChanged(int row, int column)
@@ -86,5 +84,9 @@ void ProjectSettingsTab::on_ui_add_clicked()
 
 void ProjectSettingsTab::on_ui_remove_clicked()
 {
-	ui_settingsTable->removeRow(ui_settingsTable->currentRow());
+	int row = ui_settingsTable->currentRow();
+	QTableWidgetItem* key = ui_settingsTable->item(row, 0);
+	QString keyString = key ? key->text() : "";
+	ui_settingsTable->removeRow(row);
+	emit settingRemoved(keyString);
 }

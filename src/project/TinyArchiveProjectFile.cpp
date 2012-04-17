@@ -9,17 +9,28 @@ using namespace std;
 
 #define BUFFER_SIZE 256
 
-TinyArchiveProjectFile::TinyArchiveProjectFile(const QString& path) : m_archive(0), m_path(path)
+TinyArchiveProjectFile::TinyArchiveProjectFile() : m_archive(0), m_path("")
+{
+	
+}
+
+bool TinyArchiveProjectFile::init(const QString& path)
+{
+	m_archive = new TinyArchive();
+	m_path = path;
+	m_archive->push_back(new ArchiveEntry(SETTINGS_FILE, "", 0));
+	return m_archive;
+}
+
+bool TinyArchiveProjectFile::load(const QString& path)
 {
 	ifstream ifs;
 	ifs.open(path.toLocal8Bit().data(), ifstream::in);
-	if(ifs.is_open()) m_archive = TinyArchive::read(ifs);
+	if(!ifs.is_open()) return 0;
+	m_archive = TinyArchive::read(ifs);
+	m_path = path;
 	ifs.close();
-	
-	if(!m_archive) {
-		m_archive = new TinyArchive();
-		m_archive->push_back(new ArchiveEntry(SETTINGS_FILE, "", 0));
-	}
+	return m_archive;
 }
 
 QStringList TinyArchiveProjectFile::list() const
@@ -67,7 +78,6 @@ bool TinyArchiveProjectFile::updateFileContents(const QString& path, const QByte
 {
 	qWarning() << "Updating contents of" << QString::fromStdString(path.toStdString()) << "to" << ba;
 	bool success = m_archive->update(path.toStdString(), ba.data(), ba.size());
-	qWarning() << "Called update";
 	if(!success) {
 		m_archive->push_back(new ArchiveEntry(path.toStdString(), ba.data(), ba.size()));
 		emit fileCreated(path);
@@ -77,6 +87,7 @@ bool TinyArchiveProjectFile::updateFileContents(const QString& path, const QByte
 
 void TinyArchiveProjectFile::removeFile(const QString& path)
 {
+	qWarning() << "Remove File" << path;
 	m_archive->remove(path.toStdString());
 	emit fileRemoved(path);
 }
@@ -90,7 +101,7 @@ void TinyArchiveProjectFile::setProjectSettings(const QMap<QString, QString>& pr
 {
 	QByteArray ba;
 	QTextStream stream(&ba);
-	foreach(const QString& key, projectSettings.keys()) stream << key << " " << projectSettings[key];
+	foreach(const QString& key, projectSettings.keys()) stream << key << " " << projectSettings[key] << endl;
 	m_archive->update(SETTINGS_FILE, ba.data(), ba.size());
 }
 
@@ -109,8 +120,8 @@ QMap<QString, QString> TinyArchiveProjectFile::projectSettings() const
 	while(!stream.atEnd()) {
 		QString key;
 		QString value;
-		stream >> key >> value;
-		projectSettings[key] = value;
+		stream >> key >> value >> endl;
+		if(!key.isEmpty()) projectSettings[key] = value;
 		qWarning() << key << value;
 	}
 	
@@ -124,6 +135,8 @@ bool TinyArchiveProjectFile::sync()
 	if(!ofs.is_open()) return false;
 	m_archive->write(ofs);
 	ofs.close();
+	
+	m_archive->dump();
 	return true;
 }
 

@@ -18,17 +18,29 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef _MENUS_H_
-#define _MENUS_H_
+#ifndef _LEXERJAVASCRIPT_H_
+#define _LEXERJAVASCRIPT_H_
 
-#include "MenuManager.h"
-#include "TargetMenu.h"
-#include "SourceFileMenu.h"
-#include "WebTabMenu.h"
-#include "MainWindowMenu.h"
-#include "DeveloperMenu.h"
-#include "DocumentationMenu.h"
-#include "FileOperationsMenu.h"
-#include "ProjectMenu.h"
+#include "LexerFactory.h"
+
+#include <Qsci/qscilexerjavascript.h>
+#include <Qsci/qsciapis.h>
+
+namespace Lexer
+{
+	class JavaScript : public LexerBase, public QsciLexerJavaScript
+	{
+	public:
+		JavaScript(const Constructor* constructor);
+	};
+	
+	struct ConstructorJavaScript : Constructor
+	{
+		LexerBase* construct() const { return Factory::ref().newLexerFromConstructor(this); }
+		LexerBase* construct(const QString& apis) const { return construct(); }
+		
+		LexerBase* _new() const { return new JavaScript(this); }
+	};
+}
 
 #endif

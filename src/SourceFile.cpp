@@ -68,8 +68,8 @@
 
 #define MAX(a, b) (a > b ? a : b)
 
-SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent), WorkingUnit("File"), m_fileHandle(tr("Untitled")), m_isNewFile(true), 
- 	m_targetName("?"), m_debuggerEnabled(false), m_runTab(0), m_debugger(parent), m_associatedProject(0)
+SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent), WorkingUnit("File"), m_isNewFile(true),
+	m_debuggerEnabled(false), m_runTab(0), m_debugger(parent)
 {
 	setupUi(this);
 	
@@ -84,7 +84,6 @@ SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this,
 	ui_editor->setEolMode(QsciScintilla::EolUnix);
 	ui_editor->setWrapMode(QsciScintilla::WrapWord);
 	
-	m_fileInfo.setFile(m_fileHandle);
 	mainWindow()->setStatusMessage("");
 	
 	connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
@@ -95,12 +94,14 @@ SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this,
 	
 	m_debugger.hide();
 	
+	setAssociatedFile("Untitled");
+	
 	refreshSettings();
 }
 
 void SourceFile::activate()
 {
-	mainWindow()->setTitle(m_targetName + (!target()->port().isEmpty() ? (" - " + target()->port()) : ""));
+	mainWindow()->setTitle("m_targetName" + (!target()->port().isEmpty() ? (" - " + target()->port()) : ""));
 	mainWindow()->showErrors(this);
 	mainWindow()->setStatusMessage("");
 	
@@ -117,13 +118,13 @@ void SourceFile::activate()
 }
 
 bool SourceFile::beginSetup() {
-	setParentUnit(isAssociatedWithProject() ? associatedProject() : 0);
+	setParentUnit(isProjectAssociated() ? associatedProject() : 0);
 	return changeTarget(true, isNewFile()) && !target()->error();
 }
 
 void SourceFile::completeSetup()
 {
-	mainWindow()->setTabName(this, m_fileInfo.fileName() + (isAssociatedWithProject() ? (QString(" (") + associatedProject()->name() + ")") : QString()));
+	mainWindow()->setTabName(this, associatedFileName() + (isProjectAssociated() ? (QString(" (") + associatedProject()->name() + ")") : QString()));
 	updateMargins();
 }
 
@@ -132,7 +133,7 @@ bool SourceFile::close()
 	if(!ui_editor->isModified()) return true;
 	
 	QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Unsaved Changes"),
-		tr("Save Changes to \"") + fileName() + tr("\" before closing?"),
+		tr("Save Changes to \"") + associatedFileName() + tr("\" before closing?"),
 		QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 
 	if(ret == QMessageBox::Cancel) return false;
@@ -150,41 +151,42 @@ bool SourceFile::close()
 bool SourceFile::save()
 {
 	if(m_isNewFile) return saveAs();
-	
 	UiEventManager::ref().sendEvent(UI_EVENT_FILE_SAVE);
-	
-	return fileSaveAs(m_fileInfo.filePath());
+	return fileSaveAs(associatedFile());
 }
 
 bool SourceFile::fileSaveAs(const QString& filePath)
 {
 	if(filePath.isEmpty()) return false;
 	
-	m_fileHandle.setFileName(filePath);
-	m_fileInfo.setFile(m_fileHandle);
-	
 	ui_editor->convertEols(QsciScintilla::EolUnix);
 	if(ui_editor->text(ui_editor->lines() - 1).length() > 0) ui_editor->append("\n");
 	
-	if(isAssociatedWithProject()) {
+	setAssociatedFile(filePath);
+	
+	if(isProjectAssociated()) {
 		qWarning() << "Saving" << filePath << "as project";
 		ProjectFile* projectFile = associatedProject()->projectFile();
-		if(!projectFile->updateFileContents(filePath, ui_editor->text().toLatin1())) return false;
+		if(!projectFile->updateFileContents(filePath, ui_editor->text().toLatin1())) {
+			qWarning() << "Update file contents failed";
+			return false;
+		}
 		projectFile->sync();
 	} else {
-		if(!m_fileHandle.open(QIODevice::WriteOnly)) return false;
+		QFile fileHandle(associatedFile());
+		if(!fileHandle.open(QIODevice::WriteOnly)) return false;
 
-		QTextStream fileStream(&m_fileHandle);
+		QTextStream fileStream(&fileHandle);
 		fileStream << ui_editor->text();
-		m_fileHandle.close();
+		fileHandle.close();
 	}
 	
 	ui_editor->setModified(false);
 	m_isNewFile = false;
-	mainWindow()->setTabName(this, fileName() + (isAssociatedWithProject() ? (QString(" (") + associatedProject()->name() + ")") : QString()));
+	mainWindow()->setTabName(this, associatedFileName() + (isProjectAssociated() ? (QString(" (") + associatedProject()->name() + ")") : QString()));
 	
 	// Update the lexer to the new spec for that extension
-	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(fileSuffix());
+	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(associatedFileSuffix());
 	if(Lexer::Factory::isLexerFromConstructor((Lexer::LexerBase*)ui_editor->lexer(), constructor))
 		setLexer(constructor);
 	
@@ -193,22 +195,23 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 
 bool SourceFile::fileOpen(const QString& filePath)
 {
-	m_fileHandle.setFileName(filePath);
-	m_fileInfo.setFile(m_fileHandle);	
+	setAssociatedFile(filePath);
 	
-	if(!m_fileHandle.open(QIODevice::ReadOnly)) return false;
+	QFile fileHandle(associatedFile());
+	
+	if(!fileHandle.open(QIODevice::ReadOnly)) return false;
 
-	QTextStream fileStream(&m_fileHandle);
+	QTextStream fileStream(&fileHandle);
 	ui_editor->setText(fileStream.readAll());
-	m_fileHandle.close();
+	fileHandle.close();
 
 	ui_editor->setModified(false);
 
 	m_isNewFile = false;
 
-	mainWindow()->setTabName(this, fileName());
+	mainWindow()->setTabName(this, associatedFileName());
 
-	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(fileSuffix());
+	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(associatedFileSuffix());
 	if(Lexer::Factory::isLexerFromConstructor((Lexer::LexerBase*)ui_editor->lexer(), constructor))
 		setLexer(constructor);
 	
@@ -219,16 +222,16 @@ bool SourceFile::fileOpen(const QString& filePath)
 
 bool SourceFile::memoryOpen(const QByteArray& ba, const QString& assocPath)
 {
-	m_fileHandle.setFileName(assocPath);
-	m_fileInfo.setFile(m_fileHandle);
+	setAssociatedFile(assocPath);
+	
 	ui_editor->setText(ba);
 
 	ui_editor->setModified(false);
 	m_isNewFile = false;
 
-	mainWindow()->setTabName(this, fileName());
+	mainWindow()->setTabName(this, associatedFileName());
 
-	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(fileSuffix());
+	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(associatedFileSuffix());
 	if(Lexer::Factory::isLexerFromConstructor((Lexer::LexerBase*)ui_editor->lexer(), constructor))
 		setLexer(constructor);
 		
@@ -420,10 +423,6 @@ void SourceFile::refreshSettings()
 	TargetMenu::ref().refresh();
 }
 
-QString SourceFile::fileName() 	{ return m_fileInfo.fileName(); }
-QString SourceFile::fileBaseName() { return m_fileInfo.completeBaseName(); }
-QString SourceFile::fileSuffix() { return m_fileInfo.suffix(); }
-QString SourceFile::filePath() 	{ return m_fileInfo.filePath(); }
 bool SourceFile::isNewFile() 	{ return m_isNewFile; }
 
 void SourceFile::updateMargins()
@@ -444,9 +443,7 @@ void SourceFile::updateMargins()
 
 int SourceFile::getZoom() { return ui_editor->SendScintilla(QsciScintilla::SCI_GETZOOM); }
 void SourceFile::moveTo(int line, int pos)  { if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos); }
-
 QsciScintilla* SourceFile::editor() { return ui_editor; }
-
 int SourceFile::currentLine() const { return m_currentLine; }
 
 bool SourceFile::breakpointOnLine(int line) const
@@ -456,21 +453,10 @@ bool SourceFile::breakpointOnLine(int line) const
 	return markerOnLine;
 }
 
-void SourceFile::setAssociatedProject(Project* project)
+SourceFile* SourceFile::newProjectFile(MainWindow* mainWindow, Project* project)
 {
-	m_associatedProject = project;
-	qWarning() << "set proj" << project;
-	setParentUnit(m_associatedProject);
-}
-
-Project* SourceFile::associatedProject() const
-{
-	return m_associatedProject;
-}
-
-bool SourceFile::isAssociatedWithProject() const
-{
-	return m_associatedProject;
+	SourceFile* sourceFile = new SourceFile(mainWindow);
+	sourceFile->setAssociatedProject(project);
 }
 
 void SourceFile::zoomIn() { ui_editor->zoomIn(); updateMargins(); UiEventManager::ref().sendEvent(UI_EVENT_ZOOM_IN); }
@@ -506,11 +492,11 @@ bool SourceFile::saveAs()
 	
 	settings.setValue(SAVE_PATH, fileInfo.absolutePath());
 
-	/* Saves the file with the new fileName and updates the tabWidget label */
+	/* Saves the file with the new associatedFileName and updates the tabWidget label */
 	if(fileSaveAs(fileInfo.absoluteFilePath())) {
-		mainWindow()->setTabName(this, fileName());
-		mainWindow()->setStatusMessage("Saved file \"" + fileName() + "\"");
-	} else QMessageBox::critical(mainWindow(), "Error", "Error: Could not write file " + fileName());
+		mainWindow()->setTabName(this, associatedFileName());
+		mainWindow()->setStatusMessage("Saved file \"" + associatedFileName() + "\"");
+	} else QMessageBox::critical(mainWindow(), "Error", "Error: Could not write file " + associatedFileName());
 
 	QStringList current = settings.value(RECENTS).toStringList().mid(0, 5);
 	current.push_front(fileInfo.absoluteFilePath());
@@ -522,8 +508,8 @@ bool SourceFile::saveAs()
 	return true;
 }
 
-void SourceFile::sourceModified(bool) { mainWindow()->setTabName(this, "* " + m_fileInfo.fileName()
-	+ (isAssociatedWithProject() ? (QString(" (") + associatedProject()->name() + ")") : QString())); }
+void SourceFile::sourceModified(bool) { mainWindow()->setTabName(this, "* " + associatedFileName()
+	+ (isProjectAssociated() ? (QString(" (") + associatedProject()->name() + ")") : QString())); }
 
 void SourceFile::download()
 {	
@@ -534,9 +520,9 @@ void SourceFile::download()
 	
 	mainWindow()->setStatusMessage("Downloading...");
 	QApplication::flush();
-	int message = target()->download(filePath());
+	int message = target()->download(associatedFile());
 	mainWindow()->setStatusMessage(!message ? tr("Download Succeeded") : tr("Download Failed"));
-	if(message == TargetInterface::CompileFailed) ui_localCompileFailed->performAction(filePath());
+	if(message == TargetInterface::CompileFailed) ui_localCompileFailed->performAction(associatedFile());
 	
 	updateErrors();
 	
@@ -550,7 +536,7 @@ void SourceFile::compile()
 	if(!save()) return;
 	
 	mainWindow()->hideErrors();
-	mainWindow()->setStatusMessage(target()->compile(filePath()) ? tr("Compile Succeeded") : tr("Compile Failed"));
+	mainWindow()->setStatusMessage(target()->compile(associatedFile()) ? tr("Compile Succeeded") : tr("Compile Failed"));
 
 	updateErrors();
 	
@@ -566,7 +552,7 @@ void SourceFile::run()
 	
 	mainWindow()->hideErrors();
 	bool success = false;
-	mainWindow()->setStatusMessage((success = target()->run(filePath())) ? tr("Run Succeeded") : tr("Run Failed"));
+	mainWindow()->setStatusMessage((success = target()->run(associatedFile())) ? tr("Run Succeeded") : tr("Run Failed"));
 	
 	/* if(m_runTab) {
 		int i = mainWindow()->tabWidget()->indexOf(m_runTab);
@@ -596,7 +582,7 @@ void SourceFile::simulate()
 	if(!save()) return;
 	
 	mainWindow()->hideErrors();
-	mainWindow()->setStatusMessage(target()->simulate(filePath()) ? tr("Simulation Succeeded") : tr("Simulation Failed"));
+	mainWindow()->setStatusMessage(target()->simulate(associatedFile()) ? tr("Simulation Succeeded") : tr("Simulation Failed"));
 
 	updateErrors();
 	
@@ -613,16 +599,16 @@ void SourceFile::debug()
 	QList<Location> bkpts;
 	if(!m_debuggerEnabled) {
 		foreach(const int& i, m_breakpoints) {
-			bkpts.append(Location(m_fileInfo.fileName(), ui_editor->markerLine(i) + 1));
+			bkpts.append(Location(associatedFileName(), ui_editor->markerLine(i) + 1));
 		}
 	}
-	bool success = m_debuggerEnabled ? !(interface = target()->debug(filePath())) : target()->debugConsole(filePath(), bkpts);
+	bool success = m_debuggerEnabled ? !(interface = target()->debug(associatedFile())) : target()->debugConsole(associatedFile(), bkpts);
 	mainWindow()->setStatusMessage(success ? tr("Debug Succeeded") : tr("Debug Failed"));
 	updateErrors();
 	if(!interface) return;
 	foreach(const int& i, m_breakpoints) {
 		// QScintilla starts at 0, while gdb starts at 1, + 1
-		interface->addBreakpoint(m_fileInfo.fileName(), ui_editor->markerLine(i) + 1); 
+		interface->addBreakpoint(associatedFileName(), ui_editor->markerLine(i) + 1); 
 	}
 	
 	m_debugger.startDebug(interface);
@@ -651,7 +637,7 @@ void SourceFile::choosePort()
 	const QString& portName = pDialog.getSelectedPortName();
 	if(pDialog.exec()) target()->setPort(portName);
 	UiEventManager::ref().sendEvent(UI_EVENT_CHANGE_PORT);
-	if(isAssociatedWithProject()) associatedProject()->setAssociatedPort(portName);
+	if(isProjectAssociated()) associatedProject()->setAssociatedPort(portName);
 }
 
 void SourceFile::screenGrab()
@@ -695,8 +681,8 @@ void SourceFile::makeTemplate()
 	UiEventManager::ref().sendEvent(UI_EVENT_MAKE_TEMPLATE);
 	
 	MakeTemplateDialog makeTemplateDialog(this);
-	makeTemplateDialog.setName(fileBaseName());
-	makeTemplateDialog.setExtension(fileSuffix());
+	makeTemplateDialog.setName(associatedFileBaseName());
+	makeTemplateDialog.setExtension(associatedFileSuffix());
 	
 	if(makeTemplateDialog.exec() == QDialog::Rejected) return;
 	
@@ -793,12 +779,9 @@ void SourceFile::updateErrors()
 	const QStringList& errors = target()->errorMessages();
 	const QStringList& warnings = target()->warningMessages();
 	
-	mainWindow()->setErrors(this, errors, warnings,
-				target()->linkerMessages(),
-				target()->verboseMessages());
-		
+	mainWindow()->setErrors(this, errors, warnings, target()->linkerMessages(), target()->verboseMessages());
 	mainWindow()->showErrors(this);
-
+	
 	markProblems(errors, warnings);
 }
 
@@ -822,7 +805,7 @@ bool SourceFile::changeTarget(bool skipIfValid, bool _template)
 			return false;
 		}
 	
-		if(isAssociatedWithProject()) associatedProject()->projectFile()->addProjectSetting(TARGET_KEY, targetPath);
+		if(isProjectAssociated()) associatedProject()->projectFile()->addProjectSetting(TARGET_KEY, targetPath);
 	
 		target()->setTargetFile(targetPath);
 		if(target()->error()) return false;
@@ -839,7 +822,7 @@ bool SourceFile::changeTarget(bool skipIfValid, bool _template)
 	
 	Lexer::Constructor* constructor = 0;
 
-	if(!_template && !isNewFile()) constructor = Lexer::Factory::ref().constructor(fileSuffix());
+	if(!_template && !isNewFile()) constructor = Lexer::Factory::ref().constructor(associatedFileSuffix());
 	else {
 		if(_template) {
 			QFile tFile(templateFile);
@@ -866,7 +849,6 @@ bool SourceFile::changeTarget(bool skipIfValid, bool _template)
 	if(!constructor) constructor = Lexer::Factory::ref().constructor(targetSettings.value(DEFAULT_EXTENSION, "").toString());
 	
 	m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
-	m_targetName = QFileInfo(targetPath).baseName();
 	
 	if(constructor) setLexer(constructor);
 	refreshSettings();

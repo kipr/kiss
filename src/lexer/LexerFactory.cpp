@@ -23,6 +23,7 @@
 #include "LexerC.h"
 #include "LexerCPP.h"
 #include "LexerJava.h"
+#include "LexerJavaScript.h"
 
 #include <QDebug>
 
@@ -32,7 +33,8 @@ Factory::Factory()
 {
 	registerLexerConstructor(new ConstructorJava(), QStringList() << "java");
 	registerLexerConstructor(new ConstructorC(), QStringList() << "c");
-	registerLexerConstructor(new ConstructorCPP(), QStringList() << "cpp" << "h" << "hpp");
+	registerLexerConstructor(new ConstructorCPP(), QStringList() << "cpp" << "h" << "hpp" << "cxx");
+	registerLexerConstructor(new ConstructorJavaScript(), QStringList() << "js" << "javascript");
 }
 
 Factory::~Factory()

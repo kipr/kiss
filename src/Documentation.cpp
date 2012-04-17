@@ -78,11 +78,11 @@ void Documentation::itemDoubleClicked(QListWidgetItem* item)
 		return;
 	}
 	
-	#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN
 	const QString& sysLocation = "file:///" + location;
-	#else
+#else
 	const QString& sysLocation = "file://" + location;
-	#endif
+#endif
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_OPEN_MANUAL);
 

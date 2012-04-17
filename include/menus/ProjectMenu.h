@@ -18,17 +18,40 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef _MENUS_H_
-#define _MENUS_H_
+#ifndef _PROJECTMENU_H_
+#define _PROJECTMENU_H_
 
+#include "BuildOptions.h"
+
+#include <QObject>
+
+#include "Activatable.h"
+#include "Singleton.h"
 #include "MenuManager.h"
-#include "TargetMenu.h"
-#include "SourceFileMenu.h"
-#include "WebTabMenu.h"
-#include "MainWindowMenu.h"
-#include "DeveloperMenu.h"
-#include "DocumentationMenu.h"
-#include "FileOperationsMenu.h"
-#include "ProjectMenu.h"
+#include "ConcreteMenuable.h"
+
+class ProjectMenu : public ConcreteMenuable, public ActivatableObject
+{
+Q_OBJECT
+public:
+	ProjectMenu();
+	
+	static QString menuName();
+	
+protected:
+	void activated();
+	void deactivated();
+	
+	void triggered();
+	
+public slots:
+	void update();
+	
+private:
+	MenuNode* addFile;
+	MenuNode* deleteFile;
+	MenuNode* extractFile;
+	MenuNode* extractProject;
+};
 
 #endif

@@ -4,14 +4,20 @@ FileOperationsMenu::FileOperationsMenu() : ConcreteMenuable(menuName())
 {
 	MenuNode* newFile = node(activeAction(ResourceHelper::ref().icon("page_white.png"), "New File", QKeySequence("Ctrl+Shift+N"), this, "newFile"));
 	MenuNode* newProject = node(activeAction(ResourceHelper::ref().icon("brick.png"), "New Project", QKeySequence::New, this, "newProject"));
+	MenuNode* file = node(activeAction(ResourceHelper::ref().icon("page_white.png"), "File", QKeySequence("Ctrl+Shift+N"), this, "newFile"));
+	MenuNode* project = node(activeAction(ResourceHelper::ref().icon("brick.png"), "Project", QKeySequence::New, this, "newProject"));
 	MenuNode* openFile = node(activeAction(ResourceHelper::ref().icon("folder"), "Open...", QKeySequence::Open, this, "open"));
-	MenuNode* openProject = node(activeAction(ResourceHelper::ref().icon("folder"), "Open Project...", QKeySequence("Shift+Ctrl+O"), this, "openProject"));
-	m_file.append(newFile);
-	m_file.append(newProject);
-	m_file.append(openFile);
-	m_file.append(openProject);
+
+	MenuNode* newSubmenu = node(action("New"));
+	newSubmenu->children.append(file);
+	newSubmenu->children.append(project);
 	
-	m_toolbar.append(m_file);
+	m_file.append(newSubmenu);
+	m_file.append(openFile);
+	
+	m_toolbar.append(newFile);
+	m_toolbar.append(newProject);
+	m_toolbar.append(openFile);
 	m_toolbar.append(MenuNode::separator());
 }
 

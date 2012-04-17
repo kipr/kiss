@@ -93,14 +93,6 @@ public:
 	
 	bool close();
 
-	//! \return File's Name
-	QString fileName();
-	//! \return File's Base Name. Ex: test.c -> test
-	QString fileBaseName();
-	//! \return File's Suffix. Ex: test.c -> c
-	QString fileSuffix();
-	//! \return Absolute path to current file
-	QString filePath();
 	//! \return true if file is new
 	bool isNewFile();
 	
@@ -114,9 +106,7 @@ public:
 	int currentLine() const;
 	bool breakpointOnLine(int line) const;
 	
-	void setAssociatedProject(Project* project);
-	Project* associatedProject() const;
-	bool isAssociatedWithProject() const;
+	static SourceFile* newProjectFile(MainWindow* mainWindow, Project* project);
 	
 public slots:
 	bool saveAs();
@@ -174,8 +164,6 @@ private:
 	
 	void setLexer(Lexer::Constructor* constructor);
 	
-	QFile m_fileHandle;
-	QFileInfo m_fileInfo;
 	bool m_isNewFile;
 	int m_zoomLevel;
         void dropEvent(QDropEvent *event);
@@ -203,8 +191,6 @@ private:
 	void updateErrors();
 	
 	Debugger m_debugger;
-
-	Project* m_associatedProject;
 protected:
 	void keyPressEvent(QKeyEvent *event);
 };

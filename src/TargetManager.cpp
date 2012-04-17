@@ -80,7 +80,7 @@ QStringList TargetManager::targets()
 QString TargetManager::displayName(const QString& target)
 {
 	return QSettings(QFileInfo(targetPath(target), target + "." + TARGET_EXT).absoluteFilePath(), 
-		QSettings::IniFormat).value(DISPLAY_NAME).toString();
+		QSettings::IniFormat).value(DISPLAY_NAME, QFileInfo(target).baseName()).toString();
 }
 
 QString TargetManager::targetPath(const QString& target) { return CP _ TARGET_FOLDER _ target; }

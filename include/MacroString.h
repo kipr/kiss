@@ -34,7 +34,7 @@ struct Macro
 
 struct StringMacro : Macro
 {
-	StringMacro(QString string) : m_string(string) {}
+	StringMacro(const QString& string) : m_string(string) {}
 	
 	QString macro(const QString&) const {
 		return m_string;

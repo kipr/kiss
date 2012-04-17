@@ -9,7 +9,10 @@
 class TinyArchiveProjectFile : public ProjectFile
 {
 public:
-	TinyArchiveProjectFile(const QString& path);
+	TinyArchiveProjectFile();
+	
+	virtual bool init(const QString& path);
+	virtual bool load(const QString& path);
 	
 	virtual QStringList list() const;
 	virtual const QString& path() const;

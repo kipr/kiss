@@ -58,11 +58,14 @@ void ProjectsModel::addDirectory(const QString& path, const QStringList& paths, 
 {
 	QMap<QString, QStringList> merged = merge(paths, '/');
 	qWarning() << merged;
+	parent->setColumnCount(1);
+	parent->setRowCount(merged.size());
 	quint16 i = 0;
 	foreach(const QString& key, merged.keys()) {
 		FileItem* item = new FileItem(path, key, project);
 		if(merged[key].size() != 0) item->setData(ResourceHelper::ref().icon("folder"), Qt::DecorationRole);
 		
+		qWarning() << "Added a child at" << i;
 		parent->setChild(i++, item);
 
 		addDirectory(path + "/" + key, merged[key], item, project);
@@ -78,13 +81,9 @@ void ProjectsModel::reloadProject(Project* project, QStandardItem* parent)
 	foreach(QStandardItem* item, items) delete item;
 	
 	
-	QStringList files = project->files();
+	QStringList files = project->projectFile()->list();
+	qWarning() << "Detected" << files;
 	addDirectory("", files, parent, project);
-}
-
-Project* ProjectsModel::activeProject() const
-{
-	return 0;
 }
 
 Project* ProjectsModel::indexToProject(const QModelIndex& index) const
@@ -122,25 +121,24 @@ void ProjectsModel::projectOpened(Project* project)
 void ProjectsModel::projectChanged(Project* project)
 {
 	qWarning() << "Project changed";
-	removeRow(lookupRoot(project)->row());
-	projectOpened(project);
+	reloadProject(project, lookupRoot(project));
 	
-	emit dataChanged(QModelIndex(), QModelIndex());
+	//emit dataChanged(QModelIndex(), QModelIndex());
 }
 
 void ProjectsModel::projectClosed(Project* project)
 {
 	removeRow(lookupRoot(project)->row());
-	emit dataChanged(QModelIndex(), QModelIndex());
+	//emit dataChanged(QModelIndex(), QModelIndex());
 }
 
 void ProjectsModel::itemChanged(QStandardItem* item)
 {
-	FileItem* fileItem = dynamic_cast<FileItem*>(item);
+	/* FileItem* fileItem = dynamic_cast<FileItem*>(item);
 	if(fileItem) {
 		const QString& path = fileItem->path();
 		fileItem->project()->projectFile()->moveFile(path, QFileInfo(path).path() + "/" + item->text());
-	}
+	} */
 }
 
 QMap<QString, QStringList> ProjectsModel::merge(const QStringList& list, const char delim)

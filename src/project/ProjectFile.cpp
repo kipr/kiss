@@ -36,11 +36,16 @@ void ProjectFile::addProjectSetting(const QString& key, const QString& value)
 	setProjectSettings(settings);
 }
 
-void ProjectFile::removeProjectSetting(const QString& key, const QString& value)
+void ProjectFile::removeProjectSetting(const QString& key)
 {
 	QMap<QString, QString> settings = projectSettings();
 	settings.remove(key);
 	setProjectSettings(settings);
+}
+
+void ProjectFile::settingRemoved(const QString& key)
+{
+	removeProjectSetting(key);
 }
 
 void ProjectFile::settingUpdated(const QString& key, const QString& value)

@@ -12,10 +12,7 @@ class ProjectSettingsTab : public QWidget, public TabbedWidget, private Ui::Proj
 {
 Q_OBJECT
 public:
-	ProjectSettingsTab(MainWindow* mainWindow);
-	
-	void setProjectFile(ProjectFile* file);
-	ProjectFile* projectFile() const;
+	ProjectSettingsTab(Project* project, MainWindow* mainWindow);
 	
 	virtual void activate();
 	
@@ -26,15 +23,17 @@ public:
 	
 	virtual void refreshSettings();
 	
+	void reload();
+	
 private slots:
 	void on_ui_settingsTable_cellChanged(int row, int column);
 	void on_ui_add_clicked();
 	void on_ui_remove_clicked();
 	
 signals:
+	void settingRemoved(const QString& key);
 	void settingUpdated(const QString& key, const QString& value);
-private:
-	ProjectFile* m_projectFile;
+
 };
 
 #endif

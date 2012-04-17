@@ -28,7 +28,7 @@
 
 Project::Project(ProjectFile* projectFile) : WorkingUnit("Project"), m_projectFile(projectFile)
 {
-	setName(QFileInfo(projectFile->path()).fileName());
+	setName(QFileInfo(projectFile->path()).baseName());
 	connect(projectFile, SIGNAL(fileCreated(const QString&)), SIGNAL(updated()));
 	connect(projectFile, SIGNAL(fileChanged(const QString&)), SIGNAL(updated()));
 	connect(projectFile, SIGNAL(fileRemoved(const QString&)), SIGNAL(updated()));
@@ -120,12 +120,22 @@ void Project::fileRemoved(const QString& file)
 
 Project* Project::load(const QString& path)
 {
-	Project* ret = new Project(new TinyArchiveProjectFile(path));
+	TinyArchiveProjectFile* pf = new TinyArchiveProjectFile();
+	if(!pf->load(path)) {
+		delete pf;
+		return 0;
+	}
+	Project* ret = new Project(pf);
 	return ret;
 }
 
 Project* Project::create(const QString& path)
 {
-	Project* ret = new Project(new TinyArchiveProjectFile(path));
+	TinyArchiveProjectFile* pf = new TinyArchiveProjectFile();
+	if(!pf->init(path)) {
+		delete pf;
+		return 0;
+	}
+	Project* ret = new Project(pf);
 	return ret;
 }

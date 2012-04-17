@@ -185,6 +185,7 @@ public slots:
 	void next();
 	void previous();
 	void closeTab();
+	bool closeFile(const QString& file);
 	void about();
 	void errorViewShowVerbose();
 	void errorViewShowSimple();
@@ -200,7 +201,6 @@ public slots:
 signals:
 	void settingsUpdated();
 	void updateActivatable();
-	void closeFile(const QString& path);
 
 private slots:
 	void on_ui_tabWidget_currentChanged(int i);
@@ -230,7 +230,7 @@ private:
 
 	void addLookup(TabbedWidget* tab);
 	void removeLookup(QWidget* widget);
-	TabbedWidget* lookup(QWidget* widget);
+	TabbedWidget* lookup(QWidget* widget) const;
 
 	void showErrorMessages(bool verbose = false);
 };

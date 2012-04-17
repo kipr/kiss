@@ -13,8 +13,6 @@ public:
 	ProjectsModel();
 	void setProjectManager(ProjectManager* manager);
 	
-	Project* activeProject() const;
-	
 	Project* indexToProject(const QModelIndex& index) const;
 	QString indexToPath(const QModelIndex& index) const;
 	

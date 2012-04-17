@@ -25,17 +25,21 @@ class MainWindow;
 class QMenu;
 class QMenuBar;
 class QToolBar;
+class Project;
 
+#include <QString>
 #include <QWidget>
 #include <QVariant>
 #include <QDebug>
+#include <QFileInfo>
 
 #define TABBED_WIDGET_PROPERTY "_kiss_tabbed_"
 
 class TabbedWidget
 {
 public:
-	TabbedWidget(QWidget* widget, MainWindow* mainWindow = 0) : m_widget(widget), m_mainWindow(mainWindow) {}
+	TabbedWidget(QWidget* widget, MainWindow* mainWindow = 0) : m_widget(widget), m_mainWindow(mainWindow),
+	 	m_associatedProject(0), m_associatedFile("") {}
 	~TabbedWidget() {}
 	
 	/*!
@@ -67,9 +71,24 @@ public:
 	MainWindow* mainWindow() const { return m_mainWindow; }
 	void setMainWindow(MainWindow* mainWindow) { m_mainWindow = mainWindow; }
 	
+	void setAssociatedFile(const QString& associatedFile) { m_associatedFile = associatedFile; }
+	const QString& associatedFile() const { return m_associatedFile; }
+	QFileInfo associatedFileInfo() const { return QFileInfo(m_associatedFile); }
+	QString associatedFileName() { return associatedFileInfo().fileName(); }
+	QString associatedFileBaseName() { return associatedFileInfo().baseName(); }
+	QString associatedFileSuffix() { return associatedFileInfo().completeSuffix(); }
+	bool isFileAssociated() const { return !m_associatedFile.isEmpty(); }
+	
+	void setAssociatedProject(Project* associatedProject) { m_associatedProject = associatedProject; }
+	Project* associatedProject() const { return m_associatedProject; }
+	bool isProjectAssociated() const { return m_associatedProject; }
+	
 private:
 	QWidget* m_widget;
 	MainWindow* m_mainWindow;
+	
+	Project* m_associatedProject;
+	QString m_associatedFile;
 };
 
 #endif

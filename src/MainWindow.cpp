@@ -34,6 +34,8 @@
 #include "ProjectSettingsTab.h"
 #include "ProjectManager.h"
 
+#include "NewProjectWizard.h"
+
 #include "UiEventManager.h"
 
 #include <QToolTip>
@@ -104,11 +106,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::newProject()
 {
-	QSettings settings;
-	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), openPath, tr("KISS Project (*.kissproj)"));
-	if(fileName.isEmpty()) return;
-	newProject(fileName);
+	NewProjectWizard wizard(this);
+	if(wizard.exec() == QDialog::Rejected) return;
+	newProject(wizard.saveLocation());
 }
 
 void MainWindow::newFile() { UiEventManager::ref().sendEvent(UI_EVENT_NEW_FILE); addTab(new SourceFile(this)); }
@@ -121,7 +121,7 @@ bool MainWindow::openFile(const QString& file)
 
 	for(int i = 0;i < ui_tabWidget->count();i++) {
 		SourceFile* sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
-		if(sourceFile && sourceFile->filePath() == file) {
+		if(sourceFile && sourceFile->associatedFile() == file) {
 			ui_tabWidget->setCurrentIndex(i);
 			on_ui_tabWidget_currentChanged(i);
 			return true;
@@ -132,11 +132,11 @@ bool MainWindow::openFile(const QString& file)
 	SourceFile *sourceFile = new SourceFile(this);
 	if(!sourceFile->fileOpen(file)) {
 		MessageDialog::showError(this, "simple_error", QStringList() <<
-			tr("Could not open ") + sourceFile->fileName() <<
+			tr("Could not open ") + sourceFile->associatedFileName() <<
 			tr("Unable to open file for reading."));
 		delete sourceFile;
 		return false;
-	}	
+	}
 
 	QSettings settings;
 	QStringList current = settings.value(RECENTS).toStringList().mid(0, 5);
@@ -159,7 +159,7 @@ bool MainWindow::memoryOpen(const QByteArray& ba, const QString& assocPath)
 
 	for(int i = 0; i < ui_tabWidget->count(); ++i) {
 		SourceFile* sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
-		if(sourceFile && sourceFile->filePath() == assocPath) {
+		if(sourceFile && sourceFile->associatedFile() == assocPath) {
 			ui_tabWidget->setCurrentIndex(i);
 			on_ui_tabWidget_currentChanged(i);
 			return true;
@@ -170,7 +170,7 @@ bool MainWindow::memoryOpen(const QByteArray& ba, const QString& assocPath)
 	SourceFile *sourceFile = new SourceFile(this);
 	if(!sourceFile->memoryOpen(ba, assocPath)) {
 		MessageDialog::showError(this, "simple_error", QStringList() <<
-			tr("Could not open ") + sourceFile->fileName() <<
+			tr("Could not open ") + sourceFile->associatedFileName() <<
 			tr("Unable to open file from memory."));
 		delete sourceFile;
 		return false;
@@ -226,6 +226,10 @@ void MainWindow::initMenus()
 	TargetMenu* targetMenu = new TargetMenu;
 	m_menuManager.registerMenus(targetMenu);
 	m_menuables.append(targetMenu);
+
+	ProjectMenu* projectMenu = new ProjectMenu();
+	m_menuManager.registerMenus(projectMenu);
+	m_menuables.append(projectMenu);
 
 #ifdef BUILD_WEB_TAB
 	WebTabMenu* webTabMenu = new WebTabMenu;
@@ -396,16 +400,16 @@ void MainWindow::open()
 {
 	QSettings settings;
 	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
-	QStringList filters = TargetManager::ref().allSupportedExtensions();
+	QStringList filters = TargetManager::ref().allSupportedExtensions() << "KISS Project (*.kissproj)";
 	filters.removeDuplicates();
 	QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), openPath, filters.join(";;") + ";;All Files (*)");
-		
+	
 	if(filePath.isEmpty()) return;
 
 	QFileInfo fileInfo(filePath);
 	settings.setValue(OPEN_PATH, fileInfo.absolutePath());
 
-	openFile(filePath);
+	if(fileInfo.completeSuffix() == "kissproj") openProject(filePath); else openFile(filePath);
 }
 
 void MainWindow::openProject()
@@ -414,7 +418,7 @@ void MainWindow::openProject()
 	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = TargetManager::ref().allSupportedExtensions();
 	filters.removeDuplicates();
-	QString filePath = QFileDialog::getOpenFileName(this, tr("Open Project"), openPath, tr("KISS Project (*.kissproj)"));
+	QString filePath = QFileDialog::getOpenFileName(this, tr("Open Project"), openPath, tr(""));
 		
 	if(filePath.isEmpty()) return;
 
@@ -439,6 +443,22 @@ void MainWindow::closeTab()
 	emit updateActivatable();
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_CLOSE_TAB);
+}
+
+bool MainWindow::closeFile(const QString& file)
+{
+	QList<TabbedWidget*> fileTabs = tabs();
+	
+	bool removed = false;
+	
+	foreach(TabbedWidget* tab, fileTabs) {
+		if(file == tab->associatedFile()) {
+			deleteTab(ui_tabWidget->indexOf(tab->widget()));
+			removed |= true;
+		}
+	}
+	
+	return removed;
 }
 
 void MainWindow::about()
@@ -508,7 +528,18 @@ void MainWindow::on_ui_removeFile_clicked()
 		const int type = m_projectsModel.indexType(index);
 		Project* project = m_projectsModel.indexToProject(index);
 		if(type == ProjectsModel::FileType) {
-			project->projectFile()->removeFile(m_projectsModel.indexToPath(index));
+			const QString& file = m_projectsModel.indexToPath(index);
+			QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
+				tr("Permanently delete ") + file + "?",
+				QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+				
+			if(ret == QMessageBox::No) continue;
+			project->projectFile()->removeFile(file);
+			closeFile(file);
+			project->projectFile()->sync();
+		} else if(type == ProjectsModel::ProjectType) {
+			project->projectFile()->sync();
+			ProjectManager::ref().closeProject(project);
 		}
 	}
 	ui_projects->expandAll();
@@ -604,9 +635,9 @@ void MainWindow::removeLookup(QWidget* widget)
 	m_lookup.remove(widget);
 }
 
-TabbedWidget* MainWindow::lookup(QWidget* widget)
+TabbedWidget* MainWindow::lookup(QWidget* widget) const
 {
-	QMap<QWidget*, TabbedWidget*>::iterator it = m_lookup.find(widget);
+	QMap<QWidget*, TabbedWidget*>::const_iterator it = m_lookup.find(widget);
 	return it == m_lookup.end() ? 0 : *it;
 }
 
@@ -620,15 +651,14 @@ void MainWindow::projectClicked(const QModelIndex& index)
 	if(m_projectsModel.indexType(index) == ProjectsModel::ProjectType) {
 		for(int i = 0; i < ui_tabWidget->count(); ++i) {
 			ProjectSettingsTab* tab = dynamic_cast<ProjectSettingsTab*>(ui_tabWidget->widget(i));
-			if(tab && tab->projectFile() == project->projectFile()) {
+			if(tab && tab->associatedProject() == project) {
 				ui_tabWidget->setCurrentIndex(i);
 				on_ui_tabWidget_currentChanged(i);
 				return;
 			}
 		}
 	
-		ProjectSettingsTab* tab = new ProjectSettingsTab(this);
-		tab->setProjectFile(project->projectFile());
+		ProjectSettingsTab* tab = new ProjectSettingsTab(project, this);
 		addTab(tab);
 	} else if(m_projectsModel.indexType(index) == ProjectsModel::FileType) {
 		qWarning() << "File!!";
@@ -641,7 +671,7 @@ void MainWindow::projectClicked(const QModelIndex& index)
 		SourceFile* sourceFile = new SourceFile(this);
 		for(int i = 0; i < ui_tabWidget->count(); ++i) {
 			SourceFile* sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
-			if(sourceFile && sourceFile->filePath() == path) {
+			if(sourceFile && sourceFile->associatedFile() == path) {
 				ui_tabWidget->setCurrentIndex(i);
 				on_ui_tabWidget_currentChanged(i);
 				return;
@@ -714,7 +744,7 @@ void MainWindow::activateMenuable(const QString& name, QObject* on)
 
 QStringList MainWindow::standardMenus() const
 {
-	return QStringList() << FileOperationsMenu::menuName() << MainWindowMenu::menuName()
+	return QStringList() << FileOperationsMenu::menuName() << MainWindowMenu::menuName() << ProjectMenu::menuName()
 #ifdef BUILD_DOCUMENTATION_TAB
 	<< DocumentationMenu::menuName()
 #endif
@@ -775,8 +805,7 @@ Project* MainWindow::activeProject() const
 	if(loadedProjects.size() == 0) return 0;
 	if(loadedProjects.size() == 1) return loadedProjects[0];
 	
-	SourceFile* current = dynamic_cast<SourceFile*>(m_currentTab);
-	if(current && current->isAssociatedWithProject()) return current->associatedProject();
-	
-	return m_projectsModel.activeProject();
+	if(m_currentTab && m_currentTab->isProjectAssociated()) return m_currentTab->associatedProject();
+	const QModelIndexList& list = ui_projects->selectionModel()->selectedRows();
+	return list.size() > 0 ? m_projectsModel.indexToProject(list[0]) : 0;
 }

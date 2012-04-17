@@ -36,7 +36,6 @@ namespace Lexer
 		QColor defaultColor(int style) const;
 		QFont font(int style) const;
 		QFont defaultFont(int style) const;
-
 	};
 	
 	struct ConstructorCPP : Constructor

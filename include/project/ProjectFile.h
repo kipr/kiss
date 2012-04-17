@@ -14,6 +14,9 @@ Q_OBJECT
 public:
 	virtual ~ProjectFile();
 	
+	virtual bool init(const QString& path) = 0;
+	virtual bool load(const QString& path) = 0;
+	
 	virtual QStringList list() const = 0;
 	virtual const QString& path() const = 0;
 	
@@ -33,7 +36,7 @@ public:
 	bool containsSetting(const QString& key) const;
 	QString valueForSetting(const QString& key) const;
 	void addProjectSetting(const QString& key, const QString& value);
-	void removeProjectSetting(const QString& key, const QString& value);
+	void removeProjectSetting(const QString& key);
 	
 	virtual void setProjectSettings(const QMap<QString, QString>& projectSettings) = 0;
 	virtual QMap<QString, QString> projectSettings() const = 0;
@@ -41,6 +44,7 @@ public:
 	virtual bool sync() = 0;
 	
 public slots:
+	void settingRemoved(const QString& key);
 	void settingUpdated(const QString& key, const QString& value);
 	
 signals:

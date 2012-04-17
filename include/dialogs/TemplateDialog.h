@@ -37,6 +37,7 @@ public:
 	
 	// Returns to the path of the target file for the selected target
 	QString selectedTargetFilePath();
+	QString selectedTargetName() const;
 	QString templateFile();
 private slots:
 	void on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);

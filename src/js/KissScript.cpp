@@ -26,6 +26,7 @@
 #include "Process.h"
 #include "MessageDialog.h"
 #include "MainWindow.h"
+#include "ProjectTypeScript.h"
 
 #include "ScriptUtils.h"
 #include "Kiss.h"
@@ -63,6 +64,11 @@ QScriptValue KissScript::plugin(const QString& type, const QScriptValue& obj)
 	}
 	if(type == "targets") {
 		
+	}
+	if(type == "project_type") {
+		ProjectTypeScript* projectType = new ProjectTypeScript();
+		ProjectTypes::ref().addProjectType(projectType);
+		return engine()->newQObject(projectType);
 	}
 	return false;
 }
