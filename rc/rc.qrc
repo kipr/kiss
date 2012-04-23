@@ -47,11 +47,12 @@
     </qresource>
     <qresource prefix="/">
         <file>welcome/index.html</file>
-        <file>welcome/document-new.png</file>
-        <file>welcome/document-open.png</file>
-        <file>welcome/help-browser.png</file>
-        <file>welcome/internet-web-browser.png</file>
-	<file>welcome/preferences-desktop.png</file>
+        <file>welcome/new.png</file>
+        <file>welcome/open.png</file>
+        <file>welcome/settings.png</file>
+        <file>welcome/browser.png</file>
+        <file>welcome/welcome.qml</file>
+        <file>welcome/ImageButton.qml</file>
     </qresource>
     <qresource prefix="/sourcefile">
         <file>icon_set/icons/bullet_red.png</file>

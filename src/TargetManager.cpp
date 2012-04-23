@@ -83,7 +83,12 @@ QString TargetManager::displayName(const QString& target)
 		QSettings::IniFormat).value(DISPLAY_NAME, QFileInfo(target).baseName()).toString();
 }
 
-QString TargetManager::targetPath(const QString& target) { return CP _ TARGET_FOLDER _ target; }
+QString TargetManager::targetFilePath(const QString& target) const
+{
+	return targetPath(target) _ target + "." + TARGET_EXT;
+}
+
+QString TargetManager::targetPath(const QString& target) const { return CP _ TARGET_FOLDER _ target; }
 
 QStringList TargetManager::targetPaths()
 {
@@ -125,6 +130,16 @@ QStringList TargetManager::allSupportedExtensions()
 		targetDir.cdUp();
 	}
 	return extensionList;
+}
+
+QStringList TargetManager::allSupportedExtensionsRaw()
+{
+	QStringList ret;
+	const QStringList& exts = allSupportedExtensions();
+	foreach(const QString& ext, exts) {
+		const QStringList& rawExts = ext.section('(', 1).section(')', 0, 0).split(",");
+		foreach(const QString& rawExt, rawExts) ret << rawExt.trimmed().mid(2);
+	}
 }
 
 QString TargetManager::getExpectedLocation(const QString& name) const { return QString(TARGET_FOLDER) _ name; }

@@ -20,52 +20,72 @@
 
 #include "Project.h"
 
-#include "TinyArchiveProjectFile.h"
+#include "QTinyArchive.h"
+#include "TargetManager.h"
 
 #include <QFileInfo>
+#include <QDebug>
 
-#include <QObject>
+#define SETTINGS_FILE "settings:"
 
-Project::Project(ProjectFile* projectFile) : WorkingUnit("Project"), m_projectFile(projectFile)
+#define PROJECT_NAME_SETTING "PROJECT_NAME"
+
+class ReadFailedException : public std::exception
 {
-	setName(QFileInfo(projectFile->path()).baseName());
-	connect(projectFile, SIGNAL(fileCreated(const QString&)), SIGNAL(updated()));
-	connect(projectFile, SIGNAL(fileChanged(const QString&)), SIGNAL(updated()));
-	connect(projectFile, SIGNAL(fileRemoved(const QString&)), SIGNAL(updated()));
+public:
+	virtual const char* what() const throw()
+	{
+		return "Unable to read archive";
+	}
+};
+
+Project::Project(TinyArchiveReader* reader, TinyArchiveWriter* writer)
+	: WorkingUnit("Project"), m_writer(writer)
+{
+	m_archive = (QTinyArchive*)TinyArchive::read(reader);
+	if(!m_archive) throw ReadFailedException();
+	
+	processSettings(settings()); // Initial setting processing
+	setName(settings()[PROJECT_NAME_SETTING]);
+}
+
+Project::Project(TinyArchiveWriter* writer)
+	: WorkingUnit("Project"), m_writer(writer)
+{
+	m_archive = new QTinyArchive();
+	m_archive->add(SETTINGS_FILE, SETTINGS_ID);
+	setName(settings()[PROJECT_NAME_SETTING]);
+}
+
+Project::~Project()
+{
+	delete m_writer;
+	if(m_archive) delete m_archive;
 }
 
 bool Project::addFile(const QString& path)
 {
 	QFile file(path);
 	if(!file.open(QIODevice::ReadOnly)) return false;
-	QDataStream in(&file);
-	m_projectFile->addFile(QFileInfo(file).fileName(), in);
+	m_archive->add(QFileInfo(file).fileName(), file.readAll());
 	file.close();
-	emit updated();
-	return m_projectFile->sync();
-}
-
-bool Project::createFile(const QString& path)
-{
-	m_projectFile->addFile(path, QByteArray());
-	emit updated();
-	return m_projectFile->sync();
+	return true;
 }
 
 void Project::setName(const QString& name)
 {
 	m_name = name;
-	emit updated();
 }
 
-void Project::refresh()
+const bool Project::sync()
 {
-	m_projectFile->sync();
+	return m_archive->write(m_writer);
 }
 
 QStringList Project::files() const
 {
-	return m_projectFile->list();
+	QStringList ret = m_archive->files();
+	return ret;
 }
 
 QStringList Project::resources() const
@@ -88,9 +108,9 @@ const QString& Project::name()
 	return m_name;
 }
 
-ProjectFile* Project::projectFile() const
+QTinyArchive* Project::archive() const
 {
-	return m_projectFile;
+	return m_archive;
 }
 
 void Project::setAssociatedPort(const QString& associatedPort)
@@ -108,34 +128,87 @@ bool Project::isAssociatedWithPort() const
 	return m_associatedPort.isEmpty();
 }
 
-void Project::fileAdded(const QString& file)
+const bool Project::updateSetting(const QString& key, const QString& value)
 {
-	emit updated();
+	QStringMap current = settings();
+	current[key] = value;
+	setSettings(current);
+	
+	qWarning() << "Setting update emitted";
+	emit settingUpdated(key);
+	
+	return true;
 }
 
-void Project::fileRemoved(const QString& file)
+const bool Project::removeSetting(const QString& key)
 {
-	emit updated();
+	QStringMap current = settings();
+	QStringMap::iterator it = current.find(key);
+	if(it == current.end()) return false;
+	current.erase(it);
+	setSettings(current);
+	
+	emit settingRemoved(key);
+	
+	return true;
+}
+
+void Project::setSettings(const QStringMap& settings)
+{
+	QByteArray data;
+	QDataStream stream(&data, QIODevice::WriteOnly);
+	stream << settings;
+	m_archive->put(SETTINGS_FILE, data, SETTINGS_ID);
+	processSettings(settings);
+	emit settingsChanged();
+}
+
+QStringMap Project::settings() const
+{
+	QByteArray data = QTinyNode::data(m_archive->lookup(SETTINGS_FILE));
+	QDataStream stream(&data, QIODevice::ReadOnly);
+	
+	QStringMap ret;
+	stream >> ret;
+	return ret;
+}
+
+void Project::setTargetName(const QString& target)
+{
+	updateSetting(TARGET_KEY, target);
 }
 
 Project* Project::load(const QString& path)
 {
-	TinyArchiveProjectFile* pf = new TinyArchiveProjectFile();
-	if(!pf->load(path)) {
-		delete pf;
+	TinyArchiveFile* file = new TinyArchiveFile(path.toStdString());
+	Project* ret = 0;
+	try {
+		ret = new Project(file, file);
+	} catch(const ReadFailedException& e) {
+		qWarning() << e.what();
 		return 0;
 	}
-	Project* ret = new Project(pf);
+	
+	ret->setName(QFileInfo(path).baseName());
+	
 	return ret;
 }
 
 Project* Project::create(const QString& path)
 {
-	TinyArchiveProjectFile* pf = new TinyArchiveProjectFile();
-	if(!pf->init(path)) {
-		delete pf;
-		return 0;
-	}
-	Project* ret = new Project(pf);
+	TinyArchiveFile* file = new TinyArchiveFile(path.toStdString());
+	Project* ret = new Project(file);	
+	ret->setName(QFileInfo(path).baseName());
 	return ret;
+}
+
+void Project::processSettings(const QStringMap& settings)
+{
+	foreach(const QString& key, settings.keys()) {
+		if(key == TARGET_KEY) {
+			const QString& path = TargetManager::ref().targetFilePath(settings[key]);
+			qWarning() << "Set target to" << path;
+			target()->setTargetFile(path);
+		}
+	}
 }

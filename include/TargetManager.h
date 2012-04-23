@@ -33,10 +33,12 @@ public:
 	
 	QStringList targets();
 	QString displayName(const QString& target);
-	QString targetPath(const QString& target);
+	QString targetFilePath(const QString& target) const;
+	QString targetPath(const QString& target) const;
 	QStringList targetPaths();
 	QStringList targetFiles();
 	QStringList allSupportedExtensions();
+	QStringList allSupportedExtensionsRaw();
 	QString getExpectedLocation(const QString& name) const;
 	
 	virtual void pluginLoaded(TargetInterface* plugin);

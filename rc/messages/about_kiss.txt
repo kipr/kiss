@@ -12,4 +12,8 @@ KISS is a project of the KISS Institute for Practical Robotics <br /> <br />
 Braden McDorman <br />
 Jorge Villatoro <br />
 <br />
+<b>Icons:</b> <br />
+Silk by Mark James <br />
+Dropline Neu! by Silvestre Herrera <br />
+<br />
 Thank you for using KISS IDE!

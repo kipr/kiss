@@ -26,6 +26,7 @@ class QMenu;
 class QMenuBar;
 class QToolBar;
 class Project;
+class TinyNode;
 
 #include <QString>
 #include <QWidget>

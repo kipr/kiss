@@ -29,6 +29,7 @@
 
 #include "DeveloperMenu.h"
 #include "TargetManager.h"
+#include "WebTab.h"
 
 DeclarativeTools::DeclarativeTools(MainWindow* mainWindow) : m_mainWindow(mainWindow)
 {
@@ -42,17 +43,21 @@ void DeclarativeTools::newFile()
 
 void DeclarativeTools::open()
 {
-	
+	m_mainWindow->open();
 }
 
 void DeclarativeTools::openWeb(const QString& url)
 {
-	
+#ifdef BUILD_WEB_TAB
+	WebTab* webTab = new WebTab(m_mainWindow);
+	webTab->load(url);
+	m_mainWindow->addTab(webTab);
+#endif
 }
 
 void DeclarativeTools::settings()
 {
-	
+	m_mainWindow->settings();
 }
 
 const QStringList DeclarativeTools::targets()

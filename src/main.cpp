@@ -23,6 +23,7 @@
 #include <QSplashScreen>
 #include "MainWindow.h"
 #include "WelcomeTab.h"
+#include "DeclarativeTab.h"
 #include "KissArchive.h"
 #include "TargetMenu.h"
 #include "AudioTutorial.h"
@@ -118,8 +119,12 @@ int main(int argc, char **argv)
 	splash.raise();
 	splash.show();
 	MainWindow mainWindow;
+#ifdef BUILD_DECLARATIVE_TAB
+	mainWindow.addTab(new DeclarativeTab(QUrl("qrc:/welcome/welcome.qml"), &mainWindow));
+#else
 #ifdef BUILD_WEB_TAB
 	mainWindow.addTab(new WelcomeTab(&mainWindow));
+#endif
 #endif
 	qWarning() << "Args:" << QApplication::arguments();
 	foreach(const QString& arg, QApplication::arguments().mid(1)) {

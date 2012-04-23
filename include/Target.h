@@ -55,7 +55,7 @@ public:
 	QStringList 	verboseMessages();
 	QList<QAction*> actionList();
 	
-	// These two load some settings from the target file
+	// These load some settings from the target file
 	QStringList sourceExtensions();
 	QString defaultExtension();
 	bool cStyleBlocks();

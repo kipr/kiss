@@ -31,6 +31,7 @@ ResourceHelper::ResourceHelper()
 	addSearchLocation(":/shortcuts/file/icon_set/icons/");
 	addSearchLocation(":/browser/icon_set/icons/");
 	addSearchLocation(":/icon_set/icons/");
+	addSearchLocation(":/welcome/");
 	addSearchLocation(":/sourcefile/icon_set/icons/");
 	
 	addSearchLocation("resources"); // For user resources

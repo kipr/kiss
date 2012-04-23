@@ -25,6 +25,8 @@
 #include "Kiss.h"
 #include "UiEventManager.h"
 
+#include "ResourceHelper.h"
+
 #include <QListWidgetItem>
 #include <QDebug>
 
@@ -74,14 +76,14 @@ int TemplateDialog::execTemplate()
 	return exec();
 }
 
-QString TemplateDialog::selectedTargetFilePath()
+QString TemplateDialog::selectedTargetName() const
 {
-	const QString& target = ui_targets->currentItem()->data(Qt::UserRole).toString();
-	return TargetManager::ref().targetPath(target) + "/" + target + "." + TARGET_EXT;
+	return ui_targets->currentItem() ? ui_targets->currentItem()->data(Qt::UserRole).toString() : QString();
 }
 
 QString TemplateDialog::templateFile()
 {
+	if(!ui_targets->currentItem()) return QString();
 	const QString& target = ui_targets->currentItem()->data(Qt::UserRole).toString();
 	return ui_templates->currentItem() ? 
 		ui_templates->currentItem()->data(0, Qt::UserRole).toString() : 
@@ -140,7 +142,7 @@ void TemplateDialog::addTemplates(const QString& target, QTreeWidgetItem* parent
 	foreach(const QString& folder, folders) {
 		QTreeWidgetItem* item = !parentItem ? new QTreeWidgetItem(ui_templates) : new QTreeWidgetItem(parentItem);
 		item->setText(0, folder);
-		item->setIcon(0, QIcon(":/welcome/document-open.png"));
+		item->setIcon(0, ResourceHelper::ref().icon("open"));
 		item->setFlags(Qt::ItemIsEnabled);
 		
 		addTemplates(target, item, (parent.isEmpty() ? "" : parent + "/") + folder);
@@ -154,7 +156,7 @@ void TemplateDialog::addUserTemplates(const QString& target)
 	
 	QTreeWidgetItem* parent = new QTreeWidgetItem(ui_templates);
 	parent->setText(0, tr("User Templates"));
-	parent->setIcon(0, QIcon(":/welcome/document-open.png"));
+	parent->setIcon(0, ResourceHelper::ref().icon("open"));
 	parent->setFlags(Qt::ItemIsEnabled);
 	
 	foreach(const QString& _template, templates) {

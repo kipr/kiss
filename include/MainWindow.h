@@ -184,8 +184,10 @@ public slots:
 	void openProject();
 	void next();
 	void previous();
-	void closeTab();
+	void closeTab(bool force = false);
+	void closeProjectTabs(Project* project);
 	bool closeFile(const QString& file);
+	bool closeNode(const TinyNode* node);
 	void about();
 	void errorViewShowVerbose();
 	void errorViewShowSimple();
@@ -214,6 +216,9 @@ private slots:
 	
 	void projectClicked(const QModelIndex& index);
 	void projectFileClicked(const QModelIndex& index);
+	
+	void projectOpened(Project* project);
+	void projectClosed(Project* project);
 	
 private:
 	TabbedWidget* m_currentTab;

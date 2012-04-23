@@ -35,6 +35,9 @@
 #include "TargetMenu.h"
 #include "MainWindowMenu.h"
 #include "Project.h"
+#include "ProjectSaveAs.h"
+#include "ProjectManager.h"
+#include "QTinyArchive.h"
 
 #include "UiEventManager.h"
 #include "ResourceHelper.h"
@@ -63,8 +66,6 @@
 
 #define SAVE_PATH "savepath"
 #define DEFAULT_EXTENSION "default_extension"
-
-#define TARGET_KEY "target"
 
 #define MAX(a, b) (a > b ? a : b)
 
@@ -166,12 +167,12 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 	
 	if(isProjectAssociated()) {
 		qWarning() << "Saving" << filePath << "as project";
-		ProjectFile* projectFile = associatedProject()->projectFile();
-		if(!projectFile->updateFileContents(filePath, ui_editor->text().toLatin1())) {
-			qWarning() << "Update file contents failed";
+		QTinyArchive* archive = associatedProject()->archive();
+		if(!archive->put(filePath, ui_editor->text().toLatin1())) {
+			qWarning() << "Put failed";
 			return false;
 		}
-		projectFile->sync();
+		associatedProject()->sync();
 	} else {
 		QFile fileHandle(associatedFile());
 		if(!fileHandle.open(QIODevice::WriteOnly)) return false;
@@ -238,13 +239,10 @@ bool SourceFile::memoryOpen(const QByteArray& ba, const QString& assocPath)
 	return true;
 }
 
-bool SourceFile::openProjectFile(Project* project, const QString& path)
+bool SourceFile::openProjectFile(Project* project, const TinyNode* node)
 {
-	qWarning() << "Attempting to open" << path;
- 	if(!project->projectFile()->containsFile(path)) return false;
-	QByteArray contents = project->projectFile()->fileContents(path);
-
-	bool ret = memoryOpen(contents, path);
+	if(!node) return false;
+	bool ret = memoryOpen(QTinyNode::data(node), QTinyNode::name(node));
 	setAssociatedProject(ret ? project : 0);
 	return ret;
 }
@@ -465,6 +463,11 @@ void SourceFile::zoomReset() { ui_editor->zoomTo(0); updateMargins(); UiEventMan
 
 bool SourceFile::saveAs()
 {
+	return isProjectAssociated() ? saveAsProject() : saveAsFile();
+}
+
+bool SourceFile::saveAsFile()
+{
 	QSettings settings;
 	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
 	QStringList exts = target()->sourceExtensions();
@@ -506,6 +509,19 @@ bool SourceFile::saveAs()
 	UiEventManager::ref().sendEvent(UI_EVENT_FILE_SAVE);
 	
 	return true;
+}
+
+bool SourceFile::saveAsProject()
+{
+	ProjectSaveAs saveAsProject(mainWindow());
+	saveAsProject.setProjectManager(&ProjectManager::ref());
+	saveAsProject.setDefaultProject(associatedProject());
+	if(saveAsProject.exec() == QDialog::Rejected) return false;
+	qWarning() << "Saving to" << QTinyNode::path(saveAsProject.parent()) << saveAsProject.fileName();
+	setAssociatedProject(saveAsProject.activeProject());
+	const QString& path = QPathUtils::appendComponent(QTinyNode::path(saveAsProject.parent()), saveAsProject.fileName());
+	qWarning() << "Which is" << path;
+	return fileSaveAs(path);
 }
 
 void SourceFile::sourceModified(bool) { mainWindow()->setTabName(this, "* " + associatedFileName()
@@ -734,6 +750,7 @@ bool SourceFile::checkPort()
 	if(target()->hasPort() && target()->port().isEmpty()) {
 		choosePort();
 		if(target()->port().isEmpty()) return false;
+		connect(target(), SIGNAL(requestPort()), SLOT(choosePort()));
 	}
 	mainWindow()->refreshMenus();
 	return true;
@@ -791,39 +808,40 @@ bool SourceFile::changeTarget(bool skipIfValid, bool _template)
 	
 	QString targetPath;
 	QString templateFile;
-	if(!skipIfValid || !target()->isValid()) {
-		TemplateDialog tDialog(this);
-		if((_template ? tDialog.exec() : tDialog.execTarget()) == QDialog::Rejected) return false;
-		targetPath = tDialog.selectedTargetFilePath();
+	TemplateDialog tDialog(this);
 	
-		if(_template) UiEventManager::ref().sendEvent(UI_EVENT_TEMPLATE_SELECTED);
+	bool askForTarget = !skipIfValid || !target()->isValid();
+	
+	if(askForTarget) {
+		if((_template ? tDialog.exec() : tDialog.execTarget()) == QDialog::Rejected) return false;
+		targetPath = TargetManager::ref().targetFilePath(tDialog.selectedTargetName());
 	
 		if(!target()->setTargetFile(targetPath)) {
 			MessageDialog::showError(this, "simple_error", QStringList() << 
-				tr("Error loading target at for ") + targetPath <<
+				tr("Error loading target at ") + targetPath <<
 				tr("Target plugin was probably installed incorrectly"));
 			return false;
 		}
-	
-		if(isProjectAssociated()) associatedProject()->projectFile()->addProjectSetting(TARGET_KEY, targetPath);
-	
+		
 		target()->setTargetFile(targetPath);
 		if(target()->error()) return false;
-	
-		if(target()->hasPort()) {
-			choosePort();
-			connect(target(), SIGNAL(requestPort()), SLOT(choosePort()));
-		}
-		
-		templateFile = tDialog.templateFile();
+	} else {
+		if(_template && tDialog.execTemplate() == QDialog::Rejected) return false;
 	}
 	
-	QSettings targetSettings(targetPath, QSettings::IniFormat);
+	if(_template) UiEventManager::ref().sendEvent(UI_EVENT_TEMPLATE_SELECTED);
+	
+	templateFile = tDialog.templateFile();
+	if(isProjectAssociated()) associatedProject()->setTargetName(tDialog.selectedTargetName());
+	
+	checkPort();
 	
 	Lexer::Constructor* constructor = 0;
 
+	qWarning() << "Template... " << _template;
 	if(!_template && !isNewFile()) constructor = Lexer::Factory::ref().constructor(associatedFileSuffix());
 	else {
+		qWarning() << "Template?" << _template;
 		if(_template) {
 			QFile tFile(templateFile);
 			if(!tFile.open(QIODevice::ReadOnly)) {
@@ -843,10 +861,14 @@ bool SourceFile::changeTarget(bool skipIfValid, bool _template)
 				m_templateExt = lex;
 			}
 			ui_editor->setText(templateReader.content());
+			qWarning() << "Updated template text.";
 		}
 	}
 	
-	if(!constructor) constructor = Lexer::Factory::ref().constructor(targetSettings.value(DEFAULT_EXTENSION, "").toString());
+	if(!constructor) {
+		qWarning() << "Falling back on default lexer constructor";
+		constructor = Lexer::Factory::ref().constructor(target()->defaultExtension());
+	}
 	
 	m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
 	

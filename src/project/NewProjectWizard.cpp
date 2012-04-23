@@ -12,7 +12,7 @@ NewProjectWizard::NewProjectWizard(QWidget* parent) : QDialog(parent)
 	foreach(ProjectType* projectType, ProjectTypes::ref().projectTypes())
 		ui_projectTypes->addItem(projectType->name(), QVariant::fromValue(projectType));
 	
-	const QStringList& targets = TargetManager::ref().targetFiles();
+	const QStringList& targets = TargetManager::ref().targets();
 	foreach(const QString& target, targets)
 		ui_targetPlatforms->addItem(TargetManager::ref().displayName(target), target);
 		

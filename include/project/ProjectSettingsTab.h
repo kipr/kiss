@@ -23,6 +23,7 @@ public:
 	
 	virtual void refreshSettings();
 	
+public slots:
 	void reload();
 	
 private slots:
@@ -33,6 +34,9 @@ private slots:
 signals:
 	void settingRemoved(const QString& key);
 	void settingUpdated(const QString& key, const QString& value);
+	
+private:
+	bool m_block;
 
 };
 

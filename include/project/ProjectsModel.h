@@ -2,19 +2,26 @@
 #define _PROJECTSMODEL_H_
 
 #include <QStandardItemModel>
+#include <QMap>
+
+#include "QTinyArchive.h"
 
 class ProjectManager;
 class Project;
 
-class ProjectsModel : public QStandardItemModel
+class ProjectsModel : public QStandardItemModel, private TinyArchiveListener
 {
 Q_OBJECT
 public:
 	ProjectsModel();
+	~ProjectsModel();
+	void setProject(Project* project);
 	void setProjectManager(ProjectManager* manager);
 	
 	Project* indexToProject(const QModelIndex& index) const;
-	QString indexToPath(const QModelIndex& index) const;
+	const TinyNode* indexToNode(const QModelIndex& index) const;
+	
+	QModelIndex rootIndexForProject(Project* project) const;
 	
 	enum Type {
 		ProjectType,
@@ -33,10 +40,18 @@ private slots:
 	void itemChanged(QStandardItem* item);
 	
 private:
-	void addDirectory(const QString& path, const QStringList& paths, QStandardItem* parent, Project* project);
+	void addDirectory(const TinyNode* node, QStandardItem* parent, Project* project);
 	void reloadProject(Project* project, QStandardItem* parent);
 	QStandardItem* lookupRoot(Project* project);
-	QMap<QString, QStringList> merge(const QStringList& list, const char delim);
+	
+	void nodeAdded(const TinyNode* node);
+	void nodeRemoved(const TinyNode* node);
+	void nodeUpdated(const TinyNode* node);
+	
+	ProjectManager* m_manager;
+	Project* m_project;
+	
+	QMap<const TinyNode*, QStandardItem*> m_nodeLookup;
 };
 
 #endif

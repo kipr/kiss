@@ -18,7 +18,6 @@ public:
 
 private:
 	QString m_name;
-	QString m_port;
 	Target m_target;
 	WorkingUnit* m_parentUnit;
 };

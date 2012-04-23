@@ -24,16 +24,26 @@
 #include <QString>
 #include <QIODevice>
 #include <QObject>
+#include <QMap>
 
-#include "ProjectFile.h"
 #include "WorkingUnit.h"
+
+class QTinyArchive;
+class TinyArchiveReader;
+class TinyArchiveWriter;
+
+#define TARGET_KEY "TARGET"
+#define SETTINGS_ID 1
+
+typedef QMap<QString, QString> QStringMap;
 
 class Project : public QObject, public WorkingUnit
 {
 Q_OBJECT
-public:	
+public:
+	~Project();
+	
 	bool addFile(const QString& path);
-	bool createFile(const QString& path);
 	void setName(const QString& name);
 	
 	void refresh();
@@ -50,26 +60,37 @@ public:
 	static Project* load(const QString& path);
 	static Project* create(const QString& path);
 	
-	ProjectFile* projectFile() const;
+	QTinyArchive* archive() const;
 	
 	void setAssociatedPort(const QString& associatedPort);
 	const QString& associatedPort() const;
 	bool isAssociatedWithPort() const;
 	
+	const bool updateSetting(const QString& key, const QString& value);
+	const bool removeSetting(const QString& key);
+	void setSettings(const QStringMap& settings);
+	QStringMap settings() const;
+	void setTargetName(const QString& target);
+	
+	const bool sync();
+	
 signals:
-	void updated();
+	void settingUpdated(const QString& key);
+	void settingRemoved(const QString& key);
+	void settingsChanged();
 	
 protected:
-	Project(ProjectFile* projectFile);
-	
-private slots:
-	void fileAdded(const QString& file);
-	void fileRemoved(const QString& file);
+	Project(TinyArchiveReader* reader, TinyArchiveWriter* writer);
+	Project(TinyArchiveWriter* writer);
 	
 private:
+	void processSettings(const QStringMap& settings);
+	
 	QString m_path;
 	QString m_name;
-	ProjectFile* m_projectFile;
+	
+	QTinyArchive* m_archive;
+	TinyArchiveWriter* m_writer;
 	
 	QString m_associatedPort;
 };

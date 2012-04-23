@@ -25,7 +25,7 @@
 ProjectManager::~ProjectManager()
 {
 	foreach(Project* p, m_projects) {
-		p->projectFile()->sync();
+		p->sync();
 		delete p;
 	}
 }

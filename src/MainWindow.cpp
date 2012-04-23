@@ -33,6 +33,7 @@
 #include "Project.h"
 #include "ProjectSettingsTab.h"
 #include "ProjectManager.h"
+#include "QTinyArchive.h"
 
 #include "NewProjectWizard.h"
 
@@ -88,6 +89,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	//connect(ui_projects, SIGNAL(clicked(const QModelIndex&)), SLOT(projectFileClicked(const QModelIndex&)));
 	connect(ui_projects, SIGNAL(doubleClicked(const QModelIndex&)), SLOT(projectClicked(const QModelIndex&)));
 	
+	connect(&ProjectManager::ref(), SIGNAL(projectOpened(Project*)), SLOT(projectOpened(Project*)));
+	connect(&ProjectManager::ref(), SIGNAL(projectClosed(Project*)), SLOT(projectClosed(Project*)));
+	
+	ui_projectFrame->setVisible(false);
 	
 	initMenus();
 	
@@ -108,7 +113,25 @@ void MainWindow::newProject()
 {
 	NewProjectWizard wizard(this);
 	if(wizard.exec() == QDialog::Rejected) return;
-	newProject(wizard.saveLocation());
+	const QString& saveLocation = wizard.saveLocation();
+	
+	if(QFile::exists(saveLocation)) {
+		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
+			tr("Overwrite ") + saveLocation + "?",
+			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+			
+		if(ret == QMessageBox::No) return;
+	}
+	
+	Project* project = Project::create(saveLocation);
+	if(!project) {
+		MessageDialog::showError(this, "simple_error", QStringList() <<
+			tr("Failed to create project.") <<
+			tr("Attempted save location: ") + saveLocation);
+		return;
+	}
+	project->updateSetting(TARGET_KEY, wizard.targetPlatform());
+	ProjectManager::ref().openProject(project);
 }
 
 void MainWindow::newFile() { UiEventManager::ref().sendEvent(UI_EVENT_NEW_FILE); addTab(new SourceFile(this)); }
@@ -431,11 +454,11 @@ void MainWindow::openProject()
 void MainWindow::next() { ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() + 1); }
 void MainWindow::previous() { ui_tabWidget->setCurrentIndex(ui_tabWidget->currentIndex() - 1); }
 
-void MainWindow::closeTab()
+void MainWindow::closeTab(bool force)
 {	
 	if(ui_tabWidget->count() == 0) return;
 	
-	if(!lookup(ui_tabWidget->currentWidget())->close()) return;
+	if(!lookup(ui_tabWidget->currentWidget())->close() && !force) return;
 	
 	deleteTab(ui_tabWidget->currentIndex());
 	ui_errorView->hide();
@@ -445,8 +468,19 @@ void MainWindow::closeTab()
 	UiEventManager::ref().sendEvent(UI_EVENT_CLOSE_TAB);
 }
 
+void MainWindow::closeProjectTabs(Project* project)
+{
+	QList<TabbedWidget*> all = tabs();
+	foreach(TabbedWidget* tab, all) {
+		if(!tab->isProjectAssociated()) continue;
+		if(tab->associatedProject() == project) closeTab(true);
+	}
+}
+
 bool MainWindow::closeFile(const QString& file)
 {
+	if(file.isEmpty()) return false;
+	
 	QList<TabbedWidget*> fileTabs = tabs();
 	
 	bool removed = false;
@@ -459,6 +493,11 @@ bool MainWindow::closeFile(const QString& file)
 	}
 	
 	return removed;
+}
+
+bool MainWindow::closeNode(const TinyNode* node)
+{
+	return closeFile(QString::fromStdString(node->path()));
 }
 
 void MainWindow::about()
@@ -515,9 +554,9 @@ void MainWindow::on_ui_addFile_clicked()
 			tr("Please make sure that you have a project open."));
 		return;
 	} 
+	
 	SourceFile* source = new SourceFile(this);
 	source->setAssociatedProject(project);
-	source->fileSaveAs("untitled");
 	addTab(source);
 	ui_projects->expandAll();
 }
@@ -528,17 +567,18 @@ void MainWindow::on_ui_removeFile_clicked()
 		const int type = m_projectsModel.indexType(index);
 		Project* project = m_projectsModel.indexToProject(index);
 		if(type == ProjectsModel::FileType) {
-			const QString& file = m_projectsModel.indexToPath(index);
+			const TinyNode* node = m_projectsModel.indexToNode(index);
 			QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
-				tr("Permanently delete ") + file + "?",
+				tr("Permanently delete ") + QTinyNode::name(node) + "?",
 				QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-				
+			
 			if(ret == QMessageBox::No) continue;
-			project->projectFile()->removeFile(file);
-			closeFile(file);
-			project->projectFile()->sync();
+			qWarning() << "Node path" << QString::fromStdString(node->path());
+			closeNode(node);
+			project->archive()->TinyArchive::remove(node->path());
+			project->sync();
 		} else if(type == ProjectsModel::ProjectType) {
-			project->projectFile()->sync();
+			project->sync();
 			ProjectManager::ref().closeProject(project);
 		}
 	}
@@ -662,16 +702,14 @@ void MainWindow::projectClicked(const QModelIndex& index)
 		addTab(tab);
 	} else if(m_projectsModel.indexType(index) == ProjectsModel::FileType) {
 		qWarning() << "File!!";
-		const QString& path = m_projectsModel.indexToPath(index);
-		if(!project) {
-			openFile(path);
-			return;
-		}
+		const TinyNode* node = m_projectsModel.indexToNode(index);
+		const QString& file = QString::fromStdString(node->path());
+		if(!project) return;
 
 		SourceFile* sourceFile = new SourceFile(this);
 		for(int i = 0; i < ui_tabWidget->count(); ++i) {
 			SourceFile* sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
-			if(sourceFile && sourceFile->associatedFile() == path) {
+			if(sourceFile && sourceFile->associatedFile() == file) {
 				ui_tabWidget->setCurrentIndex(i);
 				on_ui_tabWidget_currentChanged(i);
 				return;
@@ -680,7 +718,7 @@ void MainWindow::projectClicked(const QModelIndex& index)
 		
 		qWarning() << "Asking to open..";
 
-		if(!sourceFile->openProjectFile(project, path)) {
+		if(!sourceFile->openProjectFile(project, node)) {
 			delete sourceFile;
 			return;
 		}
@@ -698,6 +736,19 @@ void MainWindow::projectFileClicked(const QModelIndex& index)
 	
 	
 	#endif
+}
+
+void MainWindow::projectOpened(Project* project)
+{
+	ProjectManager* manager = qobject_cast<ProjectManager*>(sender());
+	if(manager) ui_projectFrame->setVisible(manager->projects().size());
+}
+
+void MainWindow::projectClosed(Project* project)
+{
+	closeProjectTabs(project);
+	ProjectManager* manager = qobject_cast<ProjectManager*>(sender());
+	if(manager) ui_projectFrame->setVisible(manager->projects().size());
 }
 
 bool MainWindow::eventFilter(QObject * target, QEvent * event) {

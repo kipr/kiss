@@ -72,6 +72,7 @@
 class FindDialog;
 class MainWindow;
 class Project;
+class TinyNode;
 
 namespace Lexer { struct Constructor; }
 
@@ -89,7 +90,7 @@ public:
 	bool fileSaveAs(const QString& filePath);
 	bool fileOpen(const QString& filePath);
 	bool memoryOpen(const QByteArray& ba, const QString& assocPath);
-	bool openProjectFile(Project* project, const QString& path);
+	bool openProjectFile(Project* project, const TinyNode* node);
 	
 	bool close();
 
@@ -159,6 +160,9 @@ private slots:
 	void on_ui_editor_cursorPositionChanged(int line, int index);
 	
 private:
+	bool saveAsFile();
+	bool saveAsProject();
+	
 	void showFind();
 	bool checkPort();
 	
