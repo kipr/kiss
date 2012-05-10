@@ -78,7 +78,12 @@ bool QPathUtils::isNull(const QString& path)
 
 const QStringList QTinyArchive::files() const
 {
-	return stdListToQStringList(TinyArchive::files());
+	return files(this);
+}
+
+const QStringList QTinyArchive::files(const TinyArchive* archive)
+{
+	return stdListToQStringList(archive->TinyArchive::files());
 }
 
 const bool QTinyArchive::add(const QString& path, uint32_t id)

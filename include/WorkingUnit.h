@@ -11,6 +11,10 @@ public:
 	
 	Target* target();
 	
+	const QString& port() const;
+	void setPort(const QString& port);
+	const bool isPortValid() const;
+	
 	void setParentUnit(WorkingUnit* parent);
 	WorkingUnit* parentUnit() const;
 	
@@ -19,6 +23,7 @@ public:
 private:
 	QString m_name;
 	Target m_target;
+	QString m_port;
 	WorkingUnit* m_parentUnit;
 };
 

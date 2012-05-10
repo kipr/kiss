@@ -50,6 +50,8 @@ private:
 	QAction* injectScript;
 	QAction* declTab;
 	QAction* uninstallAll;
+	QAction* writeFullProject;
+	QAction* writeDeltaProject;
 };
 
 #endif

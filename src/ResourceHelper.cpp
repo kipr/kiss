@@ -23,6 +23,8 @@
 #include <QDir>
 #include <QDebug>
 
+#include "Log.h"
+
 ResourceHelper::ResourceHelper()
 {
 	addSearchLocation(":/shortcuts/target/icon_set/icons/");
@@ -51,14 +53,15 @@ QString ResourceHelper::lookup(const QString& name)
 		if(entries.size() == 0) continue;
 		const QString& path = entries[0].canonicalFilePath();
 		if(entries.size() > 1) {
-			qWarning() << "More than one resource in" << dir.path() << "matches pattern" << name;
-			qWarning() << "\tUsing" << path;
+			Log::ref().warning(QString("More than one resource in %1 matches pattern %2. Using %3")
+				.arg(dir.path()).arg(name).arg(path));
 		}
 		m_cache[name] = path;
 		return path;
 	}
 	
-	qWarning() << "ResourceHelper Failed to lookup resource" << name << "(tried" << m_locations.size() << "locations)";
+	Log::ref().error(QString("ResourceHelper Failed to lookup resource %1 (tried %2 locations)")
+		.arg(name).arg(m_locations.size()));
 	
 	return "";
 }

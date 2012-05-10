@@ -45,6 +45,8 @@ public slots:
 	void message(const QString& label, const QString& _template, const QStringList& args) const;
 	void error(const QString& _template, const QStringList& args) const;
 	
+	bool fileExists(const QString& path);
+	
 	QStringList availableImports() const;
 	QStringList imported() const;
 	QScriptValue use(const QString& package);

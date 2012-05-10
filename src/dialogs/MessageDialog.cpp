@@ -24,6 +24,8 @@
 #include <QDesktopServices>
 #include <QFile>
 
+#include "Log.h"
+
 MessageDialog::MessageDialog(QWidget* widget) : QDialog(widget) { setupUi(this); }
 
 void MessageDialog::setMessage(const QString& message, const QStringList& args)
@@ -34,6 +36,7 @@ void MessageDialog::setMessage(const QString& message, const QStringList& args)
 	QFile file(QString(":/messages/") + message + ".txt");
 	if(file.open(QIODevice::ReadOnly)) {
 		text = file.readAll();
+		file.close();
 	}
 	for(int i = 0; i < args.size(); ++i) {
 		text = text.replace(QString("${") + QString::number(i + 1) + "}", args.at(i));
@@ -56,6 +59,7 @@ void MessageDialog::on_ui_message_anchorClicked(const QUrl& link) { QDesktopServ
 
 void MessageDialog::showMessage(QWidget* parent, const QString& label, const QString& message, const QStringList& args)
 {
+	Log::ref().info(QString("Displaying message dialog with template %1").arg(message));
 	MessageDialog dialog(parent);
 	dialog.setWindowTitle(label);
 	dialog.setLabel("");
@@ -65,6 +69,7 @@ void MessageDialog::showMessage(QWidget* parent, const QString& label, const QSt
 
 void MessageDialog::showError(QWidget* parent, const QString& error, const QStringList& args)
 {
+	Log::ref().info(QString("Displaying error dialog with template %1").arg(error));
 	MessageDialog dialog(parent);
 	dialog.setMessage(error, args);
 	dialog.exec();

@@ -21,13 +21,21 @@
 #ifndef _TARGET_H_
 #define _TARGET_H_
 
+#include <QObject>
 #include <QString>
 #include <QStringList>
 #include <QScriptValue>
 
-class Target
+class TargetPlugin : public QObject
 {
+Q_OBJECT
+
+public:
+	void setDownloadFunction(const QScriptValue& value);
+	const QScriptValue& downloadFunction() const;
 	
+	void setSimulateFunction(const QScriptValue& value);
+	const QScriptValue& simulateFunction() const;
 };
 
 #endif

@@ -32,6 +32,8 @@ class QTinyArchive;
 class TinyArchiveReader;
 class TinyArchiveWriter;
 
+#include "ArchiveWriter.h"
+
 #define TARGET_KEY "TARGET"
 #define SETTINGS_ID 1
 
@@ -43,7 +45,7 @@ Q_OBJECT
 public:
 	~Project();
 	
-	bool addFile(const QString& path);
+	const TinyNode* addFile(const QString& path);
 	void setName(const QString& name);
 	
 	void refresh();
@@ -55,16 +57,12 @@ public:
 	
 	QString outputPath() const;
 	
-	const QString& name();
+	const QString& name() const;
 	
 	static Project* load(const QString& path);
 	static Project* create(const QString& path);
 	
 	QTinyArchive* archive() const;
-	
-	void setAssociatedPort(const QString& associatedPort);
-	const QString& associatedPort() const;
-	bool isAssociatedWithPort() const;
 	
 	const bool updateSetting(const QString& key, const QString& value);
 	const bool removeSetting(const QString& key);

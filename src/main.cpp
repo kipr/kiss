@@ -26,10 +26,20 @@
 #include "DeclarativeTab.h"
 #include "KissArchive.h"
 #include "TargetMenu.h"
+#include "LogStreamBuf.h"
 #include "AudioTutorial.h"
+#include "Log.h"
+#include "LogWindow.h"
+
+#include "Compiler.h"
+#include "TestCompilerC.h"
+#include "TestCompilerO.h"
+
 #include <QTimer>
 #include <QDebug>
 #include <BackendCapabilities>
+
+using namespace std;
 
 void createArchive(const QString& name, const unsigned version, const QString& platforms, const QString& fileList, const QString& out) {
 	QFile f(fileList);
@@ -90,11 +100,39 @@ void handleArgs()
 	}
 }
 
+void debugLogHandler(QtMsgType type, const char *msg)
+{
+	//in this function, you can write the message to any stream!
+	switch (type) {
+	case QtDebugMsg:
+		Log::ref().debug(msg);
+		break;
+	case QtWarningMsg:
+		Log::ref().warning(msg);
+		break;
+	case QtCriticalMsg:
+		Log::ref().error(msg);
+		break;
+	case QtFatalMsg:
+		Log::ref().error(msg);
+		abort();
+	}
+}
+
 int main(int argc, char **argv)
 {
-	/* The Following lines just set up the application object */
 	QApplication application(argc, argv);
 	
+#ifdef ENABLE_LOG_WINDOW
+	streambuf* restore = cout.rdbuf();
+	LogStreamBuf logRedir;
+	cout.rdbuf(&logRedir);
+	cerr.rdbuf(&logRedir);
+	clog.rdbuf(&logRedir);
+#endif
+	
+	Log::ref().info(QString("KISS is starting up... (Qt version: %1)").arg(qVersion()));
+	qInstallMsgHandler(debugLogHandler);
 	
 	if(QApplication::arguments().size() > 1 && QApplication::arguments()[1].startsWith("--")) {
 		handleArgs();
@@ -104,15 +142,16 @@ int main(int argc, char **argv)
 	#ifdef Q_OS_MAC
 		QDir::setCurrent(QApplication::applicationDirPath() + "/../");
 	#else
-		QDir::setCurrent(QApplication::applicationDirPath());	
+		QDir::setCurrent(QApplication::applicationDirPath());
 	#endif
-	
-	qWarning() << "Qt Version:" << qVersion();
 
 	QApplication::setOrganizationName("KIPR");
 	QApplication::setOrganizationDomain("kipr.org");
 	QApplication::setApplicationName("KISS");
 	QApplication::setWindowIcon(QIcon(":/icon.png"));
+	
+	CompilerManager::ref().addCompiler(new TestCompilerC());
+	CompilerManager::ref().addCompiler(new TestCompilerO());
 	
 	QPixmap splashPixmap(":/splash_screen.png");
 	QSplashScreen splash(splashPixmap);
@@ -126,14 +165,27 @@ int main(int argc, char **argv)
 	mainWindow.addTab(new WelcomeTab(&mainWindow));
 #endif
 #endif
-	qWarning() << "Args:" << QApplication::arguments();
-	foreach(const QString& arg, QApplication::arguments().mid(1)) {
-		mainWindow.openFile(arg);
-	}
+	Log::ref().info(QString("Starting with the following arguments: [%1]").arg(QApplication::arguments().join(", ")));
+	foreach(const QString& arg, QApplication::arguments().mid(1)) mainWindow.openFile(arg);
 	QTimer::singleShot(1500, &splash, SLOT(hide()));
 	QTimer::singleShot(1000, &mainWindow, SLOT(show()));
 	QTimer::singleShot(1000, &mainWindow, SLOT(raise()));
 
+#ifdef ENABLE_LOG_WINDOW
+#ifdef BUILD_DEVELOPER_TOOLS
+	Log::ref().info("Built with developer tools. Automatically showing error log.");
+	QTimer::singleShot(1500, &LogWindow::ref(), SLOT(show()));
+#endif
+#endif
+
+	Log::ref().info("KISS has been launched");
 	int ret = application.exec();
+	
+#ifdef ENABLE_LOG_WINDOW
+	cout.rdbuf(restore);
+	cerr.rdbuf(restore);
+	clog.rdbuf(restore);
+#endif
+	
 	return ret;
 }

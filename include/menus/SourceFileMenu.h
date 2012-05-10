@@ -45,6 +45,7 @@ protected:
 	
 private:
 	MenuNode* breakpoint;
+	MenuNode* convertToProject;
 	
 	MenuNode* undo;
 	MenuNode* redo;

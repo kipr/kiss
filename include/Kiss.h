@@ -29,6 +29,8 @@
 #define TARGET_EXT "target"
 #define USER_FOLDER "user"
 
+#define TEMPORARY_FOLDER "kiss"
+
 #ifdef Q_OS_WIN
 #define OS_NAME "win"
 #define OS_LIB_EXT "dll"
@@ -41,7 +43,7 @@
 #endif
 
 #define KISS_C_VERSION_MAJOR 3
-#define KISS_C_VERSION_MINOR 0
-#define KISS_C_VERSION_BUILD 2
+#define KISS_C_VERSION_MINOR 1
+#define KISS_C_VERSION_BUILD 0
 
 #endif

@@ -25,10 +25,12 @@
 
 #include "MainWindow.h"
 
+#include "LogWindow.h"
+
 #include <QIcon>
 #include <QDebug>
 
-MainWindowMenu::MainWindowMenu(MainWindow* mainWindow) : ConcreteMenuable(menuName())
+MainWindowMenu::MainWindowMenu(MainWindow* mainWindow) : ConcreteMenuable(menuName()), m_mainWindow(mainWindow)
 {	
 	MenuNode* packages = new MenuNode("Packages");
 #ifdef BUILD_REPOSITORY_TAB
@@ -36,6 +38,7 @@ MainWindowMenu::MainWindowMenu(MainWindow* mainWindow) : ConcreteMenuable(menuNa
 #endif
 	packages->children.append(node(activeAction("cog_go", "Install Local Packages...", QKeySequence::UnknownKey, this, "installLocalPackage")));
 	m_file.append(packages);
+	m_file.append(node(m_hideErrors = action("Hide Errors", QKeySequence::UnknownKey)));
 	m_file.append(MenuNode::separator());
 	m_file.append(m_nextNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_right")), "Next", QKeySequence::NextChild, this, "next")));
 	m_file.append(m_prevNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_left")), "Previous", QKeySequence::PreviousChild, this, "previous")));
@@ -50,11 +53,23 @@ MainWindowMenu::MainWindowMenu(MainWindow* mainWindow) : ConcreteMenuable(menuNa
 	
 	QAction* about = activeAction("About KISS IDE", QKeySequence::UnknownKey, this, "about");
 	m_help.append(node(about));
+#ifdef ENABLE_LOG_WINDOW
+	m_help.append(node(m_errorLog = action("Error Log", QKeySequence::UnknownKey)));
+#endif
 }
 
 MenuNode* MainWindowMenu::closeNode() const
 {
 	return m_closeNode;
+}
+
+void MainWindowMenu::triggered()
+{
+	QAction* _ = (QAction*)sender();
+	if(!_) return;
+	if(_ == m_errorLog) LogWindow::ref().setVisible(true);
+	else if(_ == m_hideErrors) m_mainWindow->hideErrors();
+	else qWarning() << "MainWindowMenu received unknown trigger" << _->text();
 }
 
 void MainWindowMenu::update()

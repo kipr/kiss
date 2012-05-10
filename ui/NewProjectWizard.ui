@@ -74,7 +74,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="ui_targetPlatformLabel">
        <property name="minimumSize">
         <size>
          <width>100</width>

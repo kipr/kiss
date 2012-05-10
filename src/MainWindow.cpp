@@ -34,6 +34,7 @@
 #include "ProjectSettingsTab.h"
 #include "ProjectManager.h"
 #include "QTinyArchive.h"
+#include "Log.h"
 
 #include "NewProjectWizard.h"
 
@@ -109,10 +110,11 @@ MainWindow::~MainWindow()
 	while(ui_tabWidget->count() > 0) deleteTab(0);
 }
 
-void MainWindow::newProject()
+Project* MainWindow::newProject(bool target)
 {
 	NewProjectWizard wizard(this);
-	if(wizard.exec() == QDialog::Rejected) return;
+	wizard.setTargetPlatformEnabled(target);
+	if(wizard.exec() == QDialog::Rejected) return 0;
 	const QString& saveLocation = wizard.saveLocation();
 	
 	if(QFile::exists(saveLocation)) {
@@ -120,7 +122,7 @@ void MainWindow::newProject()
 			tr("Overwrite ") + saveLocation + "?",
 			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 			
-		if(ret == QMessageBox::No) return;
+		if(ret == QMessageBox::No) return 0;
 	}
 	
 	Project* project = Project::create(saveLocation);
@@ -128,10 +130,12 @@ void MainWindow::newProject()
 		MessageDialog::showError(this, "simple_error", QStringList() <<
 			tr("Failed to create project.") <<
 			tr("Attempted save location: ") + saveLocation);
-		return;
+		return 0;
 	}
 	project->updateSetting(TARGET_KEY, wizard.targetPlatform());
+	foreach(const QString& setting, wizard.projectType()->defaultSettings()) project->updateSetting(setting, "");
 	ProjectManager::ref().openProject(project);
+	return project;
 }
 
 void MainWindow::newFile() { UiEventManager::ref().sendEvent(UI_EVENT_NEW_FILE); addTab(new SourceFile(this)); }
@@ -211,16 +215,16 @@ bool MainWindow::memoryOpen(const QByteArray& ba, const QString& assocPath)
 bool MainWindow::openProject(const QString& filePath)
 {
 	Project* project = Project::load(filePath);
-	qWarning() << "Opening project" << filePath;
+	Log::ref().info(QString("Opening project at %1").arg(filePath));
 	if(project) ProjectManager::ref().openProject(project);
-	ui_projects->expandAll();
+	// ui_projects->expandAll();
 	return project;
 }
 
 bool MainWindow::newProject(const QString& filePath)
 {
 	Project* project = Project::create(filePath);
-	qWarning() << "Creating project" << filePath;
+	Log::ref().info(QString("Creating project at %1").arg(filePath));
 	if(project) ProjectManager::ref().openProject(project);
 	return project;
 }
@@ -259,12 +263,14 @@ void MainWindow::initMenus()
 	m_menuManager.registerMenus(webTabMenu);
 	m_menuables.append(webTabMenu);
 #endif
+
 #ifdef BUILD_DEVELOPER_TOOLS
 	DeveloperMenu* developerMenu = new DeveloperMenu(this);
 	m_menuManager.registerMenus(developerMenu);
 	m_menuManager.addActivation(developerMenu);
 	m_menuables.append(developerMenu);
 #endif
+
 #ifdef BUILD_DOCUMENTATION_TAB
 	DocumentationMenu* documentationMenu = new DocumentationMenu(this);
 	m_menuManager.registerMenus(documentationMenu);
@@ -471,10 +477,12 @@ void MainWindow::closeTab(bool force)
 void MainWindow::closeProjectTabs(Project* project)
 {
 	QList<TabbedWidget*> all = tabs();
-	foreach(TabbedWidget* tab, all) {
-		if(!tab->isProjectAssociated()) continue;
-		if(tab->associatedProject() == project) closeTab(true);
+	int i = 0;
+	while(i < ui_tabWidget->count()) {
+		if(all.contains(lookup(ui_tabWidget->widget(i)))) ++i;
+		deleteTab(i);
 	}
+	ui_errorView->hide();
 }
 
 bool MainWindow::closeFile(const QString& file)
@@ -497,7 +505,7 @@ bool MainWindow::closeFile(const QString& file)
 
 bool MainWindow::closeNode(const TinyNode* node)
 {
-	return closeFile(QString::fromStdString(node->path()));
+	return closeFile(QTinyNode::path(node));
 }
 
 void MainWindow::about()
@@ -558,7 +566,7 @@ void MainWindow::on_ui_addFile_clicked()
 	SourceFile* source = new SourceFile(this);
 	source->setAssociatedProject(project);
 	addTab(source);
-	ui_projects->expandAll();
+	// ui_projects->expandAll();
 }
 
 void MainWindow::on_ui_removeFile_clicked()
@@ -582,7 +590,7 @@ void MainWindow::on_ui_removeFile_clicked()
 			ProjectManager::ref().closeProject(project);
 		}
 	}
-	ui_projects->expandAll();
+	// ui_projects->expandAll();
 }
 
 void MainWindow::managePackages()
@@ -687,7 +695,7 @@ void MainWindow::showContextMenuForError(const QPoint &pos) { Q_UNUSED(pos); }
 void MainWindow::projectClicked(const QModelIndex& index)
 {
 	Project* project = m_projectsModel.indexToProject(index);
-	qWarning() << "Type" << m_projectsModel.indexType(index);
+	qD`ebug() << "Type" << m_projectsModel.indexType(index);
 	if(m_projectsModel.indexType(index) == ProjectsModel::ProjectType) {
 		for(int i = 0; i < ui_tabWidget->count(); ++i) {
 			ProjectSettingsTab* tab = dynamic_cast<ProjectSettingsTab*>(ui_tabWidget->widget(i));
@@ -701,7 +709,7 @@ void MainWindow::projectClicked(const QModelIndex& index)
 		ProjectSettingsTab* tab = new ProjectSettingsTab(project, this);
 		addTab(tab);
 	} else if(m_projectsModel.indexType(index) == ProjectsModel::FileType) {
-		qWarning() << "File!!";
+		qDebug() << "File!!";
 		const TinyNode* node = m_projectsModel.indexToNode(index);
 		const QString& file = QString::fromStdString(node->path());
 		if(!project) return;
@@ -715,14 +723,12 @@ void MainWindow::projectClicked(const QModelIndex& index)
 				return;
 			}
 		}
-		
-		qWarning() << "Asking to open..";
 
 		if(!sourceFile->openProjectFile(project, node)) {
 			delete sourceFile;
 			return;
 		}
-		qWarning() << "Opened!";
+		Log::ref().debug(QString("Opened %1 for editing").arg(node->name()));
 		addTab(sourceFile);
 	}
 }

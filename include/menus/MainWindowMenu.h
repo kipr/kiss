@@ -38,13 +38,17 @@ public:
 	MenuNode* closeNode() const;
 	
 public slots:
+	void triggered();
 	void update();
 	
 private:
+	MainWindow* m_mainWindow;
+	
 	MenuNode* m_nextNode;
 	MenuNode* m_prevNode;
 	MenuNode* m_closeNode;
-
+	QAction* m_errorLog;
+	QAction* m_hideErrors;
 };
 
 #endif

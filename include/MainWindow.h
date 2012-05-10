@@ -178,7 +178,7 @@ public:
 	friend class MainWindowMenu;
 	
 public slots:
-	void newProject();
+	Project* newProject(bool target = true);
 	void newFile();
 	void open();
 	void openProject();

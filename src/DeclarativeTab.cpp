@@ -98,8 +98,11 @@ DeclarativeTab::DeclarativeTab(const QUrl& file, MainWindow* parent) : TabbedWid
 	view->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
 	view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
 #ifdef BUILD_DEVELOPER_TOOLS
-	m_watcher.addPath(file.toLocalFile());
-	connect(&m_watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reload()));
+	const QString& localFile = file.toLocalFile();
+	if(!localFile.isEmpty()) {
+		m_watcher.addPath(localFile);
+		connect(&m_watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reload()));
+	}
 #endif
 }
 

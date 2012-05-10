@@ -21,21 +21,43 @@
 #ifndef _COMPILER_H_
 #define _COMPILER_H_
 
+#include "Singleton.h"
+
 #include <QString>
 #include <QStringList>
 #include <QScriptValue>
+#include <QDir>
+#include <QMap>
 
-struct CompileResult
+class CompileResult
 {
-	CompileResult(bool success, const QStringList& verboseMessages, const QStringList& errorMessages,
-		const QStringList& warningMessages, const QStringList& linkerMessages);
+public:
+	CompileResult(bool success, const QMap<QString, QStringList>& categorizedOutput);
+	CompileResult(bool success);
 	
-	const bool success;
+	const bool success() const;
+	const QStringList output(const QString& category) const;
+	const QMap<QString, QStringList>& categorizedOutput() const;
 	
-	const QStringList verboseMessages;
-	const QStringList errorMessages;
-	const QStringList warningMessages;
-	const QStringList linkerMessages;
+	void addCompileResult(const CompileResult& rhs);
+	CompileResult& operator+=(const CompileResult& rhs);
+	CompileResult operator+(const CompileResult& rhs) const;
+private:
+	bool m_success;
+	QMap<QString, QStringList> m_categorizedOutput;
+};
+
+class Compilation;
+class Compiler;
+
+class CompilerManager : public Singleton<CompilerManager>
+{
+public:
+	void addCompiler(Compiler* compiler);
+	void removeCompiler(Compiler* compiler);
+	const QList<Compiler*>& compilers() const;
+private:
+	QList<Compiler*> m_compilers;
 };
 
 class Compiler
@@ -46,7 +68,11 @@ public:
 	const QString& name() const;
 	const QStringList& types() const;
 	
-	virtual CompileResult compile(const QStringList& files) = 0;
+	virtual CompileResult compile(Compilation* compilation, const QStringList& files) = 0;
+	
+	static QDir rootOutputDirectory();
+	QDir outputDirectory();
+	
 private:
 	QString m_name;
 	QStringList m_types;
@@ -57,7 +83,7 @@ class CompilerPlugin : public Compiler
 public:
 	CompilerPlugin(const QScriptValue& plugin);
 
-	virtual CompileResult compile(const QStringList& files);
+	virtual CompileResult compile(Compilation* compilation, const QStringList& files);
 	
 private:
 	QScriptValue m_plugin;

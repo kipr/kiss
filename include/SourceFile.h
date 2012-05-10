@@ -120,7 +120,10 @@ public slots:
 	void find();
 	void print();
 	
-	bool changeTarget(bool skipIfValid, bool _template = false);
+	void convertToProject();
+	
+	bool forceChangeTarget(bool _template = false);
+	bool changeTarget(bool _template = false);
 	void choosePort();
 
 	void download();

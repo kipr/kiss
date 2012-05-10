@@ -12,6 +12,21 @@ Target* WorkingUnit::target()
 	return m_parentUnit ? m_parentUnit->target() : &m_target;
 }
 
+const QString& WorkingUnit::port() const
+{
+	return m_port;
+}
+
+void WorkingUnit::setPort(const QString& port)
+{
+	m_port = port;
+}
+
+const bool WorkingUnit::isPortValid() const
+{
+	return !m_port.isEmpty();
+}
+
 void WorkingUnit::setParentUnit(WorkingUnit* parent)
 {
 	m_parentUnit = parent;

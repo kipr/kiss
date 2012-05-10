@@ -39,9 +39,9 @@ TargetMenu::TargetMenu() : ConcreteMenuable(menuName())
 	m_targetMenu->children.append(stopNode = node(activeAction("stop.png", "Stop", QKeySequence("Alt+X"), this, "stop")));
 	m_targetMenu->children.append(debugNode = node(activeAction("bug", "Debug", QKeySequence("Alt+G"), this, "debug")));
 	
-	compileNode->activeControl = downloadNode->activeControl = true;
-	simulateNode->activeControl = runNode->activeControl = true;
-	stopNode->activeControl = debugNode->activeControl = true;
+	compileNode->activeControl = downloadNode->activeControl
+	= simulateNode->activeControl = runNode->activeControl
+	= stopNode->activeControl = debugNode->activeControl = true;
 	
 	m_toolbar.append(m_targetMenu->children);
 	m_targetMenu->children.append(MenuNode::separator());
@@ -51,7 +51,7 @@ TargetMenu::TargetMenu() : ConcreteMenuable(menuName())
 	screenNode->activeControl = requestNode->activeControl = true;
 	
 	m_targetMenu->children.append(MenuNode::separator());
-	m_targetMenu->children.append(node(activeAction("", "Change Target", QKeySequence("Alt+T"), this, "changeTarget")));
+	m_targetMenu->children.append(node(activeAction("", "Change Target", QKeySequence("Alt+T"), this, "forceChangeTarget")));
 	m_targetMenu->children.append(node(activeAction("link", "Choose Port", QKeySequence("Alt+P"), this, "choosePort")));
 	m_targetMenu->children.append(MenuNode::separator());
 	

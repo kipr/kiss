@@ -20,6 +20,7 @@
 
 #include "MenuManager.h"
 #include "Singleton.h"
+#include "Log.h"
 
 #include <QSet>
 #include <QDebug>
@@ -57,7 +58,7 @@ QList<MenuNode*> MenuNode::unify(QList<MenuNode*> nodes)
 		QMap<QString, MenuNode*>::iterator it = unity.find(node->name);
 		if(it == unity.end()) unity[node->name] = node;
 		else {
-			qWarning() << node->name << "collides";
+			Log::ref().info(QString("%1 collides").arg(node->name));
 			(*it)->registers.append(node->registers);
 		}
 	}
@@ -166,7 +167,12 @@ void MenuManager::refreshToolbar()
 		MenuNode* child = *it;
 		if(child == MenuNode::separator() && !lastSep) {
 			lastSep = m_toolBar->addSeparator();
-		} else if(isActivatable(child) && (child->rawAction->isEnabled() || !child->hideOnDisable)) { m_toolBar->addAction(child->rawAction); lastSep = 0; }
+		} else if(isActivatable(child)
+			&& (child->rawAction->isEnabled()
+			|| !child->hideOnDisable)) {
+				m_toolBar->addAction(child->rawAction);
+				lastSep = 0;
+			}
 	}
 	if(lastSep) m_toolBar->removeAction(lastSep);
 	m_toolBar->show();
@@ -186,7 +192,7 @@ void MenuManager::triggered()
 			pair.action->trigger();
 		}
 	}
-	if(!called) qWarning() << "Warning: Did not trigger" << node->name << "on any menuables.";
+	if(!called) Log::ref().warning(QString("Did not trigger %1 on any menuables.").arg(node->name));
 }
 
 void MenuManager::addChildren(MenuNode* parent, const MenuNodeList& nodes)
@@ -201,13 +207,10 @@ void MenuManager::addChildren(MenuNode* parent, const MenuNodeList& nodes)
 			parent->children.append(node);
 			lookup[node->name] = node;
 		} else {
-			qWarning() << node->name << "collides";
 			(*it)->registers.append(node->registers);
 			(*it)->children.append(node->children);
 			addChildren(node, node->children);
 		}
-		
-		// qWarning() << "Registered" << node->name;
 	}
 }
 
@@ -253,7 +256,7 @@ void MenuManager::construct(QMenu* menu, MenuNode* node)
 	}
 	if(node->children.size() == 0) { // Terminal node
 		if(node->registers.size() == 0) {
-			// qWarning() << "Terminal node" << node->name << "has no registers. Ignoring.";
+			Log::ref().warning(QString("Terminal node %1 has no registers. Ignoring.").arg(node->name));
 			return;
 		}
 		if(node->rawAction) return;
@@ -266,7 +269,6 @@ void MenuManager::construct(QMenu* menu, MenuNode* node)
 		node->rawAction = action;
 		connect(action, SIGNAL(triggered()), this, SLOT(triggered()));
 	} else { // Non-terminal node
-		// qWarning() << "Non-terminal node";
 		QMenu* subMenu = menu->addMenu(node->name);
 		construct(subMenu, node->children);
 	}
@@ -276,7 +278,7 @@ void MenuManager::construct(QToolBar* toolbar, MenuNode* node)
 {
 	if(node->children.size() == 0) { // Terminal node
 		if(node->registers.size() == 0) {
-			// qWarning() << "Terminal node" << node->name << "has no registers. Ignoring.";
+			Log::ref().warning(QString("Terminal node %1 has no registers. Ignoring.").arg(node->name));
 			return;
 		}
 		if(node->rawAction) return;
@@ -287,7 +289,7 @@ void MenuManager::construct(QToolBar* toolbar, MenuNode* node)
 		action->setData(QVariant::fromValue((void*)node));
 		node->rawAction = action;
 	} else  // Non-terminal node
-		qWarning() << "Non-terminal Nodes not supported on toolbar. Ignoring" << node->name;
+		Log::ref().warning(QString("Non-terminal nodes not supported on toolbar. Ignoring %1").arg(node->name));
 	
 }
 

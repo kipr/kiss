@@ -3,6 +3,7 @@
 #include "MainWindow.h"
 #include "Activatable.h"
 #include "Project.h"
+#include "Log.h"
 
 #include <QFileInfo>
 #include <QDebug>
@@ -53,7 +54,7 @@ void ProjectSettingsTab::reload()
 {
 	const QStringMap& settings = associatedProject()->settings();
 	
-	qWarning() << "RELOAD!!!!!";
+	Log::ref().debug("Reloaded settings tab");
 	
 	m_block = true;
 	

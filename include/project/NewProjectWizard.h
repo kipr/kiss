@@ -14,6 +14,8 @@ Q_OBJECT
 public:
 	NewProjectWizard(QWidget* parent = 0);
 	
+	void setTargetPlatformEnabled(bool enabled);
+	
 	QString projectName() const;
 	QString saveLocation() const;
 	ProjectType* projectType() const;

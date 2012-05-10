@@ -22,6 +22,7 @@
 
 #include "QTinyArchive.h"
 #include "TargetManager.h"
+#include "Log.h"
 
 #include <QFileInfo>
 #include <QDebug>
@@ -63,13 +64,14 @@ Project::~Project()
 	if(m_archive) delete m_archive;
 }
 
-bool Project::addFile(const QString& path)
+const TinyNode* Project::addFile(const QString& path)
 {
 	QFile file(path);
-	if(!file.open(QIODevice::ReadOnly)) return false;
-	m_archive->add(QFileInfo(file).fileName(), file.readAll());
+	if(!file.open(QIODevice::ReadOnly)) return 0;
+	const QString& newName = QFileInfo(file).fileName();
+	m_archive->add(newName, file.readAll());
 	file.close();
-	return true;
+	return m_archive->lookup(newName);
 }
 
 void Project::setName(const QString& name)
@@ -95,7 +97,9 @@ QStringList Project::resources() const
 
 QStringList Project::sources() const
 {
-	return files(); // TODO: NYI
+	QStringList ret = files();
+	ret.removeAll(SETTINGS_FILE);
+	return ret;
 }
 
 QString Project::outputPath() const
@@ -103,7 +107,7 @@ QString Project::outputPath() const
 	return "";
 }
 
-const QString& Project::name()
+const QString& Project::name() const
 {
 	return m_name;
 }
@@ -113,28 +117,12 @@ QTinyArchive* Project::archive() const
 	return m_archive;
 }
 
-void Project::setAssociatedPort(const QString& associatedPort)
-{
-	m_associatedPort = associatedPort;
-}
-
-const QString& Project::associatedPort() const
-{
-	return m_associatedPort;
-}
-
-bool Project::isAssociatedWithPort() const
-{
-	return m_associatedPort.isEmpty();
-}
-
 const bool Project::updateSetting(const QString& key, const QString& value)
 {
 	QStringMap current = settings();
 	current[key] = value;
 	setSettings(current);
 	
-	qWarning() << "Setting update emitted";
 	emit settingUpdated(key);
 	
 	return true;
@@ -185,7 +173,7 @@ Project* Project::load(const QString& path)
 	try {
 		ret = new Project(file, file);
 	} catch(const ReadFailedException& e) {
-		qWarning() << e.what();
+		qCritical() << e.what();
 		return 0;
 	}
 	
@@ -207,7 +195,7 @@ void Project::processSettings(const QStringMap& settings)
 	foreach(const QString& key, settings.keys()) {
 		if(key == TARGET_KEY) {
 			const QString& path = TargetManager::ref().targetFilePath(settings[key]);
-			qWarning() << "Set target to" << path;
+			Log::ref().debug(QString("Set target to %1").arg(path));
 			target()->setTargetFile(path);
 		}
 	}

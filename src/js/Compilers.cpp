@@ -22,6 +22,8 @@
 
 #include "Compiler.h"
 
+#include <QDebug>
+
 Compilers::Compilers()
 {
 	
@@ -40,10 +42,13 @@ void Compilers::removeCompiler(Compiler* compiler)
 
 Compiler* Compilers::compiler(const QString& type) const
 {
-	foreach(Compiler* compiler, m_compilers)
-		if(compiler->types().contains(type)) return compiler;
-	
-	return 0;
+	const QList<Compiler*>& possible = compilers(type);
+	if(!possible.size()) return 0;
+	Compiler* ret = possible[0];
+	if(possible.size() > 1) {
+		qWarning() << "No unique compiler for" << type << ". Returning " << ret->name();
+	}
+	return ret;
 }
 
 QList<Compiler*> Compilers::compilers(const QString& type) const

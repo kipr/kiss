@@ -1,82 +1,87 @@
 <RCC>
-    <qresource prefix="/shortcuts/edit">
-        <file>icon_set/icons/arrow_redo.png</file>
-        <file>icon_set/icons/arrow_undo.png</file>
-        <file>icon_set/icons/cut.png</file>
-        <file>icon_set/icons/page_white_copy.png</file>
-        <file>icon_set/icons/page_white_paste.png</file>
-        <file>icon_set/icons/find.png</file>
-    </qresource>
-    <qresource prefix="/debugger">
-        <file>icon_set/icons/control_end.png</file>
-        <file>icon_set/icons/control_pause.png</file>
-        <file>icon_set/icons/control_play.png</file>
-        <file>icon_set/icons/control_stop.png</file>
-    </qresource>
-    <qresource prefix="/browser">
-        <file>icon_set/icons/resultset_next.png</file>
-        <file>icon_set/icons/arrow_left.png</file>
-        <file>icon_set/icons/arrow_refresh.png</file>
-        <file>icon_set/icons/arrow_right.png</file>
-    </qresource>
-    <qresource prefix="/shortcuts/file">
-        <file>icon_set/icons/printer.png</file>
-        <file>icon_set/icons/cross.png</file>
-        <file>icon_set/icons/disk.png</file>
-        <file>icon_set/icons/folder.png</file>
-        <file>icon_set/icons/page_white.png</file>
-    </qresource>
-    <qresource prefix="/shortcuts/target">
-        <file>icon_set/icons/report.png</file>
-        <file>icon_set/icons/application_go.png</file>
-        <file>icon_set/icons/application_put.png</file>
-        <file>icon_set/icons/brick.png</file>
-        <file>icon_set/icons/brick_go.png</file>
-        <file>icon_set/icons/bricks.png</file>
-        <file>icon_set/icons/bullet_arrow_down.png</file>
-        <file>icon_set/icons/bullet_go.png</file>
-        <file>icon_set/icons/cog_go.png</file>
-        <file>icon_set/icons/link.png</file>
-        <file>icon_set/icons/page_white_put.png</file>
-        <file>icon_set/icons/ruby_blue.png</file>
-        <file>icon_set/icons/shape_flip_vertical.png</file>
-        <file>icon_set/icons/spellcheck.png</file>
-        <file>icon_set/icons/stop.png</file>
-        <file>icon_set/icons/tick.png</file>
-        <file>icon_set/icons/bug.png</file>
-    </qresource>
-    <qresource prefix="/">
-        <file>welcome/index.html</file>
-        <file>welcome/new.png</file>
-        <file>welcome/open.png</file>
-        <file>welcome/settings.png</file>
-        <file>welcome/browser.png</file>
-        <file>welcome/welcome.qml</file>
-        <file>welcome/ImageButton.qml</file>
-    </qresource>
-    <qresource prefix="/sourcefile">
-        <file>icon_set/icons/bullet_red.png</file>
-        <file>icon_set/icons/bullet_yellow.png</file>
-        <file>icon_set/icons/bullet_blue.png</file>
-        <file>icon_set/icons/bullet_black.png</file>
-	<file>icon_set/icons/add.png</file>
-	<file>icon_set/icons/delete.png</file>
-    </qresource>
-	<qresource prefix="/">
-		<file>messages/error_locating.txt</file>
-		<file>messages/error_locating_java.txt</file>
-		<file>messages/simple_error.txt</file>
-		<file>messages/simple_error_with_action.txt</file>
-		<file>messages/script_exception.txt</file>
-		<file>messages/kipr_script_exception.txt</file>
-		<file>messages/about_kiss.txt</file>
-		<file>messages/build_error.txt</file>
-	</qresource>
-	<qresource prefix="/">
-		<file>webtab_fail/index.html</file>
-	</qresource>
-	<qresource prefix="/">
-		<file>icon_set/icons/text-x-generic.png</file>
-		<file>icon_set/icons/empty.png</file>
-	</qresource>
+  <qresource prefix="/shortcuts/edit">
+    <file>logos/mac_icon.icns</file>
+    <file>icon_set/icons/arrow_undo.png</file>
+    <file>icon_set/icons/cut.png</file>
+    <file>icon_set/icons/page_white_copy.png</file>
+    <file>icon_set/icons/page_white_paste.png</file>
+    <file>icon_set/icons/find.png</file>
+  </qresource>
+  <qresource prefix="/debugger">
+    <file>icon_set/icons/control_end.png</file>
+    <file>icon_set/icons/control_pause.png</file>
+    <file>icon_set/icons/control_play.png</file>
+    <file>icon_set/icons/control_stop.png</file>
+  </qresource>
+  <qresource prefix="/browser">
+    <file>icon_set/icons/resultset_next.png</file>
+    <file>icon_set/icons/arrow_left.png</file>
+    <file>icon_set/icons/arrow_refresh.png</file>
+    <file>icon_set/icons/arrow_right.png</file>
+  </qresource>
+  <qresource prefix="/shortcuts/file">
+    <file>icon_set/icons/printer.png</file>
+    <file>icon_set/icons/cross.png</file>
+    <file>icon_set/icons/disk.png</file>
+    <file>icon_set/icons/folder.png</file>
+    <file>icon_set/icons/page_white.png</file>
+  </qresource>
+  <qresource prefix="/shortcuts/target">
+    <file>icon_set/icons/report.png</file>
+    <file>icon_set/icons/application_go.png</file>
+    <file>icon_set/icons/application_put.png</file>
+    <file>icon_set/icons/brick.png</file>
+    <file>icon_set/icons/brick_go.png</file>
+    <file>icon_set/icons/bricks.png</file>
+    <file>icon_set/icons/bullet_arrow_down.png</file>
+    <file>icon_set/icons/bullet_go.png</file>
+    <file>icon_set/icons/cog_go.png</file>
+    <file>icon_set/icons/link.png</file>
+    <file>icon_set/icons/page_white_put.png</file>
+    <file>icon_set/icons/ruby_blue.png</file>
+    <file>icon_set/icons/shape_flip_vertical.png</file>
+    <file>icon_set/icons/spellcheck.png</file>
+    <file>icon_set/icons/stop.png</file>
+    <file>icon_set/icons/tick.png</file>
+    <file>icon_set/icons/bug.png</file>
+  </qresource>
+  <qresource prefix="/">
+    <file>welcome/index.html</file>
+    <file>welcome/new.png</file>
+    <file>welcome/open.png</file>
+    <file>welcome/settings.png</file>
+    <file>welcome/browser.png</file>
+    <file>welcome/welcome.qml</file>
+    <file>welcome/ImageButton.qml</file>
+  </qresource>
+  <qresource prefix="/sourcefile">
+    <file>icon_set/icons/bullet_red.png</file>
+    <file>icon_set/icons/bullet_yellow.png</file>
+    <file>icon_set/icons/bullet_blue.png</file>
+    <file>icon_set/icons/bullet_black.png</file>
+    <file>icon_set/icons/add.png</file>
+    <file>icon_set/icons/delete.png</file>
+  </qresource>
+  <qresource prefix="/">
+    <file>messages/error_locating.txt</file>
+    <file>messages/error_locating_java.txt</file>
+    <file>messages/simple_error.txt</file>
+    <file>messages/simple_error_with_action.txt</file>
+    <file>messages/script_exception.txt</file>
+    <file>messages/kipr_script_exception.txt</file>
+    <file>messages/about_kiss.txt</file>
+    <file>messages/build_error.txt</file>
+  </qresource>
+  <qresource prefix="/">
+    <file>webtab_fail/index.html</file>
+  </qresource>
+  <qresource prefix="/">
+    <file>logos/icon.png</file>
+    <file>icon_set/icons/text-x-generic.png</file>
+    <file>icon_set/icons/page_white_c.png</file>
+    <file>icon_set/icons/page_white_cpp.png</file>
+    <file>icon_set/icons/page_white_h.png</file>
+    <file>icon_set/icons/page_white_java.png</file>
+    <file>icon_set/icons/empty.png</file>
+  </qresource>
 </RCC>

@@ -42,7 +42,10 @@ Target::Target(QObject *parent) : QObject(parent), m_got(false) {}
 // Sets the target file and loads the associated plugin file
 bool Target::setTargetFile(const QString& filename)
 {
-	qWarning() << "Target Path:" << filename;
+	if(filename.isEmpty()) {
+		m_got = 0;
+		return false;
+	}
 	m_targetFileName = filename;
 	m_targetName = TARGET_SETTINGS.value(NAME).toString();
 	m_got = get() != 0;

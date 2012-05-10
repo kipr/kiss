@@ -30,6 +30,7 @@
 
 #include "ScriptUtils.h"
 #include "Kiss.h"
+#include "Log.h"
 
 #include <iostream>
 #include <QScriptEngine>
@@ -59,7 +60,7 @@ QScriptValue KissScript::plugin(const QString& type, const QScriptValue& obj)
 		return true;
 	}
 	if(type == "lexer") {
-		qWarning() << "Lexer plugins are NYI";
+		Log::ref().warning("Lexer plugins are NYI");
 		return false;
 	}
 	if(type == "targets") {
@@ -75,7 +76,7 @@ QScriptValue KissScript::plugin(const QString& type, const QScriptValue& obj)
 
 void KissScript::log(const QString& from, const QString& message)
 {
-	std::cout << "Message from plugin " << from.toStdString() << ": " << message.toStdString() << std::endl;
+	Log::ref().info(QString("Plugin %1: %2").arg(from).arg(message));
 }
 
 void KissScript::log(const QString& message)
@@ -91,6 +92,11 @@ void KissScript::message(const QString& label, const QString& _template, const Q
 void KissScript::error(const QString& _template, const QStringList& args) const
 {
 	MessageDialog::showError(0, _template, args);
+}
+
+bool KissScript::fileExists(const QString& path)
+{
+	return QFileInfo(path).exists();
 }
 
 QStringList KissScript::availableImports() const

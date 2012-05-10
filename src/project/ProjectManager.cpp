@@ -21,6 +21,8 @@
 #include "ProjectManager.h"
 
 #include "Project.h"
+#include "ArchiveWriter.h"
+#include "Temporary.h"
 
 ProjectManager::~ProjectManager()
 {
@@ -33,6 +35,7 @@ ProjectManager::~ProjectManager()
 void ProjectManager::openProject(Project* project)
 {
 	m_projects.append(project);
+	m_writers[project] = new ArchiveWriter(project->archive(), Temporary::subdir(project->name()));
 	emit projectOpened(project);
 	connect(project, SIGNAL(updated()), SLOT(projectUpdated()));
 }
@@ -40,11 +43,20 @@ void ProjectManager::openProject(Project* project)
 void ProjectManager::closeProject(Project* project)
 {
 	m_projects.removeAll(project);
+	delete archiveWriter(project);
+	m_writers.remove(project);
 	emit projectClosed(project);
 	delete project;
 }
 
 const QList<Project*>& ProjectManager::projects() { return m_projects; }
+
+ArchiveWriter* ProjectManager::archiveWriter(Project* project)
+{
+	QMap<Project*, ArchiveWriter*>::const_iterator it = m_writers.find(project);
+	if(it == m_writers.end()) return 0;
+	return *it;
+}
 
 void ProjectManager::projectUpdated()
 {

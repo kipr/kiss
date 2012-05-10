@@ -25,8 +25,10 @@
 
 #include <QObject>
 #include <QList>
+#include <QMap>
 
 class Project;
+class ArchiveWriter;
 
 class ProjectManager : public QObject, public Singleton<ProjectManager>
 {
@@ -38,6 +40,7 @@ public:
 	void closeProject(Project* project);
 	
 	const QList<Project*>& projects();
+	ArchiveWriter* archiveWriter(Project* project);
 	
 signals:
 	void projectOpened(Project* project);
@@ -49,6 +52,7 @@ private slots:
 
 private:
 	QList<Project*> m_projects;
+	QMap<Project*, ArchiveWriter*> m_writers;
 };
 
 #endif

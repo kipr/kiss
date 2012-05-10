@@ -17,12 +17,12 @@ QString ProjectMenu::menuName()
 
 void ProjectMenu::activated()
 {
-	
+	menuManager()->addActivation(this);
 }
 
 void ProjectMenu::deactivated()
 {
-	
+	menuManager()->removeActivation(this);
 }
 
 void ProjectMenu::triggered()

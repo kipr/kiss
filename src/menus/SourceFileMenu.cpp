@@ -33,6 +33,7 @@ SourceFileMenu::SourceFileMenu(MainWindow* mainWindow) : ConcreteMenuable(menuNa
 	
 	m_file.append(node(activeAction(disk, "Save", QKeySequence::Save, this, "save")));
 	m_file.append(node(activeAction(disk, "Save As...", QKeySequence::SaveAs, this, "saveAs")));
+	m_file.append(convertToProject = node(activeAction("cog_go", "Convert to Project", QKeySequence::UnknownKey, this, "convertToProject")));
 	m_file.append(node(activeAction("print", "Print", QKeySequence::Print, this, "print")));
 	m_file.append(MenuNode::separator());
 	
@@ -87,6 +88,7 @@ void SourceFileMenu::update()
 	if(!sourceFile) return;
 	qWarning() << "Called";
 	breakpoint->rawAction->setEnabled(sourceFile->breakpointOnLine(sourceFile->currentLine()));
+	convertToProject->rawAction->setEnabled(!sourceFile->isProjectAssociated());
 }
 
 QString SourceFileMenu::menuName()

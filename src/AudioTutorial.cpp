@@ -25,6 +25,8 @@
 #include <QTextStream>
 #include <QFile>
 
+#include "Log.h"
+
 struct TutorialState
 {
 	TutorialState(const int& type, const QString& data, const QStringList& args)
@@ -132,10 +134,10 @@ void AudioTutorial::load()
 	
 	QFile file(m_path);
 	if(!file.open(QIODevice::ReadOnly)) {
-		qWarning() << "Failed to open" << m_path;
+		Log::ref().error(QString("Failed to open %1").arg(m_path));
 		return;
 	} else {
-		qWarning() << "Audio Tutorial created";
+		Log::ref().info("Audio Tutorial loaded");
 	}
 	QTextStream stream(&file);
 	QString lines = stream.readAll();
@@ -147,7 +149,7 @@ void AudioTutorial::load()
 		qWarning() << "Processing" << line;
 		const QStringList& parts = line.split(" ");
 		if(parts.size() != 2) {
-			qWarning() << "line" << line << "in" << m_path << "is malformed.";
+			Log::ref().warning(QString("Line %1 in %2 is malformed").arg(line).arg(m_path));
 			continue;
 		}
 		TutorialState* state = 0;

@@ -63,7 +63,7 @@ ELSEIF(WIN32)
   ADD_EXECUTABLE(KISS WIN32 ${KISS_SRCS_CXX} rc/logos/kiss.rc)
 ENDIF()
 
-# ADD_LIBRARY(kisside STATIC ${KISS_SRCS_CXX})
+ADD_LIBRARY(kisside STATIC ${KISS_SRCS_CXX})
 
 SET(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
 SET(LIBRARY_OUTPUT_PATH ${KISS_SOURCE_DIR}/lib)
@@ -90,8 +90,7 @@ ENDIF()
 
 LINK_DIRECTORIES(${KISS_SOURCE_DIR}/lib)
 
-# ADD_EXECUTABLE(tinyarchive accessory/tinyarchive.cpp)
-# TARGET_LINK_LIBRARIES(tinyarchive kisside)
-
+ADD_EXECUTABLE(command_chain_test tests/CommandChainTest.cpp)
+TARGET_LINK_LIBRARIES(command_chain_test ${QT_LIBRARIES} kisside)
 
 install(FILES ${INCLUDES} DESTINATION /usr/local/include/kiss/)

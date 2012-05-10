@@ -20,6 +20,12 @@ NewProjectWizard::NewProjectWizard(QWidget* parent) : QDialog(parent)
 	updateSaveLocation();
 }
 
+void NewProjectWizard::setTargetPlatformEnabled(bool enabled)
+{
+	ui_targetPlatformLabel->setVisible(enabled);
+	ui_targetPlatforms->setVisible(enabled);
+}
+
 QString NewProjectWizard::projectName() const
 {
 	return ui_projectName->text();

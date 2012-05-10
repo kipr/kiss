@@ -38,6 +38,9 @@
 #include "ProjectSaveAs.h"
 #include "ProjectManager.h"
 #include "QTinyArchive.h"
+#include "Log.h"
+#include "Compiler.h"
+#include "Compilation.h"
 
 #include "UiEventManager.h"
 #include "ResourceHelper.h"
@@ -102,25 +105,24 @@ SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this,
 
 void SourceFile::activate()
 {
-	mainWindow()->setTitle("m_targetName" + (!target()->port().isEmpty() ? (" - " + target()->port()) : ""));
+	mainWindow()->setTitle(target()->name() + (!target()->port().isEmpty() ? (" - " + target()->port()) : ""));
 	mainWindow()->showErrors(this);
 	mainWindow()->setStatusMessage("");
 	
 	QList<Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus() << SourceFileMenu::menuName() << TargetMenu::menuName());
 	foreach(Menuable* menu, menus) {
-		qWarning() << "Deactivating" << menu->name();
+		Log::ref().debug(QString("Deactivating %1").arg(menu->name()));
 		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
 		if(activatable) activatable->setActive(0);
 	}
 	
 	mainWindow()->activateMenuable(SourceFileMenu::menuName(), this);
-	mainWindow()->activateMenuable(TargetMenu::menuName(), this);
-	mainWindow()->showProjectDock();
+	mainWindow()->activateMenuable(TargetMenu::menuName(), this); 
 }
 
 bool SourceFile::beginSetup() {
 	setParentUnit(isProjectAssociated() ? associatedProject() : 0);
-	return changeTarget(true, isNewFile()) && !target()->error();
+	return changeTarget(isNewFile()) && !target()->error();
 }
 
 void SourceFile::completeSetup()
@@ -166,10 +168,10 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 	setAssociatedFile(filePath);
 	
 	if(isProjectAssociated()) {
-		qWarning() << "Saving" << filePath << "as project";
+		Log::ref().info(QString("Saving %1 with project association").arg(filePath));
 		QTinyArchive* archive = associatedProject()->archive();
 		if(!archive->put(filePath, ui_editor->text().toLatin1())) {
-			qWarning() << "Put failed";
+			Log::ref().error(QString("Failed to put %1").arg(filePath));
 			return false;
 		}
 		associatedProject()->sync();
@@ -552,8 +554,18 @@ void SourceFile::compile()
 	if(!save()) return;
 	
 	mainWindow()->hideErrors();
-	mainWindow()->setStatusMessage(target()->compile(associatedFile()) ? tr("Compile Succeeded") : tr("Compile Failed"));
-
+	
+	if(isProjectAssociated()) ProjectManager::ref().archiveWriter(associatedProject())->write(ArchiveWriter::Delta);
+	
+	Compilation* compilation = (isProjectAssociated()
+		? new Compilation(CompilerManager::ref().compilers(), associatedProject())
+		: new Compilation(CompilerManager::ref().compilers(), associatedFile()));
+	bool success = compilation->start();
+	qDebug() << "Results:" << compilation->compileResults();
+	delete compilation;
+	
+	mainWindow()->setStatusMessage(success ? tr("Compile Succeeded") : tr("Compile Failed"));
+	
 	updateErrors();
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_COMPILE);
@@ -647,13 +659,22 @@ void SourceFile::print()
 	if(printDialog.exec()) printer.printRange(ui_editor);
 }
 
+void SourceFile::convertToProject()
+{
+	Project* project = mainWindow()->newProject(false);
+	if(!project) return;
+	const TinyNode* node = project->addFile(associatedFile());
+	setAssociatedProject(project);
+	sourceModified(true);
+	setAssociatedFile(QTinyNode::path(node));
+}
+
 void SourceFile::choosePort()
 {
 	ChoosePortDialog pDialog(this);
 	const QString& portName = pDialog.getSelectedPortName();
 	if(pDialog.exec()) target()->setPort(portName);
 	UiEventManager::ref().sendEvent(UI_EVENT_CHANGE_PORT);
-	if(isProjectAssociated()) associatedProject()->setAssociatedPort(portName);
 }
 
 void SourceFile::screenGrab()
@@ -802,17 +823,23 @@ void SourceFile::updateErrors()
 	markProblems(errors, warnings);
 }
 
-bool SourceFile::changeTarget(bool skipIfValid, bool _template)
+bool SourceFile::forceChangeTarget(bool _template)
 {
-	qWarning() << "Using target" << target() << "with unit" << workingUnitPath();
+	target()->setTargetFile(""); // Invalidate target
+	return changeTarget(_template);
+}
+
+bool SourceFile::changeTarget(bool _template)
+{
+	Log::ref().info(QString("Using target %1 with unit %2").arg(target()->name()).arg(workingUnitPath()));
 	
 	QString targetPath;
 	QString templateFile;
 	TemplateDialog tDialog(this);
 	
-	bool askForTarget = !skipIfValid || !target()->isValid();
+	qDebug() << "Target valid??" << target()->isValid();
 	
-	if(askForTarget) {
+	if(!target()->isValid()) {
 		if((_template ? tDialog.exec() : tDialog.execTarget()) == QDialog::Rejected) return false;
 		targetPath = TargetManager::ref().targetFilePath(tDialog.selectedTargetName());
 	
@@ -822,26 +849,27 @@ bool SourceFile::changeTarget(bool skipIfValid, bool _template)
 				tr("Target plugin was probably installed incorrectly"));
 			return false;
 		}
-		
+		qDebug() << "Setting target file" << targetPath;
 		target()->setTargetFile(targetPath);
 		if(target()->error()) return false;
+		
+		if(isProjectAssociated()) associatedProject()->setTargetName(tDialog.selectedTargetName());
 	} else {
 		if(_template && tDialog.execTemplate() == QDialog::Rejected) return false;
 	}
 	
+	qDebug() << "Target and template figured out";
+	
 	if(_template) UiEventManager::ref().sendEvent(UI_EVENT_TEMPLATE_SELECTED);
 	
 	templateFile = tDialog.templateFile();
-	if(isProjectAssociated()) associatedProject()->setTargetName(tDialog.selectedTargetName());
 	
-	checkPort();
+	if(!isProjectAssociated()) checkPort();
 	
 	Lexer::Constructor* constructor = 0;
 
-	qWarning() << "Template... " << _template;
 	if(!_template && !isNewFile()) constructor = Lexer::Factory::ref().constructor(associatedFileSuffix());
 	else {
-		qWarning() << "Template?" << _template;
 		if(_template) {
 			QFile tFile(templateFile);
 			if(!tFile.open(QIODevice::ReadOnly)) {
@@ -856,17 +884,17 @@ bool SourceFile::changeTarget(bool skipIfValid, bool _template)
 		
 			if(templateReader.hasLexerName()) {
 				QString lex = templateReader.lexerName();
-				qWarning() << "Template Lexer specified" << lex;
+				Log::ref().debug(QString("Template Lexer specified: %1").arg(lex));
 				constructor = Lexer::Factory::ref().constructor(lex);
 				m_templateExt = lex;
 			}
 			ui_editor->setText(templateReader.content());
-			qWarning() << "Updated template text.";
+			Log::ref().info("Done setting up template");
 		}
 	}
 	
 	if(!constructor) {
-		qWarning() << "Falling back on default lexer constructor";
+		Log::ref().debug("Falling back on default lexer constructor");
 		constructor = Lexer::Factory::ref().constructor(target()->defaultExtension());
 	}
 	
@@ -874,6 +902,8 @@ bool SourceFile::changeTarget(bool skipIfValid, bool _template)
 	
 	if(constructor) setLexer(constructor);
 	refreshSettings();
+	
+	qDebug() << "changeTarget complete";
 	
 	return true;
 }

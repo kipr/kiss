@@ -35,6 +35,8 @@ class QTinyArchive : public TinyArchive
 public:
 	const QStringList files() const;
 	
+	static const QStringList files(const TinyArchive* archive);
+	
 	const bool add(const QString& path, uint32_t id = 0);
 	const bool add(const QString& path, const QByteArray& data, uint32_t id = 0);
 	const bool update(const QString& path, const QByteArray& data, uint32_t id = 0);

@@ -5,6 +5,7 @@
 
 #include "ResourceHelper.h"
 #include "QTinyArchive.h"
+#include "Log.h"
 
 #include <QFileInfo>
 #include <QDebug>
@@ -36,6 +37,14 @@ struct ProjectItem : QStandardItem, Projectable
 		setData(QVariant::fromValue(project), PROJECT_ROLE);
 		setEditable(false);
 	}
+	
+	template<typename T>
+	static ProjectItem* cast(T* type)
+	{
+		if(!type) return 0;
+		ProjectItem* p = dynamic_cast<ProjectItem*>(type);
+		return p;
+	}
 };
 
 struct FileItem : QStandardItem, Projectable
@@ -43,9 +52,19 @@ struct FileItem : QStandardItem, Projectable
 	FileItem(const TinyNode* node, Project* project)
 		: QStandardItem(QTinyNode::name(node)), Projectable(project), m_node(node)
 	{
-		setData(ResourceHelper::ref().icon("page_white.png"), Qt::DecorationRole);
+		QIcon icon = ResourceHelper::ref().icon(QString("page_white_") + QFileInfo(text()).completeSuffix() + ".png");
+		if(icon.isNull()) icon = ResourceHelper::ref().icon("page_white.png");
+		setData(icon, Qt::DecorationRole);
 		setData(QVariant::fromValue(project), PROJECT_ROLE);
 		setEditable(false);
+	}
+	
+	template<typename T>
+	static FileItem* cast(T* type)
+	{
+		if(!type) return 0;
+		FileItem* p = dynamic_cast<FileItem*>(type);
+		return p;
 	}
 	
 	const TinyNode* node() { return m_node; }
@@ -112,7 +131,7 @@ void ProjectsModel::addDirectory(const TinyNode* node, QStandardItem* parent, Pr
 		FileItem* item = new FileItem(child, project);
 		m_nodeLookup[child] = item;
 		
-		qWarning() << "Added a child at" << i;
+		Log::ref().debug(QString("Added child at %1").arg(i));
 		parent->setChild(i++, item);
 
 		addDirectory(child, item, project);
@@ -174,7 +193,7 @@ void ProjectsModel::projectOpened(Project* project)
 
 void ProjectsModel::projectChanged(Project* project)
 {
-	qWarning() << "Project changed";
+	Log::ref().debug(QString("Project %1 changed").arg(project->name()));
 	reloadProject(project, lookupRoot(project));
 }
 
@@ -215,17 +234,17 @@ QStandardItem* ProjectsModel::lookupRoot(Project* project)
 
 void ProjectsModel::nodeAdded(const TinyNode* node)
 {
-	qWarning() << "Node added";
+	Log::ref().debug(QString("Node %1 Added").arg(QTinyNode::name(node)));
 	if(node->id() > 0) return; // Special ID, ignore
 	
 	if(!node->parent()) {
-		qWarning() << "TinyNode doesn't have parent???";
+		Log::ref().error("Node does not have a parent");
 		return;
 	}
 	
 	QMap<const TinyNode*, QStandardItem*>::iterator it = m_nodeLookup.find(node->parent());
 	if(it == m_nodeLookup.end()) {
-		qWarning() << "Failed to lookup" << QTinyNode::name(node->parent());
+		Log::ref().error(QString("Failed to lookup %1").arg(QTinyNode::name(node->parent())));
 		return;
 	}
 	
@@ -233,21 +252,40 @@ void ProjectsModel::nodeAdded(const TinyNode* node)
 	
 	Project* project = Projectable::project_cast(item);
 	if(!project) {
-		qWarning() << "Unable to determine project";
+		Log::ref().error("Unable to determine project");
 		return;
 	}
 	
 	FileItem* childItem = new FileItem(node, project);
+	qDebug() << "Appending" << childItem->text() << "to" << item->text();
 	item->appendRow(childItem);
+	qDebug() << "Item children" << item->rowCount();
 	m_nodeLookup[node] = childItem;
 }
 
 void ProjectsModel::nodeRemoved(const TinyNode* node)
 {
+	Log::ref().debug(QString("Node %1 Removed").arg(QTinyNode::name(node)));
+	if(node->id() > 0) return; // Special ID, ignore
 	
+	QMap<const TinyNode*, QStandardItem*>::iterator it = m_nodeLookup.find(node);
+	if(it == m_nodeLookup.end()) {
+		qCritical() << "Failed to lookup" << QTinyNode::name(node);
+		return;
+	}
+	
+	FileItem* item = FileItem::cast(*it);
+	if(!item) {
+		qCritical() << "Cannot remove non-file item";
+		return;
+	}
+
+	item->parent()->removeRow(item->row());
+	
+	m_nodeLookup.erase(it);
 }
 
 void ProjectsModel::nodeUpdated(const TinyNode* node)
 {
-	qWarning() << "Node updated" << QTinyNode::name(node);
+	Log::ref().debug(QString("Node %1 Updated").arg(QTinyNode::name(node)));
 }

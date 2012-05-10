@@ -23,6 +23,8 @@
 #ifdef BUILD_DEVELOPER_TOOLS
 
 #include "KissArchive.h"
+#include "ArchiveWriter.h"
+#include "ProjectManager.h"
 #include <QFileDialog>
 
 #include "DeclarativeTab.h"
@@ -31,6 +33,8 @@ DeveloperMenu::DeveloperMenu(MainWindow* mainWindow) : ConcreteMenuable(menuName
 {
 	MenuNode* developer = new MenuNode("Developer");
 	developer->children.append(node(injectScript = action("Inject Script")));
+	developer->children.append(node(writeFullProject = action("Write Full Project")));
+	developer->children.append(node(writeDeltaProject = action("Write Delta Project")));
 #ifdef BUILD_DECLARATIVE_TAB
 	developer->children.append(node(declTab = action("Create Declarative Tab")));
 #endif
@@ -53,6 +57,16 @@ void DeveloperMenu::triggered()
 			qWarning() << path;
 			m_mainWindow->scriptEnvironment()->execute(path);
 		}
+	} else if(_ == writeFullProject) {
+		Project* project = m_mainWindow->activeProject();
+		ArchiveWriter* writer = ProjectManager::ref().archiveWriter(project);
+		if(!writer) return;
+		writer->write(ArchiveWriter::Full);
+	} else if(_ == writeDeltaProject) {
+		Project* project = m_mainWindow->activeProject();
+		ArchiveWriter* writer = ProjectManager::ref().archiveWriter(project);
+		if(!writer) return;
+		writer->write(ArchiveWriter::Delta);
 	}
 #ifdef BUILD_DECLARATIVE_TAB
 	else if(_ == declTab) {
