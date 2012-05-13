@@ -114,6 +114,7 @@ DeclarativeTab::~DeclarativeTab()
 void DeclarativeTab::activate()
 {
 	QList<Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
+	mainWindow()->showErrors(0);
 	foreach(Menuable* menu, menus) {
 		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
 		if(activatable) activatable->setActive(0);

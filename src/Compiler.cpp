@@ -26,8 +26,8 @@
 #include <QScriptEngine>
 #include <QDebug>
 
-CompileResult::CompileResult(bool success, const QMap<QString, QStringList>& categorizedOutput)
-	: m_success(success), m_categorizedOutput(categorizedOutput)
+CompileResult::CompileResult(bool success, const QMap<QString, QStringList>& categorizedOutput, const QString& raw)
+	: m_success(success), m_categorizedOutput(categorizedOutput), m_raw(raw)
 {
 	
 }
@@ -42,6 +42,11 @@ const bool CompileResult::success() const
 	return m_success;
 }
 
+const QString& CompileResult::raw() const
+{
+	return m_raw;
+}
+
 const QStringList CompileResult::output(const QString& category) const
 {
 	return m_categorizedOutput.value(category);
@@ -50,6 +55,11 @@ const QStringList CompileResult::output(const QString& category) const
 const QMap<QString, QStringList>& CompileResult::categorizedOutput() const
 {
 	return m_categorizedOutput;
+}
+
+void CompileResult::clear()
+{
+	m_categorizedOutput.clear();
 }
 
 void CompileResult::addCompileResult(const CompileResult& rhs)
@@ -66,6 +76,7 @@ void CompileResult::addCompileResult(const CompileResult& rhs)
 		m_categorizedOutput[category] = res;
 	}
 	m_success &= rhs.success();
+	m_raw += rhs.raw();
 }
 
 CompileResult& CompileResult::operator+=(const CompileResult& rhs)

@@ -3,11 +3,16 @@
 #include <QListWidget>
 #include <QDebug>
 
-ErrorWidget::ErrorWidget(QWidget* parent = 0) : QWidget(parent), m_unit(0) { setupUi(this); }
+ErrorWidget::ErrorWidget(QWidget* parent) : QWidget(parent), m_unit(0)
+{
+	setupUi(this);
+	setCategorized();
+}
 
-void ErrorWidget::setCompileResults(WorkingUnit* unit, const CompileResults& results)
+void ErrorWidget::setCompileResult(const WorkingUnit* unit, const CompileResult& results)
 {
 	m_unit = unit;
+	if(m_current == m_unit) show();
 	
 	while(ui_tabs->count()) {
 		QWidget* widget = ui_tabs->widget(0);
@@ -16,20 +21,31 @@ void ErrorWidget::setCompileResults(WorkingUnit* unit, const CompileResults& res
 	}
 	
 	const QMap<QString, QStringList>& categories = results.categorizedOutput();
+	int largest = -1;
+	int largestSize = 0;
 	foreach(const QString& key, categories.keys()) {
 		QListWidget* listWidget = new QListWidget(this);
-		foreach(const QString& line, categories.value(key)) {
-			listWidget->addItem(line);
+		const QStringList& items = categories.value(key);
+		foreach(const QString& line, items) listWidget->addItem(line);
+		const int i = ui_tabs->addTab(listWidget, key);
+		if(items.size() > largestSize && largestSize >= 0) largest = i;
+		if(key == DEFAULT_ERROR_KEY) {
+			largest = i;
+			largestSize = -1;
 		}
-		ui_tabs->addTab(listWidget, key);
 	}
 	
-	ui_raw->setText("...");
+	if(largest >= 0) ui_tabs->setCurrentIndex(largest);
+	
+	ui_raw->setText(results.raw());
+	
+	if(!ui_tabs->count()) hide();
 }
 
-void ErrorWidget::workingUnitChanged(WorkingUnit* unit)
+void ErrorWidget::workingUnitChanged(const WorkingUnit* current)
 {
-	if(unit == m_unit) show();
+	m_current = current;
+	setVisible(m_current == m_unit && ui_tabs->count());
 }
 
 void ErrorWidget::on_ui_viewMode_currentIndexChanged(int index)

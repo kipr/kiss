@@ -32,6 +32,7 @@
 
 #include "MenuManager.h"
 #include "ScriptEnvironment.h"
+#include "Compiler.h"
 
 #include "ProjectsModel.h"
 
@@ -44,19 +45,6 @@
 
 class QListWidgetItem;
 class SourceFile;
-
-struct Messages
-{
-	Messages() {}
-	
-	Messages(QStringList errors, QStringList warnings, QStringList linker, QStringList verbose)
-		: errors(errors), warnings(warnings), linker(linker), verbose(verbose) {}
-	
-	QStringList errors;
-	QStringList warnings;
-	QStringList linker;
-	QStringList verbose;
-};
 
 /*! \class MainWindow
  * \brief Holds tabs to display
@@ -110,11 +98,8 @@ public:
 	void setStatusMessage(const QString& message, int time = 0);
 	
 	/*! Shows given errors in Error View */
-	void setErrors(TabbedWidget* tab, 
-		const QStringList& errors, const QStringList& warnings, 
-		const QStringList& linker, const QStringList& verbose);
-		
-	void showErrors(TabbedWidget* tab);
+	void setErrors(const WorkingUnit* unit, const CompileResult& results);
+	void showErrors(const WorkingUnit* unit);
 
 	void hideErrors();
 	
@@ -174,6 +159,7 @@ public:
 	bool canGoNext();
 	
 	Project* activeProject() const;
+	ProjectsModel* projectsModel();
 	
 	friend class MainWindowMenu;
 	
@@ -189,8 +175,6 @@ public slots:
 	bool closeFile(const QString& file);
 	bool closeNode(const TinyNode* node);
 	void about();
-	void errorViewShowVerbose();
-	void errorViewShowSimple();
 	void settings();
 	void managePackages();
 	void installLocalPackage();
@@ -222,11 +206,8 @@ private slots:
 	
 private:
 	TabbedWidget* m_currentTab;
-	TabbedWidget* m_errorTab;
 	EditorSettingsDialog m_editorSettingsDialog;
-	QMap<TabbedWidget*, Messages> m_messages;
 	QMap<QWidget*, TabbedWidget*> m_lookup;
-	QListWidget m_errorList, m_warningList, m_linkErrorList, m_verboseList;
 	MenuManager m_menuManager;
 	QList<Menuable*> m_menuables;
 	ScriptEnvironment m_scriptEnvironment;

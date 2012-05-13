@@ -147,8 +147,6 @@ bool CommandChain::execute()
 		}
 	}
 	if(drainExecuting()) return false;
-	m_chainSession->out()->seek(0);
-	m_chainSession->err()->seek(0);
 	return true;
 }
 

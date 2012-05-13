@@ -67,6 +67,8 @@
 #include <QUrl>
 #include <Qsci/qscilexercpp.h>
 
+#include <memory>
+
 #define SAVE_PATH "savepath"
 #define DEFAULT_EXTENSION "default_extension"
 
@@ -106,7 +108,7 @@ SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this,
 void SourceFile::activate()
 {
 	mainWindow()->setTitle(target()->name() + (!target()->port().isEmpty() ? (" - " + target()->port()) : ""));
-	mainWindow()->showErrors(this);
+	mainWindow()->showErrors(topLevelUnit());
 	mainWindow()->setStatusMessage("");
 	
 	QList<Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus() << SourceFileMenu::menuName() << TargetMenu::menuName());
@@ -516,12 +518,18 @@ bool SourceFile::saveAsFile()
 bool SourceFile::saveAsProject()
 {
 	ProjectSaveAs saveAsProject(mainWindow());
-	saveAsProject.setProjectManager(&ProjectManager::ref());
 	saveAsProject.setDefaultProject(associatedProject());
 	if(saveAsProject.exec() == QDialog::Rejected) return false;
 	qWarning() << "Saving to" << QTinyNode::path(saveAsProject.parent()) << saveAsProject.fileName();
 	setAssociatedProject(saveAsProject.activeProject());
 	const QString& path = QPathUtils::appendComponent(QTinyNode::path(saveAsProject.parent()), saveAsProject.fileName());
+	if(associatedProject()->archive()->exists(path)) {
+		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
+			tr("Overwrite ") + path + "?",
+			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+			
+		if(ret == QMessageBox::No) return false;
+	}
 	qWarning() << "Which is" << path;
 	return fileSaveAs(path);
 }
@@ -557,12 +565,12 @@ void SourceFile::compile()
 	
 	if(isProjectAssociated()) ProjectManager::ref().archiveWriter(associatedProject())->write(ArchiveWriter::Delta);
 	
-	Compilation* compilation = (isProjectAssociated()
+	std::auto_ptr<Compilation> compilation(isProjectAssociated()
 		? new Compilation(CompilerManager::ref().compilers(), associatedProject())
 		: new Compilation(CompilerManager::ref().compilers(), associatedFile()));
 	bool success = compilation->start();
 	qDebug() << "Results:" << compilation->compileResults();
-	delete compilation;
+	mainWindow()->setErrors(topLevelUnit(), compilation->results());
 	
 	mainWindow()->setStatusMessage(success ? tr("Compile Succeeded") : tr("Compile Failed"));
 	
@@ -812,15 +820,15 @@ void SourceFile::markProblems(const QStringList& errors, const QStringList& warn
 
 void SourceFile::updateErrors() 
 {
-	clearProblems();
+	//clearProblems();
 	
-	const QStringList& errors = target()->errorMessages();
-	const QStringList& warnings = target()->warningMessages();
+	//const QStringList& errors = target()->errorMessages();
+	//const QStringList& warnings = target()->warningMessages();
 	
-	mainWindow()->setErrors(this, errors, warnings, target()->linkerMessages(), target()->verboseMessages());
-	mainWindow()->showErrors(this);
+	//mainWindow()->setErrors(this, errors, warnings, target()->linkerMessages(), target()->verboseMessages());
+	//mainWindow()->showErrors(this);
 	
-	markProblems(errors, warnings);
+	//markProblems(errors, warnings);
 }
 
 bool SourceFile::forceChangeTarget(bool _template)

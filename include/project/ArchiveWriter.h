@@ -17,7 +17,7 @@ public:
 	const QDir& root() const;
 	const TinyArchive* archive() const;
 	
-	const bool write(const int& mode);
+	const bool write(const int& mode = Delta);
 	
 	enum Mode {
 		Delta,

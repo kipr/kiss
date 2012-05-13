@@ -45,8 +45,13 @@ bool Documentation::beginSetup()
 			item->setData(Qt::UserRole, manuals[manual]);
 			item->setSizeHint(QSize(100, 65));
 			QFile descrip(QFileInfo(manuals[manual]).path() + "/description.txt");
+			QFile decor(QFileInfo(manuals[manual]).path() + "/decoration.html");
 			descrip.open(QIODevice::ReadOnly);
-			list->setItemWidget(item, new TitleDescriptionWidget(manual, QTextStream(&descrip).readAll(), list));
+			decor.open(QIODevice::ReadOnly);
+			list->setItemWidget(item, new TitleDescriptionWidget(manual,
+				QTextStream(&descrip).readAll(),
+				QTextStream(&decor).readAll(),
+				list));
 		}
 	}
 	list->setIconSize(QSize(50, 50));

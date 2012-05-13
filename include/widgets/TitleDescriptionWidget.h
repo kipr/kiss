@@ -10,6 +10,7 @@ Q_OBJECT
 public:
 	TitleDescriptionWidget(QWidget* parent);
 	TitleDescriptionWidget(const QString& title, const QString& description, QWidget* parent);
+	TitleDescriptionWidget(const QString& title, const QString& description, const QString& decoration, QWidget* parent);
 };
 
 #endif

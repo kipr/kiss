@@ -18,6 +18,8 @@ public:
 	void setParentUnit(WorkingUnit* parent);
 	WorkingUnit* parentUnit() const;
 	
+	const WorkingUnit* topLevelUnit() const;
+	
 	QString workingUnitPath() const;
 
 private:

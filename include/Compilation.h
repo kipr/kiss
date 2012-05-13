@@ -2,13 +2,12 @@
 #define _COMPILATION_H_
 
 #include "Project.h"
+#include "Compiler.h"
 
 #include <QString>
 #include <QStringList>
 #include <QMap>
 #include <QSet>
-
-class Compiler;
 
 class Compilation
 {
@@ -19,6 +18,8 @@ public:
 	
 	void addFile(const QString& file, bool remove = false);
 	void addFiles(const QStringList& files, bool remove = false);
+	
+	const CompileResult& results();
 	
 	void addCompileResult(const QString& file);
 	const QStringList& compileResults() const;
@@ -39,6 +40,7 @@ private:
 	QSet<QString> m_files;
 	QStringList m_compileResults;
 	QStringList m_removes;
+	CompileResult m_results;
 };
 
 #endif

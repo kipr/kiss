@@ -14,23 +14,15 @@ ProjectSaveAs::ProjectSaveAs(MainWindow* mainWindow)
 	
 	ui_buttons->button(QDialogButtonBox::Save)->setEnabled(false);
 	
-	ui_projects->setModel(&m_model);
+	ui_projects->setModel(m_mainWindow->projectsModel());
 	connect(ui_projects, SIGNAL(pressed(const QModelIndex&)), SLOT(selectionChanged(const QModelIndex&)));
-	
-	ProjectManager::ref().projects();
 	
 	on_ui_filename_textChanged("");
 }
 
-void ProjectSaveAs::setProjectManager(ProjectManager* projectManager)
-{
-	m_model.setProjectManager(projectManager);
-	ui_projects->expandAll();
-}
-
 void ProjectSaveAs::setDefaultProject(Project* project)
 {
-	ui_projects->selectionModel()->select(m_model.rootIndexForProject(project), QItemSelectionModel::Select);
+	ui_projects->selectionModel()->select(m_mainWindow->projectsModel()->rootIndexForProject(project), QItemSelectionModel::Select);
 	setActiveProject(project);
 }
 
@@ -62,8 +54,9 @@ void ProjectSaveAs::on_ui_filename_textChanged(const QString& text)
 	invalidText |= c;
 	
 	ui_error->setText("");
+	
 	if(invalidText) ui_error->setText(tr("Invalid file name"));
-	if(!text.contains('.')) {
+	if(!invalidText && !text.contains('.')) {
 		ui_error->setText(tr("File does not have an extension"));
 		invalid |= true;
 	}
@@ -75,10 +68,11 @@ void ProjectSaveAs::on_ui_filename_textChanged(const QString& text)
 
 void ProjectSaveAs::selectionChanged(const QModelIndex& index)
 {
-	setActiveProject(m_model.indexToProject(index));
-	int type = m_model.indexType(index);
-	if(type == ProjectsModel::ProjectType) {
-		
+	setActiveProject(m_mainWindow->projectsModel()->indexToProject(index));
+	int type = m_mainWindow->projectsModel()->indexType(index);
+	const TinyNode* node = m_mainWindow->projectsModel()->indexToNode(index);
+	if(type == ProjectsModel::FileType) {
+		ui_filename->setText(QTinyNode::name(node));
 	}
 }
 

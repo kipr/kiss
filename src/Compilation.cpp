@@ -9,20 +9,20 @@
 #include <QFileInfo>
 
 Compilation::Compilation(const QList<Compiler*>& compilers, const QMap<QString, QString>& settings)
-	: m_compilers(compilers), m_settings(settings), m_name("")
+	: m_compilers(compilers), m_settings(settings), m_name(""), m_results(true)
 {
 	
 }
 
 Compilation::Compilation(const QList<Compiler*>& compilers, Project* project)
-	: m_compilers(compilers), m_settings(project->settings())
+	: m_compilers(compilers), m_settings(project->settings()), m_results(true)
 {
 	m_name = project->name();
 	addFiles(ProjectManager::ref().archiveWriter(project)->files());
 }
 
 Compilation::Compilation(const QList<Compiler*>& compilers, const QString& file)
-	: m_compilers(compilers)
+	: m_compilers(compilers), m_results(true)
 {
 	m_name = QFileInfo(file).baseName();
 	addFile(file);
@@ -41,6 +41,11 @@ void Compilation::addFile(const QString& file, bool remove)
 void Compilation::addFiles(const QStringList& files, bool remove)
 {
 	foreach(const QString& file, files) addFile(file, remove);
+}
+
+const CompileResult& Compilation::results()
+{
+	return m_results;
 }
 
 void Compilation::addCompileResult(const QString& file)
@@ -89,9 +94,10 @@ const bool Compilation::compile(const QStringList& files, Compiler* compiler)
 		qWarning() << "Compilation does not know how to compile" << files;
 		return true;
 	}
-	qDebug() << "Compiling " << files << "with" << compiler->name();
+	qDebug() << "Compiling" << files << "with" << compiler->name();
 	CompileResult result = compiler->compile(this, files);
 	qDebug() << result.categorizedOutput();
+	m_results += result;
 	return result.success();
 }
 

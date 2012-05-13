@@ -29,11 +29,15 @@ CompileResult TestCompilerO::compile(Compilation* compilation, const QStringList
 	chain.add(createGccSegment(QStringList() << "-o" << executable << files));
 	qDebug() << "Creating executable" << executable;
 	bool success = chain.execute();
+	QIODevice* out = chain.chainSession()->out();
+	QIODevice* err = chain.chainSession()->err();
+	out->seek(0);
+	err->seek(0);
 	if(!success) {
 		qWarning() << "Chain execution failed";
-		
 	} else compilation->addCompileResult(outputDirectory().path() + "/" + executable);
-	return CompileResult(success) + GccOutput::processLinkerOutput(chain.chainSession()->err());
+	
+	return CompileResult(success) + GccOutput::processLinkerOutput(err);
 }
 
 QProcessSegment* TestCompilerO::createGccSegment(const QStringList& args)

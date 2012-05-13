@@ -32,12 +32,15 @@
 class CompileResult
 {
 public:
-	CompileResult(bool success, const QMap<QString, QStringList>& categorizedOutput);
+	CompileResult(bool success, const QMap<QString, QStringList>& categorizedOutput, const QString& raw = QString());
 	CompileResult(bool success);
 	
 	const bool success() const;
+	const QString& raw() const;
 	const QStringList output(const QString& category) const;
 	const QMap<QString, QStringList>& categorizedOutput() const;
+	
+	void clear();
 	
 	void addCompileResult(const CompileResult& rhs);
 	CompileResult& operator+=(const CompileResult& rhs);
@@ -45,6 +48,7 @@ public:
 private:
 	bool m_success;
 	QMap<QString, QStringList> m_categorizedOutput;
+	QString m_raw;
 };
 
 class Compilation;

@@ -13,7 +13,6 @@ Q_OBJECT
 public:
 	ProjectSaveAs(MainWindow* mainWindow);
 	
-	void setProjectManager(ProjectManager* project);
 	void setDefaultProject(Project* project);
 	
 	Project* activeProject() const;
@@ -31,7 +30,6 @@ private:
 	void updateActiveLabel();
 	
 	MainWindow* m_mainWindow;
-	ProjectsModel m_model;
 	
 	Project* m_active;
 	const TinyNode* m_parent;

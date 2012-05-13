@@ -29,10 +29,14 @@ CompileResult TestCompilerC::compile(Compilation* compilation, const QStringList
 		compilation->addFile(outputDirectory().path() + "/" + output);
 	}
 	bool success = chain.execute();
+	QIODevice* out = chain.chainSession()->out();
+	QIODevice* err = chain.chainSession()->err();
+	out->seek(0);
+	err->seek(0);
 	if(!success) {
 		qWarning() << "Chain execution failed";
 	} else qWarning() << "Chain execution succeeded";
-	return CompileResult(success) + GccOutput::processCompilerOutput(chain.chainSession()->err());
+	return CompileResult(success) + GccOutput::processCompilerOutput(err);
 }
 
 QProcessSegment* TestCompilerC::createGccSegment(const QStringList& args)

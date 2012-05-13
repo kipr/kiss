@@ -32,7 +32,7 @@
 #define INSTALLED_DIRS_STRING "/dirs"
 #define INSTALLED_FILES_STRING "/files"
 
-const static char kissMagic[2] = {0xB3, 0x7A};
+const static unsigned char kissMagic[2] = {0xB3, 0x7A};
 const static unsigned kissVersion = KISS_ARCHIVE_VERSION;
 
 /**
@@ -64,7 +64,7 @@ KissReturn KissArchive::create(const QString& name, unsigned pVersion, const QSt
 	}
 	
 	unsigned size = (unsigned)noBlanks.size();
-	out->write(kissMagic, 2);
+	out->write((const char*)kissMagic, 2);
 	
 	unsigned numPlatforms = platforms.size();
 	out->write((char*)&numPlatforms, sizeof(unsigned));

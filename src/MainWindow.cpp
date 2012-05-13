@@ -64,7 +64,7 @@
 
 #define OPEN_PATH "openpath"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_errorTab(0), m_scriptEnvironment(this)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_scriptEnvironment(this)
 {
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	
@@ -81,11 +81,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), 
 	deleteTab(0);
 
 	hideErrors();
-	
-	connect(&m_errorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(errorClicked(QListWidgetItem*)));
-	connect(&m_warningList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(errorClicked(QListWidgetItem*)));
-	connect(&m_linkErrorList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(errorClicked(QListWidgetItem*)));
-	connect(&m_verboseList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), SLOT(errorClicked(QListWidgetItem*)));
 	
 	//connect(ui_projects, SIGNAL(clicked(const QModelIndex&)), SLOT(projectFileClicked(const QModelIndex&)));
 	connect(ui_projects, SIGNAL(doubleClicked(const QModelIndex&)), SLOT(projectClicked(const QModelIndex&)));
@@ -292,33 +287,17 @@ void MainWindow::setTabName(QWidget* widget, const QString& string) { ui_tabWidg
 void MainWindow::setTabIcon(QWidget* widget, const QIcon& icon) { ui_tabWidget->setTabIcon(ui_tabWidget->indexOf(widget), icon); }
 void MainWindow::setStatusMessage(const QString& message, int time) { ui_statusbar->showMessage(message, time); }
 
-void MainWindow::setErrors(TabbedWidget* tab, 
-	const QStringList& errors, const QStringList& warnings, 
-	const QStringList& linker, const QStringList& verbose)
+void MainWindow::setErrors(const WorkingUnit* unit, const CompileResult& results)
 {
-	m_messages.insert(tab, Messages(errors, warnings, linker, verbose));
+	ui_errors->setCompileResult(unit, results);
 }
 
-void MainWindow::showErrors(TabbedWidget* tab) {
-	m_errorTab = tab;
-	
-	ui_errorView->hide();
-	ui_errorView->clear();
-
-	m_errorList.clear();
-	m_warningList.clear();
-	m_linkErrorList.clear();
-	m_verboseList.clear();
-	
-	m_errorList.addItems(m_messages[tab].errors);
-	m_warningList.addItems(m_messages[tab].warnings);
-	m_linkErrorList.addItems(m_messages[tab].linker);
-	m_verboseList.addItems(m_messages[tab].verbose);
-	
-	errorViewShowSimple();
+void MainWindow::showErrors(const WorkingUnit* unit)
+{
+	ui_errors->workingUnitChanged(unit);
 }
 
-void MainWindow::hideErrors() { ui_errorView->hide(); }
+void MainWindow::hideErrors() { ui_errors->hide(); }
 
 /* Handles closing all of the open editor windows when the window is closed */
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -353,12 +332,7 @@ void MainWindow::deleteTab(int index)
 	QWidget* w = ui_tabWidget->widget(index);
 	TabbedWidget* tab = 0;
 	tab = lookup(w);
-	if(m_errorTab == tab) {
-		ui_errorView->hide();
-		m_errorTab = 0;
-	}
 	qWarning() << tab;
-	m_messages.remove(tab);
 	ui_tabWidget->removeTab(index);
 	removeLookup(w);
 	delete w;
@@ -400,30 +374,6 @@ void MainWindow::closeAllOthers(TabbedWidget* tab)
 }
 
 void MainWindow::refreshMenus() { /* initMenus(dynamic_cast<Tab*>(ui_tabWidget->currentWidget())); */ }
-
-void MainWindow::showErrorMessages(bool verbose)
-{
-	ui_errorView->clear();
-	ui_errorView->hide();
-
-	if(m_errorList.count() > 0) {
-		ui_errorView->addTab(&m_errorList, tr("Errors"));
-		ui_errorView->show();
-	}
-	if(m_warningList.count() > 0) {
-		ui_errorView->addTab(&m_warningList, tr("Warnings"));
-		ui_errorView->show();
-	}
-	if(m_linkErrorList.count() > 0) {
-		ui_errorView->addTab(&m_linkErrorList, tr("Linker Output"));
-		ui_errorView->show();
-	}
-	if( (verbose || ui_errorView->count() == 0) && m_verboseList.count() > 0) {
-		ui_errorView->clear();
-		ui_errorView->addTab(&m_verboseList, tr("Verbose Output"));
-		ui_errorView->show();
-	}
-}
 
 void MainWindow::open()
 {
@@ -467,7 +417,7 @@ void MainWindow::closeTab(bool force)
 	if(!lookup(ui_tabWidget->currentWidget())->close() && !force) return;
 	
 	deleteTab(ui_tabWidget->currentIndex());
-	ui_errorView->hide();
+	ui_errors->hide();
 	
 	emit updateActivatable();
 	
@@ -482,7 +432,7 @@ void MainWindow::closeProjectTabs(Project* project)
 		if(all.contains(lookup(ui_tabWidget->widget(i)))) ++i;
 		deleteTab(i);
 	}
-	ui_errorView->hide();
+	ui_errors->hide();
 }
 
 bool MainWindow::closeFile(const QString& file)
@@ -514,25 +464,6 @@ void MainWindow::about()
 		<< QString::number(KISS_C_VERSION_MAJOR)
 		<< QString::number(KISS_C_VERSION_MINOR)
 		<< QString::number(KISS_C_VERSION_BUILD));
-}
-
-
-void MainWindow::errorViewShowVerbose()
-{
-	ui_errorView->setCornerWidget(new QPushButton(tr("Simple")));
-	ui_errorView->cornerWidget()->show();
-	connect(ui_errorView->cornerWidget(), SIGNAL(clicked()), this, SLOT(errorViewShowSimple()));
-
-	showErrorMessages(true);
-}
-
-void MainWindow::errorViewShowSimple()
-{
-	ui_errorView->setCornerWidget(new QPushButton(tr("Verbose")));
-	ui_errorView->cornerWidget()->show();
-	connect(ui_errorView->cornerWidget(), SIGNAL(clicked()), this, SLOT(errorViewShowVerbose()));
-
-	showErrorMessages(false);
 }
 
 void MainWindow::settings() { if(m_editorSettingsDialog.exec()) emit settingsUpdated(); }
@@ -657,8 +588,9 @@ void MainWindow::openRecent()
 
 void MainWindow::errorClicked(QListWidgetItem* item)
 {
-	if(!m_errorTab) return;
-	int i = ui_tabWidget->indexOf(m_errorTab->widget());
+#if 0
+	if(!m_errors) return;
+	// int i = ui_tabWidget->indexOf(m_errors->widget());
 	QWidget* widget = ui_tabWidget->widget(i);
 	
 	int line = item->text().section(":", 1, 1).toInt();
@@ -670,6 +602,7 @@ void MainWindow::errorClicked(QListWidgetItem* item)
 	ui_tabWidget->setCurrentIndex(i);
 	
 	widget->setFocus(Qt::OtherFocusReason); // For some reason this isn't working?
+#endif
 }
 
 void MainWindow::addLookup(TabbedWidget* tab)
@@ -695,7 +628,7 @@ void MainWindow::showContextMenuForError(const QPoint &pos) { Q_UNUSED(pos); }
 void MainWindow::projectClicked(const QModelIndex& index)
 {
 	Project* project = m_projectsModel.indexToProject(index);
-	qD`ebug() << "Type" << m_projectsModel.indexType(index);
+	qDebug() << "Type" << m_projectsModel.indexType(index);
 	if(m_projectsModel.indexType(index) == ProjectsModel::ProjectType) {
 		for(int i = 0; i < ui_tabWidget->count(); ++i) {
 			ProjectSettingsTab* tab = dynamic_cast<ProjectSettingsTab*>(ui_tabWidget->widget(i));
@@ -865,4 +798,9 @@ Project* MainWindow::activeProject() const
 	if(m_currentTab && m_currentTab->isProjectAssociated()) return m_currentTab->associatedProject();
 	const QModelIndexList& list = ui_projects->selectionModel()->selectedRows();
 	return list.size() > 0 ? m_projectsModel.indexToProject(list[0]) : 0;
+}
+
+ProjectsModel* MainWindow::projectsModel()
+{
+	return &m_projectsModel;
 }

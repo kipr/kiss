@@ -1,11 +1,12 @@
 #include "GccOutput.h"
 
+#include "ErrorWidget.h"
+
 #include <QIODevice>
 
 #define ERROR_KEY "error"
 #define LINKER_KEY "linker"
 #define WARNING_KEY "warning"
-#define VERBOSE_KEY "verbose"
 
 CompileResult GccOutput::processCompilerOutput(QIODevice* in)
 {
@@ -52,11 +53,10 @@ CompileResult GccOutput::processCompilerOutput(QIODevice* in)
 	else if(!foundWarning) warningMessages.clear();
 	
 	QMap<QString, QStringList> ret;
-	ret[ERROR_KEY] = errorMessages;
-	ret[WARNING_KEY] = warningMessages;
-	ret[VERBOSE_KEY] = verboseMessages;
+	if(foundError) ret[DEFAULT_ERROR_KEY] = errorMessages;
+	if(foundWarning) ret[DEFAULT_WARNING_KEY] = warningMessages;
 	
-	return CompileResult(true, ret);
+	return CompileResult(true, ret, verboseMessages.join("\n"));
 }
 
 CompileResult GccOutput::processLinkerOutput(QIODevice* in)
@@ -71,9 +71,8 @@ CompileResult GccOutput::processLinkerOutput(QIODevice* in)
 	}
 	
 	QMap<QString, QStringList> ret;
-	ret[LINKER_KEY] = linkerMessages;
-	ret[VERBOSE_KEY] = verboseMessages;
+	if(linkerMessages.size()) ret[DEFAULT_LINKER_KEY] = linkerMessages;
 	
-	return CompileResult(true, ret);
+	return CompileResult(true, ret, verboseMessages.join("\n"));
 }
 

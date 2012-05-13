@@ -37,6 +37,13 @@ WorkingUnit* WorkingUnit::parentUnit() const
 	return m_parentUnit;
 }
 
+const WorkingUnit* WorkingUnit::topLevelUnit() const
+{
+	const WorkingUnit* unit = this;
+	while(unit->parentUnit()) unit = unit->parentUnit();
+	return unit;
+}
+
 QString WorkingUnit::workingUnitPath() const
 {
 	return m_name + " -> " + (m_parentUnit ? m_parentUnit->workingUnitPath() : QString("nil"));
