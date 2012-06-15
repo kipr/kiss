@@ -32,7 +32,7 @@ class AudioTutorial;
 #include "UiEventManager.h"
 
 #include <QList>
-#include <Phonon>
+#include <phonon>
 
 struct TutorialState;
 
