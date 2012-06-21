@@ -29,6 +29,13 @@
 
 using namespace Lexer;
 
+Constructor::Constructor(const QString& name) : Named(name)
+{
+	
+}
+
+Constructor::~Constructor() {}
+
 Factory::Factory()
 {
 	registerLexerConstructor(new ConstructorJava(), QStringList() << "java");
@@ -94,4 +101,21 @@ void Factory::setFont(const QFont& font)
 QFont Factory::font() const
 {
 	return m_font;
+}
+
+const QStringList Factory::extensions() const
+{
+	QStringList exts(m_constructors.keys());
+	exts.removeDuplicates();
+	return exts;
+}
+
+const QStringList Factory::formattedExtensions() const
+{
+	QStringList ret;
+	const QStringList& exts = extensions();
+	QMap<QString, QStringList> types;
+	foreach(const QString& ext, exts) types[constructor(ext)->name()] << "*." + ext;
+	foreach(const QString& type, types.keys()) ret << type + " (" + types[type].join(" ") + ")";
+	return ret;
 }

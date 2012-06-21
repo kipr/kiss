@@ -30,23 +30,25 @@
 class TemplateManager : public Singleton<TemplateManager>
 {
 public:
-	QStringList templateFolders(const QString& target, const QString& _template);
-	QStringList templates(const QString& target, const QString& _template);
-	QIcon templateIcon(const QString& target, const QString& _template);
+	QStringList types() const;
 	
-	QStringList userTemplates(const QString& target);
-	bool addUserTemplate(const QString& target, const QString& name, const QString& content);
-	bool deleteUserTemplate(const QString& target, const QString& name);
+	QStringList templateFolders(const QString& type, const QString& _template);
+	QStringList templates(const QString& type, const QString& _template);
+	QIcon templateIcon(const QString& type, const QString& _template);
 	
-	QString pathForUserTemplate(const QString& target, const QString& _template);
-	QString pathForTemplate(const QString& target, const QString& _template);
+	QStringList userTemplates(const QString& type);
+	bool addUserTemplate(const QString& type, const QString& name, const QString& content);
+	bool deleteUserTemplate(const QString& type, const QString& name);
 	
-	bool isTemplateDirectory(const QString& target, const QString& _template);
+	QString pathForUserTemplate(const QString& type, const QString& _template);
+	QString pathForTemplate(const QString& type, const QString& _template);
+	
+	bool isTemplateDirectory(const QString& type, const QString& _template);
 	bool isTemplateDirectory(const QString& path);
 	
 	static const QString& defaultTemplateName();
 private:
-	void ensureUserTemplateDirExists(const QString& target);
+	void ensureUserTemplateDirExists(const QString& type);
 	
 	static QString m_defaultName;
 };

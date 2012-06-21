@@ -75,6 +75,9 @@
   <qresource prefix="/">
     <file>webtab_fail/index.html</file>
   </qresource>
+<qresource prefix="/">
+    <file>devices/default_device.png</file>
+  </qresource>
   <qresource prefix="/">
     <file>logos/icon.png</file>
     <file>icon_set/icons/text-x-generic.png</file>

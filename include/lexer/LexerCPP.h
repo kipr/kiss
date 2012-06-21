@@ -36,14 +36,18 @@ namespace Lexer
 		QColor defaultColor(int style) const;
 		QFont font(int style) const;
 		QFont defaultFont(int style) const;
+		
+		virtual const bool cStyleBlocks() const;
 	};
 	
 	struct ConstructorCPP : Constructor
 	{
-		LexerBase* construct() const { return Factory::ref().newLexerFromConstructor(this); }
-		LexerBase* construct(const QString& apis) const { return construct(); }
+		ConstructorCPP();
 		
-		LexerBase* _new() const { return new CPP(this); }
+		LexerBase* construct() const;
+		LexerBase* construct(const QString& apis) const;
+		
+		LexerBase* _new() const;
 	};
 }
 

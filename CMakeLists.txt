@@ -22,6 +22,8 @@ INCLUDE_DIRECTORIES(
 	${INCLUDE}/menus
 	${INCLUDE}/js
 	${INCLUDE}/project
+	${INCLUDE}/compiler
+	${INCLUDE}/interface
 )
 
 SET(QT_USE_QTDECLARATIVE TRUE)
@@ -32,8 +34,16 @@ SET(QT_USE_PHONON TRUE)
 
 INCLUDE(${QT_USE_FILE})
 
-FILE(GLOB INCLUDES ${INCLUDE}/*.h ${INCLUDE}/lexer/* ${INCLUDE}/dialogs/* ${INCLUDE}/widgets/* ${INCLUDE}/menus/* ${INCLUDE}/js/* ${INCLUDE}/project/*)
-FILE(GLOB SOURCES ${SRC}/* ${SRC}/lexer/* ${SRC}/dialogs/* ${SRC}/widgets/* ${SRC}/menus/* ${SRC}/js/* ${SRC}/project/*)
+FILE(GLOB INCLUDES ${INCLUDE}/*.h
+	${INCLUDE}/lexer/*
+	${INCLUDE}/dialogs/*
+	${INCLUDE}/widgets/*
+	${INCLUDE}/menus/* 
+	${INCLUDE}/js/*
+	${INCLUDE}/project/*
+	${INCLUDE}/compiler/*
+	${INCLUDE}/interface/*)
+FILE(GLOB SOURCES ${SRC}/* ${SRC}/lexer/* ${SRC}/dialogs/* ${SRC}/widgets/* ${SRC}/menus/* ${SRC}/js/* ${SRC}/project/* ${SRC}/compiler/* ${SRC}/interface/*)
 FILE(GLOB UIS ${UI}/*)
 
 SET(KISS_SRCS_CXX ${SOURCES})
@@ -84,13 +94,17 @@ IF(APPLE)
 		COMMAND ${CMAKE_COMMAND} -E copy ${RC}/logos/mac_icon.icns ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Resources
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS Info.plist MacDeployQt)
+		
+	SET(OSX_INSTALL_NAMES_SCRIPT "${KISS_SOURCE_DIR}/scripts/osx_install_names.sh")
 ENDIF()
 
 # Accessory Programs
 
 LINK_DIRECTORIES(${KISS_SOURCE_DIR}/lib)
 
-ADD_EXECUTABLE(command_chain_test tests/CommandChainTest.cpp)
-TARGET_LINK_LIBRARIES(command_chain_test ${QT_LIBRARIES} kisside)
+# ADD_EXECUTABLE(command_chain_test tests/CommandChainTest.cpp)
+# TARGET_LINK_LIBRARIES(command_chain_test ${QT_LIBRARIES} kisside)
 
 install(FILES ${INCLUDES} DESTINATION /usr/local/include/kiss/)
+
+add_subdirectory(plugins)

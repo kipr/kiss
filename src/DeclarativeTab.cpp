@@ -28,7 +28,6 @@
 #include <QtDeclarative>
 
 #include "DeveloperMenu.h"
-#include "TargetManager.h"
 #include "WebTab.h"
 
 DeclarativeTools::DeclarativeTools(MainWindow* mainWindow) : m_mainWindow(mainWindow)
@@ -58,11 +57,6 @@ void DeclarativeTools::openWeb(const QString& url)
 void DeclarativeTools::settings()
 {
 	m_mainWindow->settings();
-}
-
-const QStringList DeclarativeTools::targets()
-{
-	return TargetManager::ref().targets();
 }
 
 const QStringList DeclarativeTools::templates(const QString& target)

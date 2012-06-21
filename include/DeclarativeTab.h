@@ -47,7 +47,6 @@ public slots:
 	void openWeb(const QString& url);
 	void settings();
 	
-	const QStringList targets();
 	const QStringList templates(const QString& target);
 	
 	void tellActivated();

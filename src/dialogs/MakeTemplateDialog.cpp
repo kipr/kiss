@@ -23,7 +23,9 @@
 MakeTemplateDialog::MakeTemplateDialog(QWidget* parent) : QDialog(parent) { setupUi(this); }
 
 void MakeTemplateDialog::setName(const QString& name) { ui_name->setText(name); }
+void MakeTemplateDialog::setTypes(const QStringList& types) { ui_types->addItems(types); }
 void MakeTemplateDialog::setExtension(const QString& extension) { ui_extension->setText(extension); }
 
 QString MakeTemplateDialog::name() { return ui_name->text(); }
+QString MakeTemplateDialog::type() { return ui_types->currentText(); }
 QString MakeTemplateDialog::extension() { return ui_extension->text(); }

@@ -18,8 +18,8 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef __SINGLETON_H__
-#define __SINGLETON_H__
+#ifndef _SINGLETON_H_
+#define _SINGLETON_H_
 
 /*! \class Singleton
  * \brief Implements a simple Singleton Pattern

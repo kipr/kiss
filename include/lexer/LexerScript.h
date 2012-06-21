@@ -10,10 +10,13 @@ namespace Lexer
 {
 	class Script : public LexerBase, public QsciLexerBase
 	{
+		virtual const bool cStyleBlocks() const { return false; }
 	};
 	
 	struct ConstructorScript : Constructor
 	{
+		ConstructorScript() : Constructor("???") {}
+		
 		LexerBase* construct() const { return Factory::ref().newLexerFromConstructor(this); }
 		LexerBase* construct(const QString& apis) const { return construct(); }
 		

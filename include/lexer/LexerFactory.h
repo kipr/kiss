@@ -28,15 +28,20 @@
 #include <Qsci/qscilexercpp.h>
 #include <Qsci/qsciapis.h>
 
+#include "Named.h"
+
 #include <QDebug>
 
 namespace Lexer
 {
 	struct LexerBase;
 	
-	struct Constructor
+	class Constructor : public Named
 	{
-		virtual ~Constructor() {}
+	public:
+		Constructor(const QString& name);
+		virtual ~Constructor();
+		
 		virtual LexerBase* construct() const = 0;
 		virtual LexerBase* construct(const QString& apis) const = 0;
 		
@@ -50,6 +55,8 @@ namespace Lexer
 		
 		void setAPIFile(const QString& apis) { if(m_apis.load(apis)) m_apis.prepare(); }
 		QsciLexer* lexer() const { return m_lexer; }
+		
+		virtual const bool cStyleBlocks() const = 0;
 	private:
 		QsciLexer* m_lexer;
 		const Constructor* m_constructor;
@@ -73,6 +80,9 @@ namespace Lexer
 	
 		void setFont(const QFont& font);
 		QFont font() const;
+		
+		const QStringList extensions() const;
+		const QStringList formattedExtensions() const;
 	private:
 		QFont m_font;
 		QMap<QString, Constructor*> m_constructors;

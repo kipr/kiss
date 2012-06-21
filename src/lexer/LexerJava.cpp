@@ -22,6 +22,11 @@
 
 using namespace Lexer;
 
+ConstructorJava::ConstructorJava() : Constructor("Java Files") {}
+LexerBase* ConstructorJava::construct() const { return Factory::ref().newLexerFromConstructor(this); }
+LexerBase* ConstructorJava::construct(const QString& apis) const { return construct(); }
+LexerBase* ConstructorJava::_new() const { return new Java(this); }
+
 Java::Java(const Constructor* constructor) : CPP(constructor) {}
 
 const char *Java::keywords(int set) const

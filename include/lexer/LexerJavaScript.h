@@ -32,14 +32,18 @@ namespace Lexer
 	{
 	public:
 		JavaScript(const Constructor* constructor);
+		
+		virtual const bool cStyleBlocks() const;
 	};
 	
 	struct ConstructorJavaScript : Constructor
 	{
-		LexerBase* construct() const { return Factory::ref().newLexerFromConstructor(this); }
-		LexerBase* construct(const QString& apis) const { return construct(); }
+		ConstructorJavaScript();
 		
-		LexerBase* _new() const { return new JavaScript(this); }
+		LexerBase* construct() const;
+		LexerBase* construct(const QString& apis) const;
+		
+		LexerBase* _new() const;
 	};
 }
 

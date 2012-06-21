@@ -22,18 +22,14 @@
 
 #ifdef BUILD_DOCUMENTATION_TAB
 
-#include "TargetMenu.h"
+#include "DeviceMenu.h"
 #include "MainWindow.h"
 #include "Documentation.h"
 
 DocumentationMenu::DocumentationMenu(MainWindow* mainWindow) : ConcreteMenuable(menuName()), m_mainWindow(mainWindow)
 {
-	MenuNode* targetMenu = new MenuNode("Target");
+	MenuNode* deviceMenu = new MenuNode("Target");
 	MenuNode* doc = node(action("report", "Documentation"));
-	targetMenu->children.append(MenuNode::separator());
-	targetMenu->children.append(doc);
-	m_actions.append(targetMenu);
-	
 	m_help.append(doc);
 	m_help.append(MenuNode::separator());
 }

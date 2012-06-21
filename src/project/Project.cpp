@@ -21,7 +21,6 @@
 #include "Project.h"
 
 #include "QTinyArchive.h"
-#include "TargetManager.h"
 #include "Log.h"
 
 #include <QFileInfo>
@@ -161,9 +160,9 @@ QStringMap Project::settings() const
 	return ret;
 }
 
-void Project::setTargetName(const QString& target)
+void Project::setDevice(const QString& device)
 {
-	updateSetting(TARGET_KEY, target);
+	updateSetting(DEVICE_KEY, device);
 }
 
 Project* Project::load(const QString& path)
@@ -192,11 +191,5 @@ Project* Project::create(const QString& path)
 
 void Project::processSettings(const QStringMap& settings)
 {
-	foreach(const QString& key, settings.keys()) {
-		if(key == TARGET_KEY) {
-			const QString& path = TargetManager::ref().targetFilePath(settings[key]);
-			Log::ref().debug(QString("Set target to %1").arg(path));
-			target()->setTargetFile(path);
-		}
-	}
+
 }

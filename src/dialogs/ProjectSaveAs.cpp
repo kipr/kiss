@@ -4,7 +4,6 @@
 #include "Project.h"
 
 #include "ProjectManager.h"
-#include "TargetManager.h"
 
 ProjectSaveAs::ProjectSaveAs(MainWindow* mainWindow)
 	: QDialog(mainWindow), m_mainWindow(mainWindow),

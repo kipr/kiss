@@ -37,8 +37,8 @@ void SourceLocalFailed::performAction(const QString filePath)
 {
 	m_filePath = filePath;
 	
-	if(m_state == Always && m_sourceFile->target()->hasDownload()) m_sourceFile->target()->download(m_filePath);
-	else show();
+	// if(m_state == Always && m_sourceFile->target()->hasDownload()) m_sourceFile->target()->download(m_filePath);
+	// else show();
 }
 
 void SourceLocalFailed::setState(int state)
@@ -62,7 +62,7 @@ void SourceLocalFailed::on_ui_yes_clicked()
 	hide();
 	m_sourceFile->mainWindow()->setStatusMessage("Downloading Anyway...");
 	QApplication::flush();
-	m_sourceFile->mainWindow()->setStatusMessage(m_sourceFile->target()->download(m_filePath) ? tr("Download Succeeded") : tr("Download Failed"));
+	// m_sourceFile->mainWindow()->setStatusMessage(m_sourceFile->device()->download(m_filePath) ? tr("Download Succeeded") : tr("Download Failed"));
 }
 
 void SourceLocalFailed::on_ui_no_clicked() { hide(); }

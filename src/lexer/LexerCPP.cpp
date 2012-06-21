@@ -26,6 +26,11 @@
 
 using namespace Lexer;
 
+ConstructorCPP::ConstructorCPP() : Constructor("C++ Files") {}
+LexerBase* ConstructorCPP::construct() const { return Factory::ref().newLexerFromConstructor(this); }
+LexerBase* ConstructorCPP::construct(const QString& apis) const { return construct(); }
+LexerBase* ConstructorCPP::_new() const { return new CPP(this); }
+
 CPP::CPP(const Constructor* constructor) : LexerBase(this, constructor)
 {
 }
@@ -144,3 +149,5 @@ QFont CPP::defaultFont(int style) const
 
 	return f;
 }
+
+const bool CPP::cStyleBlocks() const { return true; }

@@ -25,6 +25,7 @@
 #include <QIODevice>
 #include <QObject>
 #include <QMap>
+ #include <QMetaType>
 
 #include "WorkingUnit.h"
 
@@ -34,7 +35,7 @@ class TinyArchiveWriter;
 
 #include "ArchiveWriter.h"
 
-#define TARGET_KEY "TARGET"
+#define DEVICE_KEY "DEVICE"
 #define SETTINGS_ID 1
 
 typedef QMap<QString, QString> QStringMap;
@@ -68,7 +69,7 @@ public:
 	const bool removeSetting(const QString& key);
 	void setSettings(const QStringMap& settings);
 	QStringMap settings() const;
-	void setTargetName(const QString& target);
+	void setDevice(const QString& device);
 	
 	const bool sync();
 	

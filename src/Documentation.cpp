@@ -3,11 +3,10 @@
 #ifdef BUILD_DOCUMENTATION_TAB
 
 #include "MainWindow.h"
-#include "TargetManager.h"
-#include "Target.h"
 #include "ResourceHelper.h"
 #include "TitleDescriptionWidget.h"
 #include "WebTab.h"
+#include "DocumentationManager.h"
 
 #include <QListWidget>
 #include <QPushButton>
@@ -36,23 +35,18 @@ bool Documentation::beginSetup()
 {
 	QListWidget* list = qobject_cast<QListWidget*>(widget());
 	const QString providedBy("Provided by ");
-	foreach(const QString& targetPath, TargetManager::ref().targetFiles()) {
-		const QMap<QString, QString>& manuals = Target::targetManualPaths(targetPath);
-		foreach(const QString& manual, manuals.keys()) {
-			if(!QFileInfo(manuals[manual]).exists()) continue;
-			QListWidgetItem* item = new QListWidgetItem(list);
-			item->setIcon(ResourceHelper::ref().icon("text-x-generic"));
-			item->setData(Qt::UserRole, manuals[manual]);
-			item->setSizeHint(QSize(100, 65));
-			QFile descrip(QFileInfo(manuals[manual]).path() + "/description.txt");
-			QFile decor(QFileInfo(manuals[manual]).path() + "/decoration.html");
-			descrip.open(QIODevice::ReadOnly);
-			decor.open(QIODevice::ReadOnly);
-			list->setItemWidget(item, new TitleDescriptionWidget(manual,
-				QTextStream(&descrip).readAll(),
-				QTextStream(&decor).readAll(),
-				list));
-		}
+	foreach(const DocumentationLocation& location, DocumentationManager::ref().locations()) {
+		QListWidgetItem* item = new QListWidgetItem(list);
+		item->setIcon(ResourceHelper::ref().icon("text-x-generic"));
+		item->setData(Qt::UserRole, location.location());
+		item->setSizeHint(QSize(100, 65));
+		list->setItemWidget(item,
+			new TitleDescriptionWidget(
+				location.name(),
+				location.description(),
+				location.decoration(),
+				list)
+			);
 	}
 	list->setIconSize(QSize(50, 50));
 	connect(list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(itemDoubleClicked(QListWidgetItem*)));

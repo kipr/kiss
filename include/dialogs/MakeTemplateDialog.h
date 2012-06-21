@@ -22,6 +22,8 @@
 #define _MAKETEMPLATEDIALOG_H_
 
 #include <QDialog>
+#include <QString>
+#include <QStringList>
 #include "ui_MakeTemplateDialog.h"
 
 class MakeTemplateDialog : public QDialog, public Ui::MakeTemplateDialog
@@ -31,9 +33,11 @@ public:
 	MakeTemplateDialog(QWidget* parent);
 	
 	void setName(const QString& name);
+	void setTypes(const QStringList& name);
 	void setExtension(const QString& extension);
 	
 	QString name();
+	QString type();
 	QString extension();	
 };
 

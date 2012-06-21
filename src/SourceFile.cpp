@@ -22,7 +22,6 @@
 
 #include "MainWindow.h"
 #include "WebTab.h"
-#include "TargetManager.h"
 #include "Singleton.h"
 #include "RequestFileDialog.h"
 #include "MessageDialog.h"
@@ -32,7 +31,7 @@
 #include "TemplateFormat.h"
 #include "MakeTemplateDialog.h"
 #include "SourceFileMenu.h"
-#include "TargetMenu.h"
+#include "DeviceMenu.h"
 #include "MainWindowMenu.h"
 #include "Project.h"
 #include "ProjectSaveAs.h"
@@ -40,7 +39,10 @@
 #include "QTinyArchive.h"
 #include "Log.h"
 #include "Compiler.h"
+#include "CompilerManager.h"
 #include "Compilation.h"
+#include "DeviceDialog.h"
+#include "InterfaceManager.h"
 
 #include "UiEventManager.h"
 #include "ResourceHelper.h"
@@ -107,11 +109,11 @@ SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this,
 
 void SourceFile::activate()
 {
-	mainWindow()->setTitle(target()->name() + (!target()->port().isEmpty() ? (" - " + target()->port()) : ""));
+	mainWindow()->setTitle(device()->displayName());
 	mainWindow()->showErrors(topLevelUnit());
 	mainWindow()->setStatusMessage("");
 	
-	QList<Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus() << SourceFileMenu::menuName() << TargetMenu::menuName());
+	QList<Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus() << SourceFileMenu::menuName() << DeviceMenu::menuName());
 	foreach(Menuable* menu, menus) {
 		Log::ref().debug(QString("Deactivating %1").arg(menu->name()));
 		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
@@ -119,12 +121,15 @@ void SourceFile::activate()
 	}
 	
 	mainWindow()->activateMenuable(SourceFileMenu::menuName(), this);
-	mainWindow()->activateMenuable(TargetMenu::menuName(), this); 
+	mainWindow()->activateMenuable(DeviceMenu::menuName(), this); 
 }
 
 bool SourceFile::beginSetup() {
 	setParentUnit(isProjectAssociated() ? associatedProject() : 0);
-	return changeTarget(isNewFile()) && !target()->error();
+	if(isNewFile()) { if(!selectTemplate()) return false; }
+	else setLexer(Lexer::Factory::ref().constructor(associatedFileSuffix()));
+	if(!device().get()) changeDevice();
+	return device().get();
 }
 
 void SourceFile::completeSetup()
@@ -148,7 +153,7 @@ bool SourceFile::close()
 	}
 	
 	mainWindow()->activateMenuable(SourceFileMenu::menuName(), 0);
-	mainWindow()->activateMenuable(TargetMenu::menuName(), 0);
+	mainWindow()->activateMenuable(DeviceMenu::menuName(), 0);
 	
 	return true;
 }
@@ -192,7 +197,7 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 	
 	// Update the lexer to the new spec for that extension
 	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(associatedFileSuffix());
-	if(Lexer::Factory::isLexerFromConstructor((Lexer::LexerBase*)ui_editor->lexer(), constructor))
+	if(!Lexer::Factory::isLexerFromConstructor((Lexer::LexerBase*)ui_editor->lexer(), constructor))
 		setLexer(constructor);
 	
 	return true;
@@ -254,7 +259,7 @@ bool SourceFile::openProjectFile(Project* project, const TinyNode* node)
 void SourceFile::indentAll()
 {
 	if(!ui_editor->lexer()) return;
-	if(!target()->cStyleBlocks()) return;
+	if(!dynamic_cast<Lexer::LexerBase*>(ui_editor->lexer())->cStyleBlocks()) return;
 	
 	setUpdatesEnabled(false);
 
@@ -422,7 +427,7 @@ void SourceFile::refreshSettings()
 	updateMargins();
 	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
 	
-	TargetMenu::ref().refresh();
+	DeviceMenu::ref().refresh();
 }
 
 bool SourceFile::isNewFile() 	{ return m_isNewFile; }
@@ -474,19 +479,12 @@ bool SourceFile::saveAsFile()
 {
 	QSettings settings;
 	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
-	QStringList exts = target()->sourceExtensions();
+	QStringList exts = Lexer::Factory::ref().formattedExtensions();
 	
-	QRegExp reg("*." + target()->defaultExtension() + "*");
+	QRegExp reg("*." + m_templateExt + "*");
 	reg.setPatternSyntax(QRegExp::Wildcard);
 	int i = exts.indexOf(reg);
 	if(i != -1) exts.swap(0, i);
-	
-	if(!m_templateExt.isEmpty()) {
-		QRegExp reg("*." + m_templateExt + "*");
-		reg.setPatternSyntax(QRegExp::Wildcard);
-		int i = exts.indexOf(reg);
-		if(i != -1) exts.swap(0, i);
-	}
 	
 	QString filePath = QFileDialog::getSaveFileName(mainWindow(), "Save File", savePath, 
 		exts.join(";;") + (exts.size() < 1 ? "" : ";;") + "All Files (*)");
@@ -494,7 +492,7 @@ bool SourceFile::saveAsFile()
 
 	QFileInfo fileInfo(filePath);
 	
-	QString ext = target()->defaultExtension();
+	QString ext = m_templateExt;
 	if(!ext.isEmpty() && fileInfo.suffix().isEmpty()) fileInfo.setFile(filePath.section(".", 0, 0) + "." + ext);
 	
 	settings.setValue(SAVE_PATH, fileInfo.absolutePath());
@@ -537,35 +535,58 @@ bool SourceFile::saveAsProject()
 void SourceFile::sourceModified(bool) { mainWindow()->setTabName(this, "* " + associatedFileName()
 	+ (isProjectAssociated() ? (QString(" (") + associatedProject()->name() + ")") : QString())); }
 
-void SourceFile::download()
-{	
-	if(!save()) return;
-	if(!checkPort()) return;
+const bool SourceFile::download()
+{
+	if(!device().get()) if(!changeDevice()) return false;
+	CompilationPtr compilation = compile();
+	if(!compilation.get() || !compilation->results().success()) return false;
 	
-	ui_localCompileFailed->hide();
-	
-	mainWindow()->setStatusMessage("Downloading...");
+	const int type = device()->downloadType();
+	mainWindow()->setStatusMessage(tr("Downloading ") + (type == Device::Source ? "Source" : "Binary") + "...");
 	QApplication::flush();
-	int message = target()->download(associatedFile());
-	mainWindow()->setStatusMessage(!message ? tr("Download Succeeded") : tr("Download Failed"));
-	if(message == TargetInterface::CompileFailed) ui_localCompileFailed->performAction(associatedFile());
 	
-	updateErrors();
+	const bool assoc = type == Device::Source && isProjectAssociated();
+	QTinyArchive* archive = 0;
+	if(type == Device::Source) {
+		if(assoc) archive = associatedProject()->archive();
+		else {
+			archive = new QTinyArchive();
+			archive->add(associatedFileName(), ui_editor->text().toUtf8());
+		}
+	} else {
+		const QStringList& results = compilation->compileResults();
+		if(results.size()) {
+			archive = new QTinyArchive();
+			foreach(const QString& result, results) {
+				QFile data(result);
+				data.open(QIODevice::ReadOnly);
+				archive->add(QFileInfo(result).fileName(), data.readAll());
+				data.close();
+			}
+			archive->add("run", QFileInfo(results[0]).fileName().toUtf8());
+		}
+	}
 	
+	const bool message = archive ? device()->download(isProjectAssociated() ? associatedProject()->name() : associatedFileName(), archive) : false;
+	if(!assoc && archive) delete archive;
+	
+	mainWindow()->setStatusMessage(message ? tr("Download Succeeded") : tr("Download Failed"));
 	UiEventManager::ref().sendEvent(UI_EVENT_DOWNLOAD);
+	
+	return true;
 }
 
-void SourceFile::compile()
+CompilationPtr SourceFile::compile()
 {
 	ui_localCompileFailed->hide();
 	
-	if(!save()) return;
+	if(!save()) return CompilationPtr();
 	
 	mainWindow()->hideErrors();
 	
 	if(isProjectAssociated()) ProjectManager::ref().archiveWriter(associatedProject())->write(ArchiveWriter::Delta);
 	
-	std::auto_ptr<Compilation> compilation(isProjectAssociated()
+	CompilationPtr compilation(isProjectAssociated()
 		? new Compilation(CompilerManager::ref().compilers(), associatedProject())
 		: new Compilation(CompilerManager::ref().compilers(), associatedFile()));
 	bool success = compilation->start();
@@ -577,43 +598,24 @@ void SourceFile::compile()
 	updateErrors();
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_COMPILE);
+	
+	return compilation;
 }
 
-void SourceFile::run()
-{	
-	if(!save()) return;
-	if(!checkPort()) return;
-	
-	ui_localCompileFailed->hide();
-	
-	mainWindow()->hideErrors();
-	bool success = false;
-	mainWindow()->setStatusMessage((success = target()->run(associatedFile())) ? tr("Run Succeeded") : tr("Run Failed"));
-	
-	/* if(m_runTab) {
-		int i = mainWindow()->tabWidget()->indexOf(m_runTab);
-		if(i >= 0) mainWindow()->deleteTab(i);
-	}
-	
-	TabbedWidget* ui = success ? m_target.ui() : 0;
-	m_runTab = !ui ? 0 : dynamic_cast<QWidget*>(ui);
-	if(ui) {
-		mainWindow()->addTab(ui);
-		const QString& port = m_target.port();
-		mainWindow()->setTabName(dynamic_cast<QWidget*>(ui), QString("Running") + (port.isEmpty() ? "" : (" on " + port)));
-	}
-	*/
-	
-	updateErrors();
-	
+const bool SourceFile::run()
+{
+	if(!download()) return false;
+	const bool success = device()->run(isProjectAssociated() ? associatedProject()->name() : associatedFileName());
+	mainWindow()->setStatusMessage(success ? tr("Run Succeeded") : tr("Run Failed"));
 	UiEventManager::ref().sendEvent(UI_EVENT_RUN);
+	return success;
 }
 
-void SourceFile::stop() { target()->stop(); UiEventManager::ref().sendEvent(UI_EVENT_STOP); }
+void SourceFile::stop() { /* target()->stop(); UiEventManager::ref().sendEvent(UI_EVENT_STOP); */ }
 
 void SourceFile::simulate()
 {
-	ui_localCompileFailed->hide();
+	/* ui_localCompileFailed->hide();
 	
 	if(!save()) return;
 	
@@ -622,12 +624,12 @@ void SourceFile::simulate()
 
 	updateErrors();
 	
-	UiEventManager::ref().sendEvent(UI_EVENT_SIMULATE);
+	UiEventManager::ref().sendEvent(UI_EVENT_SIMULATE); */
 }
 
 void SourceFile::debug()
 {
-	ui_localCompileFailed->hide();
+	/* ui_localCompileFailed->hide();
 	
 	if(!save()) return;
 	mainWindow()->hideErrors();
@@ -649,7 +651,7 @@ void SourceFile::debug()
 	
 	m_debugger.startDebug(interface);
 	
-	UiEventManager::ref().sendEvent(UI_EVENT_DEBUG);
+	UiEventManager::ref().sendEvent(UI_EVENT_DEBUG); */
 }
 
 void SourceFile::copy() { ui_editor->copy(); }
@@ -677,17 +679,17 @@ void SourceFile::convertToProject()
 	setAssociatedFile(QTinyNode::path(node));
 }
 
-void SourceFile::choosePort()
+const bool SourceFile::changeDevice()
 {
-	ChoosePortDialog pDialog(this);
-	const QString& portName = pDialog.getSelectedPortName();
-	if(pDialog.exec()) target()->setPort(portName);
-	UiEventManager::ref().sendEvent(UI_EVENT_CHANGE_PORT);
+	DeviceDialog deviceDialog(&InterfaceManager::ref(), this);
+	if(deviceDialog.exec() == QDialog::Rejected) return false;
+	setDevice(deviceDialog.device());
+	return device().get();
 }
 
 void SourceFile::screenGrab()
 {
-	if(!checkPort()) return;
+	/* if(!checkPort()) return;
 	QByteArray file = target()->screenGrab();
 	QSettings settings;
 	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
@@ -698,12 +700,12 @@ void SourceFile::screenGrab()
 	if(!f.open(QIODevice::WriteOnly)) return;
 	f.write(file);
 	f.close();
-	QDesktopServices::openUrl(QUrl::fromUserInput(saveFilePath));
+	QDesktopServices::openUrl(QUrl::fromUserInput(saveFilePath)); */
 }
 
 void SourceFile::requestFile()
 {
-	if(!checkPort()) return;
+	/* if(!checkPort()) return;
 	RequestFileDialog dialog(target());
 	if(!dialog.exec()) return;
 	QByteArray file = target()->requestFile(target()->requestFilePath() + "/" + dialog.selectedFile());
@@ -716,7 +718,7 @@ void SourceFile::requestFile()
 	if(!f.open(QIODevice::WriteOnly)) return;
 	f.write(file);
 	f.close();
-	mainWindow()->openFile(saveFilePath);
+	mainWindow()->openFile(saveFilePath); */
 }
 
 void SourceFile::makeTemplate()
@@ -727,6 +729,7 @@ void SourceFile::makeTemplate()
 	
 	MakeTemplateDialog makeTemplateDialog(this);
 	makeTemplateDialog.setName(associatedFileBaseName());
+	makeTemplateDialog.setTypes(TemplateManager::ref().types());
 	makeTemplateDialog.setExtension(associatedFileSuffix());
 	
 	if(makeTemplateDialog.exec() == QDialog::Rejected) return;
@@ -740,9 +743,9 @@ void SourceFile::makeTemplate()
 	writer.setContent(ui_editor->text());
 	writer.update();
 	
-	qWarning() << output;
+	qDebug() << output;
 	
-	TemplateManager::ref().addUserTemplate(target()->name(), makeTemplateDialog.name(), output);
+	TemplateManager::ref().addUserTemplate(makeTemplateDialog.type(), makeTemplateDialog.name(), output);
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_MAKE_TEMPLATE2);
 }
@@ -773,17 +776,6 @@ void SourceFile::on_ui_editor_cursorPositionChanged(int line, int)
 }
 
 void SourceFile::showFind() { ui_find->show(); }
-
-bool SourceFile::checkPort()
-{
-	if(target()->hasPort() && target()->port().isEmpty()) {
-		choosePort();
-		if(target()->port().isEmpty()) return false;
-		connect(target(), SIGNAL(requestPort()), SLOT(choosePort()));
-	}
-	mainWindow()->refreshMenus();
-	return true;
-}
 
 void SourceFile::setLexer(Lexer::Constructor* constructor)
 {
@@ -831,87 +823,44 @@ void SourceFile::updateErrors()
 	//markProblems(errors, warnings);
 }
 
-bool SourceFile::forceChangeTarget(bool _template)
+const bool SourceFile::selectTemplate()
 {
-	target()->setTargetFile(""); // Invalidate target
-	return changeTarget(_template);
-}
-
-bool SourceFile::changeTarget(bool _template)
-{
-	Log::ref().info(QString("Using target %1 with unit %2").arg(target()->name()).arg(workingUnitPath()));
-	
 	QString targetPath;
 	QString templateFile;
+	
 	TemplateDialog tDialog(this);
-	
-	qDebug() << "Target valid??" << target()->isValid();
-	
-	if(!target()->isValid()) {
-		if((_template ? tDialog.exec() : tDialog.execTarget()) == QDialog::Rejected) return false;
-		targetPath = TargetManager::ref().targetFilePath(tDialog.selectedTargetName());
-	
-		if(!target()->setTargetFile(targetPath)) {
-			MessageDialog::showError(this, "simple_error", QStringList() << 
-				tr("Error loading target at ") + targetPath <<
-				tr("Target plugin was probably installed incorrectly"));
-			return false;
-		}
-		qDebug() << "Setting target file" << targetPath;
-		target()->setTargetFile(targetPath);
-		if(target()->error()) return false;
-		
-		if(isProjectAssociated()) associatedProject()->setTargetName(tDialog.selectedTargetName());
-	} else {
-		if(_template && tDialog.execTemplate() == QDialog::Rejected) return false;
-	}
-	
-	qDebug() << "Target and template figured out";
-	
-	if(_template) UiEventManager::ref().sendEvent(UI_EVENT_TEMPLATE_SELECTED);
-	
+	if(tDialog.exec() == QDialog::Rejected) return false;
 	templateFile = tDialog.templateFile();
-	
-	if(!isProjectAssociated()) checkPort();
 	
 	Lexer::Constructor* constructor = 0;
 
-	if(!_template && !isNewFile()) constructor = Lexer::Factory::ref().constructor(associatedFileSuffix());
-	else {
-		if(_template) {
-			QFile tFile(templateFile);
-			if(!tFile.open(QIODevice::ReadOnly)) {
-				MessageDialog::showError(this, "simple_error_with_action", QStringList() <<
-					tr("Error loading template file ") + templateFile <<
-					tr("Unable to open file for reading.") <<
-					tr("Continuing without selected template."));
-				return true;
-			}
-			QTextStream stream(&tFile);
-			TemplateFormatReader templateReader(&stream);
-		
-			if(templateReader.hasLexerName()) {
-				QString lex = templateReader.lexerName();
-				Log::ref().debug(QString("Template Lexer specified: %1").arg(lex));
-				constructor = Lexer::Factory::ref().constructor(lex);
-				m_templateExt = lex;
-			}
-			ui_editor->setText(templateReader.content());
-			Log::ref().info("Done setting up template");
-		}
+	QFile tFile(templateFile);
+	if(!tFile.open(QIODevice::ReadOnly)) {
+		MessageDialog::showError(this, "simple_error_with_action", QStringList() <<
+			tr("Error loading template file ") + templateFile <<
+			tr("Unable to open file for reading.") <<
+			tr("Continuing without selected template."));
+		return true;
+	}
+	QTextStream stream(&tFile);
+	TemplateFormatReader templateReader(&stream);
+
+	if(templateReader.hasLexerName()) {
+		QString lex = templateReader.lexerName();
+		Log::ref().debug(QString("Template Lexer specified: %1").arg(lex));
+		constructor = Lexer::Factory::ref().constructor(lex);
+		m_templateExt = lex;
 	}
 	
-	if(!constructor) {
-		Log::ref().debug("Falling back on default lexer constructor");
-		constructor = Lexer::Factory::ref().constructor(target()->defaultExtension());
-	}
+	ui_editor->setText(templateReader.content());
+	tFile.close();
 	
-	m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
+	Log::ref().info("Template selected");
+	
+	// m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
 	
 	if(constructor) setLexer(constructor);
 	refreshSettings();
-	
-	qDebug() << "changeTarget complete";
-	
+	UiEventManager::ref().sendEvent(UI_EVENT_TEMPLATE_SELECTED);
 	return true;
 }

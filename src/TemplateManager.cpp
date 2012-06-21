@@ -29,10 +29,19 @@
 
 QString TemplateManager::m_defaultName = "Default";
 
-QStringList TemplateManager::templateFolders(const QString& target, const QString& _template)
+QStringList TemplateManager::types() const
 {
-	QDir targetDir(pathForTemplate(target, _template));
-	QStringList entries = targetDir.exists() ? targetDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) : QStringList();
+	QDir typeDir(QDir::currentPath() + "/" + TEMPLATES_FOLDER);
+	const QStringList& entries = typeDir.exists()
+		? typeDir.entryList(QDir::Dirs | QDir::NoDot | QDir::NoDotDot)
+		: QStringList();
+	return entries;
+}
+
+QStringList TemplateManager::templateFolders(const QString& type, const QString& _template)
+{
+	QDir typeDir(pathForTemplate(type, _template));
+	QStringList entries = typeDir.exists() ? typeDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot) : QStringList();
 	
 	// If no extra path, we're done
 	if(_template.isEmpty()) return entries;
@@ -44,12 +53,12 @@ QStringList TemplateManager::templateFolders(const QString& target, const QStrin
 	return ret;
 }
 
-QStringList TemplateManager::templates(const QString& target, const QString& _template)
+QStringList TemplateManager::templates(const QString& type, const QString& _template)
 {
-	if(!isTemplateDirectory(target, _template)) return QStringList();
+	if(!isTemplateDirectory(type, _template)) return QStringList();
 	
-	QDir targetDir(pathForTemplate(target, _template));
-	QStringList entries = targetDir.entryList(QStringList() << TEMPLATE_EXT_WILDCARD, QDir::Files);
+	QDir typeDir(pathForTemplate(type, _template));
+	QStringList entries = typeDir.entryList(QStringList() << TEMPLATE_EXT_WILDCARD, QDir::Files);
 	
 	// If no extra path, we're done
 	if(_template.isEmpty()) return entries;
@@ -60,24 +69,24 @@ QStringList TemplateManager::templates(const QString& target, const QString& _te
 	return ret;
 }
 
-QIcon TemplateManager::templateIcon(const QString& target, const QString& _template)
+QIcon TemplateManager::templateIcon(const QString& type, const QString& _template)
 {
 	QFileInfo templateInfo(_template);
-	const QString& base = pathForTemplate(target, templateInfo.path() + "/" + templateInfo.baseName());
+	const QString& base = pathForTemplate(type, templateInfo.path() + "/" + templateInfo.baseName());
 	QFileInfo file(base + ".png");
 	if(!file.exists()) file.setFile(file.path() + "/" + defaultTemplateName() + ".png");
 	return QIcon(file.filePath());
 }
 
-QStringList TemplateManager::userTemplates(const QString& target)
+QStringList TemplateManager::userTemplates(const QString& type)
 {
-	return QDir(pathForUserTemplate(target, "")).entryList(QDir::Files);
+	return QDir(pathForUserTemplate(type, "")).entryList(QDir::Files);
 }
 
-bool TemplateManager::addUserTemplate(const QString& target, const QString& name, const QString& content)
+bool TemplateManager::addUserTemplate(const QString& type, const QString& name, const QString& content)
 {
-	ensureUserTemplateDirExists(target);
-	QFile file(pathForUserTemplate(target, name) + "." + TEMPLATE_EXT);
+	ensureUserTemplateDirExists(type);
+	QFile file(pathForUserTemplate(type, name) + "." + TEMPLATE_EXT);
 	
 	if(!file.open(QFile::WriteOnly | QFile::Truncate)) return false;
 	
@@ -89,30 +98,30 @@ bool TemplateManager::addUserTemplate(const QString& target, const QString& name
 	return true;
 }
 
-bool TemplateManager::deleteUserTemplate(const QString& target, const QString& name)
+bool TemplateManager::deleteUserTemplate(const QString& type, const QString& name)
 {
-	return QFile(pathForUserTemplate(target, name)).remove();
+	return QFile(pathForUserTemplate(type, name)).remove();
 }
 
-QString TemplateManager::pathForUserTemplate(const QString& target, const QString& _template)
+QString TemplateManager::pathForUserTemplate(const QString& type, const QString& _template)
 {
-	return QDir::currentPath() + "/" + USER_FOLDER + "/" + TEMPLATES_FOLDER + "/" + target + (_template.isEmpty() ? "" : "/" + _template);
+	return QDir::currentPath() + "/" + USER_FOLDER + "/" + TEMPLATES_FOLDER + "/" + type + (_template.isEmpty() ? "" : "/" + _template);
 }
 
-QString TemplateManager::pathForTemplate(const QString& target, const QString& _template)
+QString TemplateManager::pathForTemplate(const QString& type, const QString& _template)
 {
-	return QDir::currentPath() + "/" + TARGET_FOLDER + "/" + target + "/" + TEMPLATES_FOLDER + (_template.isEmpty() ? "" : "/" + _template);
+	return QDir::currentPath() + "/" + TEMPLATES_FOLDER + "/" + type + "/" + (_template.isEmpty() ? "" : "/" + _template);
 }
 
-bool TemplateManager::isTemplateDirectory(const QString& target, const QString& _template)
+bool TemplateManager::isTemplateDirectory(const QString& type, const QString& _template)
 {
-	return isTemplateDirectory(pathForTemplate(target, _template));
+	return isTemplateDirectory(pathForTemplate(type, _template));
 }
 
 bool TemplateManager::isTemplateDirectory(const QString& path) { return QFileInfo(path).isDir(); }
 const QString& TemplateManager::defaultTemplateName() { return m_defaultName; }
 
-void TemplateManager::ensureUserTemplateDirExists(const QString& target)
+void TemplateManager::ensureUserTemplateDirExists(const QString& type)
 {
-	QDir().mkpath(pathForUserTemplate(target, ""));
+	QDir().mkpath(pathForUserTemplate(type, ""));
 }

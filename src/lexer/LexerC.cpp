@@ -22,6 +22,11 @@
 
 using namespace Lexer;
 
+ConstructorC::ConstructorC() : Constructor("C Files") {}
+LexerBase* ConstructorC::construct() const { return Factory::ref().newLexerFromConstructor(this); }
+LexerBase* ConstructorC::construct(const QString& apis) const { return construct(); }
+LexerBase* ConstructorC::_new() const { return new C(this); }
+
 C::C(const Constructor* constructor) : CPP(constructor) {}
 
 const char *C::keywords(int set) const

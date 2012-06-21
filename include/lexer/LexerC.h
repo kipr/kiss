@@ -35,10 +35,12 @@ namespace Lexer
 
 	struct ConstructorC : Constructor
 	{
-		LexerBase* construct() const { return Factory::ref().newLexerFromConstructor(this); }
-		LexerBase* construct(const QString& apis) const { return construct(); }
+		ConstructorC();
 		
-		LexerBase* _new() const { return new C(this); }
+		LexerBase* construct() const;
+		LexerBase* construct(const QString& apis) const;
+		
+		LexerBase* _new() const;
 	};
 }
 

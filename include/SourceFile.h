@@ -28,6 +28,7 @@
 #include "ui_SourceFile.h"
 #include "Tab.h"
 #include "Debugger.h"
+#include "Compilation.h"
 
 #include "WorkingUnit.h"
 
@@ -74,7 +75,7 @@ class MainWindow;
 class Project;
 class TinyNode;
 
-namespace Lexer { struct Constructor; }
+namespace Lexer { class Constructor; }
 
 class SourceFile : public QWidget, public TabbedWidget, public WorkingUnit, private Ui::SourceFile
 {
@@ -122,13 +123,11 @@ public slots:
 	
 	void convertToProject();
 	
-	bool forceChangeTarget(bool _template = false);
-	bool changeTarget(bool _template = false);
-	void choosePort();
+	const bool changeDevice();
 
-	void download();
-	void compile();
-	void run();
+	const bool download();
+	CompilationPtr compile();
+	const bool run();
 	void stop();
 	void simulate();
 	void debug();
@@ -165,9 +164,9 @@ private slots:
 private:
 	bool saveAsFile();
 	bool saveAsProject();
+	const bool selectTemplate();
 	
 	void showFind();
-	bool checkPort();
 	
 	void setLexer(Lexer::Constructor* constructor);
 	

@@ -18,21 +18,21 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef __REQUESTFILEDIALOG_H__
-#define __REQUESTFILEDIALOG_H__
+#ifndef _REQUESTFILEDIALOG_H_
+#define _REQUESTFILEDIALOG_H_
 
 #include <QDialog>
 #include "ui_RequestFileDialog.h"
-#include "Target.h"
+#include "Device.h"
 
 class RequestFileDialog : public QDialog, public Ui::RequestFileDialog
 {
 public:
-	RequestFileDialog(Target* target);
+	RequestFileDialog(DevicePtr device);
 	int exec();
 	QString selectedFile();
 private:
-	Target* m_target;
+	DevicePtr m_device;
 };
 
 #endif

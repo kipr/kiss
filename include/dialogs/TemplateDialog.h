@@ -32,16 +32,14 @@ public:
 	TemplateDialog(QWidget* parent = 0);
 	
 	int exec();
-	int execTarget();
-	int execTemplate();
 	
 	// Returns to the path of the target file for the selected target
 	
-	QString selectedTargetName() const;
+	QString selectedTypeName() const;
 	QString templateFile();
 	
 private slots:
-	void on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);
+	void on_ui_types_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);
 	void on_ui_templates_itemDoubleClicked(QTreeWidgetItem* current);
 	
 	void on_ui_templates_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem*);

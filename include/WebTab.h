@@ -57,8 +57,8 @@ public:
 	//! Loads an unformatted URL
 	void load(QString url, bool hideUrl = false);
 	QString current();
-	
 	QWebHistory* history();
+	
 	QWebView* webView();
 	
 public slots:

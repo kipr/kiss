@@ -19,7 +19,6 @@
  **************************************************************************/
 
 #include "TemplateDialog.h"
-#include "TargetManager.h"
 #include "TemplateManager.h"
 #include "MessageDialog.h"
 #include "Kiss.h"
@@ -29,30 +28,23 @@
 
 #include <QListWidgetItem>
 #include <QDebug>
+#include <QFileInfo>
 
 TemplateDialog::TemplateDialog(QWidget* parent) : QDialog(parent) { setupUi(this); }
 
 int TemplateDialog::exec()
 {
-	ui_targets->clear();
+	ui_types->clear();
 	
-	const QStringList& targets = TargetManager::ref().targets();
-	if(targets.size() == 0) {
-		MessageDialog::showError(this, "simple_error", QStringList() << 
-			tr("You have no targets installed") <<
-			tr("There is probably an issue with your installation. "
-			"If you are a developer, you've forgotten to install the initial targets."));
-		return QDialog::Rejected;
-	}
-	
+	const QStringList& types = TemplateManager::ref().types();
 	bool first = true;
-	foreach(const QString& target, targets) {
-		QListWidgetItem* item = new QListWidgetItem(TargetManager::ref().displayName(target));
+	foreach(const QString& type, types) {
+		QListWidgetItem* item = new QListWidgetItem(type);
 		
-		item->setData(Qt::UserRole, target);
-		ui_targets->addItem(item);
+		item->setData(Qt::UserRole, type);
+		ui_types->addItem(item);
 		if(first) {
-			ui_targets->setCurrentItem(item);
+			ui_types->setCurrentItem(item);
 			first = false;
 		}
 	}
@@ -60,42 +52,26 @@ int TemplateDialog::exec()
 	return QDialog::exec();
 }
 
-int TemplateDialog::execTarget()
+QString TemplateDialog::selectedTypeName() const
 {
-	ui_templates->hide();
-	ui_remove->hide();
-	setFixedSize(200, 200);
-	setWindowTitle(tr("Targets"));
-	return exec();
-}
-
-int TemplateDialog::execTemplate()
-{
-	ui_targets->hide();
-	setWindowTitle(tr("Templates"));
-	return exec();
-}
-
-QString TemplateDialog::selectedTargetName() const
-{
-	return ui_targets->currentItem() ? ui_targets->currentItem()->data(Qt::UserRole).toString() : QString();
+	return ui_types->currentItem() ? ui_types->currentItem()->data(Qt::UserRole).toString() : QString();
 }
 
 QString TemplateDialog::templateFile()
 {
-	if(!ui_targets->currentItem()) return QString();
-	const QString& target = ui_targets->currentItem()->data(Qt::UserRole).toString();
+	if(!ui_types->currentItem()) return QString();
+	const QString& type = ui_types->currentItem()->data(Qt::UserRole).toString();
 	return ui_templates->currentItem() ? 
 		ui_templates->currentItem()->data(0, Qt::UserRole).toString() : 
-		TemplateManager::ref().pathForTemplate(target, "Default");
+		TemplateManager::ref().pathForTemplate(type, "Default");
 }
 
-void TemplateDialog::on_ui_targets_currentItemChanged(QListWidgetItem* current, QListWidgetItem*)
+void TemplateDialog::on_ui_types_currentItemChanged(QListWidgetItem* current, QListWidgetItem*)
 {
-	const QString& target = current->data(Qt::UserRole).toString();
+	const QString& type = current->data(Qt::UserRole).toString();
 	ui_templates->clear();
-	addTemplates(target, 0, "");
-	addUserTemplates(target);
+	addTemplates(type, 0, "");
+	addUserTemplates(type);
 	ui_templates->setCurrentItem(ui_templates->topLevelItem(0));
 }
 
@@ -113,18 +89,18 @@ void TemplateDialog::on_ui_templates_currentItemChanged(QTreeWidgetItem* current
 	}
 	
 	const QString& templatePath = current->data(0, Qt::UserRole).toString();
-	const QString& target = ui_targets->currentItem()->data(Qt::UserRole).toString();
-	const QString& userTemplateRoot = TemplateManager::ref().pathForUserTemplate(target, "");
+	const QString& type = ui_types->currentItem()->data(Qt::UserRole).toString();
+	const QString& userTemplateRoot = TemplateManager::ref().pathForUserTemplate(type, "");
 	ui_remove->setEnabled(templatePath.startsWith(userTemplateRoot));
 }
 
 void TemplateDialog::on_ui_remove_clicked()
 {
 	const QString& templatePath = ui_templates->currentItem()->data(0, Qt::UserRole).toString();
-	const QString& target = ui_targets->currentItem()->data(Qt::UserRole).toString();
-	TemplateManager::ref().deleteUserTemplate(target, QFileInfo(templatePath).fileName());
+	const QString& type = ui_types->currentItem()->data(Qt::UserRole).toString();
+	TemplateManager::ref().deleteUserTemplate(type, QFileInfo(templatePath).fileName());
 	
-	on_ui_targets_currentItemChanged(ui_targets->currentItem(), 0);
+	on_ui_types_currentItemChanged(ui_types->currentItem(), 0);
 }
 
 void TemplateDialog::addTemplates(const QString& target, QTreeWidgetItem* parentItem, const QString& parent = "")

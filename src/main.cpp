@@ -25,15 +25,11 @@
 #include "WelcomeTab.h"
 #include "DeclarativeTab.h"
 #include "KissArchive.h"
-#include "TargetMenu.h"
 #include "LogStreamBuf.h"
 #include "AudioTutorial.h"
 #include "Log.h"
 #include "LogWindow.h"
-
-#include "Compiler.h"
-#include "TestCompilerC.h"
-#include "TestCompilerO.h"
+#include "KissStandardEnvironment.h"
 
 #include <QTimer>
 #include <QDebug>
@@ -100,25 +96,6 @@ void handleArgs()
 	}
 }
 
-void debugLogHandler(QtMsgType type, const char *msg)
-{
-	//in this function, you can write the message to any stream!
-	switch (type) {
-	case QtDebugMsg:
-		Log::ref().debug(msg);
-		break;
-	case QtWarningMsg:
-		Log::ref().warning(msg);
-		break;
-	case QtCriticalMsg:
-		Log::ref().error(msg);
-		break;
-	case QtFatalMsg:
-		Log::ref().error(msg);
-		abort();
-	}
-}
-
 int main(int argc, char **argv)
 {
 	QApplication application(argc, argv);
@@ -132,26 +109,14 @@ int main(int argc, char **argv)
 #endif
 	
 	Log::ref().info(QString("KISS is starting up... (Qt version: %1)").arg(qVersion()));
-	qInstallMsgHandler(debugLogHandler);
+	
+	// Creates everything we need
+	KissStandardEnvironment::createStandardEnvironment();
 	
 	if(QApplication::arguments().size() > 1 && QApplication::arguments()[1].startsWith("--")) {
 		handleArgs();
 		return 0;
 	}
-	
-	#ifdef Q_OS_MAC
-		QDir::setCurrent(QApplication::applicationDirPath() + "/../");
-	#else
-		QDir::setCurrent(QApplication::applicationDirPath());
-	#endif
-
-	QApplication::setOrganizationName("KIPR");
-	QApplication::setOrganizationDomain("kipr.org");
-	QApplication::setApplicationName("KISS");
-	QApplication::setWindowIcon(QIcon(":/icon.png"));
-	
-	CompilerManager::ref().addCompiler(new TestCompilerC());
-	CompilerManager::ref().addCompiler(new TestCompilerO());
 	
 	QPixmap splashPixmap(":/splash_screen.png");
 	QSplashScreen splash(splashPixmap);

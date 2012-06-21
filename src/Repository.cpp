@@ -26,7 +26,6 @@
 #include "KissArchive.h"
 #include "MainWindow.h"
 #include "Kiss.h"
-#include "TargetManager.h"
 #include "SourceDialog.h"
 
 #include <QCoreApplication>
@@ -108,7 +107,7 @@ void Repository::on_ui_uninstall_clicked()
 void Repository::on_ui_begin_clicked()
 {
 	mainWindow()->closeAllOthers(this);
-	TargetManager::ref().unloadAll();
+	// TargetManager::ref().unloadAll();
 	
 	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(downloadFinished(QNetworkReply*)));
 	disconnect(&m_network, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));

@@ -44,6 +44,21 @@ template<typename M, typename T>
 class PluginManager : public Singleton<M>
 {
 public:
+	QStringList plugins() {
+		return m_plugins.keys();
+	}
+	
+	void loadAll() {
+		QDir pluginPath(QDir::currentPath());
+		pluginPath.cd(getExpectedLocation(""));
+		QFileInfoList files = pluginPath.entryInfoList(QDir::Files | QDir::NoDot | QDir::NoDotDot);
+		qDebug() << "Found" << files.size() << "plugins for loading";
+		foreach(const QFileInfo& file, files) {
+			QString name = file.baseName().mid(3);
+			loadPlugin(name);
+		}
+	}
+	
 	//! Get plugin instance, loads if not found
 	T* get(const QString& name) {
 		if(!m_plugins.contains(name)) 
@@ -63,7 +78,7 @@ public:
 		pluginPath.cd(getExpectedLocation(name));
 		
 
-		const QString& pluginPathString = pluginPath.absoluteFilePath("lib" + name + "_plugin." + OS_LIB_EXT);
+		const QString& pluginPathString = pluginPath.absoluteFilePath("lib" + name + "." + OS_LIB_EXT);
 		qWarning() << "Path:" << pluginPathString;
 
 		plugin->setFileName(pluginPathString);

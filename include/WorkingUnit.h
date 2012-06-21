@@ -2,14 +2,16 @@
 #define _WORKINGUNIT_H_
 
 #include <QString>
-#include "Target.h"
+
+#include "Device.h"
 
 class WorkingUnit
 {
 public:
 	WorkingUnit(const QString& name);
 	
-	Target* target();
+	void setDevice(DevicePtr device);
+	DevicePtr device();
 	
 	const QString& port() const;
 	void setPort(const QString& port);
@@ -24,7 +26,7 @@ public:
 
 private:
 	QString m_name;
-	Target m_target;
+	DevicePtr m_device;
 	QString m_port;
 	WorkingUnit* m_parentUnit;
 };

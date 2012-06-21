@@ -20,12 +20,12 @@
 
 #include "RequestFileDialog.h"
 
-RequestFileDialog::RequestFileDialog(Target* target) : m_target(target) { setupUi(this); }
+RequestFileDialog::RequestFileDialog(DevicePtr device) : m_device(device) { setupUi(this); }
 
 int RequestFileDialog::exec()
 {
 	ui_files->clear();
-	ui_files->addItems(m_target->requestDir(m_target->requestFilePath()));
+	// ui_files->addItems();
 	return QDialog::exec();
 }
 

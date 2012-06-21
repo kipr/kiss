@@ -22,19 +22,19 @@
 #include "Kiss.h"
 #include "SourceFile.h"
 #include "WebTab.h"
-#include "TargetManager.h"
 #include "WelcomeTab.h"
 #include "KissArchive.h"
 #include "ChoosePortDialog.h"
 #include "Repository.h"
 #include "MessageDialog.h"
-#include "TargetManager.h"
 #include "Menus.h"
 #include "Project.h"
 #include "ProjectSettingsTab.h"
 #include "ProjectManager.h"
 #include "QTinyArchive.h"
 #include "Log.h"
+
+#include "LexerFactory.h" // Used to query supported extensions
 
 #include "NewProjectWizard.h"
 
@@ -54,6 +54,7 @@
 #include <QPrintDialog>
 #include <QNetworkProxyFactory>
 #include <QFileOpenEvent>
+#include <QSettings>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -127,7 +128,7 @@ Project* MainWindow::newProject(bool target)
 			tr("Attempted save location: ") + saveLocation);
 		return 0;
 	}
-	project->updateSetting(TARGET_KEY, wizard.targetPlatform());
+
 	foreach(const QString& setting, wizard.projectType()->defaultSettings()) project->updateSetting(setting, "");
 	ProjectManager::ref().openProject(project);
 	return project;
@@ -245,9 +246,9 @@ void MainWindow::initMenus()
 	m_menuManager.addActivation(mainWindowMenu);
 	m_menuables.append(mainWindowMenu);
 	
-	TargetMenu* targetMenu = new TargetMenu;
-	m_menuManager.registerMenus(targetMenu);
-	m_menuables.append(targetMenu);
+	DeviceMenu* deviceMenu = new DeviceMenu;
+	m_menuManager.registerMenus(deviceMenu);
+	m_menuables.append(deviceMenu);
 
 	ProjectMenu* projectMenu = new ProjectMenu();
 	m_menuManager.registerMenus(projectMenu);
@@ -379,7 +380,8 @@ void MainWindow::open()
 {
 	QSettings settings;
 	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
-	QStringList filters = TargetManager::ref().allSupportedExtensions() << "KISS Project (*.kissproj)";
+	QStringList filters = Lexer::Factory::ref().formattedExtensions();
+	filters << "KISS Project (*.kissproj)";
 	filters.removeDuplicates();
 	QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), openPath, filters.join(";;") + ";;All Files (*)");
 	
@@ -395,7 +397,7 @@ void MainWindow::openProject()
 {
 	QSettings settings;
 	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
-	QStringList filters = TargetManager::ref().allSupportedExtensions();
+	QStringList filters = Lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
 	QString filePath = QFileDialog::getOpenFileName(this, tr("Open Project"), openPath, tr(""));
 		
@@ -429,8 +431,9 @@ void MainWindow::closeProjectTabs(Project* project)
 	QList<TabbedWidget*> all = tabs();
 	int i = 0;
 	while(i < ui_tabWidget->count()) {
-		if(all.contains(lookup(ui_tabWidget->widget(i)))) ++i;
-		deleteTab(i);
+		TabbedWidget* current = lookup(ui_tabWidget->widget(i));
+		if(current->associatedProject() == project) deleteTab(i);
+		else i++;
 	}
 	ui_errors->hide();
 }
@@ -535,7 +538,7 @@ void MainWindow::installLocalPackage()
 {
 	QSettings settings;
 	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
-	QStringList filters = TargetManager::ref().allSupportedExtensions();
+	QStringList filters = Lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
 	QStringList filePaths = QFileDialog::getOpenFileNames(this, tr("Open Packages"), openPath, "KISS Archives (*.kiss)");
 	foreach(const QString& filePath, filePaths) {
@@ -644,13 +647,14 @@ void MainWindow::projectClicked(const QModelIndex& index)
 	} else if(m_projectsModel.indexType(index) == ProjectsModel::FileType) {
 		qDebug() << "File!!";
 		const TinyNode* node = m_projectsModel.indexToNode(index);
+		Project* proj = m_projectsModel.indexToProject(index);
 		const QString& file = QString::fromStdString(node->path());
 		if(!project) return;
 
 		SourceFile* sourceFile = new SourceFile(this);
 		for(int i = 0; i < ui_tabWidget->count(); ++i) {
 			SourceFile* sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
-			if(sourceFile && sourceFile->associatedFile() == file) {
+			if(sourceFile && sourceFile->associatedFile() == file && sourceFile->associatedProject() == proj) {
 				ui_tabWidget->setCurrentIndex(i);
 				on_ui_tabWidget_currentChanged(i);
 				return;
@@ -744,9 +748,9 @@ QStringList MainWindow::standardMenus() const
 	;
 }
 
+// TODO: NYI
 void MainWindow::restart()
 {
-	TargetManager::ref().unloadAll();
 }
 
 ScriptEnvironment* MainWindow::scriptEnvironment()
