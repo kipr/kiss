@@ -194,7 +194,7 @@ private:
 	
 	void clearProblems();
 	void markProblems(const QStringList& errors, const QStringList& warnings);
-	void updateErrors();
+	void updateErrors(const CompileResult& compileResult);
 	
 	Debugger m_debugger;
 protected:

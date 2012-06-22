@@ -2,27 +2,29 @@
 
 #include "Compiler.h"
 #include "ProjectManager.h"
+#include "PlatformHintsManager.h"
 
 #include <QDebug>
 #include <QFileInfo>
 #include <QStringList>
 #include <QFileInfo>
 
-Compilation::Compilation(const QList<Compiler*>& compilers, const QMap<QString, QString>& settings)
+Compilation::Compilation(const QList<Compiler*>& compilers, const QMap<QString, QString>& settings, const QString& platform)
 	: m_compilers(compilers), m_settings(settings), m_name(""), m_results(true)
 {
-	
+	m_settings = unite(m_settings, PlatformHintsManager::ref().flagMap(platform));
 }
 
-Compilation::Compilation(const QList<Compiler*>& compilers, Project* project)
+Compilation::Compilation(const QList<Compiler*>& compilers, Project* project, const QString& platform)
 	: m_compilers(compilers), m_settings(project->settings()), m_results(true)
 {
 	m_name = project->name();
 	addFiles(ProjectManager::ref().archiveWriter(project)->files());
+	m_settings = unite(m_settings, PlatformHintsManager::ref().flagMap(platform));
 }
 
-Compilation::Compilation(const QList<Compiler*>& compilers, const QString& file)
-	: m_compilers(compilers), m_results(true)
+Compilation::Compilation(const QList<Compiler*>& compilers, const QString& file, const QString& platform)
+	: m_compilers(compilers), m_settings(PlatformHintsManager::ref().flagMap(platform)), m_results(true)
 {
 	m_name = QFileInfo(file).baseName();
 	addFile(file);
@@ -109,3 +111,15 @@ Compiler* Compilation::compilerFor(const QString& ext)
 	return 0;
 }
 
+QMap<QString, QString> Compilation::unite(const QMap<QString, QString>& a, const QMap<QString, QString>& b) const
+{
+	QMap<QString, QString> ret = a;
+	ret = ret.unite(b);
+	foreach(const QString& key, ret.keys()) {
+		QStringList values = QStringList(ret.values(key));
+		if(values.size() == 1) continue;
+		ret.remove(key);
+		ret[key] = values.join(" ");
+	}
+	return ret;
+}

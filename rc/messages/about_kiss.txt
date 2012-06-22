@@ -1,6 +1,6 @@
 <b>KIPR's Instructional Software System</b> <br /> <br />
 	
-KISS Version ${1}.${2}.${3} <br /> <br />
+KISS Version ${1}.${2}.${3} "${4}"<br /> <br />
 
 Copyright (C) 2007-2012 KISS Institute for Practical Robotics <br />
 <a href="http://www.kipr.org/">http://www.kipr.org/</a> <br />
@@ -10,6 +10,8 @@ KISS is a project of the KISS Institute for Practical Robotics <br /> <br />
 
 <b>Contributors:</b> <br />
 Braden McDorman <br />
+<br />
+<b>Previous Contributors:</b> <br />
 Jorge Villatoro <br />
 <br />
 <b>Icons:</b> <br />

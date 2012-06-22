@@ -1,2 +1,3 @@
 add_subdirectory(compilers)
 add_subdirectory(interfaces)
+add_subdirectory(lexers)

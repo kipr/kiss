@@ -4,8 +4,10 @@
 
 #include "Device.h"
 #include "InterfaceManager.h"
+
 #include "CompilerPluginManager.h"
 #include "InterfacePluginManager.h"
+#include "LexerPluginManager.h"
 
 #include <QIcon>
 #include <QApplication>
@@ -52,4 +54,5 @@ void KissStandardEnvironment::createStandardEnvironment()
 	
 	CompilerPluginManager::ref().loadAll();
 	InterfacePluginManager::ref().loadAll();
+	LexerPluginManager::ref().loadAll();
 }

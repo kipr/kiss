@@ -20,11 +20,6 @@
 
 #include "LexerFactory.h"
 
-#include "LexerC.h"
-#include "LexerCPP.h"
-#include "LexerJava.h"
-#include "LexerJavaScript.h"
-
 #include <QDebug>
 
 using namespace Lexer;
@@ -36,13 +31,7 @@ Constructor::Constructor(const QString& name) : Named(name)
 
 Constructor::~Constructor() {}
 
-Factory::Factory()
-{
-	registerLexerConstructor(new ConstructorJava(), QStringList() << "java");
-	registerLexerConstructor(new ConstructorC(), QStringList() << "c");
-	registerLexerConstructor(new ConstructorCPP(), QStringList() << "cpp" << "h" << "hpp" << "cxx");
-	registerLexerConstructor(new ConstructorJavaScript(), QStringList() << "js" << "javascript");
-}
+Factory::Factory() {}
 
 Factory::~Factory()
 {
@@ -76,9 +65,22 @@ Constructor* Factory::constructor(const QString& ext) const
 	return i.value();
 }
 
+void Factory::registerLexerConstructor(Constructor* c)
+{
+	registerLexerConstructor(c, c->extensions());
+}
+
 void Factory::registerLexerConstructor(Constructor* c, const QStringList& exts)
 {
 	foreach(const QString& ext, exts) m_constructors[ext] = c;
+}
+
+void Factory::unregisterLexerConstructor(Constructor* c)
+{
+	const QList<QString>& keys = m_constructors.keys();
+	foreach(const QString& key, keys) {
+		if(m_constructors.value(key) == c) m_constructors.remove(key);
+	}
 }
 
 void Factory::setAPIsForLexer(LexerBase* lexer, const QString& apis)

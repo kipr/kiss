@@ -55,9 +55,9 @@ QProcessSegment* CompilerO::createGccSegment(const QStringList& args)
 QString CompilerO::gccPath()
 {
 #ifdef Q_OS_WIN32
-	return QDir::currentPath() + "/targets/gcc/mingw/bin/gcc.exe";
+	return QDir::currentPath() + "/targets/gcc/mingw/bin/g++.exe";
 #else
-	return "/usr/bin/gcc";
+	return "/usr/bin/g++";
 #endif
 }
 

@@ -36,8 +36,9 @@ namespace Lexer
 {
 	struct LexerBase;
 	
-	class Constructor : public Named
+	class Constructor : public QObject, public Named
 	{
+	Q_OBJECT
 	public:
 		Constructor(const QString& name);
 		virtual ~Constructor();
@@ -46,6 +47,8 @@ namespace Lexer
 		virtual LexerBase* construct(const QString& apis) const = 0;
 		
 		virtual LexerBase* _new() const = 0;
+		
+		virtual QStringList extensions() const = 0;
 	};
 
 	struct LexerBase
@@ -73,7 +76,9 @@ namespace Lexer
 		LexerBase* newLexerFromConstructor(const Constructor* constructor) const;
 		Constructor* constructor(const QString& ext) const;
 	
+		void registerLexerConstructor(Constructor* c);
 		void registerLexerConstructor(Constructor* c, const QStringList& exts);
+		void unregisterLexerConstructor(Constructor* c);
 		
 		static void setAPIsForLexer(LexerBase* lexer, const QString& apis);
 		static bool isLexerFromConstructor(LexerBase* lexer, Constructor* constructor);
@@ -88,5 +93,7 @@ namespace Lexer
 		QMap<QString, Constructor*> m_constructors;
 	};
 }
+
+Q_DECLARE_INTERFACE(Lexer::Constructor, "com.kipr.kiss.LexerConstructor/1.0");
 
 #endif

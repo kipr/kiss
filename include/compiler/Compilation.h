@@ -14,9 +14,9 @@
 class Compilation
 {
 public:
-	Compilation(const QList<Compiler*>& compilers, const QMap<QString, QString>& settings);
-	Compilation(const QList<Compiler*>& compilers, Project* project);
-	Compilation(const QList<Compiler*>& compilers, const QString& file);
+	Compilation(const QList<Compiler*>& compilers, const QMap<QString, QString>& settings, const QString& platform);
+	Compilation(const QList<Compiler*>& compilers, Project* project, const QString& platform);
+	Compilation(const QList<Compiler*>& compilers, const QString& file, const QString& platform);
 	
 	void addFile(const QString& file, bool remove = false);
 	void addFiles(const QStringList& files, bool remove = false);
@@ -36,6 +36,8 @@ protected:
 	Compiler* compilerFor(const QString& ext);
 
 private:
+	QMap<QString, QString> unite(const QMap<QString, QString>& a, const QMap<QString, QString>& b) const;
+	
 	QList<Compiler*> m_compilers;
 	QMap<QString, QString> m_settings;
 	QString m_name;

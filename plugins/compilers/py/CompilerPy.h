@@ -15,6 +15,8 @@ public:
 	
 	virtual CompileResult compile(Compilation* compilation, const QStringList& files);
 private:
+	QString extractFirstString(const QString& str);
+	CompileResult processCompile(QIODevice *err);
 	QProcessSegment* createPythonSegment(const QStringList& args);
 	static QString pythonPath();
 };

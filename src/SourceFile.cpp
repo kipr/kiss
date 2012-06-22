@@ -46,6 +46,7 @@
 
 #include "UiEventManager.h"
 #include "ResourceHelper.h"
+#include "Interface.h"
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
@@ -587,15 +588,15 @@ CompilationPtr SourceFile::compile()
 	if(isProjectAssociated()) ProjectManager::ref().archiveWriter(associatedProject())->write(ArchiveWriter::Delta);
 	
 	CompilationPtr compilation(isProjectAssociated()
-		? new Compilation(CompilerManager::ref().compilers(), associatedProject())
-		: new Compilation(CompilerManager::ref().compilers(), associatedFile()));
+		? new Compilation(CompilerManager::ref().compilers(), associatedProject(), device()->interface()->name())
+		: new Compilation(CompilerManager::ref().compilers(), associatedFile(), device()->interface()->name()));
 	bool success = compilation->start();
 	qDebug() << "Results:" << compilation->compileResults();
 	mainWindow()->setErrors(topLevelUnit(), compilation->results());
 	
 	mainWindow()->setStatusMessage(success ? tr("Compile Succeeded") : tr("Compile Failed"));
 	
-	updateErrors();
+	updateErrors(compilation->results());
 	
 	UiEventManager::ref().sendEvent(UI_EVENT_COMPILE);
 	
@@ -810,17 +811,14 @@ void SourceFile::markProblems(const QStringList& errors, const QStringList& warn
 	}
 }
 
-void SourceFile::updateErrors() 
+void SourceFile::updateErrors(const CompileResult& compileResult) 
 {
-	//clearProblems();
+	clearProblems();
 	
-	//const QStringList& errors = target()->errorMessages();
-	//const QStringList& warnings = target()->warningMessages();
+	const QStringList& errors = compileResult.output(DEFAULT_ERROR_KEY);
+	const QStringList& warnings = compileResult.output(DEFAULT_WARNING_KEY);
 	
-	//mainWindow()->setErrors(this, errors, warnings, target()->linkerMessages(), target()->verboseMessages());
-	//mainWindow()->showErrors(this);
-	
-	//markProblems(errors, warnings);
+	markProblems(errors, warnings);
 }
 
 const bool SourceFile::selectTemplate()
