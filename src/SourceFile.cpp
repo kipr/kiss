@@ -465,6 +465,7 @@ SourceFile* SourceFile::newProjectFile(MainWindow* mainWindow, Project* project)
 {
 	SourceFile* sourceFile = new SourceFile(mainWindow);
 	sourceFile->setAssociatedProject(project);
+	return sourceFile;
 }
 
 void SourceFile::zoomIn() { ui_editor->zoomIn(); updateMargins(); UiEventManager::ref().sendEvent(UI_EVENT_ZOOM_IN); }
