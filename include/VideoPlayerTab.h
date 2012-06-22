@@ -33,7 +33,11 @@ class VideoPlayerTab;
 #include "Tab.h"
 
 #include <QWidget>
+#ifdef Q_OS_MAC
+#include <Phonon>
+#else
 #include <phonon>
+#endif
 
 class VideoPlayerTab : public QWidget, public TabbedWidget, public Ui::VideoPlayerTab
 {

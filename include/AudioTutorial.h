@@ -32,7 +32,12 @@ class AudioTutorial;
 #include "UiEventManager.h"
 
 #include <QList>
+#include <QWidget>
+#ifdef Q_OS_MAC
+#include <Phonon>
+#else
 #include <phonon>
+#endif
 
 struct TutorialState;
 
