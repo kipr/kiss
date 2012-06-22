@@ -2,9 +2,6 @@
 #include <QDebug>
 #include <QBuffer>
 
-#pragma mark -
-#pragma mark ChainSession
-
 ChainSession::ChainSession()
 	: m_in(new QBuffer()),
 	m_out(new QBuffer()),
@@ -60,9 +57,6 @@ ChainSession* ChainSegment::session()
 	return m_session;
 }
 
-#pragma mark -
-#pragma mark QThreadSegment
-
 QThreadSegment::QThreadSegment(QThread* thread, bool parallel, bool transferOwnership)
 	: m_thread(thread), m_transferOwnership(transferOwnership), m_parallel(parallel) {}
 
@@ -103,10 +97,6 @@ const bool QThreadSegment::isErrorState() const
 	const ErrorState* errState = dynamic_cast<const ErrorState*>(m_thread);
 	return errState ? errState->isErrorState() : false;
 }
-
-
-#pragma mark -
-#pragma mark CommandChain
 
 CommandChain::CommandChain(quint16 maxConcurrentSegments)
 	: m_maxConcurrentSegments(maxConcurrentSegments),
@@ -206,9 +196,6 @@ ChainSession* CommandChain::chainSession()
 	return m_chainSession;
 }
 
-#pragma mark -
-#pragma mark QProcessSegment
-
 QProcessSegment::QProcessSegment(const QString& program, const QStringList& args, bool parallel)
 	: m_program(program), m_args(args), m_parallel(parallel) {}
 
@@ -251,9 +238,6 @@ QProcess* QProcessSegment::process()
 {
 	return &m_process;
 }
-
-#pragma mark -
-#pragma mark TimeSegment
 
 TimeSegment::TimeSegment(long time) : m_time(time) {}
 
