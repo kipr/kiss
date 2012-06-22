@@ -20,7 +20,7 @@ public:
 		ret[DEVICE_TYPE] = "Windows Computer";
 	#elif defined(Q_OS_MAC)
 		ret[DEVICE_TYPE] = "Mac OS X Computer";
-	#elif
+	#else
 		ret[DEVICE_TYPE] = "*nix Computer";
 	#endif
 		ret[DOWNLOAD_TYPE] = DOWNLOAD_BINARY;
