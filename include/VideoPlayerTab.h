@@ -33,7 +33,7 @@ class VideoPlayerTab;
 #include "Tab.h"
 
 #include <QWidget>
-#include <Phonon>
+#include <phonon>
 
 class VideoPlayerTab : public QWidget, public TabbedWidget, public Ui::VideoPlayerTab
 {
