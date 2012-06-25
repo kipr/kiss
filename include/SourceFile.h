@@ -28,7 +28,7 @@
 #include "ui_SourceFile.h"
 #include "Tab.h"
 #include "Debugger.h"
-#include "Compilation.h"
+#include <kiss-compiler/Compilation.h>
 
 #include "WorkingUnit.h"
 

@@ -22,7 +22,7 @@
 
 #include "Project.h"
 #include "ArchiveWriter.h"
-#include "Temporary.h"
+#include <kiss-compiler/Temporary.h>
 
 ProjectManager::~ProjectManager()
 {

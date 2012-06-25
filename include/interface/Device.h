@@ -3,6 +3,7 @@
 
 #include "Named.h"
 #include "QTinyArchive.h"
+#include <kiss-compiler/Compiler.h>
 
 #include <QString>
 #include <QMap>
@@ -42,6 +43,7 @@ public:
 	virtual const QMap<QString, QString> information() const = 0; // Needs to be cached
 	
 	virtual const bool available() = 0;
+	virtual const CompileResult compile(const QString& name) = 0;
 	virtual const bool download(const QString& name, TinyArchive* archive) = 0;
 	virtual const bool run(const QString& name) = 0;
 	

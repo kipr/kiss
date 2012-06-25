@@ -38,6 +38,11 @@ public:
 		return ret[0];
 	}
 	
+	virtual const CompileResult compile(const QString& name)
+	{
+		return CompileResult(false);
+	}
+	
 	virtual const bool download(const QString& name, TinyArchive* archive)
 	{
 		if(!connect()) return false;

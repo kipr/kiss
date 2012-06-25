@@ -38,9 +38,8 @@
 #include "ProjectManager.h"
 #include "QTinyArchive.h"
 #include "Log.h"
-#include "Compiler.h"
-#include "CompilerManager.h"
-#include "Compilation.h"
+#include <kiss-compiler/Compiler.h>
+#include <kiss-compiler/CompilerManager.h>
 #include "DeviceDialog.h"
 #include "InterfaceManager.h"
 
@@ -588,9 +587,13 @@ CompilationPtr SourceFile::compile()
 	
 	if(isProjectAssociated()) ProjectManager::ref().archiveWriter(associatedProject())->write(ArchiveWriter::Delta);
 	
-	CompilationPtr compilation(isProjectAssociated()
-		? new Compilation(CompilerManager::ref().compilers(), associatedProject(), device()->interface()->name())
-		: new Compilation(CompilerManager::ref().compilers(), associatedFile(), device()->interface()->name()));
+	CompilationPtr compilation(isProjectAssociated() ? new Compilation(CompilerManager::ref().compilers(),
+			associatedProject()->name(),
+			ProjectManager::ref().archiveWriter(associatedProject())->files(),
+			associatedProject()->settings(),
+			device()->interface()->name()) : new Compilation(CompilerManager::ref().compilers(),
+			associatedFile(),
+			device()->interface()->name()));
 	bool success = compilation->start();
 	qDebug() << "Results:" << compilation->compileResults();
 	mainWindow()->setErrors(topLevelUnit(), compilation->results());

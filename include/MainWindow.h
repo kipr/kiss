@@ -32,7 +32,7 @@
 
 #include "MenuManager.h"
 #include "ScriptEnvironment.h"
-#include "Compiler.h"
+#include <kiss-compiler/Compiler.h>
 
 #include "ProjectsModel.h"
 

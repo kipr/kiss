@@ -2,7 +2,7 @@
 
 #include "DeltaArchiveListener.h"
 #include "Log.h"
-#include "FileSystemUtils.h"
+#include <kiss-compiler/FileSystemUtils.h>
 #include "QTinyArchive.h"
 
 #include <QDebug>

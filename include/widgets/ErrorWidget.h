@@ -2,7 +2,7 @@
 #define _ERRORWIDGET_H_
 
 #include "ui_ErrorWidget.h"
-#include "Compiler.h"
+#include <kiss-compiler/Compiler.h>
 #include "WorkingUnit.h"
 
 #define DEFAULT_ERROR_KEY "Errors"

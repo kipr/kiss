@@ -1,6 +1,6 @@
 #include "LocalInterface.h"
 
-#include "Temporary.h"
+#include <kiss-compiler/Temporary.h>
 #include "ArchiveWriter.h"
 
 #include <QProcess>
@@ -31,6 +31,11 @@ public:
 	virtual const bool available()
 	{
 		return true;
+	}
+	
+	virtual const CompileResult compile(const QString& name)
+	{
+		return CompileResult(false);
 	}
 	
 	virtual const bool download(const QString& name, TinyArchive* archive)

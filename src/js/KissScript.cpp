@@ -20,9 +20,6 @@
 
 #include "KissScript.h"
 
-#include "Compilers.h"
-#include "Compiler.h"
-
 #include "Process.h"
 #include "MessageDialog.h"
 #include "MainWindow.h"
@@ -55,10 +52,6 @@ QString KissScript::cwd() const
 
 QScriptValue KissScript::plugin(const QString& type, const QScriptValue& obj)
 {
-	if(type == "compiler") {
-		Compilers::ref().addCompiler(new CompilerPlugin(obj));
-		return true;
-	}
 	if(type == "lexer") {
 		Log::ref().warning("Lexer plugins are NYI");
 		return false;

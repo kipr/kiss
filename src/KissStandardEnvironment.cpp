@@ -5,7 +5,7 @@
 #include "Device.h"
 #include "InterfaceManager.h"
 
-#include "CompilerPluginManager.h"
+#include <kiss-compiler/CompilerPluginManager.h>
 #include "InterfacePluginManager.h"
 #include "LexerPluginManager.h"
 

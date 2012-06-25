@@ -22,6 +22,12 @@ public:
 		return true;
 	}
 	
+	virtual const CompileResult compile(const QString& name)
+	{
+		qDebug() << "(Dummy Device) Compiling" << name;
+		return CompileResult(true);
+	}
+	
 	virtual const bool download(const QString& name, TinyArchive* archive)
 	{
 		qDebug() << "(Dummy Device) Downloading" << name;
