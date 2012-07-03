@@ -24,16 +24,15 @@
 #include "TemplateDialog.h"
 #include "ChoosePortDialog.h"
 #include "EditorSettingsDialog.h"
-#include "Target.h"
 #include "ui_SourceFile.h"
 #include "Tab.h"
-#include "Debugger.h"
 #include <kiss-compiler/Compilation.h>
 
 #include "WorkingUnit.h"
 
 #include "SourceFindWidget.h"
 #include "SourceLocalFailed.h"
+#include "QtDeviceResponder.h"
 
 #include <QtGlobal>
 #include <Qsci/qsciscintilla.h>
@@ -126,10 +125,9 @@ public slots:
 	const bool changeDevice();
 
 	const bool download();
-	CompilationPtr compile();
+	const bool compile();
 	const bool run();
 	void stop();
-	void simulate();
 	void debug();
 	void screenGrab();
 	void requestFile();
@@ -161,6 +159,15 @@ signals:
 private slots:
 	void on_ui_editor_cursorPositionChanged(int line, int index);
 	
+	void availableFinished(bool avail);
+	void compileFinished(CompileResult result);
+	void downloadFinished(bool success);
+	void runFinished(bool success);
+	void connectionError();
+	void communicationError();
+	void notAuthenticatedError();
+	void authenticationResponse(bool success);
+	
 private:
 	bool saveAsFile();
 	bool saveAsProject();
@@ -190,13 +197,11 @@ private:
 	int m_currentLine;
 	QWidget* m_runTab;
 	
-	//QsciAPIs m_apis;
-	
 	void clearProblems();
 	void markProblems(const QStringList& errors, const QStringList& warnings);
 	void updateErrors(const CompileResult& compileResult);
 	
-	Debugger m_debugger;
+	QtDeviceResponder m_responder;
 protected:
 	void keyPressEvent(QKeyEvent *event);
 };

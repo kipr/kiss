@@ -32,16 +32,10 @@ DeviceMenu::DeviceMenu() : ConcreteMenuable(menuName())
 	
 	m_targetMenu->children.append(compileNode = node(activeAction("bricks", "Compile", QKeySequence("Alt+C"), this, "compile")));
 	m_targetMenu->children.append(downloadNode = node(activeAction("ruby_blue", "Download", QKeySequence("Alt+D"), this, "download")));
-	m_targetMenu->children.append(simulateNode = node(activeAction("application_go", "Simulate", QKeySequence("Alt+S"), this, "simulate")));
 	m_targetMenu->children.append(runNode = node(activeAction("arrow_right", "Run", QKeySequence("Alt+R"), this, "run")));
 	m_targetMenu->children.append(stopNode = node(activeAction("stop.png", "Stop", QKeySequence("Alt+X"), this, "stop")));
-	m_targetMenu->children.append(debugNode = node(activeAction("bug", "Debug", QKeySequence("Alt+G"), this, "debug")));
-	
-	downloadNode->activeControl = simulateNode->activeControl = true;
-	
 	m_toolbar.append(m_targetMenu->children);
 	m_targetMenu->children.append(MenuNode::separator());
-	
 	m_targetMenu->children.append(MenuNode::separator());
 	m_targetMenu->children.append(node(activeAction("", "Change Device", QKeySequence("Alt+T"), this, "forceChangeDevice")));
 	m_targetMenu->children.append(node(activeAction("link", "Choose Port", QKeySequence("Alt+P"), this, "choosePort")));
@@ -53,26 +47,17 @@ DeviceMenu::DeviceMenu() : ConcreteMenuable(menuName())
 void DeviceMenu::refresh()
 {
 	if(!isActive()) return;
-	DevicePtr device = qobject_cast<SourceFile*>(active())->device();
-	
-	downloadNode->rawAction->setEnabled(!device->interface()->local());
-	simulateNode->rawAction->setEnabled(!device->interface()->local());
-	
 	menuManager()->refreshToolbar();
 }
 
 void DeviceMenu::activated()
 {
 	menuManager()->addActivation(this);
-	
 	refresh();
 }
 
 void DeviceMenu::deactivated()
 {
-	downloadNode->rawAction->setEnabled(false);
-	simulateNode->rawAction->setEnabled(false);
-	
 	menuManager()->removeActivation(this);
 }
 

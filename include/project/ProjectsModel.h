@@ -3,11 +3,11 @@
 
 #include <QStandardItemModel>
 #include <QMap>
-
-#include "QTinyArchive.h"
+#include <TinyArchive.h>
 
 class ProjectManager;
 class Project;
+class TinyNode;
 
 class ProjectsModel : public QStandardItemModel, private TinyArchiveListener
 {

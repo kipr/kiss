@@ -4,7 +4,7 @@
 #include "ProjectManager.h"
 
 #include "ResourceHelper.h"
-#include "QTinyArchive.h"
+#include <kiss-compiler/QTinyArchive.h>
 #include "Log.h"
 
 #include <QFileInfo>

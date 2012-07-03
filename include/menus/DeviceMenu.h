@@ -43,14 +43,12 @@ protected:
 	void deactivated();
 	
 private:
-	MenuNode* m_targetMenu;
+	MenuNode *m_targetMenu;
 
-	MenuNode* compileNode;
-	MenuNode* downloadNode;
-	MenuNode* simulateNode;
-	MenuNode* runNode;
-	MenuNode* stopNode;
-	MenuNode* debugNode;
+	MenuNode *compileNode;
+	MenuNode *downloadNode;
+	MenuNode *runNode;
+	MenuNode *stopNode;
 };
 
 #endif

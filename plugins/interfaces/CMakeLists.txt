@@ -1,3 +1,2 @@
-add_subdirectory(dummy)
-add_subdirectory(local)
+add_subdirectory(computer)
 add_subdirectory(cbc3)

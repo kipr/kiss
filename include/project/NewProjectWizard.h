@@ -6,8 +6,6 @@
 
 #include "ui_NewProjectWizard.h"
 
-#include "ProjectType.h"
-
 class NewProjectWizard : public QDialog, private Ui::NewProjectWizard
 {
 Q_OBJECT
@@ -18,7 +16,6 @@ public:
 	
 	QString projectName() const;
 	QString saveLocation() const;
-	ProjectType* projectType() const;
 	QString targetPlatform() const;
 	
 public slots:

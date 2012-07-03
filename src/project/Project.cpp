@@ -20,8 +20,7 @@
 
 #include "Project.h"
 
-#include "QTinyArchive.h"
-#include "Log.h"
+#include <kiss-compiler/QTinyArchive.h>
 
 #include <QFileInfo>
 #include <QDebug>

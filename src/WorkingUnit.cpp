@@ -12,9 +12,7 @@ void WorkingUnit::setDevice(DevicePtr device)
 	WorkingUnit* unit = this;
 	while(unit->parentUnit()) unit = unit->parentUnit();
 	if(unit == this) m_device = device;
-	else 
-	
-	unit->setDevice(device);
+	else unit->setDevice(device);
 }
 
 DevicePtr WorkingUnit::device()

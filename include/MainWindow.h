@@ -31,7 +31,6 @@
 #include <QListWidget>
 
 #include "MenuManager.h"
-#include "ScriptEnvironment.h"
 #include <kiss-compiler/Compiler.h>
 
 #include "ProjectsModel.h"
@@ -150,8 +149,6 @@ public:
 	void activateMenuable(const QString& name, QObject* on);
 	QStringList standardMenus() const;
 	
-	ScriptEnvironment* scriptEnvironment();
-	
 	void restart();
 	
 	bool canClose();
@@ -183,7 +180,7 @@ public slots:
 	void hideProjectDock();
 	
 	QList<QObject*> tabs(const QString& type);
-
+	
 signals:
 	void settingsUpdated();
 	void updateActivatable();
@@ -204,13 +201,17 @@ private slots:
 	void projectOpened(Project* project);
 	void projectClosed(Project* project);
 	
+	void availableFinished(bool avail);
+	void compileFinished(CompileResult result);
+	void downloadFinished(bool success);
+	void runFinished(bool success);
+	
 private:
 	TabbedWidget* m_currentTab;
 	EditorSettingsDialog m_editorSettingsDialog;
 	QMap<QWidget*, TabbedWidget*> m_lookup;
 	MenuManager m_menuManager;
 	QList<Menuable*> m_menuables;
-	ScriptEnvironment m_scriptEnvironment;
 	
 	ProjectsModel m_projectsModel;
 

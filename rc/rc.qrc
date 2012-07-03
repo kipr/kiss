@@ -75,7 +75,8 @@
   <qresource prefix="/">
     <file>webtab_fail/index.html</file>
   </qresource>
-<qresource prefix="/">
+  <qresource prefix="/">
+    <file>icon_set/icons/Locked.png</file>
     <file>devices/default_device.png</file>
   </qresource>
   <qresource prefix="/">
@@ -86,5 +87,10 @@
     <file>icon_set/icons/page_white_h.png</file>
     <file>icon_set/icons/page_white_java.png</file>
     <file>icon_set/icons/empty.png</file>
+  </qresource>
+  <qresource prefix="/">
+    <file>keypad/Keypad.qml</file>
+    <file>keypad/DigitButton.qml</file>
+    <file>keypad/MyButton.qml</file>
   </qresource>
 </RCC>

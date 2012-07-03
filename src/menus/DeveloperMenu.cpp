@@ -23,7 +23,7 @@
 #ifdef BUILD_DEVELOPER_TOOLS
 
 #include "KissArchive.h"
-#include "ArchiveWriter.h"
+#include <kiss-compiler/ArchiveWriter.h>
 #include "ProjectManager.h"
 #include <QFileDialog>
 
@@ -50,13 +50,6 @@ void DeveloperMenu::triggered()
 		QStringList installed = KissArchive::installed();
 		foreach(const QString& install, installed) KissArchive::uninstall(install);
 		qWarning() << "Uninstalled all packages.";
-	} else if(_ == injectScript) {
-		QStringList filePaths = QFileDialog::getOpenFileNames(0, tr("Inject Scripts"), QDir::homePath(), "Javascript (*.js)");
-		
-		foreach(const QString& path, filePaths) {
-			qWarning() << path;
-			m_mainWindow->scriptEnvironment()->execute(path);
-		}
 	} else if(_ == writeFullProject) {
 		Project* project = m_mainWindow->activeProject();
 		ArchiveWriter* writer = ProjectManager::ref().archiveWriter(project);

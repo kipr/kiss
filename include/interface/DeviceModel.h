@@ -2,32 +2,16 @@
 #define _DEVICEMODEL_H_
 
 #include "Device.h"
+#include "Interface.h"
 
 #include <QStandardItemModel>
 #include <QMap>
 #include <QRunnable>
 #include <QThreadPool>
 
-class Interface;
 class InterfaceManager;
 
-class InterfaceWorker : public QObject, public QRunnable
-{
-Q_OBJECT
-public:
-	InterfaceWorker(Interface *interface, QStandardItemModel *model);
-	~InterfaceWorker();
-	void run();
-	
-signals:
-	void foundDevice(DevicePtr device);
-	
-private:
-	Interface *m_interface;
-	QStandardItemModel *m_model;
-};
-
-class DeviceModel : public QStandardItemModel
+class DeviceModel : public QStandardItemModel, public InterfaceResponder
 {
 Q_OBJECT
 public:
@@ -35,19 +19,21 @@ public:
 	DevicePtr indexToDevice(const QModelIndex& index) const;
 	Interface* indexToInterface(const QModelIndex& index) const;
 	
-	void filter(Interface* interface);
-	
 	void refresh();
+	
+signals:
+	void foundDevice(DevicePtr device);
+	void interfaceStartedScan(Interface *interface);
 	
 public slots:
 	void addDevice(DevicePtr device);
 	
 private slots:
-	void interfaceAdded(Interface* interface);
 	void interfaceRemoved(Interface* interface);
 	
 private:
-	void reload(Interface* interface);
+	void deviceScanStarted(Interface *interface);
+	void deviceFound(Interface *interface, DevicePtr device);
 	
 	InterfaceManager* m_manager;
 };

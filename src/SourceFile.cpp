@@ -30,13 +30,14 @@
 #include "TemplateManager.h"
 #include "TemplateFormat.h"
 #include "MakeTemplateDialog.h"
+#include "PasswordDialog.h"
 #include "SourceFileMenu.h"
 #include "DeviceMenu.h"
 #include "MainWindowMenu.h"
 #include "Project.h"
 #include "ProjectSaveAs.h"
 #include "ProjectManager.h"
-#include "QTinyArchive.h"
+#include <kiss-compiler/QTinyArchive.h>
 #include "Log.h"
 #include <kiss-compiler/Compiler.h>
 #include <kiss-compiler/CompilerManager.h>
@@ -76,8 +77,8 @@
 
 #define MAX(a, b) (a > b ? a : b)
 
-SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent), WorkingUnit("File"), m_isNewFile(true),
-	m_debuggerEnabled(false), m_runTab(0), m_debugger(parent)
+SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent),
+	WorkingUnit("File"), m_isNewFile(true), m_debuggerEnabled(false), m_runTab(0)
 {
 	setupUi(this);
 	
@@ -100,11 +101,18 @@ SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this,
 	ui_find->hide();
 	ui_localCompileFailed->hide();
 	
-	m_debugger.hide();
-	
 	setAssociatedFile("Untitled");
 	
 	refreshSettings();
+	
+	connect(&m_responder, SIGNAL(compileFinished(CompileResult)), SLOT(compileFinished(CompileResult)));
+	connect(&m_responder, SIGNAL(downloadFinished(bool)), SLOT(downloadFinished(bool)));
+	connect(&m_responder, SIGNAL(runFinished(bool)), SLOT(runFinished(bool)));
+	connect(&m_responder, SIGNAL(availableFinished(bool)), SLOT(availableFinished(bool)));
+	connect(&m_responder, SIGNAL(connectionError()), SLOT(connectionError()));
+	connect(&m_responder, SIGNAL(communicationError()), SLOT(communicationError()));
+	connect(&m_responder, SIGNAL(notAuthenticatedError()), SLOT(notAuthenticatedError()));
+	connect(&m_responder, SIGNAL(authenticationResponse(bool)), SLOT(authenticationResponse(bool)));
 }
 
 void SourceFile::activate()
@@ -523,8 +531,7 @@ bool SourceFile::saveAsProject()
 	setAssociatedProject(saveAsProject.activeProject());
 	const QString& path = QPathUtils::appendComponent(QTinyNode::path(saveAsProject.parent()), saveAsProject.fileName());
 	if(associatedProject()->archive()->exists(path)) {
-		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
-			tr("Overwrite ") + path + "?",
+		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"), tr("Overwrite ") + path + "?",
 			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 			
 		if(ret == QMessageBox::No) return false;
@@ -538,99 +545,92 @@ void SourceFile::sourceModified(bool) { mainWindow()->setTabName(this, "* " + as
 
 const bool SourceFile::download()
 {
+	if(!save()) return false;
 	if(!device().get()) if(!changeDevice()) return false;
-	CompilationPtr compilation = compile();
-	if(!compilation.get() || !compilation->results().success()) return false;
 	
-	const int type = device()->downloadType();
-	mainWindow()->setStatusMessage(tr("Downloading ") + (type == Device::Source ? "Source" : "Binary") + "...");
+	mainWindow()->setStatusMessage(tr("Downloading..."));
 	QApplication::flush();
 	
-	const bool assoc = type == Device::Source && isProjectAssociated();
+	const bool assoc = isProjectAssociated();
 	QTinyArchive* archive = 0;
-	if(type == Device::Source) {
-		if(assoc) archive = associatedProject()->archive();
-		else {
-			archive = new QTinyArchive();
-			archive->add(associatedFileName(), ui_editor->text().toUtf8());
-		}
-	} else {
-		const QStringList& results = compilation->compileResults();
-		if(results.size()) {
-			archive = new QTinyArchive();
-			foreach(const QString& result, results) {
-				QFile data(result);
-				data.open(QIODevice::ReadOnly);
-				archive->add(QFileInfo(result).fileName(), data.readAll());
-				data.close();
-			}
-			archive->add("run", QFileInfo(results[0]).fileName().toUtf8());
-		}
+	if(assoc) archive = associatedProject()->archive();
+	else {
+		archive = new QTinyArchive();
+		archive->add(associatedFileName(), ui_editor->text().toUtf8());
 	}
-	
-	const bool message = archive ? device()->download(isProjectAssociated() ? associatedProject()->name() : associatedFileName(), archive) : false;
+	const QString remoteName = assoc ? associatedProject()->name() : associatedFileName();
+	const bool message = archive ? device()->download(remoteName, archive) : false;
+	if(!message) {
+		mainWindow()->setStatusMessage(tr("Error communicating with ") + device()->displayName());
+	}
 	if(!assoc && archive) delete archive;
-	
-	mainWindow()->setStatusMessage(message ? tr("Download Succeeded") : tr("Download Failed"));
-	UiEventManager::ref().sendEvent(UI_EVENT_DOWNLOAD);
-	
-	return true;
+	return message;
 }
 
-CompilationPtr SourceFile::compile()
+const bool SourceFile::compile()
 {
+	if(!save()) return false;
+	if(!device().get()) if(!changeDevice()) return false;
+	
 	ui_localCompileFailed->hide();
 	
-	if(!save()) return CompilationPtr();
+	mainWindow()->setStatusMessage(tr("Downloading and Compiling..."));
+	QApplication::flush();
 	
-	mainWindow()->hideErrors();
+	const bool assoc = isProjectAssociated();
+	QTinyArchive* archive = 0;
+	if(assoc) archive = associatedProject()->archive();
+	else {
+		archive = new QTinyArchive();
+		archive->add(associatedFileName(), ui_editor->text().toUtf8());
+	}
 	
-	if(isProjectAssociated()) ProjectManager::ref().archiveWriter(associatedProject())->write(ArchiveWriter::Delta);
-	
-	CompilationPtr compilation(isProjectAssociated() ? new Compilation(CompilerManager::ref().compilers(),
-			associatedProject()->name(),
-			ProjectManager::ref().archiveWriter(associatedProject())->files(),
-			associatedProject()->settings(),
-			device()->interface()->name()) : new Compilation(CompilerManager::ref().compilers(),
-			associatedFile(),
-			device()->interface()->name()));
-	bool success = compilation->start();
-	qDebug() << "Results:" << compilation->compileResults();
-	mainWindow()->setErrors(topLevelUnit(), compilation->results());
-	
-	mainWindow()->setStatusMessage(success ? tr("Compile Succeeded") : tr("Compile Failed"));
-	
-	updateErrors(compilation->results());
-	
-	UiEventManager::ref().sendEvent(UI_EVENT_COMPILE);
-	
-	return compilation;
+	const QString remoteName = assoc ? associatedProject()->name() : associatedFileName();
+	CommunicationQueue queue;
+	queue.enqueue(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive));
+	queue.enqueue(new CommunicationEntry(CommunicationEntry::Compile, remoteName));
+	bool success = device()->executeQueue(queue);
+	if(!assoc && archive) delete archive; // We can get away with this because the first command is sent immeadiately
+	if(!success) {
+		mainWindow()->setStatusMessage(tr("Error starting download and compile procedure"));
+	}
+	return success;
 }
 
 const bool SourceFile::run()
 {
-	if(!download()) return false;
-	const bool success = device()->run(isProjectAssociated() ? associatedProject()->name() : associatedFileName());
-	mainWindow()->setStatusMessage(success ? tr("Run Succeeded") : tr("Run Failed"));
-	UiEventManager::ref().sendEvent(UI_EVENT_RUN);
+	if(!save()) return false;
+	if(!device().get()) if(!changeDevice()) return false;
+	
+	ui_localCompileFailed->hide();
+	
+	mainWindow()->setStatusMessage(tr("Downloading, Compiling, and Running..."));
+	QApplication::flush();
+	
+	const bool assoc = isProjectAssociated();
+	QTinyArchive* archive = 0;
+	if(assoc) archive = associatedProject()->archive();
+	else {
+		archive = new QTinyArchive();
+		archive->add(associatedFileName(), ui_editor->text().toUtf8());
+	}
+	
+	const QString remoteName = assoc ? associatedProject()->name() : associatedFileName();
+	
+	CommunicationQueue queue;
+	queue.enqueue(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive));
+	queue.enqueue(new CommunicationEntry(CommunicationEntry::Compile, remoteName));
+	queue.enqueue(new CommunicationEntry(CommunicationEntry::Run, remoteName));
+	
+	bool success = device()->executeQueue(queue);
+	if(!assoc && archive) delete archive; // We can get away with this because the first command is sent immeadiately
+	if(!success) {
+		mainWindow()->setStatusMessage(tr("Error starting download, compile, and run procedure"));
+	}
 	return success;
 }
 
 void SourceFile::stop() { /* target()->stop(); UiEventManager::ref().sendEvent(UI_EVENT_STOP); */ }
-
-void SourceFile::simulate()
-{
-	/* ui_localCompileFailed->hide();
-	
-	if(!save()) return;
-	
-	mainWindow()->hideErrors();
-	mainWindow()->setStatusMessage(target()->simulate(associatedFile()) ? tr("Simulation Succeeded") : tr("Simulation Failed"));
-
-	updateErrors();
-	
-	UiEventManager::ref().sendEvent(UI_EVENT_SIMULATE); */
-}
 
 void SourceFile::debug()
 {
@@ -689,7 +689,8 @@ const bool SourceFile::changeDevice()
 	DeviceDialog deviceDialog(&InterfaceManager::ref(), this);
 	if(deviceDialog.exec() == QDialog::Rejected) return false;
 	setDevice(deviceDialog.device());
-	return device().get();
+	device()->setResponder(&m_responder);
+	return true;
 }
 
 void SourceFile::screenGrab()
@@ -778,6 +779,54 @@ void SourceFile::on_ui_editor_cursorPositionChanged(int line, int)
 {
 	m_currentLine = line;
 	emit updateActivatable();
+}
+
+void SourceFile::availableFinished(bool avail)
+{
+	qDebug() << "Available finished";
+}
+
+void SourceFile::compileFinished(CompileResult result)
+{
+	qDebug() << "Compile finished";
+	updateErrors(result);
+	mainWindow()->setStatusMessage(tr("Compile ") + (result.success() ? tr("Succeeded") : tr("Failed")));
+	mainWindow()->setErrors(topLevelUnit(), result);
+	UiEventManager::ref().sendEvent(UI_EVENT_COMPILE);
+}
+
+void SourceFile::downloadFinished(bool success)
+{
+	qDebug() << "Download finished";
+	mainWindow()->setStatusMessage(tr("Download ") + (success ? tr("Succeeded") : tr("Failed")));
+}
+
+void SourceFile::runFinished(bool success)
+{
+	qDebug() << "Run finished";
+	mainWindow()->setStatusMessage(tr("Run ") + (success ? tr("Succeeded") : tr("Failed")));
+}
+
+void SourceFile::connectionError()
+{
+	mainWindow()->setStatusMessage(tr("Unable to establish a connection with ") + device()->displayName());
+}
+
+void SourceFile::communicationError()
+{
+	mainWindow()->setStatusMessage(tr("Error communicating with ") + device()->displayName());
+}
+
+void SourceFile::notAuthenticatedError()
+{
+	PasswordDialog dialog(this);
+	if(dialog.exec() == QDialog::Rejected) return;
+	device()->authenticate(dialog.hash());
+}
+
+void SourceFile::authenticationResponse(bool success)
+{
+	qDebug() << "Authed?" << success;
 }
 
 void SourceFile::showFind() { ui_find->show(); }

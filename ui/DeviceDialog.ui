@@ -127,18 +127,18 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
           <item>
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="label_8">
             <property name="text">
-             <string>Downloads:</string>
+             <string>Comm Port:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="ui_downloadType">
+           <widget class="QLabel" name="ui_commPort">
             <property name="text">
-             <string>N/A</string>
+             <string>Unknown</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -224,7 +224,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
+      <widget class="QDialogButtonBox" name="ui_buttons">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -240,7 +240,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>ui_buttons</sender>
    <signal>accepted()</signal>
    <receiver>DeviceDialog</receiver>
    <slot>accept()</slot>
@@ -256,7 +256,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>ui_buttons</sender>
    <signal>rejected()</signal>
    <receiver>DeviceDialog</receiver>
    <slot>reject()</slot>

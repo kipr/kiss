@@ -1,7 +1,5 @@
 #include "NewProjectWizard.h"
 
-#include "ProjectType.h"
-
 #include <QFileDialog>
 #include <QSettings>
 
@@ -11,13 +9,6 @@
 NewProjectWizard::NewProjectWizard(QWidget* parent) : QDialog(parent)
 {
 	setupUi(this);
-	
-	foreach(ProjectType* projectType, ProjectTypes::ref().projectTypes())
-		ui_projectTypes->addItem(projectType->name(), QVariant::fromValue(projectType));
-	
-	// const QStringList& targets = TargetManager::ref().targets();
-	// foreach(const QString& target, targets)
-	// 	ui_targetPlatforms->addItem(TargetManager::ref().displayName(target), target);
 		
 	QSettings settings;
 	settings.beginGroup(SETTINGS_GROUP);
@@ -40,12 +31,6 @@ QString NewProjectWizard::projectName() const
 QString NewProjectWizard::saveLocation() const
 {
 	return ui_saveLocation->text();
-}
-
-ProjectType* NewProjectWizard::projectType() const
-{
-	int i = ui_projectTypes->currentIndex();
-	return ui_projectTypes->itemData(i).value<ProjectType*>();
 }
 
 QString NewProjectWizard::targetPlatform() const

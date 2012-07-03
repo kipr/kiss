@@ -37,24 +37,11 @@ private:
 	DevicePtr m_device;
 };
 
-InterfaceWorker::InterfaceWorker(Interface *interface, QStandardItemModel *model)
-	: m_interface(interface), m_model(model)
-{}
-
-InterfaceWorker::~InterfaceWorker() {}
-
-void InterfaceWorker::run()
-{
-	printf("Checking interface %s for devices...\n", m_interface->name().toStdString().c_str());
-	QList<DevicePtr> devices = m_interface->devices();
-	foreach(DevicePtr device, devices) emit foundDevice(device);
-}
-
-
 DeviceModel::DeviceModel(InterfaceManager* manager) : m_manager(manager)
 {
-	connect(m_manager, SIGNAL(interfaceAdded(Interface*)), SLOT(interfaceAdded(Interface*)));
-	connect(m_manager, SIGNAL(interfaceRemoved(Interface*)), SLOT(interfaceRemoved(Interface*)), Qt::QueuedConnection);
+	connect(m_manager, SIGNAL(interfaceRemoved(Interface *)), SLOT(interfaceRemoved(Interface *)), Qt::QueuedConnection);
+	connect(this, SIGNAL(interfaceStartedScan(Interface *)), SLOT(interfaceRemoved(Interface *)), Qt::QueuedConnection);
+	connect(this, SIGNAL(foundDevice(DevicePtr)), SLOT(addDevice(DevicePtr)), Qt::QueuedConnection);
 }
 
 DevicePtr DeviceModel::indexToDevice(const QModelIndex& index) const
@@ -67,28 +54,15 @@ Interface* DeviceModel::indexToInterface(const QModelIndex& index) const
 	return DeviceItem::interface_cast(itemFromIndex(index));
 }
 
-void DeviceModel::filter(Interface* interface)
-{
-	reload(interface);
-}
-
 void DeviceModel::refresh()
 {
 	clear();
-	foreach(Interface *interface, InterfaceManager::ref().interfaces()) interfaceAdded(interface);
+	foreach(Interface *interface, InterfaceManager::ref().interfaces()) interface->scan(this);
 }
 
 void DeviceModel::addDevice(DevicePtr device)
 {
 	appendRow(new DeviceItem(device));
-}
-
-void DeviceModel::interfaceAdded(Interface* interface)
-{
-	interfaceRemoved(interface);
-	InterfaceWorker *worker = new InterfaceWorker(interface, this);
-	connect(worker, SIGNAL(foundDevice(DevicePtr)), SLOT(addDevice(DevicePtr)));
-	QThreadPool::globalInstance()->start(worker);
 }
 
 void DeviceModel::interfaceRemoved(Interface* interface)
@@ -98,12 +72,12 @@ void DeviceModel::interfaceRemoved(Interface* interface)
 	}
 }
 
-void DeviceModel::reload(Interface* filter)
+void DeviceModel::deviceScanStarted(Interface *interface)
 {
-	bool filtering = filter;
-	clear();
-	foreach(Interface* interface, m_manager->interfaces()) {
-		if(!filtering) filter = interface;
-		if(interface == filter) interfaceAdded(interface);
-	}
+	emit interfaceStartedScan(interface);
+}
+
+void DeviceModel::deviceFound(Interface *interface, DevicePtr device)
+{
+	emit foundDevice(device);
 }

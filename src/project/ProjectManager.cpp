@@ -21,7 +21,7 @@
 #include "ProjectManager.h"
 
 #include "Project.h"
-#include "ArchiveWriter.h"
+#include <kiss-compiler/ArchiveWriter.h>
 #include <kiss-compiler/Temporary.h>
 
 ProjectManager::~ProjectManager()

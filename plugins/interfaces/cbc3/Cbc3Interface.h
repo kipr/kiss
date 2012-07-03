@@ -3,6 +3,8 @@
 
 #include <QtPlugin>
 #include "Interface.h"
+#include <easydevice/DiscoveryServer.h>
+#include <easydevice/DeviceInfo.h>
 
 class Ohaiyo;
 class OhaiyoListener;
@@ -15,11 +17,14 @@ public:
 	Cbc3Interface();
 	~Cbc3Interface();
 	
-	virtual QList<DevicePtr> devices();
-	virtual const bool local();
+	virtual const bool scan(InterfaceResponder *responder);
+private slots:
+	void scanStarted();
+	void found(EasyDevice::DeviceInfo deviceInfo, const QHostAddress& address);
+	
 private:
-	Ohaiyo *m_ohaiyo;
-	OhaiyoListener *m_listener;
+	EasyDevice::DiscoveryServer *m_server;
+	InterfaceResponder *m_responder;
 };
 
 #endif

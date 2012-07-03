@@ -31,7 +31,7 @@
 #include "Project.h"
 #include "ProjectSettingsTab.h"
 #include "ProjectManager.h"
-#include "QTinyArchive.h"
+#include <TinyArchive.h>
 #include "Log.h"
 
 #include "LexerFactory.h" // Used to query supported extensions
@@ -65,7 +65,7 @@
 
 #define OPEN_PATH "openpath"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0), m_scriptEnvironment(this)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0)
 {
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	
@@ -129,7 +129,6 @@ Project* MainWindow::newProject(bool target)
 		return 0;
 	}
 
-	foreach(const QString& setting, wizard.projectType()->defaultSettings()) project->updateSetting(setting, "");
 	ProjectManager::ref().openProject(project);
 	return project;
 }
@@ -365,6 +364,7 @@ void MainWindow::moveToTab(TabbedWidget* tab)
 
 QTabWidget* MainWindow::tabWidget() { return ui_tabWidget; }
 QList<TabbedWidget*> MainWindow::tabs() { return m_lookup.values(); }
+
 void MainWindow::closeAllOthers(TabbedWidget* tab)
 {
 	int i = 0;
@@ -673,7 +673,7 @@ void MainWindow::projectClicked(const QModelIndex& index)
 
 void MainWindow::projectFileClicked(const QModelIndex& index)
 {
-	Project* project = m_projectsModel.indexToProject(index);
+	// Project* project = m_projectsModel.indexToProject(index);
 	
 	#if 0
 	
@@ -693,6 +693,31 @@ void MainWindow::projectClosed(Project* project)
 	closeProjectTabs(project);
 	ProjectManager* manager = qobject_cast<ProjectManager*>(sender());
 	if(manager) ui_projectFrame->setVisible(manager->projects().size());
+}
+
+void MainWindow::availableFinished(bool avail)
+{
+	qDebug() << "Available finished";
+}
+
+void MainWindow::compileFinished(CompileResult result)
+{
+	qDebug() << "Compile finished";
+	setStatusMessage(result.success() ? tr("Remote Compilation Succeeded") : tr("Remote Compilation Failed"));
+	UiEventManager::ref().sendEvent(UI_EVENT_COMPILE);
+}
+
+void MainWindow::downloadFinished(bool success)
+{
+	qDebug() << "Download finished";
+	setStatusMessage(success ? tr("Download Succeeded") : tr("Download Failed"));
+	UiEventManager::ref().sendEvent(UI_EVENT_DOWNLOAD);
+}
+
+void MainWindow::runFinished(bool success)
+{
+	qDebug() << "Run finished";
+	setStatusMessage(success ? tr("Run Succeeded") : tr("Run Failed"));
 }
 
 bool MainWindow::eventFilter(QObject * target, QEvent * event) {
@@ -752,11 +777,6 @@ QStringList MainWindow::standardMenus() const
 // TODO: NYI
 void MainWindow::restart()
 {
-}
-
-ScriptEnvironment* MainWindow::scriptEnvironment()
-{
-	return &m_scriptEnvironment;
 }
 
 QList<QObject*> MainWindow::tabs(const QString& name)

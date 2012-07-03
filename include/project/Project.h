@@ -33,7 +33,7 @@ class QTinyArchive;
 class TinyArchiveReader;
 class TinyArchiveWriter;
 
-#include "ArchiveWriter.h"
+#include <kiss-compiler/ArchiveWriter.h>
 
 #define DEVICE_KEY "DEVICE"
 #define SETTINGS_ID 1
