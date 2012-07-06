@@ -92,5 +92,5 @@ const bool Device::executeEntry(const CommunicationEntry *entry)
 
 void Device::clearEntries()
 {
-	while(m_queue.size()) delete m_queue.dequeue();
+	while(m_workingQueue.size()) delete m_workingQueue.dequeue();
 }

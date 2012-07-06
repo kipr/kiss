@@ -81,6 +81,7 @@ class SourceFile : public QWidget, public TabbedWidget, public WorkingUnit, priv
 Q_OBJECT
 public:
 	SourceFile(MainWindow* parent = 0);
+	~SourceFile();
 	
 	void activate();
 	
@@ -200,6 +201,9 @@ private:
 	void clearProblems();
 	void markProblems(const QStringList& errors, const QStringList& warnings);
 	void updateErrors(const CompileResult& compileResult);
+	
+	void setTemporaryArchive(TinyArchive *archive);
+	TinyArchive *m_temporaryArchive;
 	
 	QtDeviceResponder m_responder;
 protected:

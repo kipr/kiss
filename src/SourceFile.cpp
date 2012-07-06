@@ -78,7 +78,9 @@
 #define MAX(a, b) (a > b ? a : b)
 
 SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this, parent),
-	WorkingUnit("File"), m_isNewFile(true), m_debuggerEnabled(false), m_runTab(0)
+	WorkingUnit("File"), m_isNewFile(true),
+	m_debuggerEnabled(false), m_runTab(0),
+	m_temporaryArchive(0)
 {
 	setupUi(this);
 	
@@ -113,6 +115,11 @@ SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this,
 	connect(&m_responder, SIGNAL(communicationError()), SLOT(communicationError()));
 	connect(&m_responder, SIGNAL(notAuthenticatedError()), SLOT(notAuthenticatedError()));
 	connect(&m_responder, SIGNAL(authenticationResponse(bool)), SLOT(authenticationResponse(bool)));
+}
+
+SourceFile::~SourceFile()
+{
+	setTemporaryArchive(0);
 }
 
 void SourceFile::activate()
@@ -567,7 +574,9 @@ const bool SourceFile::download()
 	if(!success) {
 		mainWindow()->setStatusMessage(tr("Error communicating with ") + device()->displayName());
 	}
-	if(!assoc && archive) delete archive;
+	if(!assoc && archive) {
+		setTemporaryArchive(archive);
+	}
 	return success;
 }
 
@@ -596,7 +605,9 @@ const bool SourceFile::compile()
 	queue.enqueue(new CommunicationEntry(CommunicationEntry::Compile, remoteName));
 	queue.enqueue(new CommunicationEntry(CommunicationEntry::Disconnect));
 	bool success = device()->executeQueue(queue);
-	if(!assoc && archive) delete archive; // We can get away with this because the first command is sent immeadiately
+	if(!assoc && archive) {
+		setTemporaryArchive(archive);
+	}
 	if(!success) {
 		mainWindow()->setStatusMessage(tr("Error starting download and compile procedure"));
 	}
@@ -631,7 +642,9 @@ const bool SourceFile::run()
 	queue.enqueue(new CommunicationEntry(CommunicationEntry::Disconnect));
 	
 	bool success = device()->executeQueue(queue);
-	if(!assoc && archive) delete archive; // We can get away with this because the first command is sent immeadiately
+	if(!assoc && archive) {
+		setTemporaryArchive(archive);
+	}
 	if(!success) {
 		mainWindow()->setStatusMessage(tr("Error starting download, compile, and run procedure"));
 	}
@@ -922,4 +935,10 @@ const bool SourceFile::selectTemplate()
 	refreshSettings();
 	UiEventManager::ref().sendEvent(UI_EVENT_TEMPLATE_SELECTED);
 	return true;
+}
+
+void SourceFile::setTemporaryArchive(TinyArchive *archive)
+{
+	if(m_temporaryArchive) delete m_temporaryArchive;
+	m_temporaryArchive = archive;
 }
