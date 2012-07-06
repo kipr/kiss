@@ -545,6 +545,7 @@ void SourceFile::sourceModified(bool) { mainWindow()->setTabName(this, "* " + as
 
 const bool SourceFile::download()
 {
+	if(device()->isQueueExecuting()) return false;
 	if(!save()) return false;
 	if(!device().get()) if(!changeDevice()) return false;
 	
@@ -559,16 +560,20 @@ const bool SourceFile::download()
 		archive->add(associatedFileName(), ui_editor->text().toUtf8());
 	}
 	const QString remoteName = assoc ? associatedProject()->name() : associatedFileName();
-	const bool message = archive ? device()->download(remoteName, archive) : false;
-	if(!message) {
+	CommunicationQueue queue;
+	queue.enqueue(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive));
+	queue.enqueue(new CommunicationEntry(CommunicationEntry::Disconnect));
+	bool success = device()->executeQueue(queue);
+	if(!success) {
 		mainWindow()->setStatusMessage(tr("Error communicating with ") + device()->displayName());
 	}
 	if(!assoc && archive) delete archive;
-	return message;
+	return success;
 }
 
 const bool SourceFile::compile()
 {
+	if(device()->isQueueExecuting()) return false;
 	if(!save()) return false;
 	if(!device().get()) if(!changeDevice()) return false;
 	
@@ -589,6 +594,7 @@ const bool SourceFile::compile()
 	CommunicationQueue queue;
 	queue.enqueue(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive));
 	queue.enqueue(new CommunicationEntry(CommunicationEntry::Compile, remoteName));
+	queue.enqueue(new CommunicationEntry(CommunicationEntry::Disconnect));
 	bool success = device()->executeQueue(queue);
 	if(!assoc && archive) delete archive; // We can get away with this because the first command is sent immeadiately
 	if(!success) {
@@ -599,6 +605,7 @@ const bool SourceFile::compile()
 
 const bool SourceFile::run()
 {
+	if(device()->isQueueExecuting()) return false;
 	if(!save()) return false;
 	if(!device().get()) if(!changeDevice()) return false;
 	
@@ -621,6 +628,7 @@ const bool SourceFile::run()
 	queue.enqueue(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive));
 	queue.enqueue(new CommunicationEntry(CommunicationEntry::Compile, remoteName));
 	queue.enqueue(new CommunicationEntry(CommunicationEntry::Run, remoteName));
+	queue.enqueue(new CommunicationEntry(CommunicationEntry::Disconnect));
 	
 	bool success = device()->executeQueue(queue);
 	if(!assoc && archive) delete archive; // We can get away with this because the first command is sent immeadiately

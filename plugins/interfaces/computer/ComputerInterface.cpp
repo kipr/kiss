@@ -15,7 +15,7 @@
 using namespace EasyDevice;
 
 ComputerInterface::ComputerInterface()
-	: Interface("CBC 3 (Networked)"),
+	: Interface("Computer"),
 	m_server(new DiscoveryServer()),
 	m_responder(0)
 {
@@ -38,13 +38,20 @@ const bool ComputerInterface::scan(InterfaceResponder *responder)
 	return true;
 }
 
+void ComputerInterface::invalidateResponder()
+{
+	m_responder = 0;
+}
+
 void ComputerInterface::scanStarted()
 {
+	if(!m_responder) return;
 	m_responder->deviceScanStarted(this);
 }
 
 void ComputerInterface::found(DeviceInfo deviceInfo, const QHostAddress& address)
 {
+	if(!m_responder) return;
 	TcpSocketDevice *device = new TcpSocketDevice(this, address, 8075);
 	device->setDeviceInfo(deviceInfo);
 	m_responder->deviceFound(this, DevicePtr(device));

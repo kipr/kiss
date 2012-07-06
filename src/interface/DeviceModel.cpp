@@ -57,7 +57,7 @@ Interface* DeviceModel::indexToInterface(const QModelIndex& index) const
 void DeviceModel::refresh()
 {
 	clear();
-	foreach(Interface *interface, InterfaceManager::ref().interfaces()) interface->scan(this);
+	// foreach(Interface *interface, InterfaceManager::ref().interfaces()) interface->scan(this);
 }
 
 void DeviceModel::addDevice(DevicePtr device)

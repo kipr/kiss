@@ -38,13 +38,20 @@ const bool Cbc3Interface::scan(InterfaceResponder *responder)
 	return true;
 }
 
+void Cbc3Interface::invalidateResponder()
+{
+	m_responder = 0;
+}
+
 void Cbc3Interface::scanStarted()
 {
+	if(!m_responder) return;
 	m_responder->deviceScanStarted(this);
 }
 
 void Cbc3Interface::found(DeviceInfo deviceInfo, const QHostAddress& address)
 {
+	if(!m_responder) return;
 	TcpSocketDevice *device = new TcpSocketDevice(this, address, 8075);
 	device->setDeviceInfo(deviceInfo);
 	m_responder->deviceFound(this, DevicePtr(device));

@@ -25,6 +25,8 @@ public:
 	
 	void setDeviceInfo(EasyDevice::DeviceInfo deviceInfo);
 	
+	virtual const bool disconnect();
+	
 	virtual const QMap<QString, QString> information() const;
 	virtual const bool available();
 	virtual const bool compile(const QString& name);
@@ -40,7 +42,7 @@ private slots:
 private:
 	void processPayload(const QByteArray& payload);
 	bool connect();
-	bool disconnect();
+	
 	
 	EasyDevice::DeviceInfo m_deviceInfo;
 	QHostAddress m_address;

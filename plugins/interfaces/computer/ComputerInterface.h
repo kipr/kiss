@@ -18,6 +18,7 @@ public:
 	~ComputerInterface();
 	
 	virtual const bool scan(InterfaceResponder *responder);
+	virtual void invalidateResponder();
 private slots:
 	void scanStarted();
 	void found(EasyDevice::DeviceInfo deviceInfo, const QHostAddress& address);
