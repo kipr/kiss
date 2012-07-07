@@ -127,6 +127,27 @@
          </layout>
         </item>
         <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Version:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="ui_version">
+            <property name="text">
+             <string>Unknown</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_8">
           <item>
            <widget class="QLabel" name="label_8">
@@ -179,27 +200,6 @@
           </item>
           <item>
            <widget class="QLabel" name="ui_interface">
-            <property name="text">
-             <string>Unknown</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
-          <item>
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>Version:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="ui_version">
             <property name="text">
              <string>Unknown</string>
             </property>
