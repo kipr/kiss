@@ -39,7 +39,7 @@ public:
 	const QString type() const;
 	const QString commPort() const;
 	const QString serial() const;
-    const QString version() const;
+	const QString version() const;
 
 	
 	virtual const QMap<QString, QString> information() const = 0; // Needs to be cached

@@ -39,7 +39,7 @@ const QString Device::serial() const
 }
 
 const QString Device::version() const {
-    return information().value(VERSION);
+	return information().value(VERSION);
 }
 
 void Device::setResponder(DeviceResponder *responder)

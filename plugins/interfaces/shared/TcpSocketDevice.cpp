@@ -27,7 +27,7 @@ const QMap<QString, QString> TcpSocketDevice::information() const
 	ret[DISPLAY_NAME] = m_deviceInfo.displayName();
 	ret[DEVICE_TYPE] = m_deviceInfo.deviceType();
 	ret[SERIAL] = m_deviceInfo.serialNumber();
-    ret[VERSION] = m_deviceInfo.version();
+	ret[VERSION] = m_deviceInfo.version();
 	ret[COMM_PORT] = m_address.toString();
 	return ret;
 }
