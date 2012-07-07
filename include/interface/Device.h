@@ -17,6 +17,7 @@
 #define DEVICE_TYPE "device_type"
 #define COMM_PORT "comm_port"
 #define SERIAL "serial"
+#define VERSION "version"
 
 #define DOWNLOAD_TYPE "download_type"
 #define DOWNLOAD_SOURCE "src"
@@ -38,6 +39,8 @@ public:
 	const QString type() const;
 	const QString commPort() const;
 	const QString serial() const;
+    const QString version() const;
+
 	
 	virtual const QMap<QString, QString> information() const = 0; // Needs to be cached
 	

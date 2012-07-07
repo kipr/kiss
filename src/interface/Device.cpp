@@ -38,6 +38,10 @@ const QString Device::serial() const
 	return information().value(SERIAL);
 }
 
+const QString Device::version() const {
+    return information().value(VERSION);
+}
+
 void Device::setResponder(DeviceResponder *responder)
 {
 	m_responder = responder;

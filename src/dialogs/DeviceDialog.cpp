@@ -47,6 +47,7 @@ void DeviceDialog::currentDeviceChanged(const QModelIndex& index)
 	ui_commPort->setText(device.get() ? device->commPort() : unknown);
 	ui_serialNumber->setText(device.get() ? device->serial() : unknown);
 	ui_interface->setText(device.get() ? device->interface()->name() : unknown);
+    ui_version->setText(device.get() ? device->version() : unknown);
 	ui_buttons->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 
