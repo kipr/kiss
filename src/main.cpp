@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 #ifdef ENABLE_LOG_WINDOW
 #ifdef BUILD_DEVELOPER_TOOLS
 	Log::ref().info("Built with developer tools. Automatically showing error log.");
-	QTimer::singleShot(1500, &LogWindow::ref(), SLOT(show()));
+	QTimer::singleShot(500, &LogWindow::ref(), SLOT(show()));
 #endif
 #endif
 

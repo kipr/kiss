@@ -16,9 +16,11 @@ public:
 		Compile,
 		Run,
 		Authenticate,
+		Disconnect,
 		Custom
 	};
 	
+	CommunicationEntry(const Type& type);
 	CommunicationEntry(const Type& type, const QString& name, TinyArchive *archive = 0);
 	CommunicationEntry(const QString& custom, const QByteArray& payload = QByteArray());
 	

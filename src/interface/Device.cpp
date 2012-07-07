@@ -62,6 +62,11 @@ const bool Device::executeQueue(const CommunicationQueue& queue)
 	return true;
 }
 
+const bool Device::isQueueExecuting() const
+{
+	return m_workingQueue.size();
+}
+
 void Device::notifyQueue(const bool success)
 {
 	if(!m_workingQueue.size()) return;
@@ -79,6 +84,7 @@ const bool Device::executeEntry(const CommunicationEntry *entry)
 		case CommunicationEntry::Download: return download(entry->name(), entry->archive());
 		case CommunicationEntry::Compile: return compile(entry->name());
 		case CommunicationEntry::Run: return run(entry->name());
+		case CommunicationEntry::Disconnect: return disconnect();
 		default: qCritical() << "Device does not know how to execute queue entry of type" << entry->type();
 	}
 	return false;
@@ -86,5 +92,5 @@ const bool Device::executeEntry(const CommunicationEntry *entry)
 
 void Device::clearEntries()
 {
-	while(m_queue.size()) delete m_queue.dequeue();
+	while(m_workingQueue.size()) delete m_workingQueue.dequeue();
 }

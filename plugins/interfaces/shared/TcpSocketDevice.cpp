@@ -194,7 +194,7 @@ bool TcpSocketDevice::connect()
 	return m_socket.state() == QAbstractSocket::ConnectedState;
 }
 
-bool TcpSocketDevice::disconnect()
+const bool TcpSocketDevice::disconnect()
 {
 	m_socket.disconnectFromHost();
 	return true;

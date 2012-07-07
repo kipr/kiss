@@ -1,6 +1,12 @@
 #include "CommunicationQueue.h"
 #include "TinyArchive.h"
 
+CommunicationEntry::CommunicationEntry(const Type& type)
+	: m_type(type)
+{
+	
+}
+
 CommunicationEntry::CommunicationEntry(const CommunicationEntry::Type& type, const QString& name, TinyArchive *archive)
 	: m_type(type), m_name(name), m_archive(archive)
 {
