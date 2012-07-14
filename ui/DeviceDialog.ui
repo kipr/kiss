@@ -231,7 +231,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="ui_refresh">
        <property name="text">
         <string>Refresh</string>
        </property>
