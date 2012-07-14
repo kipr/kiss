@@ -63,6 +63,7 @@ void DeviceDialog::on_ui_interfaces_currentIndexChanged(int index)
 
 void DeviceDialog::on_ui_refresh_clicked()
 {
+	m_model.clear();
 	foreach(Interface *interface, m_manager->interfaces())
 		interface->scan(&m_model);
 }
