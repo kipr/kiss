@@ -383,7 +383,7 @@ void MainWindow::open()
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
 	filters << "KISS Project (*.kissproj)";
 	filters.removeDuplicates();
-	QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), openPath, filters.join(";;") + ";;All Files (*)");
+	QString filePath = QFileDialog::getOpenFileName(this, tr("Open"), openPath, filters.join(";;") + ";;All Files (*)");
 	
 	if(filePath.isEmpty()) return;
 

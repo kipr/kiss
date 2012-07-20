@@ -36,7 +36,7 @@ Rectangle {
 		ImageButton
 		{
 			imageSource: 'open.png'
-			title: 'Open File'
+			title: 'Open'
 			onClicked: {
 				kiss.open()
 			}
