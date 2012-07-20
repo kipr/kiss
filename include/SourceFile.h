@@ -22,7 +22,6 @@
 #define __SourceFile_H__
 
 #include "TemplateDialog.h"
-#include "ChoosePortDialog.h"
 #include "EditorSettingsDialog.h"
 #include "ui_SourceFile.h"
 #include "Tab.h"
@@ -64,7 +63,6 @@
 #define UI_EVENT_MAKE_TEMPLATE "makeTemplate"
 #define UI_EVENT_MAKE_TEMPLATE2 "makeTemplate2"
 
-#define UI_EVENT_CHANGE_PORT "changePort"
 #define UI_EVENT_CHANGE_TARGET "changeTarget"
 
 #define UI_EVENT_TEMPLATE_SELECTED "templateSelected"

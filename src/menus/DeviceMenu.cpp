@@ -38,7 +38,6 @@ DeviceMenu::DeviceMenu() : ConcreteMenuable(menuName())
 	m_targetMenu->children.append(MenuNode::separator());
 	m_targetMenu->children.append(MenuNode::separator());
 	m_targetMenu->children.append(node(activeAction("computer", "Change Device", QKeySequence("Alt+T"), this, "changeDevice")));
-	m_targetMenu->children.append(node(activeAction("link", "Choose Port", QKeySequence("Alt+P"), this, "choosePort")));
 	m_targetMenu->children.append(MenuNode::separator());
 	
 	m_actions.append(m_targetMenu);

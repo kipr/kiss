@@ -24,7 +24,6 @@
 #include "WebTab.h"
 #include "WelcomeTab.h"
 #include "KissArchive.h"
-#include "ChoosePortDialog.h"
 #include "Repository.h"
 #include "MessageDialog.h"
 #include "Menus.h"
