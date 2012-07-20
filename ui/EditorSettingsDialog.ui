@@ -53,7 +53,7 @@
           </property>
           <property name="currentFont">
            <font>
-            <family>Academy Engraved LET</family>
+            <family>DejaVu Sans</family>
             <pointsize>14</pointsize>
             <weight>50</weight>
             <bold>false</bold>
@@ -221,6 +221,9 @@
        <layout class="QHBoxLayout">
         <item>
          <widget class="QLabel" name="label_3">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -242,6 +245,9 @@
          <layout class="QVBoxLayout">
           <item>
            <widget class="QCheckBox" name="ui_autoCompletionAPISourceCheckBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>API</string>
             </property>
@@ -249,6 +255,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="ui_autoCompletionDocumentSourceCheckBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Document</string>
             </property>
@@ -262,6 +271,9 @@
        <layout class="QHBoxLayout">
         <item>
          <widget class="QLabel" name="label_4">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -275,6 +287,9 @@
         </item>
         <item>
          <widget class="QSpinBox" name="ui_autoCompletionThresholdSpinBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimum">
            <number>1</number>
           </property>
@@ -350,6 +365,9 @@
          <layout class="QVBoxLayout">
           <item>
            <widget class="QRadioButton" name="ui_autoIndentIntelligentStyleRadioButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Intelligent</string>
             </property>
@@ -357,6 +375,9 @@
           </item>
           <item>
            <widget class="QRadioButton" name="ui_autoIndentMaintainStyleRadioButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Maintain</string>
             </property>
@@ -377,6 +398,9 @@
         </item>
         <item>
          <widget class="QSpinBox" name="ui_autoIndentWidthSpinBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimum">
            <number>1</number>
           </property>
