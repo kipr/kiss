@@ -697,7 +697,7 @@ void SourceFile::print()
 
 void SourceFile::convertToProject()
 {
-	Project* project = mainWindow()->newProject(false);
+	Project* project = mainWindow()->newProject();
 	if(!project) return;
 	const TinyNode* node = project->addFile(associatedFile());
 	setAssociatedProject(project);

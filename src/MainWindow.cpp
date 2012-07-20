@@ -106,10 +106,10 @@ MainWindow::~MainWindow()
 	while(ui_tabWidget->count() > 0) deleteTab(0);
 }
 
-Project* MainWindow::newProject(bool target)
+Project* MainWindow::newProject()
 {
 	NewProjectWizard wizard(this);
-	wizard.setTargetPlatformEnabled(target);
+
 	if(wizard.exec() == QDialog::Rejected) return 0;
 	const QString& saveLocation = wizard.saveLocation();
 	

@@ -17,12 +17,6 @@ NewProjectWizard::NewProjectWizard(QWidget* parent) : QDialog(parent)
 	updateSaveLocation();
 }
 
-void NewProjectWizard::setTargetPlatformEnabled(bool enabled)
-{
-	ui_targetPlatformLabel->setVisible(enabled);
-	ui_targetPlatforms->setVisible(enabled);
-}
-
 QString NewProjectWizard::projectName() const
 {
 	return ui_projectName->text();
@@ -31,12 +25,6 @@ QString NewProjectWizard::projectName() const
 QString NewProjectWizard::saveLocation() const
 {
 	return ui_saveLocation->text();
-}
-
-QString NewProjectWizard::targetPlatform() const
-{
-	int i = ui_targetPlatforms->currentIndex();
-	return ui_targetPlatforms->itemData(i).toString();
 }
 
 void NewProjectWizard::on_ui_browse_clicked()
