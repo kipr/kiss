@@ -49,9 +49,9 @@ SourceFileMenu::SourceFileMenu(MainWindow* mainWindow) : ConcreteMenuable(menuNa
 	m_edit.append(undo = node(activeAction("arrow_undo", "Undo", QKeySequence::Undo, this, "undo")));
 	m_edit.append(redo = node(activeAction("arrow_redo", "Redo", QKeySequence::Redo, this, "redo")));
 	m_edit.append(MenuNode::separator());
-	m_edit.append(node(activeAction("", "Zoom In", QKeySequence::ZoomIn, this, "zoomIn")));
-	m_edit.append(node(activeAction("", "Zoom Out", QKeySequence::ZoomOut, this, "zoomOut")));
-	m_edit.append(node(activeAction("", "Reset Zoom", QKeySequence("Ctrl+0"), this, "zoomReset")));
+	m_edit.append(node(activeAction("magnifier_zoom_in", "Zoom In", QKeySequence::ZoomIn, this, "zoomIn")));
+	m_edit.append(node(activeAction("magnifier_zoom_out", "Zoom Out", QKeySequence::ZoomOut, this, "zoomOut")));
+	m_edit.append(node(activeAction("magnifier", "Reset Zoom", QKeySequence("Ctrl+0"), this, "zoomReset")));
 	m_edit.append(MenuNode::separator());
 	m_edit.append(node(activeAction("find", "Find", QKeySequence::Find, this, "find")));
 	

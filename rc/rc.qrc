@@ -7,6 +7,10 @@
         <file>icon_set/icons/page_white_paste.png</file>
         <file>icon_set/icons/find.png</file>
         <file>icon_set/icons/cog.png</file>
+        <file>icon_set/icons/arrow_redo.png</file>
+        <file>icon_set/icons/magnifier.png</file>
+        <file>icon_set/icons/magnifier_zoom_in.png</file>
+        <file>icon_set/icons/magnifier_zoom_out.png</file>
     </qresource>
     <qresource prefix="/debugger">
         <file>icon_set/icons/control_end.png</file>
@@ -46,6 +50,7 @@
         <file>icon_set/icons/tick.png</file>
         <file>icon_set/icons/bug.png</file>
         <file>icon_set/icons/computer.png</file>
+        <file>icon_set/icons/information.png</file>
     </qresource>
     <qresource prefix="/">
         <file>welcome/index.html</file>

@@ -51,7 +51,7 @@ MainWindowMenu::MainWindowMenu(MainWindow* mainWindow) : ConcreteMenuable(menuNa
 	m_edit.append(MenuNode::separator());
 	m_edit.append(node(activeAction("cog.png", "Settings", QKeySequence::Preferences, this, "settings")));
 	
-	QAction* about = activeAction("About KISS IDE", QKeySequence::UnknownKey, this, "about");
+	QAction* about = activeAction("information", "About KISS IDE", QKeySequence::UnknownKey, this, "about");
 	m_help.append(node(about));
 #ifdef ENABLE_LOG_WINDOW
 	m_help.append(node(m_errorLog = action("Error Log", QKeySequence::UnknownKey)));
