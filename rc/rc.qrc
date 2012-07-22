@@ -6,6 +6,7 @@
         <file>icon_set/icons/page_white_copy.png</file>
         <file>icon_set/icons/page_white_paste.png</file>
         <file>icon_set/icons/find.png</file>
+        <file>icon_set/icons/cog.png</file>
     </qresource>
     <qresource prefix="/debugger">
         <file>icon_set/icons/control_end.png</file>
