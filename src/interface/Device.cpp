@@ -75,9 +75,8 @@ void Device::notifyQueue(const bool success)
 {
 	if(!m_workingQueue.size()) return;
 	if(success) {
-		CommunicationEntry *entry = m_workingQueue.dequeue();
-		if(!executeEntry(entry)) clearEntries();
-		delete entry;
+		CommunicationEntryPtr entry = m_workingQueue.dequeue();
+		if(!executeEntry(entry.data())) clearEntries();
 	} else clearEntries();
 }
 
@@ -96,5 +95,5 @@ const bool Device::executeEntry(const CommunicationEntry *entry)
 
 void Device::clearEntries()
 {
-	while(m_workingQueue.size()) delete m_workingQueue.dequeue();
+	m_workingQueue.clear();
 }

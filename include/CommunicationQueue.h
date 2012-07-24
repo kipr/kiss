@@ -4,6 +4,7 @@
 #include <QQueue>
 #include <QString>
 #include <QByteArray>
+#include <QSharedPointer>
 
 class TinyArchive;
 
@@ -40,6 +41,7 @@ private:
 	TinyArchive *m_archive;
 };
 
-typedef QQueue<CommunicationEntry *> CommunicationQueue;
+typedef QSharedPointer<CommunicationEntry> CommunicationEntryPtr;
+typedef QQueue<CommunicationEntryPtr> CommunicationQueue;
 
 #endif

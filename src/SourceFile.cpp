@@ -568,8 +568,8 @@ const bool SourceFile::download()
 	}
 	const QString remoteName = assoc ? associatedProject()->name() : associatedFileName();
 	CommunicationQueue queue;
-	queue.enqueue(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive));
-	queue.enqueue(new CommunicationEntry(CommunicationEntry::Disconnect));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive)));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Disconnect)));
 	bool success = device()->executeQueue(queue);
 	if(!success) {
 		mainWindow()->setStatusMessage(tr("Error communicating with ") + device()->displayName());
@@ -601,9 +601,9 @@ const bool SourceFile::compile()
 	
 	const QString remoteName = assoc ? associatedProject()->name() : associatedFileName();
 	CommunicationQueue queue;
-	queue.enqueue(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive));
-	queue.enqueue(new CommunicationEntry(CommunicationEntry::Compile, remoteName));
-	queue.enqueue(new CommunicationEntry(CommunicationEntry::Disconnect));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive)));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Compile, remoteName)));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Disconnect)));
 	bool success = device()->executeQueue(queue);
 	if(!assoc && archive) {
 		setTemporaryArchive(archive);
@@ -636,10 +636,10 @@ const bool SourceFile::run()
 	const QString remoteName = assoc ? associatedProject()->name() : associatedFileName();
 	
 	CommunicationQueue queue;
-	queue.enqueue(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive));
-	queue.enqueue(new CommunicationEntry(CommunicationEntry::Compile, remoteName));
-	queue.enqueue(new CommunicationEntry(CommunicationEntry::Run, remoteName));
-	queue.enqueue(new CommunicationEntry(CommunicationEntry::Disconnect));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive)));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Compile, remoteName)));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Run, remoteName)));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Disconnect)));
 	
 	bool success = device()->executeQueue(queue);
 	if(!assoc && archive) {
@@ -848,6 +848,14 @@ void SourceFile::notAuthenticatedError()
 void SourceFile::authenticationResponse(bool success)
 {
 	qDebug() << "Authed?" << success;
+	if(success) {
+		device()->retryLastQueue();
+		return;
+	}
+	
+	PasswordDialog dialog(this);
+	if(dialog.exec() == QDialog::Rejected) return;
+	device()->authenticate(dialog.hash());
 }
 
 void SourceFile::showFind() { ui_find->show(); }

@@ -98,7 +98,8 @@ const bool TcpSocketDevice::authenticate(const QByteArray& hash)
 	QDataStream dataStream(&block, QIODevice::WriteOnly);
 	dataStream << (quint32)0;
 	dataStream << QString(AUTHENTICATE_KEY);
-	dataStream.device()->write(hash);
+	qDebug() << "Sending hash of length" << hash.size();
+	dataStream << hash;
 	dataStream.device()->seek(0);
 	dataStream << (quint32)(block.size() - sizeof(quint32));
 	m_socket.write(block);
