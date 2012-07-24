@@ -88,5 +88,7 @@
         <file>icon_set/icons/bullet_black.png</file>
         <file>icon_set/icons/add.png</file>
         <file>icon_set/icons/delete.png</file>
+        <file>icon_set/icons/text_indent.png</file>
+        <file>icon_set/icons/bullet_delete.png</file>
     </qresource>
 </RCC>

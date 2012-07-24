@@ -70,6 +70,14 @@ QAction* ConcreteMenuable::activeAction(const QIcon& icon, const QString& text, 
 	return ret;
 }
 
+QAction* ConcreteMenuable::activeAction(const QString& iconRes, const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot) {
+	return activeAction(ResourceHelper::ref().icon(iconRes), text, shortcut, activatable, slot);
+}
+
+QAction* ConcreteMenuable::activeAction(const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot) {
+	return activeAction("", text, shortcut, activatable, slot);
+}
+
 QAction* ConcreteMenuable::activeCheckedAction(const QIcon& icon, const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot) {
 	QAction* ret = new QAction(icon, text, 0);
 	ret->setCheckable(true);
@@ -80,12 +88,12 @@ QAction* ConcreteMenuable::activeCheckedAction(const QIcon& icon, const QString&
 	return ret;
 }
 
-QAction* ConcreteMenuable::activeAction(const QString& iconRes, const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot) {
-	return activeAction(ResourceHelper::ref().icon(iconRes), text, shortcut, activatable, slot);
+QAction* ConcreteMenuable::activeCheckedAction(const QString& iconRes, const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot) {
+	return activeCheckedAction(ResourceHelper::ref().icon(iconRes), text, shortcut, activatable, slot);
 }
 
-QAction* ConcreteMenuable::activeAction(const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot) {
-	return activeAction("", text, shortcut, activatable, slot);
+QAction* ConcreteMenuable::activeCheckedAction(const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot) {
+	return activeCheckedAction("", text, shortcut, activatable, slot);
 }
 
 QAction* ConcreteMenuable::action(const QIcon& icon, const QString& text, const QKeySequence& shortcut) {

@@ -59,10 +59,10 @@ SourceFileMenu::SourceFileMenu(MainWindow* mainWindow) : ConcreteMenuable(menuNa
 	
 	MenuNode* source = new MenuNode("Source");
 	
-	source->children.append(node(activeAction("", "Indent All", QKeySequence("Ctrl+I"), this, "indentAll")));
+	source->children.append(node(activeAction("text_indent", "Indent All", QKeySequence("Ctrl+I"), this, "indentAll")));
 	source->children.append(MenuNode::separator());
-	source->children.append(breakpoint = node(activeCheckedAction(QIcon(), "Toggle Breakpoint", QKeySequence("Ctrl+Shift+B"), this, "toggleBreakpoint")));
-	source->children.append(node(activeAction("", "Clear All Breakpoints", QKeySequence("Ctrl+Alt+Shift+B"), this, "clearBreakpoints")));
+	source->children.append(breakpoint = node(activeCheckedAction("bullet_blue", "Toggle Breakpoint", QKeySequence("Ctrl+Shift+B"), this, "toggleBreakpoint")));
+	source->children.append(node(activeAction("bullet_delete", "Clear All Breakpoints", QKeySequence("Ctrl+Alt+Shift+B"), this, "clearBreakpoints")));
 	
 	m_actions.append(source);
 	
