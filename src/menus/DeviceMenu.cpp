@@ -33,7 +33,6 @@ DeviceMenu::DeviceMenu() : ConcreteMenuable(menuName())
 	m_targetMenu->children.append(compileNode = node(activeAction("bricks", "Compile", QKeySequence("Alt+C"), this, "compile")));
 	m_targetMenu->children.append(downloadNode = node(activeAction("ruby_blue", "Download", QKeySequence("Alt+D"), this, "download")));
 	m_targetMenu->children.append(runNode = node(activeAction("arrow_right", "Run", QKeySequence("Alt+R"), this, "run")));
-	m_targetMenu->children.append(stopNode = node(activeAction("stop.png", "Stop", QKeySequence("Alt+X"), this, "stop")));
 	m_toolbar.append(m_targetMenu->children);
 	m_targetMenu->children.append(MenuNode::separator());
 	m_targetMenu->children.append(MenuNode::separator());

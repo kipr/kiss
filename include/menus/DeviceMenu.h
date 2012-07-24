@@ -48,7 +48,6 @@ private:
 	MenuNode *compileNode;
 	MenuNode *downloadNode;
 	MenuNode *runNode;
-	MenuNode *stopNode;
 };
 
 #endif
