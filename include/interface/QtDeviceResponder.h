@@ -16,7 +16,7 @@ public:
 	virtual void communicationError(Device *device);
 	virtual void connectionError(Device *device);
 	virtual void notAuthenticatedError(Device *device);
-	virtual void authenticationResponse(Device *device, bool success);
+	virtual void authenticationResponse(Device *device, const DeviceResponder::AuthenticateReturn& response);
 	
 signals:
 	void availableFinished(bool available);
@@ -28,7 +28,7 @@ signals:
 	void communicationError();
 	void connectionError();
 	void notAuthenticatedError();
-	void authenticationResponse(bool success);
+	void authenticationResponse(const DeviceResponder::AuthenticateReturn& response);
 
 private:
 	

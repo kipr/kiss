@@ -179,7 +179,12 @@ void TcpSocketDevice::processPayload(const QByteArray& payload)
 		responder()->runResponse(this, success);
 	} else if(command == AUTHENTICATE_KEY) {
 		stream >> success;
-		responder()->authenticationResponse(this, success);
+		bool tryAgain = false;
+		if(!success) stream >> tryAgain;
+		DeviceResponder::AuthenticateReturn ret = success ? DeviceResponder::AuthSuccess : DeviceResponder::AuthWillNotAccept;
+		if(!success && tryAgain)  ret = DeviceResponder::AuthTryAgain;
+		qDebug() << "Got success" << success << "and try again" << tryAgain << "==" << ret;
+		responder()->authenticationResponse(this, ret);
 	} else {
 		responder()->customResponse(this, command, payload);
 		success = true; // TODO: Perhaps not the best assumption

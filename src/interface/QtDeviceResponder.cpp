@@ -45,7 +45,7 @@ void QtDeviceResponder::notAuthenticatedError(Device *device)
 	emit notAuthenticatedError();
 }
 
-void QtDeviceResponder::authenticationResponse(Device *device, bool success)
+void QtDeviceResponder::authenticationResponse(Device *device, const DeviceResponder::AuthenticateReturn& response)
 {
-	emit authenticationResponse(success);
+	emit authenticationResponse(response);
 }

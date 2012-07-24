@@ -114,7 +114,7 @@ SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this,
 	connect(&m_responder, SIGNAL(connectionError()), SLOT(connectionError()));
 	connect(&m_responder, SIGNAL(communicationError()), SLOT(communicationError()));
 	connect(&m_responder, SIGNAL(notAuthenticatedError()), SLOT(notAuthenticatedError()));
-	connect(&m_responder, SIGNAL(authenticationResponse(bool)), SLOT(authenticationResponse(bool)));
+	connect(&m_responder, SIGNAL(authenticationResponse(DeviceResponder::AuthenticateReturn)), SLOT(authenticationResponse(DeviceResponder::AuthenticateReturn)));
 }
 
 SourceFile::~SourceFile()
@@ -845,11 +845,15 @@ void SourceFile::notAuthenticatedError()
 	device()->authenticate(dialog.hash());
 }
 
-void SourceFile::authenticationResponse(bool success)
+void SourceFile::authenticationResponse(const DeviceResponder::AuthenticateReturn& response)
 {
-	qDebug() << "Authed?" << success;
-	if(success) {
+	qDebug() << "Authed?" << (response == DeviceResponder::AuthSuccess);
+	if(response == DeviceResponder::AuthSuccess) {
 		device()->retryLastQueue();
+		return;
+	}
+	if(response == DeviceResponder::AuthWillNotAccept) {
+		mainWindow()->setStatusMessage(device()->displayName() + tr(" told KISS not to try authenticating again."));
 		return;
 	}
 	

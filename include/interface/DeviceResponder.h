@@ -9,6 +9,12 @@ class Device;
 class DeviceResponder
 {
 public:
+	enum AuthenticateReturn {
+		AuthWillNotAccept,
+		AuthTryAgain,
+		AuthSuccess
+	};
+	
 	virtual void availableResponse(Device *device, bool available) = 0; 
 	virtual void compileResponse(Device *device, CompileResult results) = 0;
 	virtual void downloadResponse(Device *device, bool success) = 0;
@@ -18,7 +24,7 @@ public:
 	virtual void communicationError(Device *device) = 0;
 	virtual void connectionError(Device *device) = 0;
 	virtual void notAuthenticatedError(Device *device) = 0;
-	virtual void authenticationResponse(Device *device, bool success) = 0;
+	virtual void authenticationResponse(Device *device, const DeviceResponder::AuthenticateReturn& response) = 0;
 };
 
 #endif

@@ -165,7 +165,7 @@ private slots:
 	void connectionError();
 	void communicationError();
 	void notAuthenticatedError();
-	void authenticationResponse(bool success);
+	void authenticationResponse(const DeviceResponder::AuthenticateReturn& response);
 	
 private:
 	bool saveAsFile();
