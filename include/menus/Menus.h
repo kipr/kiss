@@ -22,7 +22,7 @@
 #define _MENUS_H_
 
 #include "MenuManager.h"
-#include "DeviceMenu.h"
+#include "TargetMenu.h"
 #include "SourceFileMenu.h"
 #include "WebTabMenu.h"
 #include "MainWindowMenu.h"

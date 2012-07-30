@@ -46,7 +46,7 @@ void Cbc3Interface::invalidateResponder()
 void Cbc3Interface::scanStarted()
 {
 	if(!m_responder) return;
-	m_responder->deviceScanStarted(this);
+	m_responder->targetScanStarted(this);
 }
 
 void Cbc3Interface::found(DeviceInfo deviceInfo, const QHostAddress& address)
@@ -54,7 +54,7 @@ void Cbc3Interface::found(DeviceInfo deviceInfo, const QHostAddress& address)
 	if(!m_responder) return;
 	TcpSocketDevice *device = new TcpSocketDevice(this, address, 8075);
 	device->setDeviceInfo(deviceInfo);
-	m_responder->deviceFound(this, DevicePtr(device));
+	m_responder->targetFound(this, TargetPtr(device));
 }
 
 Q_EXPORT_PLUGIN2(cbc3_interface, Cbc3Interface);

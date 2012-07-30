@@ -1,64 +1,64 @@
-#include "Device.h"
-#include "DeviceResponder.h"
+#include "Target.h"
+#include "TargetResponder.h"
 
 #include <QDebug>
 
-Device::Device(Interface* interface, const QString& name) : m_interface(interface)
+Target::Target(Interface* interface, const QString& name) : m_interface(interface)
 {
 	
 }
 
-Device::~Device()
+Target::~Target()
 {
 	
 }
 
-Interface* Device::interface() const
+Interface* Target::interface() const
 {
 	return m_interface;
 }
 
-const QString Device::displayName() const
+const QString Target::displayName() const
 {
 	return information().value(DISPLAY_NAME);
 }
 
-const QString Device::commPort() const
+const QString Target::commPort() const
 {
 	return information().value(COMM_PORT);
 }
 
-const QString Device::type() const
+const QString Target::type() const
 {
 	return information().value(DEVICE_TYPE);
 }
 
-const QString Device::serial() const
+const QString Target::serial() const
 {
 	return information().value(SERIAL);
 }
 
-const QString Device::version() const {
+const QString Target::version() const {
 	return information().value(VERSION);
 }
 
-void Device::setResponder(DeviceResponder *responder)
+void Target::setResponder(TargetResponder *responder)
 {
 	m_responder = responder;
 }
 
-DeviceResponder *Device::responder()
+TargetResponder *Target::responder()
 {
 	return m_responder;
 }
 
-const bool Device::retryLastQueue()
+const bool Target::retryLastQueue()
 {
 	if(!m_queue.size()) return false;
 	return executeQueue(m_queue);
 }
 
-const bool Device::executeQueue(const CommunicationQueue& queue)
+const bool Target::executeQueue(const CommunicationQueue& queue)
 {
 	if(m_workingQueue.size()) return false;
 	m_workingQueue = m_queue = queue;
@@ -66,12 +66,12 @@ const bool Device::executeQueue(const CommunicationQueue& queue)
 	return true;
 }
 
-const bool Device::isQueueExecuting() const
+const bool Target::isQueueExecuting() const
 {
 	return m_workingQueue.size();
 }
 
-void Device::notifyQueue(const bool success)
+void Target::notifyQueue(const bool success)
 {
 	if(!m_workingQueue.size()) return;
 	if(success) {
@@ -80,7 +80,7 @@ void Device::notifyQueue(const bool success)
 	} else clearEntries();
 }
 
-const bool Device::executeEntry(const CommunicationEntry *entry)
+const bool Target::executeEntry(const CommunicationEntry *entry)
 {
 	switch(entry->type()) {
 		case CommunicationEntry::Custom: return sendCustom(entry->custom(), entry->payload());
@@ -88,12 +88,12 @@ const bool Device::executeEntry(const CommunicationEntry *entry)
 		case CommunicationEntry::Compile: return compile(entry->name());
 		case CommunicationEntry::Run: return run(entry->name());
 		case CommunicationEntry::Disconnect: return disconnect();
-		default: qCritical() << "Device does not know how to execute queue entry of type" << entry->type();
+		default: qCritical() << "Target does not know how to execute queue entry of type" << entry->type();
 	}
 	return false;
 }
 
-void Device::clearEntries()
+void Target::clearEntries()
 {
 	m_workingQueue.clear();
 }

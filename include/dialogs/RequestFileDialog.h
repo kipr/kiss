@@ -23,16 +23,16 @@
 
 #include <QDialog>
 #include "ui_RequestFileDialog.h"
-#include "Device.h"
+#include "Target.h"
 
 class RequestFileDialog : public QDialog, public Ui::RequestFileDialog
 {
 public:
-	RequestFileDialog(DevicePtr device);
+	RequestFileDialog(TargetPtr target);
 	int exec();
 	QString selectedFile();
 private:
-	DevicePtr m_device;
+	TargetPtr m_target;
 };
 
 #endif

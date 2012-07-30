@@ -1,7 +1,7 @@
 #ifndef _CBC3_H_
 #define _CBC3_H_
 
-#include "Device.h"
+#include "Target.h"
 #include <easydevice/DeviceInfo.h>
 #include <QtGlobal>
 #include <QTcpSocket>
@@ -16,7 +16,7 @@ class Interface;
 #define LOCKED_KEY "locked"
 #define AUTHENTICATE_KEY "authenticate"
 
-class TcpSocketDevice : public QObject, public Device
+class TcpSocketDevice : public QObject, public Target
 {
 Q_OBJECT
 public:

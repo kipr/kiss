@@ -1,11 +1,11 @@
 #include "TcpSocketDevice.h"
-#include "DeviceResponder.h"
+#include "TargetResponder.h"
 
 #include <kiss-compiler/QTinyArchiveStream.h>
 #include <QBuffer>
 
 TcpSocketDevice::TcpSocketDevice(Interface *interface, const QHostAddress& address, const quint32& port)
-	: Device(interface, "TCP Socket Device"), m_address(address), m_port(port), m_payload(0)
+	: Target(interface, "TCP Socket Device"), m_address(address), m_port(port), m_payload(0)
 {
 	QObject::connect(&m_socket, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(error(QAbstractSocket::SocketError)));
 	QObject::connect(&m_socket, SIGNAL(readyRead()), SLOT(readyRead()));
@@ -181,8 +181,8 @@ void TcpSocketDevice::processPayload(const QByteArray& payload)
 		stream >> success;
 		bool tryAgain = false;
 		if(!success) stream >> tryAgain;
-		DeviceResponder::AuthenticateReturn ret = success ? DeviceResponder::AuthSuccess : DeviceResponder::AuthWillNotAccept;
-		if(!success && tryAgain)  ret = DeviceResponder::AuthTryAgain;
+		TargetResponder::AuthenticateReturn ret = success ? TargetResponder::AuthSuccess : TargetResponder::AuthWillNotAccept;
+		if(!success && tryAgain)  ret = TargetResponder::AuthTryAgain;
 		qDebug() << "Got success" << success << "and try again" << tryAgain << "==" << ret;
 		responder()->authenticationResponse(this, ret);
 	} else {

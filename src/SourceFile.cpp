@@ -32,7 +32,7 @@
 #include "MakeTemplateDialog.h"
 #include "PasswordDialog.h"
 #include "SourceFileMenu.h"
-#include "DeviceMenu.h"
+#include "TargetMenu.h"
 #include "MainWindowMenu.h"
 #include "Project.h"
 #include "ProjectSaveAs.h"
@@ -41,7 +41,7 @@
 #include "Log.h"
 #include <kiss-compiler/Compiler.h>
 #include <kiss-compiler/CompilerManager.h>
-#include "DeviceDialog.h"
+#include "TargetDialog.h"
 #include "InterfaceManager.h"
 
 #include "UiEventManager.h"
@@ -114,7 +114,7 @@ SourceFile::SourceFile(MainWindow* parent) : QWidget(parent), TabbedWidget(this,
 	connect(&m_responder, SIGNAL(connectionError()), SLOT(connectionError()));
 	connect(&m_responder, SIGNAL(communicationError()), SLOT(communicationError()));
 	connect(&m_responder, SIGNAL(notAuthenticatedError()), SLOT(notAuthenticatedError()));
-	connect(&m_responder, SIGNAL(authenticationResponse(DeviceResponder::AuthenticateReturn)), SLOT(authenticationResponse(DeviceResponder::AuthenticateReturn)));
+	connect(&m_responder, SIGNAL(authenticationResponse(TargetResponder::AuthenticateReturn)), SLOT(authenticationResponse(TargetResponder::AuthenticateReturn)));
 }
 
 SourceFile::~SourceFile()
@@ -124,11 +124,11 @@ SourceFile::~SourceFile()
 
 void SourceFile::activate()
 {
-	mainWindow()->setTitle(device()->displayName());
+	mainWindow()->setTitle(target()->displayName());
 	mainWindow()->showErrors(topLevelUnit());
 	mainWindow()->setStatusMessage("");
 	
-	QList<Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus() << SourceFileMenu::menuName() << DeviceMenu::menuName());
+	QList<Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus() << SourceFileMenu::menuName() << TargetMenu::menuName());
 	foreach(Menuable* menu, menus) {
 		Log::ref().debug(QString("Deactivating %1").arg(menu->name()));
 		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
@@ -136,15 +136,15 @@ void SourceFile::activate()
 	}
 	
 	mainWindow()->activateMenuable(SourceFileMenu::menuName(), this);
-	mainWindow()->activateMenuable(DeviceMenu::menuName(), this); 
+	mainWindow()->activateMenuable(TargetMenu::menuName(), this); 
 }
 
 bool SourceFile::beginSetup() {
 	setParentUnit(isProjectAssociated() ? associatedProject() : 0);
 	if(isNewFile()) { if(!selectTemplate()) return false; }
 	else setLexer(Lexer::Factory::ref().constructor(associatedFileSuffix()));
-	if(!device().get()) changeDevice();
-	return device().get();
+	if(!target().get()) changeTarget();
+	return target().get();
 }
 
 void SourceFile::completeSetup()
@@ -168,7 +168,7 @@ bool SourceFile::close()
 	}
 	
 	mainWindow()->activateMenuable(SourceFileMenu::menuName(), 0);
-	mainWindow()->activateMenuable(DeviceMenu::menuName(), 0);
+	mainWindow()->activateMenuable(TargetMenu::menuName(), 0);
 	
 	return true;
 }
@@ -442,7 +442,7 @@ void SourceFile::refreshSettings()
 	updateMargins();
 	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
 	
-	DeviceMenu::ref().refresh();
+	TargetMenu::ref().refresh();
 }
 
 bool SourceFile::isNewFile() 	{ return m_isNewFile; }
@@ -552,9 +552,9 @@ void SourceFile::sourceModified(bool) { mainWindow()->setTabName(this, "* " + as
 
 const bool SourceFile::download()
 {
-	if(device()->isQueueExecuting()) return false;
+	if(target()->isQueueExecuting()) return false;
 	if(!save()) return false;
-	if(!device().get()) if(!changeDevice()) return false;
+	if(!target().get()) if(!changeTarget()) return false;
 	
 	mainWindow()->setStatusMessage(tr("Downloading..."));
 	QApplication::flush();
@@ -570,9 +570,9 @@ const bool SourceFile::download()
 	CommunicationQueue queue;
 	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive)));
 	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Disconnect)));
-	bool success = device()->executeQueue(queue);
+	bool success = target()->executeQueue(queue);
 	if(!success) {
-		mainWindow()->setStatusMessage(tr("Error communicating with ") + device()->displayName());
+		mainWindow()->setStatusMessage(tr("Error communicating with ") + target()->displayName());
 	}
 	if(!assoc && archive) {
 		setTemporaryArchive(archive);
@@ -582,9 +582,9 @@ const bool SourceFile::download()
 
 const bool SourceFile::compile()
 {
-	if(device()->isQueueExecuting()) return false;
+	if(target()->isQueueExecuting()) return false;
 	if(!save()) return false;
-	if(!device().get()) if(!changeDevice()) return false;
+	if(!target().get()) if(!changeTarget()) return false;
 	
 	ui_localCompileFailed->hide();
 	
@@ -604,7 +604,7 @@ const bool SourceFile::compile()
 	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, remoteName, archive)));
 	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Compile, remoteName)));
 	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Disconnect)));
-	bool success = device()->executeQueue(queue);
+	bool success = target()->executeQueue(queue);
 	if(!assoc && archive) {
 		setTemporaryArchive(archive);
 	}
@@ -616,9 +616,9 @@ const bool SourceFile::compile()
 
 const bool SourceFile::run()
 {
-	if(device()->isQueueExecuting()) return false;
+	if(target()->isQueueExecuting()) return false;
 	if(!save()) return false;
-	if(!device().get()) if(!changeDevice()) return false;
+	if(!target().get()) if(!changeTarget()) return false;
 	
 	ui_localCompileFailed->hide();
 	
@@ -641,7 +641,7 @@ const bool SourceFile::run()
 	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Run, remoteName)));
 	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Disconnect)));
 	
-	bool success = device()->executeQueue(queue);
+	bool success = target()->executeQueue(queue);
 	if(!assoc && archive) {
 		setTemporaryArchive(archive);
 	}
@@ -705,12 +705,12 @@ void SourceFile::convertToProject()
 	setAssociatedFile(QTinyNode::path(node));
 }
 
-const bool SourceFile::changeDevice()
+const bool SourceFile::changeTarget()
 {
-	DeviceDialog deviceDialog(&InterfaceManager::ref(), this);
-	if(deviceDialog.exec() == QDialog::Rejected) return false;
-	setDevice(deviceDialog.device());
-	device()->setResponder(&m_responder);
+	TargetDialog targetDialog(&InterfaceManager::ref(), this);
+	if(targetDialog.exec() == QDialog::Rejected) return false;
+	setTarget(targetDialog.target());
+	target()->setResponder(&m_responder);
 	return true;
 }
 
@@ -830,36 +830,36 @@ void SourceFile::runFinished(bool success)
 
 void SourceFile::connectionError()
 {
-	mainWindow()->setStatusMessage(tr("Unable to establish a connection with ") + device()->displayName());
+	mainWindow()->setStatusMessage(tr("Unable to establish a connection with ") + target()->displayName());
 }
 
 void SourceFile::communicationError()
 {
-	mainWindow()->setStatusMessage(tr("Error communicating with ") + device()->displayName());
+	mainWindow()->setStatusMessage(tr("Error communicating with ") + target()->displayName());
 }
 
 void SourceFile::notAuthenticatedError()
 {
 	PasswordDialog dialog(this);
 	if(dialog.exec() == QDialog::Rejected) return;
-	device()->authenticate(dialog.hash());
+	target()->authenticate(dialog.hash());
 }
 
-void SourceFile::authenticationResponse(const DeviceResponder::AuthenticateReturn& response)
+void SourceFile::authenticationResponse(const TargetResponder::AuthenticateReturn& response)
 {
-	qDebug() << "Authed?" << (response == DeviceResponder::AuthSuccess);
-	if(response == DeviceResponder::AuthSuccess) {
-		device()->retryLastQueue();
+	qDebug() << "Authed?" << (response == TargetResponder::AuthSuccess);
+	if(response == TargetResponder::AuthSuccess) {
+		target()->retryLastQueue();
 		return;
 	}
-	if(response == DeviceResponder::AuthWillNotAccept) {
-		mainWindow()->setStatusMessage(device()->displayName() + tr(" told KISS not to try authenticating again."));
+	if(response == TargetResponder::AuthWillNotAccept) {
+		mainWindow()->setStatusMessage(target()->displayName() + tr(" told KISS not to try authenticating again."));
 		return;
 	}
 	
 	PasswordDialog dialog(this);
 	if(dialog.exec() == QDialog::Rejected) return;
-	device()->authenticate(dialog.hash());
+	target()->authenticate(dialog.hash());
 }
 
 void SourceFile::showFind() { ui_find->show(); }

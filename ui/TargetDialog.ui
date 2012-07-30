@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DeviceDialog</class>
- <widget class="QDialog" name="DeviceDialog">
+ <class>TargetDialog</class>
+ <widget class="QDialog" name="TargetDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Device Selection</string>
+   <string>Target Selection</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">
@@ -32,7 +32,7 @@
    <item>
     <widget class="QLabel" name="label_4">
      <property name="text">
-      <string>Select the device you wish to communicate with:</string>
+      <string>Select the target you wish to communicate with:</string>
      </property>
     </widget>
    </item>
@@ -41,7 +41,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QListView" name="ui_devices">
+        <widget class="QListView" name="ui_targets">
          <property name="gridSize">
           <size>
            <width>128</width>
@@ -58,7 +58,7 @@
          <item>
           <widget class="QLabel" name="label_6">
            <property name="text">
-            <string>Show devices communicating over:</string>
+            <string>Show targets communicating over:</string>
            </property>
           </widget>
          </item>
@@ -70,7 +70,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QGroupBox" name="ui_deviceInfo">
+      <widget class="QGroupBox" name="ui_targetInfo">
        <property name="minimumSize">
         <size>
          <width>250</width>
@@ -78,7 +78,7 @@
         </size>
        </property>
        <property name="title">
-        <string>Device Information</string>
+        <string>Target Information</string>
        </property>
        <property name="flat">
         <bool>false</bool>
@@ -263,7 +263,7 @@
   <connection>
    <sender>ui_buttons</sender>
    <signal>accepted()</signal>
-   <receiver>DeviceDialog</receiver>
+   <receiver>TargetDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -279,7 +279,7 @@
   <connection>
    <sender>ui_buttons</sender>
    <signal>rejected()</signal>
-   <receiver>DeviceDialog</receiver>
+   <receiver>TargetDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -295,7 +295,7 @@
   <connection>
    <sender>ui_additionalInfo</sender>
    <signal>toggled(bool)</signal>
-   <receiver>ui_deviceInfo</receiver>
+   <receiver>ui_targetInfo</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">

@@ -31,7 +31,7 @@
 
 #include "SourceFindWidget.h"
 #include "SourceLocalFailed.h"
-#include "QtDeviceResponder.h"
+#include "QtTargetResponder.h"
 
 #include <QtGlobal>
 #include <Qsci/qsciscintilla.h>
@@ -121,7 +121,7 @@ public slots:
 	
 	void convertToProject();
 	
-	const bool changeDevice();
+	const bool changeTarget();
 
 	const bool download();
 	const bool compile();
@@ -165,7 +165,7 @@ private slots:
 	void connectionError();
 	void communicationError();
 	void notAuthenticatedError();
-	void authenticationResponse(const DeviceResponder::AuthenticateReturn& response);
+	void authenticationResponse(const TargetResponder::AuthenticateReturn& response);
 	
 private:
 	bool saveAsFile();
@@ -203,7 +203,7 @@ private:
 	void setTemporaryArchive(TinyArchive *archive);
 	TinyArchive *m_temporaryArchive;
 	
-	QtDeviceResponder m_responder;
+	QtTargetResponder m_responder;
 protected:
 	void keyPressEvent(QKeyEvent *event);
 };

@@ -7,17 +7,17 @@ WorkingUnit::WorkingUnit(const QString& name) : m_name(name), m_parentUnit(0)
 	
 }
 
-void WorkingUnit::setDevice(DevicePtr device)
+void WorkingUnit::setTarget(TargetPtr target)
 {
 	WorkingUnit* unit = this;
 	while(unit->parentUnit()) unit = unit->parentUnit();
-	if(unit == this) m_device = device;
-	else unit->setDevice(device);
+	if(unit == this) m_target = target;
+	else unit->setTarget(target);
 }
 
-DevicePtr WorkingUnit::device()
+TargetPtr WorkingUnit::target()
 {
-	return m_parentUnit ? m_parentUnit->device() : m_device;
+	return m_parentUnit ? m_parentUnit->target() : m_target;
 }
 
 const QString& WorkingUnit::port() const

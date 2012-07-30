@@ -3,15 +3,15 @@
 
 #include <QString>
 
-#include "Device.h"
+#include "Target.h"
 
 class WorkingUnit
 {
 public:
 	WorkingUnit(const QString& name);
 	
-	void setDevice(DevicePtr device);
-	DevicePtr device();
+	void setTarget(TargetPtr target);
+	TargetPtr target();
 	
 	const QString& port() const;
 	void setPort(const QString& port);
@@ -26,7 +26,7 @@ public:
 
 private:
 	QString m_name;
-	DevicePtr m_device;
+	TargetPtr m_target;
 	QString m_port;
 	WorkingUnit* m_parentUnit;
 };

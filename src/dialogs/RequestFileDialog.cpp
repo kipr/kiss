@@ -20,7 +20,7 @@
 
 #include "RequestFileDialog.h"
 
-RequestFileDialog::RequestFileDialog(DevicePtr device) : m_device(device) { setupUi(this); }
+RequestFileDialog::RequestFileDialog(TargetPtr target) : m_target(target) { setupUi(this); }
 
 int RequestFileDialog::exec()
 {

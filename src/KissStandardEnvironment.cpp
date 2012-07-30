@@ -2,7 +2,7 @@
 
 #include "Log.h"
 
-#include "Device.h"
+#include "Target.h"
 #include "InterfaceManager.h"
 
 #include <kiss-compiler/CompilerPluginManager.h>
@@ -45,7 +45,7 @@ void KissStandardEnvironment::createStandardEnvironment()
 		QDir::setCurrent(QApplication::applicationDirPath());
 	#endif
 	
-	qRegisterMetaType<DevicePtr>("DevicePtr");
+	qRegisterMetaType<TargetPtr>("TargetPtr");
 	
 	QApplication::setOrganizationName("KIPR");
 	QApplication::setOrganizationDomain("kipr.org");

@@ -18,36 +18,48 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef _DEVICEMENU_H_
-#define _DEVICEMENU_H_
+#include "TargetMenu.h"
 
-#include "MenuManager.h"
-#include "Singleton.h"
-#include "Activatable.h"
-#include "SourceFile.h"
-#include "ConcreteMenuable.h"
+#include "ResourceHelper.h"
+#include "Documentation.h"
+#include "MainWindow.h"
+#include "Interface.h"
 
-#include <QMultiMap>
-
-class DeviceMenu : public ConcreteMenuable, public Singleton<DeviceMenu>, public ActivatableObject
+TargetMenu::TargetMenu() : ConcreteMenuable(menuName())
 {
-Q_OBJECT
-public:
-	DeviceMenu();
-	void refresh();
+	// Put manuals in "Target"
+	m_targetMenu = new MenuNode("Target");
 	
-	static QString menuName();
+	m_targetMenu->children.append(compileNode = node(activeAction("bricks", "Compile", QKeySequence("Alt+C"), this, "compile")));
+	m_targetMenu->children.append(downloadNode = node(activeAction("ruby_blue", "Download", QKeySequence("Alt+D"), this, "download")));
+	m_targetMenu->children.append(runNode = node(activeAction("arrow_right", "Run", QKeySequence("Alt+R"), this, "run")));
+	m_toolbar.append(m_targetMenu->children);
+	m_targetMenu->children.append(MenuNode::separator());
+	m_targetMenu->children.append(MenuNode::separator());
+	m_targetMenu->children.append(node(activeAction("computer", "Change Target", QKeySequence("Alt+T"), this, "changeTarget")));
+	m_targetMenu->children.append(MenuNode::separator());
 	
-protected:
-	void activated();
-	void deactivated();
-	
-private:
-	MenuNode *m_targetMenu;
+	m_actions.append(m_targetMenu);
+}
 
-	MenuNode *compileNode;
-	MenuNode *downloadNode;
-	MenuNode *runNode;
-};
+void TargetMenu::refresh()
+{
+	if(!isActive()) return;
+	menuManager()->refreshToolbar();
+}
 
-#endif
+void TargetMenu::activated()
+{
+	menuManager()->addActivation(this);
+	refresh();
+}
+
+void TargetMenu::deactivated()
+{
+	menuManager()->removeActivation(this);
+}
+
+QString TargetMenu::menuName()
+{
+	return "Target";
+}

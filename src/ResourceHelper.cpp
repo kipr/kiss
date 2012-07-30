@@ -35,7 +35,7 @@ ResourceHelper::ResourceHelper()
 	addSearchLocation(":/icon_set/icons/");
 	addSearchLocation(":/welcome/");
 	addSearchLocation(":/sourcefile/icon_set/icons/");
-	addSearchLocation(":/devices/");
+	addSearchLocation(":/targets/");
 	
 	addSearchLocation("resources"); // For user resources
 }

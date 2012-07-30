@@ -46,7 +46,7 @@ void ComputerInterface::invalidateResponder()
 void ComputerInterface::scanStarted()
 {
 	if(!m_responder) return;
-	m_responder->deviceScanStarted(this);
+	m_responder->targetScanStarted(this);
 }
 
 void ComputerInterface::found(DeviceInfo deviceInfo, const QHostAddress& address)
@@ -54,7 +54,7 @@ void ComputerInterface::found(DeviceInfo deviceInfo, const QHostAddress& address
 	if(!m_responder) return;
 	TcpSocketDevice *device = new TcpSocketDevice(this, address, 8075);
 	device->setDeviceInfo(deviceInfo);
-	m_responder->deviceFound(this, DevicePtr(device));
+	m_responder->targetFound(this, TargetPtr(device));
 }
 
 Q_EXPORT_PLUGIN2(computer_interface, ComputerInterface);

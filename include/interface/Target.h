@@ -1,5 +1,5 @@
-#ifndef _DEVICE_H_
-#define _DEVICE_H_
+#ifndef _TARGET_H_
+#define _TARGET_H_
 
 #include "Named.h"
 #include "CommunicationQueue.h"
@@ -25,13 +25,13 @@
 
 class Project;
 class Interface;
-class DeviceResponder;
+class TargetResponder;
 
-class Device
+class Target
 {
 public:
-	Device(Interface* interface, const QString& name);
-	virtual ~Device();
+	Target(Interface* interface, const QString& name);
+	virtual ~Target();
 	
 	Interface* interface() const;
 	
@@ -57,8 +57,8 @@ public:
 	virtual const bool authenticate(const QByteArray& hash) = 0;
 	virtual const bool sendCustom(const QString& custom, const QByteArray& payload = QByteArray()) = 0;
 	
-	void setResponder(DeviceResponder *responder);
-	DeviceResponder *responder();
+	void setResponder(TargetResponder *responder);
+	TargetResponder *responder();
 protected:
 	void notifyQueue(const bool success);
 	
@@ -70,10 +70,10 @@ private:
 	CommunicationQueue m_queue;
 	
 	Interface* m_interface;
-	DeviceResponder *m_responder;
+	TargetResponder *m_responder;
 };
 
-typedef boost::shared_ptr<Device> DevicePtr;
+typedef boost::shared_ptr<Target> TargetPtr;
 
 
 #endif

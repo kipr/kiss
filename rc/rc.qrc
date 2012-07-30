@@ -69,7 +69,6 @@
         <file>messages/build_error.txt</file>
         <file>webtab_fail/index.html</file>
         <file>icon_set/icons/Locked.png</file>
-        <file>devices/default_device.png</file>
         <file>logos/icon.png</file>
         <file>icon_set/icons/text-x-generic.png</file>
         <file>icon_set/icons/page_white_c.png</file>
@@ -80,6 +79,7 @@
         <file>keypad/Keypad.qml</file>
         <file>keypad/DigitButton.qml</file>
         <file>keypad/MyButton.qml</file>
+        <file>targets/default_target.png</file>
     </qresource>
     <qresource prefix="/sourcefile">
         <file>icon_set/icons/bullet_red.png</file>

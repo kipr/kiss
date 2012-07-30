@@ -18,48 +18,36 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#include "DeviceMenu.h"
+#ifndef _TARGETMENU_H_
+#define _TARGETMENU_H_
 
-#include "ResourceHelper.h"
-#include "Documentation.h"
-#include "MainWindow.h"
-#include "Interface.h"
+#include "MenuManager.h"
+#include "Singleton.h"
+#include "Activatable.h"
+#include "SourceFile.h"
+#include "ConcreteMenuable.h"
 
-DeviceMenu::DeviceMenu() : ConcreteMenuable(menuName())
+#include <QMultiMap>
+
+class TargetMenu : public ConcreteMenuable, public Singleton<TargetMenu>, public ActivatableObject
 {
-	// Put manuals in "Device"
-	m_targetMenu = new MenuNode("Device");
+Q_OBJECT
+public:
+	TargetMenu();
+	void refresh();
 	
-	m_targetMenu->children.append(compileNode = node(activeAction("bricks", "Compile", QKeySequence("Alt+C"), this, "compile")));
-	m_targetMenu->children.append(downloadNode = node(activeAction("ruby_blue", "Download", QKeySequence("Alt+D"), this, "download")));
-	m_targetMenu->children.append(runNode = node(activeAction("arrow_right", "Run", QKeySequence("Alt+R"), this, "run")));
-	m_toolbar.append(m_targetMenu->children);
-	m_targetMenu->children.append(MenuNode::separator());
-	m_targetMenu->children.append(MenuNode::separator());
-	m_targetMenu->children.append(node(activeAction("computer", "Change Device", QKeySequence("Alt+T"), this, "changeDevice")));
-	m_targetMenu->children.append(MenuNode::separator());
+	static QString menuName();
 	
-	m_actions.append(m_targetMenu);
-}
+protected:
+	void activated();
+	void deactivated();
+	
+private:
+	MenuNode *m_targetMenu;
 
-void DeviceMenu::refresh()
-{
-	if(!isActive()) return;
-	menuManager()->refreshToolbar();
-}
+	MenuNode *compileNode;
+	MenuNode *downloadNode;
+	MenuNode *runNode;
+};
 
-void DeviceMenu::activated()
-{
-	menuManager()->addActivation(this);
-	refresh();
-}
-
-void DeviceMenu::deactivated()
-{
-	menuManager()->removeActivation(this);
-}
-
-QString DeviceMenu::menuName()
-{
-	return "Device";
-}
+#endif
