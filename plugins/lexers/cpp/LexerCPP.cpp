@@ -40,6 +40,7 @@ CPP::CPP(const Constructor* constructor) : LexerBase(this, constructor)
 
 QColor CPP::defaultColor(int style) const
 {
+	qDebug() << "MYNAMEIFISIAHFKDLSH";
     switch (style)
     {
 	case Default: return SyntaxStandards::defaultColor();
@@ -61,7 +62,8 @@ QColor CPP::defaultColor(int style) const
 	case DoubleQuotedString:
 	case SingleQuotedString:
 	case RawString:
-		return SyntaxStandards::stringColor();
+		//return SyntaxStandards::stringColor();
+		return QColor(200, 200, 200);
 
 	case PreProcessor: return SyntaxStandards::preprocessorColor();
 	case Operator: return SyntaxStandards::operatorColor();

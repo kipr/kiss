@@ -19,6 +19,7 @@
  **************************************************************************/
 
 #include "EditorSettingsDialog.h"
+#include "LexerFactory.h"
 
 #include <QSettings>
 #include <QDebug>
@@ -53,14 +54,34 @@ int EditorSettingsDialog::exec()
 	return QDialog::Accepted;
 }
 
+void EditorSettingsDialog::on_ui_lexerColorBox_colorChanged(QColor color)
+{
+	lexerSettings.insert(ui_lexerBox->currentText(), color);
+}
+
+void EditorSettingsDialog::on_ui_lexerBox_currentIndexChanged(const QString& text)
+{
+	ui_lexerColorBox->setColor(lexerSettings.value(text));
+}
+
 // Save the settings from the dialog
 void EditorSettingsDialog::saveSettings()
 {
 	qWarning() << "Font" << ui_fontBox->currentFont().family();
 	QSettings settings;
 	settings.beginGroup(EDITOR);
+	settings.setValue(BACKGROUND_COLOR, ui_backgroundColorBox->color());
 	settings.setValue(FONT, ui_fontBox->currentFont().family());
 	settings.setValue(FONT_SIZE, ui_fontSizeSpinBox->value());
+	
+	settings.beginGroup(LEXER);
+	QMap<QString, QColor>::const_iterator i = lexerSettings.constBegin();
+	while (i != lexerSettings.constEnd()) {
+		settings.setValue(i.key(), i.value());
+		++i;
+	}
+	Lexer::Settings::ref().setSettings(lexerSettings);
+	settings.endGroup();
 	
 	settings.beginGroup(AUTO_COMPLETION);
 	settings.setValue(ENABLED, ui_autoCompletionEnabledCheckBox->isChecked());
@@ -90,6 +111,7 @@ void EditorSettingsDialog::readSettings()
 	// Open up the applications settings and look in the editor group
 	QSettings settings;
 	settings.beginGroup(EDITOR);
+	ui_backgroundColorBox->setColor(settings.value(BACKGROUND_COLOR, QColor(255, 255, 255)).value<QColor>());
 
 	// Figure out the font and set it
 	#ifdef Q_OS_WIN32
@@ -108,7 +130,15 @@ void EditorSettingsDialog::readSettings()
 	#else
 	ui_fontSizeSpinBox->setValue(settings.value(FONT_SIZE, 10).toInt());
 	#endif
-
+	
+	// Read the lexer settings
+	lexerSettings.clear();
+	settings.beginGroup(LEXER);
+	QStringList keys = settings.childKeys();
+	foreach(QString key, keys) lexerSettings.insert(key, settings.value(key).value<QColor>());
+	ui_lexerColorBox->setColor(lexerSettings.value(ui_lexerBox->currentText()));
+	settings.endGroup();
+	
 	// Set the auto completion settings from the application config
 	settings.beginGroup(AUTO_COMPLETION);
 	ui_autoCompletionEnabledCheckBox->setChecked(settings.value(ENABLED, false).toBool());

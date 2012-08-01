@@ -37,6 +37,7 @@ C::C(const Constructor* constructor) : LexerBase(this, constructor) {}
 
 QColor C::defaultColor(int style) const
 {
+
     switch (style)
     {
 	case Default: return SyntaxStandards::defaultColor();
@@ -45,24 +46,24 @@ QColor C::defaultColor(int style) const
 	case CommentLine:
 	case InactiveComment:
 	case InactiveCommentLine:
-		return SyntaxStandards::commentColor();
-
+		return Lexer::Settings::ref().getSetting("Comments", SyntaxStandards::commentColor());
+	
 	case CommentDoc:
 	case CommentLineDoc:
 	case InactiveCommentDoc:
-		return SyntaxStandards::docColor();
+		return Lexer::Settings::ref().getSetting("Doc Comments", SyntaxStandards::docColor());
 
-	case Number: return SyntaxStandards::numberColor();
-	case Keyword: return SyntaxStandards::keywordColor();
+	case Number: return Lexer::Settings::ref().getSetting("Numbers", SyntaxStandards::numberColor());
+	case Keyword: return Lexer::Settings::ref().getSetting("Keywords", SyntaxStandards::keywordColor());
 
 	case DoubleQuotedString:
 	case SingleQuotedString:
 	case RawString:
-		return SyntaxStandards::stringColor();
+		return Lexer::Settings::ref().getSetting("Strings", SyntaxStandards::stringColor());
 
-	case PreProcessor: return SyntaxStandards::preprocessorColor();
-	case Operator: return SyntaxStandards::operatorColor();
-	case UnclosedString: return SyntaxStandards::unclosedStringColor();
+	case PreProcessor: return Lexer::Settings::ref().getSetting("Preprocessors", SyntaxStandards::preprocessorColor());
+	case Operator: return Lexer::Settings::ref().getSetting("Operators", SyntaxStandards::operatorColor());
+	case UnclosedString: return Lexer::Settings::ref().getSetting("Unclosed Strings", SyntaxStandards::unclosedStringColor());
 	case CommentDocKeyword: return SyntaxStandards::docKeywordColor();
 	case CommentDocKeywordError: return SyntaxStandards::docKeywordErrorColor();
 

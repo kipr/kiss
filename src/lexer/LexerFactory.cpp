@@ -31,6 +31,10 @@ Constructor::Constructor(const QString& name) : Named(name)
 
 Constructor::~Constructor() {}
 
+Settings::Settings() {}
+
+Settings::~Settings() {}
+
 Factory::Factory() {}
 
 Factory::~Factory()

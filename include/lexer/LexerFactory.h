@@ -65,6 +65,22 @@ namespace Lexer
 		const Constructor* m_constructor;
 		QsciAPIs m_apis;
 	};
+	
+	class Settings : public Singleton<Settings>
+	{
+	public:
+		Settings();
+		~Settings();
+		
+		QColor getSetting(const QString& type, const QColor& defaultValue) { return settings.value(type, defaultValue); }
+		QMap<QString, QColor> getSettings() { return settings; }
+		
+		void setSetting(const QString& type, const QColor& color) { settings.insert(type, color); }
+		void setSettings(QMap<QString, QColor> newSettings) { settings = newSettings; }
+		
+	private:
+		QMap<QString, QColor> settings;
+	};
 
 	class Factory : public Singleton<Factory>
 	{

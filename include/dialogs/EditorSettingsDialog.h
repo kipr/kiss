@@ -27,9 +27,11 @@
 #include <QObject>
 
 #define EDITOR "Editor"
+#define LEXER "Lexer"
 #define FONT "font"
 #define ENABLED "enabled"
 #define FONT_SIZE "fontsize"
+#define BACKGROUND_COLOR "backgroundcolor"
 #define AUTO_COMPLETION "autocompletion"
 #define API_SOURCE "apisource"
 #define DOC_SOURCE "docsource"
@@ -55,8 +57,14 @@ public:
 
 	// Show the dialog
 	int exec();
+	
+private slots:
+	void on_ui_lexerColorBox_colorChanged(QColor);
+	void on_ui_lexerBox_currentIndexChanged(const QString& text);
 
 private:
+	QMap<QString, QColor> lexerSettings;
+	
 	// Save/Read the current settings
 	void saveSettings();
 	void readSettings();
