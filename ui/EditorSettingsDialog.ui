@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>785</width>
-    <height>345</height>
+    <width>803</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -341,6 +341,13 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <layout class="QGridLayout" name="gridLayout_2">
+        <item row="1" column="0">
+         <widget class="QPushButton" name="ui_lexerSettingsButton">
+          <property name="text">
+           <string>Lexer Settings</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_7">
           <property name="text">
@@ -350,53 +357,6 @@
         </item>
         <item row="0" column="1">
          <widget class="ColorBox" name="ui_backgroundColorBox"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QComboBox" name="ui_lexerBox">
-          <item>
-           <property name="text">
-            <string>Comments</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Doc Comments</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Numbers</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Keywords</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Strings</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Preprocessors</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Operator</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Unclosed Strings</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="ColorBox" name="ui_lexerColorBox"/>
         </item>
        </layout>
       </item>

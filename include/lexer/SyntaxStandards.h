@@ -3,6 +3,16 @@
 
 #include <QColor>
 
+#define DEFAULT "Default"
+#define COMMENTS "Comments"
+#define DOC_COMMENTS "Doc Comments"
+#define NUMBERS "Numbers"
+#define KEYWORDS "Keywords"
+#define STRINGS "Strings"
+#define PREPROCESSORS "Preprocessors"
+#define OPERATORS "Operators"
+#define UNCLOSED_STRINGS "Unclosed Strings"
+
 class SyntaxStandards
 {
 public:

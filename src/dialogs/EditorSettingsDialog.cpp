@@ -19,6 +19,7 @@
  **************************************************************************/
 
 #include "EditorSettingsDialog.h"
+#include "LexerSettingsDialog.h"
 #include "LexerFactory.h"
 
 #include <QSettings>
@@ -54,14 +55,11 @@ int EditorSettingsDialog::exec()
 	return QDialog::Accepted;
 }
 
-void EditorSettingsDialog::on_ui_lexerColorBox_colorChanged(QColor color)
+void EditorSettingsDialog::on_ui_lexerSettingsButton_clicked()
 {
-	lexerSettings.insert(ui_lexerBox->currentText(), color);
-}
-
-void EditorSettingsDialog::on_ui_lexerBox_currentIndexChanged(const QString& text)
-{
-	ui_lexerColorBox->setColor(lexerSettings.value(text));
+	LexerSettingsDialog diag(m_lexerSettings);
+	if(diag.exec())
+		m_lexerSettings = diag.settings();
 }
 
 // Save the settings from the dialog
@@ -75,12 +73,12 @@ void EditorSettingsDialog::saveSettings()
 	settings.setValue(FONT_SIZE, ui_fontSizeSpinBox->value());
 	
 	settings.beginGroup(LEXER);
-	QMap<QString, QColor>::const_iterator i = lexerSettings.constBegin();
-	while (i != lexerSettings.constEnd()) {
+	QMap<QString, QColor>::const_iterator i = m_lexerSettings.constBegin();
+	while (i != m_lexerSettings.constEnd()) {
 		settings.setValue(i.key(), i.value());
 		++i;
 	}
-	Lexer::Settings::ref().setSettings(lexerSettings);
+	Lexer::Settings::ref().setSettings(m_lexerSettings);
 	settings.endGroup();
 	
 	settings.beginGroup(AUTO_COMPLETION);
@@ -132,11 +130,11 @@ void EditorSettingsDialog::readSettings()
 	#endif
 	
 	// Read the lexer settings
-	lexerSettings.clear();
+	m_lexerSettings.clear();
 	settings.beginGroup(LEXER);
 	QStringList keys = settings.childKeys();
-	foreach(QString key, keys) lexerSettings.insert(key, settings.value(key).value<QColor>());
-	ui_lexerColorBox->setColor(lexerSettings.value(ui_lexerBox->currentText()));
+	foreach(QString key, keys) m_lexerSettings.insert(key, settings.value(key).value<QColor>());
+
 	settings.endGroup();
 	
 	// Set the auto completion settings from the application config

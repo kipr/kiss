@@ -59,11 +59,10 @@ public:
 	int exec();
 	
 private slots:
-	void on_ui_lexerColorBox_colorChanged(QColor);
-	void on_ui_lexerBox_currentIndexChanged(const QString& text);
+	void on_ui_lexerSettingsButton_clicked();
 
 private:
-	QMap<QString, QColor> lexerSettings;
+	QMap<QString, QColor> m_lexerSettings;
 	
 	// Save/Read the current settings
 	void saveSettings();

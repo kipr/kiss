@@ -395,6 +395,7 @@ void SourceFile::refreshSettings()
 	/* Read font, indent, margin, etc. settings */
 	QSettings settings;
 	settings.beginGroup(EDITOR);
+	ui_editor->setWhitespaceBackgroundColor(settings.value(BACKGROUND_COLOR).value<QColor>());
 
 	/* Set the default font from settings */
 	QFont defFont(settings.value(FONT).toString(), settings.value(FONT_SIZE).toInt());
