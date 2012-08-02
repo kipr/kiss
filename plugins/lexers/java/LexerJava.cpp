@@ -36,32 +36,32 @@ QColor Java::defaultColor(int style) const
 {
     switch (style)
     {
-	case Default: return SyntaxStandards::defaultColor();
+	case Default: return Lexer::Settings::ref().getSetting(DEFAULT, SyntaxStandards::defaultColor());
 
 	case Comment:
 	case CommentLine:
 	case InactiveComment:
 	case InactiveCommentLine:
-		return SyntaxStandards::commentColor();
+		return Lexer::Settings::ref().getSetting(COMMENT, SyntaxStandards::commentColor());
 
 	case CommentDoc:
 	case CommentLineDoc:
 	case InactiveCommentDoc:
-		return SyntaxStandards::docColor();
+		return Lexer::Settings::ref().getSetting(DOC_COMMENT, SyntaxStandards::docColorColor());
 
-	case Number: return SyntaxStandards::numberColor();
-	case Keyword: return SyntaxStandards::keywordColor();
+	case Number: return Lexer::Settings::ref().getSetting(NUMBER, SyntaxStandards::numberColor());
+	case Keyword: return Lexer::Settings::ref().getSetting(KEYWORD, SyntaxStandards::keywordColor());
 
 	case DoubleQuotedString:
 	case SingleQuotedString:
 	case RawString:
-		return SyntaxStandards::stringColor();
+		return Lexer::Settings::ref().getSetting(STRING, SyntaxStandards::stringColor());
 
-	case PreProcessor: return SyntaxStandards::preprocessorColor();
-	case Operator: return SyntaxStandards::operatorColor();
-	case UnclosedString: return SyntaxStandards::unclosedStringColor();
-	case CommentDocKeyword: return SyntaxStandards::docKeywordColor();
-	case CommentDocKeywordError: return SyntaxStandards::docKeywordErrorColor();
+	case PreProcessor: return Lexer::Settings::ref().getSetting(PREPROCESSOR, SyntaxStandards::preprocessorColor());
+	case Operator: return Lexer::Settings::ref().getSetting(OPERATOR, SyntaxStandards::operatorColor());
+	case UnclosedString: return Lexer::Settings::ref().getSetting(UNCLOSED_STRING, SyntaxStandards::unclosedStringColor());
+	case CommentDocKeyword: return Lexer::Settings::ref().getSetting(DOC_KEYWORD, SyntaxStandards::docKeywordColor());
+	case CommentDocKeywordError: return Lexer::Settings::ref().getSetting(DOC_KEYWORD_ERROR, SyntaxStandards::docKeywordErrorColor());
 
 	case InactiveDefault:
 	case InactiveUUID:

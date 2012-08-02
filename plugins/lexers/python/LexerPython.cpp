@@ -27,23 +27,23 @@ QColor Python::defaultColor(int style) const
 	case FunctionMethodName:
 	case Identifier:
 	case HighlightedIdentifier:
-		return QColor(0, 0, 0);
+		return Lexer::Settings::ref().getSetting(DEFAULT, SyntaxStandards::defaultColor());
 
 	case Comment:
 	case CommentBlock:
-		return SyntaxStandards::commentColor();
+		return Lexer::Settings::ref().getSetting(COMMENT, SyntaxStandards::commentColor());
 
-	case Number: return SyntaxStandards::numberColor();
-	case Keyword: return SyntaxStandards::keywordColor();
+	case Number: return Lexer::Settings::ref().getSetting(NUMBER, SyntaxStandards::numberColor());
+	case Keyword: return Lexer::Settings::ref().getSetting(KEYWORD, SyntaxStandards::keywordColor());
 
 	case DoubleQuotedString:
 	case SingleQuotedString:
 	case TripleDoubleQuotedString:
 	case TripleSingleQuotedString:
-		return SyntaxStandards::stringColor();
+		return Lexer::Settings::ref().getSetting(STRING, SyntaxStandards::stringColor());
 
-	case Operator: return SyntaxStandards::operatorColor();
-	case UnclosedString: return SyntaxStandards::unclosedStringColor();
+	case Operator: return Lexer::Settings::ref().getSetting(OPERATOR, SyntaxStandards::operatorColor());
+	case UnclosedString: return Lexer::Settings::ref().getSetting(UNCLOSED_STRING, SyntaxStandards::unclosedStringColor());
     }
 
     return QsciLexerPython::defaultColor(style);
