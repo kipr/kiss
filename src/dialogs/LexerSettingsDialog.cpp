@@ -9,7 +9,7 @@ LexerSettingsDialog::LexerSettingsDialog(QMap<QString, QColor> lexerSettings, QW
 {
     setupUi(this);
     
-    ui_table->setColumnWidth(0, 170);
+    ui_table->setColumnWidth(0, 180);
     
     const int rows = ui_table->rowCount();
     ColorBox *boxes[rows];
