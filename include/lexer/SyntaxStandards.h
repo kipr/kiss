@@ -4,14 +4,16 @@
 #include <QColor>
 
 #define DEFAULT "Default"
-#define COMMENTS "Comments"
-#define DOC_COMMENTS "Doc Comments"
-#define NUMBERS "Numbers"
-#define KEYWORDS "Keywords"
-#define STRINGS "Strings"
-#define PREPROCESSORS "Preprocessors"
-#define OPERATORS "Operators"
-#define UNCLOSED_STRINGS "Unclosed Strings"
+#define COMMENT "Comments"
+#define DOC_COMMENT "Doc Comments"
+#define NUMBER "Numbers"
+#define KEYWORD "Keywords"
+#define STRING "Strings"
+#define PREPROCESSOR "Preprocessors"
+#define OPERATOR "Operators"
+#define UNCLOSED_STRING "Unclosed Strings"
+#define DOC_KEYWORD "Doc Keywords"
+#define DOC_KEYWORD_ERROR "Doc Keyword Errors"
 
 class SyntaxStandards
 {

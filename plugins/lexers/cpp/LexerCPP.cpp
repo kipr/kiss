@@ -62,8 +62,7 @@ QColor CPP::defaultColor(int style) const
 	case DoubleQuotedString:
 	case SingleQuotedString:
 	case RawString:
-		//return SyntaxStandards::stringColor();
-		return QColor(200, 200, 200);
+		return SyntaxStandards::stringColor();
 
 	case PreProcessor: return SyntaxStandards::preprocessorColor();
 	case Operator: return SyntaxStandards::operatorColor();
