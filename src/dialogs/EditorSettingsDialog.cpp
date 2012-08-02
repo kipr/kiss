@@ -23,7 +23,6 @@
 #include "LexerFactory.h"
 
 #include <QSettings>
-#include <QDebug>
 
 EditorSettingsDialog::EditorSettingsDialog(QWidget *parent) : QDialog(parent)
 {
@@ -58,14 +57,12 @@ int EditorSettingsDialog::exec()
 void EditorSettingsDialog::on_ui_lexerSettingsButton_clicked()
 {
 	LexerSettingsDialog diag(m_lexerSettings);
-	if(diag.exec())
-		m_lexerSettings = diag.settings();
+	if(diag.exec()) m_lexerSettings = diag.settings();
 }
 
 // Save the settings from the dialog
 void EditorSettingsDialog::saveSettings()
 {
-	qWarning() << "Font" << ui_fontBox->currentFont().family();
 	QSettings settings;
 	settings.beginGroup(EDITOR);
 	settings.setValue(BACKGROUND_COLOR, ui_backgroundColorBox->color());
