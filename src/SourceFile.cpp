@@ -68,7 +68,6 @@
 #include <QPixmap>
 #include <QDesktopServices>
 #include <QUrl>
-#include <Qsci/qscilexercpp.h>
 
 #include <memory>
 
@@ -437,13 +436,6 @@ void SourceFile::refreshSettings()
 	m_debuggerEnabled = settings.value(DEBUGGER_ENABLED).toBool();
 
 	settings.endGroup();
-	
-	qDebug() << "REFRESHING THOSE SETTINGSAIFJD;";	
-	/*Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(associatedFileSuffix());
-	if(Lexer::Factory::isLexerFromConstructor((Lexer::LexerBase*)ui_editor->lexer(), constructor)) {
-		qDebug() << "SETTING A NEW LEERLJFDLSAOLOL";
-		setLexer(constructor);
-	}*/
 
 	ui_editor->setLexer(ui_editor->lexer());
 	
