@@ -6,9 +6,6 @@
 #include <easydevice/DiscoveryServer.h>
 #include <easydevice/DeviceInfo.h>
 
-class Ohaiyo;
-class OhaiyoListener;
-
 class Cbc3Interface : public QObject, public Interface
 {
 Q_OBJECT

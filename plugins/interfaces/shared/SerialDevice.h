@@ -1,26 +1,24 @@
-#ifndef _CBC3_H_
-#define _CBC3_H_
+#ifndef _SERIALDEVICE_H_
+#define _SERIALDEVICE_H_
 
 #include "Target.h"
+#include "SerialIODevice.h"
 #include "Keys.h"
 #include <easydevice/DeviceInfo.h>
 #include <QtGlobal>
-#include <QTcpSocket>
-#include <QHostAddress>
+#include <QString>
 
-class Interface;
-
-class TcpSocketDevice : public QObject, public Target
+class SerialDevice : public QObject, public Target
 {
 Q_OBJECT
 public:
-	TcpSocketDevice(Interface *interface, const QHostAddress& address, const quint32& port);
-	~TcpSocketDevice();
-	
+	SerialDevice(Interface *interface, const QString& path);
+	~SerialDevice();
+
 	void setDeviceInfo(EasyDevice::DeviceInfo deviceInfo);
-	
+
 	virtual const bool disconnect();
-	
+
 	virtual const QMap<QString, QString> information() const;
 	virtual const bool available();
 	virtual const bool compile(const QString& name);
@@ -28,21 +26,16 @@ public:
 	virtual const bool run(const QString& name);
 	virtual const bool authenticate(const QByteArray& hash);
 	virtual const bool sendCustom(const QString& custom, const QByteArray& payload);
-	
 private slots:
 	void readyRead();
-	void error(QAbstractSocket::SocketError socketError);
-	
+
 private:
 	void processPayload(const QByteArray& payload);
 	bool connect();
-	
-	
+
+	QString m_path;
 	EasyDevice::DeviceInfo m_deviceInfo;
-	QHostAddress m_address;
-	quint16 m_port;
-	QTcpSocket m_socket;
-	
+	SerialIODevice m_device;
 	quint32 m_payload;
 };
 
