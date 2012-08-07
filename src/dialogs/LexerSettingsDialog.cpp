@@ -1,5 +1,4 @@
 #include "LexerSettingsDialog.h"
-#include "ColorBox.h"
 #include "SyntaxStandards.h"
 
 #include <QDebug>
@@ -12,7 +11,7 @@ LexerSettingsDialog::LexerSettingsDialog(QMap<QString, QColor> lexerSettings, QW
     ui_table->setColumnWidth(0, 180);
     
     const int rows = ui_table->rowCount();
-    ColorBox *boxes[rows];
+    boxes = new ColorBox *[rows];
     for(int i = 0; i < rows; ++i) {
 		boxes[i] = new ColorBox(ui_table);
 		boxes[i]->setProperty("row", i);
@@ -33,11 +32,33 @@ LexerSettingsDialog::LexerSettingsDialog(QMap<QString, QColor> lexerSettings, QW
     boxes[10]->setColor(m_lexerSettings.value(DOC_KEYWORD_ERROR, SyntaxStandards::docKeywordErrorColor()));
 }
 
-LexerSettingsDialog::~LexerSettingsDialog() {}
+LexerSettingsDialog::~LexerSettingsDialog()
+{
+	for(int i = 0; i < ui_table->rowCount(); ++i) delete boxes[i];
+	delete boxes;
+	delete ui;
+}
 
 QMap<QString, QColor> LexerSettingsDialog::settings()
 {
 	return m_lexerSettings;
+}
+
+void LexerSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
+{
+	if((QPushButton *)button == ui_buttonBox->button(QDialogButtonBox::RestoreDefaults)) {
+		boxes[0]->setColor(SyntaxStandards::defaultColor());
+		boxes[1]->setColor(SyntaxStandards::commentColor());
+		boxes[2]->setColor(SyntaxStandards::docColor());
+		boxes[3]->setColor(SyntaxStandards::numberColor());
+		boxes[4]->setColor(SyntaxStandards::keywordColor());
+		boxes[5]->setColor(SyntaxStandards::stringColor());
+		boxes[6]->setColor(SyntaxStandards::preprocessorColor());
+		boxes[7]->setColor(SyntaxStandards::operatorColor());
+		boxes[8]->setColor(SyntaxStandards::unclosedStringColor());
+		boxes[9]->setColor(SyntaxStandards::docKeywordColor());
+		boxes[10]->setColor(SyntaxStandards::docKeywordErrorColor());
+	}
 }
 
 void LexerSettingsDialog::settingChanged(QColor color)
