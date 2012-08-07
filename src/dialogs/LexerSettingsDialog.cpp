@@ -1,4 +1,5 @@
 #include "LexerSettingsDialog.h"
+#include "ui_LexerSettingsDialog.h"
 #include "SyntaxStandards.h"
 
 #include <QDebug>
@@ -6,17 +7,18 @@
 LexerSettingsDialog::LexerSettingsDialog(QMap<QString, QColor> lexerSettings, QWidget *parent)
 	: QDialog(parent), m_lexerSettings(lexerSettings)
 {
-    setupUi(this);
+	ui = new Ui::LexerSettingsDialog();
+    ui->setupUi(this);
     
-    ui_table->setColumnWidth(0, 180);
+    ui->ui_table->setColumnWidth(0, 180);
     
-    const int rows = ui_table->rowCount();
+    const int rows = ui->ui_table->rowCount();
     boxes = new ColorBox *[rows];
     for(int i = 0; i < rows; ++i) {
-		boxes[i] = new ColorBox(ui_table);
+		boxes[i] = new ColorBox(ui->ui_table);
 		boxes[i]->setProperty("row", i);
 		connect(boxes[i], SIGNAL(colorChanged(QColor)), SLOT(settingChanged(QColor)));
-		ui_table->setCellWidget(i, 1, boxes[i]);
+		ui->ui_table->setCellWidget(i, 1, boxes[i]);
     }
     
     boxes[0]->setColor(m_lexerSettings.value(DEFAULT, SyntaxStandards::defaultColor()));
@@ -34,8 +36,9 @@ LexerSettingsDialog::LexerSettingsDialog(QMap<QString, QColor> lexerSettings, QW
 
 LexerSettingsDialog::~LexerSettingsDialog()
 {
-	for(int i = 0; i < ui_table->rowCount(); ++i) delete boxes[i];
+	for(int i = 0; i < ui->ui_table->rowCount(); ++i) delete boxes[i];
 	delete boxes;
+	delete ui;
 }
 
 QMap<QString, QColor> LexerSettingsDialog::settings()
@@ -45,7 +48,7 @@ QMap<QString, QColor> LexerSettingsDialog::settings()
 
 void LexerSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
 {
-	if((QPushButton *)button == ui_buttonBox->button(QDialogButtonBox::RestoreDefaults)) {
+	if((QPushButton *)button == ui->ui_buttonBox->button(QDialogButtonBox::RestoreDefaults)) {
 		boxes[0]->setColor(SyntaxStandards::defaultColor());
 		boxes[1]->setColor(SyntaxStandards::commentColor());
 		boxes[2]->setColor(SyntaxStandards::docColor());
@@ -63,6 +66,6 @@ void LexerSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
 void LexerSettingsDialog::settingChanged(QColor color)
 {
 	ColorBox *box = (ColorBox *)sender();
-	QString setting = ui_table->item(box->property("row").toInt(), 0)->text();
+	QString setting = ui->ui_table->item(box->property("row").toInt(), 0)->text();
 	m_lexerSettings.insert(setting, color);
 }

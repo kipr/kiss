@@ -2,11 +2,15 @@
 #define LEXERSETTINGSDIALOG_H
 
 #include <QDialog>
+#include <QAbstractButton>
 #include "ColorBox.h"
 
-#include "ui_LexerSettingsDialog.h"
+namespace Ui
+{
+	class LexerSettingsDialog;
+}
 
-class LexerSettingsDialog : public QDialog, private Ui::LexerSettingsDialog
+class LexerSettingsDialog : public QDialog
 {
     Q_OBJECT
     
