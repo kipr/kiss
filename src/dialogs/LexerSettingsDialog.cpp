@@ -36,7 +36,6 @@ LexerSettingsDialog::~LexerSettingsDialog()
 {
 	for(int i = 0; i < ui_table->rowCount(); ++i) delete boxes[i];
 	delete boxes;
-	delete ui;
 }
 
 QMap<QString, QColor> LexerSettingsDialog::settings()
