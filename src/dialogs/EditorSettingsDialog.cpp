@@ -65,6 +65,15 @@ void EditorSettingsDialog::on_ui_themeSettingsButton_clicked()
 	}
 }
 
+void EditorSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
+{
+	if((QPushButton *)button == ui_buttonBox->button(QDialogButtonBox::RestoreDefaults)) {
+		QSettings settings;
+		settings.remove(EDITOR);
+		readSettings();
+	}
+}
+
 // Save the settings from the dialog
 void EditorSettingsDialog::saveSettings()
 {

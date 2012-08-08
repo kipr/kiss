@@ -60,6 +60,7 @@ public:
 	
 private slots:
 	void on_ui_themeSettingsButton_clicked();
+	void on_ui_buttonBox_clicked(QAbstractButton *button);
 
 private:
 	QMap<QString, QColor> m_lexerSettings;
