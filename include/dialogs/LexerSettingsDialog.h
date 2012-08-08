@@ -12,22 +12,25 @@ namespace Ui
 
 class LexerSettingsDialog : public QDialog
 {
-    Q_OBJECT
-    
+	Q_OBJECT
+	
 public:
-    LexerSettingsDialog(QMap<QString, QColor> lexerSettings, QWidget *parent = 0);
-    ~LexerSettingsDialog();
-    
-    QMap<QString, QColor> settings();
-    
+	LexerSettingsDialog(QMap<QString, QColor> lexerSettings, QColor backgroundColor, QFont font, int fontSize, QWidget *parent = 0);
+	~LexerSettingsDialog();
+	
+	QMap<QString, QColor> settings();
+	QColor backgroundColor();
+	QFont font();
+	int fontSize();
+	
 private slots:
 	void on_ui_buttonBox_clicked(QAbstractButton *button);
 	void settingChanged(QColor color);
-    
+	
 private:
-    Ui::LexerSettingsDialog *ui;
-    QMap<QString, QColor> m_lexerSettings;
-    ColorBox **boxes;
+	Ui::LexerSettingsDialog *ui;
+	QMap<QString, QColor> m_lexerSettings;
+	ColorBox **boxes;
 };
 
 #endif // LEXERSETTINGSDIALOG_H

@@ -63,6 +63,9 @@ private slots:
 
 private:
 	QMap<QString, QColor> m_lexerSettings;
+	QColor m_backgroundColor;
+	QFont m_font;
+	int m_fontSize;
 	
 	// Save/Read the current settings
 	void saveSettings();
