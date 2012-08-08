@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>LexerSettingsDialog</class>
- <widget class="QDialog" name="LexerSettingsDialog">
+ <class>ThemeSettingsDialog</class>
+ <widget class="QDialog" name="ThemeSettingsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Lexer Settings</string>
+   <string>Theme Settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -247,7 +247,7 @@
   <connection>
    <sender>ui_buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>LexerSettingsDialog</receiver>
+   <receiver>ThemeSettingsDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -263,7 +263,7 @@
   <connection>
    <sender>ui_buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>LexerSettingsDialog</receiver>
+   <receiver>ThemeSettingsDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -59,7 +59,7 @@ public:
 	int exec();
 	
 private slots:
-	void on_ui_lexerSettingsButton_clicked();
+	void on_ui_themeSettingsButton_clicked();
 
 private:
 	QMap<QString, QColor> m_lexerSettings;

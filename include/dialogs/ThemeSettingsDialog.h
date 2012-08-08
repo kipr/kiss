@@ -1,5 +1,5 @@
-#ifndef LEXERSETTINGSDIALOG_H
-#define LEXERSETTINGSDIALOG_H
+#ifndef THEMESETTINGSDIALOG_H
+#define THEMESETTINGSDIALOG_H
 
 #include <QDialog>
 #include <QAbstractButton>
@@ -7,16 +7,16 @@
 
 namespace Ui
 {
-	class LexerSettingsDialog;
+	class ThemeSettingsDialog;
 }
 
-class LexerSettingsDialog : public QDialog
+class ThemeSettingsDialog : public QDialog
 {
 	Q_OBJECT
 	
 public:
-	LexerSettingsDialog(QMap<QString, QColor> lexerSettings, QColor backgroundColor, QFont font, int fontSize, QWidget *parent = 0);
-	~LexerSettingsDialog();
+	ThemeSettingsDialog(QMap<QString, QColor> lexerSettings, QColor backgroundColor, QFont font, int fontSize, QWidget *parent = 0);
+	~ThemeSettingsDialog();
 	
 	QMap<QString, QColor> settings();
 	QColor backgroundColor();
@@ -28,9 +28,9 @@ private slots:
 	void settingChanged(QColor color);
 	
 private:
-	Ui::LexerSettingsDialog *ui;
+	Ui::ThemeSettingsDialog *ui;
 	QMap<QString, QColor> m_lexerSettings;
 	ColorBox **boxes;
 };
 
-#endif // LEXERSETTINGSDIALOG_H
+#endif // THEMESETTINGSDIALOG_H

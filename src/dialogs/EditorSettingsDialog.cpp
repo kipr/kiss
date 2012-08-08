@@ -19,7 +19,7 @@
  **************************************************************************/
 
 #include "EditorSettingsDialog.h"
-#include "LexerSettingsDialog.h"
+#include "ThemeSettingsDialog.h"
 #include "LexerFactory.h"
 
 #include <QSettings>
@@ -54,9 +54,9 @@ int EditorSettingsDialog::exec()
 	return QDialog::Accepted;
 }
 
-void EditorSettingsDialog::on_ui_lexerSettingsButton_clicked()
+void EditorSettingsDialog::on_ui_themeSettingsButton_clicked()
 {
-	LexerSettingsDialog diag(m_lexerSettings, m_backgroundColor, m_font, m_fontSize);
+	ThemeSettingsDialog diag(m_lexerSettings, m_backgroundColor, m_font, m_fontSize);
 	if(diag.exec()) {
 		m_lexerSettings = diag.settings();
 		m_backgroundColor = diag.backgroundColor();

@@ -1,13 +1,13 @@
-#include "LexerSettingsDialog.h"
-#include "ui_LexerSettingsDialog.h"
+#include "ThemeSettingsDialog.h"
+#include "ui_ThemeSettingsDialog.h"
 #include "SyntaxStandards.h"
 
 #include <QDebug>
 
-LexerSettingsDialog::LexerSettingsDialog(QMap<QString, QColor> lexerSettings, QColor backgroundColor, QFont font, int fontSize, QWidget *parent)
+ThemeSettingsDialog::ThemeSettingsDialog(QMap<QString, QColor> lexerSettings, QColor backgroundColor, QFont font, int fontSize, QWidget *parent)
 	: QDialog(parent), m_lexerSettings(lexerSettings)
 {
-	ui = new Ui::LexerSettingsDialog();
+	ui = new Ui::ThemeSettingsDialog();
 	ui->setupUi(this);
 	
 	ui->ui_table->setColumnWidth(0, 180);
@@ -38,34 +38,34 @@ LexerSettingsDialog::LexerSettingsDialog(QMap<QString, QColor> lexerSettings, QC
 	ui->ui_fontSizeBox->setValue(fontSize);
 }
 
-LexerSettingsDialog::~LexerSettingsDialog()
+ThemeSettingsDialog::~ThemeSettingsDialog()
 {
 	for(int i = 0; i < ui->ui_table->rowCount(); ++i) delete boxes[i];
 	delete boxes;
 	delete ui;
 }
 
-QMap<QString, QColor> LexerSettingsDialog::settings()
+QMap<QString, QColor> ThemeSettingsDialog::settings()
 {
 	return m_lexerSettings;
 }
 
-QColor LexerSettingsDialog::backgroundColor()
+QColor ThemeSettingsDialog::backgroundColor()
 {
 	return ui->ui_backgroundColorBox->color();
 }
 
-QFont LexerSettingsDialog::font()
+QFont ThemeSettingsDialog::font()
 {
 	return ui->ui_fontBox->currentFont();
 }
 
-int LexerSettingsDialog::fontSize()
+int ThemeSettingsDialog::fontSize()
 {
 	return ui->ui_fontSizeBox->value();
 }
 
-void LexerSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
+void ThemeSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
 {
 	if((QPushButton *)button == ui->ui_buttonBox->button(QDialogButtonBox::RestoreDefaults)) {
 		boxes[0]->setColor(SyntaxStandards::defaultColor());
@@ -82,7 +82,7 @@ void LexerSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
 	}
 }
 
-void LexerSettingsDialog::settingChanged(QColor color)
+void ThemeSettingsDialog::settingChanged(QColor color)
 {
 	ColorBox *box = (ColorBox *)sender();
 	QString setting = ui->ui_table->item(box->property("row").toInt(), 0)->text();
