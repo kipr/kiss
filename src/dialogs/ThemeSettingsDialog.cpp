@@ -65,23 +65,6 @@ int ThemeSettingsDialog::fontSize()
 	return ui->ui_fontSizeBox->value();
 }
 
-void ThemeSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
-{
-	if((QPushButton *)button == ui->ui_buttonBox->button(QDialogButtonBox::RestoreDefaults)) {
-		boxes[0]->setColor(SyntaxStandards::defaultColor());
-		boxes[1]->setColor(SyntaxStandards::commentColor());
-		boxes[2]->setColor(SyntaxStandards::docColor());
-		boxes[3]->setColor(SyntaxStandards::numberColor());
-		boxes[4]->setColor(SyntaxStandards::keywordColor());
-		boxes[5]->setColor(SyntaxStandards::stringColor());
-		boxes[6]->setColor(SyntaxStandards::preprocessorColor());
-		boxes[7]->setColor(SyntaxStandards::operatorColor());
-		boxes[8]->setColor(SyntaxStandards::unclosedStringColor());
-		boxes[9]->setColor(SyntaxStandards::docKeywordColor());
-		boxes[10]->setColor(SyntaxStandards::docKeywordErrorColor());
-	}
-}
-
 void ThemeSettingsDialog::settingChanged(QColor color)
 {
 	ColorBox *box = (ColorBox *)sender();

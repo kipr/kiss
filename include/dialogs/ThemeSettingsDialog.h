@@ -24,7 +24,6 @@ public:
 	int fontSize();
 	
 private slots:
-	void on_ui_buttonBox_clicked(QAbstractButton *button);
 	void settingChanged(QColor color);
 	
 private:
