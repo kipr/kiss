@@ -159,9 +159,9 @@ QStringMap Project::settings() const
 	return ret;
 }
 
-void Project::setDevice(const QString& device)
+void Project::setTarget(const QString& target)
 {
-	updateSetting(DEVICE_KEY, device);
+	updateSetting(TARGET_KEY, target);
 }
 
 Project* Project::load(const QString& path)
