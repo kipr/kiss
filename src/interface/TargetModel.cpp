@@ -31,7 +31,7 @@ public:
 	template<typename T>
 	static Interface* interface_cast(T* t) {
 		TargetPtr target = target_cast(t);
-		return target.get() ? target->interface() : 0;
+		return target.data() ? target->interface() : 0;
 	}
 private:
 	TargetPtr m_target;

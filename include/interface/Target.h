@@ -9,7 +9,7 @@
 #include <QObject>
 #include <QString>
 #include <QMap>
-#include <boost/shared_ptr.hpp>
+#include <QSharedPointer>
 
 #define NOT_AVAILABLE "N/A"
 
@@ -73,7 +73,7 @@ private:
 	TargetResponder *m_responder;
 };
 
-typedef boost::shared_ptr<Target> TargetPtr;
+typedef QSharedPointer<Target> TargetPtr;
 
 
 #endif
