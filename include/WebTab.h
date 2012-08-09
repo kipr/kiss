@@ -29,7 +29,7 @@ class WebTab;
 
 #ifdef BUILD_WEB_TAB
 
-#include "Tab.h"
+#include "TabbedWidget.h"
 #include "ui_WebTab.h"
 #include "MacroString.h"
 #include "AudioTutorial.h"

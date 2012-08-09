@@ -23,7 +23,7 @@
 
 #include "ui_MainWindow.h"
 #include "EditorSettingsDialog.h"
-#include "Tab.h"
+#include "TabbedWidget.h"
 
 #include <Qsci/qscilexercpp.h>
 #include <QEvent>

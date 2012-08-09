@@ -2,7 +2,7 @@
 #define _PROJECTSETTINGSTAB_H_
 
 #include <QWidget>
-#include "Tab.h"
+#include "TabbedWidget.h"
 
 struct ProjectFile;
 

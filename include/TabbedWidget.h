@@ -18,8 +18,8 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef __TAB_H__
-#define __TAB_H__
+#ifndef __TABBEDWIDGET_H__
+#define __TABBEDWIDGET_H__
 
 class MainWindow;
 class QMenu;

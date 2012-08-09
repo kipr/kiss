@@ -24,7 +24,7 @@
 #include "TemplateDialog.h"
 #include "EditorSettingsDialog.h"
 #include "ui_SourceFile.h"
-#include "Tab.h"
+#include "TabbedWidget.h"
 #include <kiss-compiler/Compilation.h>
 
 #include "WorkingUnit.h"

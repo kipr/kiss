@@ -30,7 +30,7 @@ class Repository;
 #ifdef BUILD_REPOSITORY_TAB
 
 #include "ui_Repository.h"
-#include "Tab.h"
+#include "TabbedWidget.h"
 
 #include <QWidget>
 #include <QMenu>
