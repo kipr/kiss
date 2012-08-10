@@ -2,6 +2,7 @@
 #define THEMESETTINGSDIALOG_H
 
 #include <QDialog>
+#include <QMap>
 #include <QAbstractButton>
 #include "ColorBox.h"
 
