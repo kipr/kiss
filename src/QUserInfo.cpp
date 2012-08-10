@@ -12,16 +12,16 @@ QString QUserInfo::username()
 {
 	QString ret;
 #ifdef Q_OS_WIN
-	LPTSTR str = malloc(SIZE);
-	LPDWORD size = SIZE;
+	TCHAR str[SIZE + 1];
+	DWORD size = SIZE + 1;
 #ifdef UNICODE
-	if(!GetUserName(str, size)) ret = "";
+	if(!GetUserName((TCHAR*)str, &size)) ret = "";
 	else ret = QString::fromUtf16(str);
 #else
-	if(!GetUserName(str, size)) ret = "";
+	if(!GetUserName((TCHAR*)str, &size)) ret = "";
 	else ret = QString::fromAscii(str);
 #endif
-	free(str);
+
 #else
 	ret = QString::fromUtf8(getlogin());
 #endif
