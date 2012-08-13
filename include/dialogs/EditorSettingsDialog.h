@@ -27,11 +27,7 @@
 #include <QObject>
 
 #define EDITOR "Editor"
-#define LEXER "Lexer"
-#define FONT "font"
 #define ENABLED "enabled"
-#define FONT_SIZE "fontsize"
-#define BACKGROUND_COLOR "backgroundcolor"
 #define AUTO_COMPLETION "autocompletion"
 #define API_SOURCE "apisource"
 #define DOC_SOURCE "docsource"

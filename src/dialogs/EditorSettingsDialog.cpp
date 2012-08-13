@@ -19,7 +19,6 @@
  **************************************************************************/
 
 #include "EditorSettingsDialog.h"
-#include "ThemeSettingsDialog.h"
 #include "LexerFactory.h"
 
 #include <QSettings>
@@ -56,13 +55,6 @@ int EditorSettingsDialog::exec()
 
 void EditorSettingsDialog::on_ui_themeSettingsButton_clicked()
 {
-	ThemeSettingsDialog diag(m_lexerSettings, m_backgroundColor, m_font, m_fontSize);
-	if(diag.exec()) {
-		m_lexerSettings = diag.settings();
-		m_backgroundColor = diag.backgroundColor();
-		m_font = diag.font();
-		m_fontSize = diag.fontSize();
-	}
 }
 
 void EditorSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
@@ -79,18 +71,6 @@ void EditorSettingsDialog::saveSettings()
 {
 	QSettings settings;
 	settings.beginGroup(EDITOR);
-	settings.setValue(BACKGROUND_COLOR, m_backgroundColor);
-	settings.setValue(FONT, m_font);
-	settings.setValue(FONT_SIZE, m_fontSize);
-	
-	settings.beginGroup(LEXER);
-	QMap<QString, QColor>::const_iterator i = m_lexerSettings.constBegin();
-	while (i != m_lexerSettings.constEnd()) {
-		settings.setValue(i.key(), i.value());
-		++i;
-	}
-	Lexer::Settings::ref().setSettings(m_lexerSettings);
-	settings.endGroup();
 	
 	settings.beginGroup(AUTO_COMPLETION);
 	settings.setValue(ENABLED, ui_autoCompletionEnabledCheckBox->isChecked());
@@ -121,33 +101,6 @@ void EditorSettingsDialog::readSettings()
 	QSettings settings;
 
 	settings.beginGroup(EDITOR);
-	m_backgroundColor = settings.value(BACKGROUND_COLOR, QColor(255, 255, 255)).value<QColor>();
-
-	// Figure out the font and set it
-	#ifdef Q_OS_WIN32
-	QString fontString = settings.value(FONT, "Courier New").toString();
-	#elif defined(Q_OS_MAC)
-	QString fontString = settings.value(FONT, "Monaco").toString();
-	#else
-	QString fontString = settings.value(FONT, "Monospace").toString();
-	#endif
-	
-	m_font = QFont(fontString);
-	
-	// Figure out the font size and set the widget
-	#ifdef Q_OS_MAC
-	m_fontSize = settings.value(FONT_SIZE, 12).toInt();
-	#else
-	m_fontSize = settings.value(FONT_SIZE, 10).toInt();
-	#endif
-	
-	// Read the lexer settings
-	m_lexerSettings.clear();
-	settings.beginGroup(LEXER);
-	QStringList keys = settings.childKeys();
-	foreach(QString key, keys) m_lexerSettings.insert(key, settings.value(key).value<QColor>());
-
-	settings.endGroup();
 	
 	// Set the auto completion settings from the application config
 	settings.beginGroup(AUTO_COMPLETION);

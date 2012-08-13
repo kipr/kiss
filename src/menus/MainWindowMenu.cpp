@@ -46,6 +46,7 @@ MainWindowMenu::MainWindowMenu(MainWindow* mainWindow) : ConcreteMenuable(menuNa
 	
 	m_edit.append(MenuNode::separator());
 	m_edit.append(node(activeAction("cog.png", "Settings", QKeySequence::Preferences, this, "settings")));
+	m_edit.append(node(activeAction("theme.png", "Editor Theme", QKeySequence::Preferences, this, "theme")));
 	
 	QAction* about = activeAction("information", "About KISS IDE", QKeySequence::UnknownKey, this, "about");
 	m_help.append(node(about));

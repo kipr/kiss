@@ -1,10 +1,15 @@
-#ifndef THEMESETTINGSDIALOG_H
-#define THEMESETTINGSDIALOG_H
+#ifndef _THEMESETTINGSDIALOG_H_
+#define _THEMESETTINGSDIALOG_H_
 
 #include <QDialog>
 #include <QMap>
 #include <QAbstractButton>
 #include "ColorBox.h"
+
+#define LEXER "Lexer"
+#define FONT "font"
+#define FONT_SIZE "fontsize"
+#define BACKGROUND_COLOR "backgroundcolor"
 
 namespace Ui
 {
@@ -13,24 +18,36 @@ namespace Ui
 
 class ThemeSettingsDialog : public QDialog
 {
-	Q_OBJECT
-	
+Q_OBJECT
 public:
-	ThemeSettingsDialog(QMap<QString, QColor> lexerSettings, QColor backgroundColor, QFont font, int fontSize, QWidget *parent = 0);
+	ThemeSettingsDialog(QWidget *parent = 0);
 	~ThemeSettingsDialog();
 	
-	QMap<QString, QColor> settings();
-	QColor backgroundColor();
-	QFont font();
-	int fontSize();
+	virtual int exec();
+	
+	const QMap<QString, QColor>& settings() const;
+	QColor backgroundColor() const;
+	QFont font() const;
+	int fontSize() const;
+	
+	void readSettings();
+	void writeSettings();
+	
+public slots:
+	void setDefaults();
 	
 private slots:
 	void settingChanged(QColor color);
 	
 private:
+	void updateBoxes();
+	
 	Ui::ThemeSettingsDialog *ui;
 	QMap<QString, QColor> m_lexerSettings;
-	ColorBox **boxes;
+	ColorBox **m_boxes;
+	int m_fontSize;
+	QFont m_font;
+	QColor m_backgroundColor;
 };
 
-#endif // THEMESETTINGSDIALOG_H
+#endif

@@ -1,73 +1,163 @@
 #include "ThemeSettingsDialog.h"
 #include "ui_ThemeSettingsDialog.h"
-#include "SyntaxStandards.h"
 
+#include "EditorSettingsDialog.h"
+#include "SyntaxStandards.h"
+#include "LexerFactory.h"
+
+#include <QSettings>
+#include <QColor>
+#include <QMap>
 #include <QDebug>
 
-ThemeSettingsDialog::ThemeSettingsDialog(QMap<QString, QColor> lexerSettings, QColor backgroundColor, QFont font, int fontSize, QWidget *parent)
-	: QDialog(parent), m_lexerSettings(lexerSettings)
+ThemeSettingsDialog::ThemeSettingsDialog(QWidget *parent)
+	: QDialog(parent)
 {
 	ui = new Ui::ThemeSettingsDialog();
 	ui->setupUi(this);
 	
-	ui->ui_table->setColumnWidth(0, 180);
+	ui->table->setColumnWidth(0, 180);
 	
-	const int rows = ui->ui_table->rowCount();
-	boxes = new ColorBox *[rows];
+	const int rows = ui->table->rowCount();
+	m_boxes = new ColorBox *[rows];
 	for(int i = 0; i < rows; ++i) {
-		boxes[i] = new ColorBox(ui->ui_table);
-		boxes[i]->setProperty("row", i);
-		connect(boxes[i], SIGNAL(colorChanged(QColor)), SLOT(settingChanged(QColor)));
-		ui->ui_table->setCellWidget(i, 1, boxes[i]);
+		m_boxes[i] = new ColorBox(ui->table);
+		m_boxes[i]->setProperty("row", i);
+		connect(m_boxes[i], SIGNAL(colorChanged(QColor)), SLOT(settingChanged(QColor)));
+		ui->table->setCellWidget(i, 1, m_boxes[i]);
 	}
-	
-	boxes[0]->setColor(m_lexerSettings.value(DEFAULT, SyntaxStandards::defaultColor()));
-	boxes[1]->setColor(m_lexerSettings.value(COMMENT, SyntaxStandards::commentColor()));
-	boxes[2]->setColor(m_lexerSettings.value(DOC_COMMENT, SyntaxStandards::docColor()));
-	boxes[3]->setColor(m_lexerSettings.value(NUMBER, SyntaxStandards::numberColor()));
-	boxes[4]->setColor(m_lexerSettings.value(KEYWORD, SyntaxStandards::keywordColor()));
-	boxes[5]->setColor(m_lexerSettings.value(STRING, SyntaxStandards::stringColor()));
-	boxes[6]->setColor(m_lexerSettings.value(PREPROCESSOR, SyntaxStandards::preprocessorColor()));
-	boxes[7]->setColor(m_lexerSettings.value(OPERATOR, SyntaxStandards::operatorColor()));
-	boxes[8]->setColor(m_lexerSettings.value(UNCLOSED_STRING, SyntaxStandards::unclosedStringColor()));
-	boxes[9]->setColor(m_lexerSettings.value(DOC_KEYWORD, SyntaxStandards::docKeywordColor()));
-	boxes[10]->setColor(m_lexerSettings.value(DOC_KEYWORD_ERROR, SyntaxStandards::docKeywordErrorColor()));
-	
-	ui->ui_backgroundColorBox->setColor(backgroundColor);
-	ui->ui_fontBox->setCurrentFont(font);
-	ui->ui_fontSizeBox->setValue(fontSize);
+	readSettings();
+	setDefaults();
+	connect(ui->reset, SIGNAL(clicked()), SLOT(setDefaults()));
 }
 
 ThemeSettingsDialog::~ThemeSettingsDialog()
 {
-	for(int i = 0; i < ui->ui_table->rowCount(); ++i) delete boxes[i];
-	delete boxes;
+	for(quint16 i = 0; i < ui->table->rowCount(); ++i) delete m_boxes[i];
+	delete m_boxes;
 	delete ui;
 }
 
-QMap<QString, QColor> ThemeSettingsDialog::settings()
+int ThemeSettingsDialog::exec()
+{
+	readSettings();
+	if(!QDialog::exec()) return QDialog::Rejected;
+	writeSettings();
+	return QDialog::Accepted;
+}
+
+const QMap<QString, QColor>& ThemeSettingsDialog::settings() const
 {
 	return m_lexerSettings;
 }
 
-QColor ThemeSettingsDialog::backgroundColor()
+QColor ThemeSettingsDialog::backgroundColor() const
 {
-	return ui->ui_backgroundColorBox->color();
+	return ui->backgroundColorBox->color();
 }
 
-QFont ThemeSettingsDialog::font()
+QFont ThemeSettingsDialog::font() const
 {
-	return ui->ui_fontBox->currentFont();
+	return ui->fontBox->currentFont();
 }
 
-int ThemeSettingsDialog::fontSize()
+int ThemeSettingsDialog::fontSize() const
 {
-	return ui->ui_fontSizeBox->value();
+	return ui->fontSizeBox->value();
+}
+
+void ThemeSettingsDialog::readSettings()
+{
+	QSettings settings;
+
+	settings.beginGroup(EDITOR);
+	ui->backgroundColorBox->setColor(settings.value(BACKGROUND_COLOR, QColor(255, 255, 255)).value<QColor>());
+
+	// Figure out the font and set it
+#ifdef Q_OS_WIN32
+	QString fontString = settings.value(FONT, "Courier New").toString();
+#elif defined(Q_OS_MAC)
+	QString fontString = settings.value(FONT, "Monaco").toString();
+#else
+	QString fontString = settings.value(FONT, "Monospace").toString();
+#endif
+	
+	ui->fontBox->setCurrentFont(QFont(fontString));
+	
+	int fontSize = 0;
+#ifdef Q_OS_MAC
+	fontSize = settings.value(FONT_SIZE, 12).toInt();
+#else
+	fontSize = settings.value(FONT_SIZE, 10).toInt();
+#endif
+	
+	// Figure out the font size and set the widget
+	ui->fontSizeBox->setValue(fontSize);
+	
+	// Read the lexer settings
+	m_lexerSettings.clear();
+	settings.beginGroup(LEXER);
+	QStringList keys = settings.childKeys();
+	foreach(const QString& key, keys) m_lexerSettings.insert(key, settings.value(key).value<QColor>());
+
+	settings.endGroup();
+	settings.endGroup();
+	
+	updateBoxes();
+}
+
+void ThemeSettingsDialog::writeSettings()
+{
+	QSettings settings;
+	
+	settings.beginGroup(EDITOR);
+	
+	settings.setValue(BACKGROUND_COLOR, backgroundColor());
+	settings.setValue(FONT, font());
+	settings.setValue(FONT_SIZE, fontSize());
+	
+	settings.beginGroup(LEXER);
+	QMap<QString, QColor>::const_iterator i = m_lexerSettings.constBegin();
+	for(; i != m_lexerSettings.constEnd(); ++i) settings.setValue(i.key(), i.value());
+	Lexer::Settings::ref().setSettings(m_lexerSettings);
+	settings.endGroup();
+	settings.endGroup();
+}
+
+void ThemeSettingsDialog::setDefaults()
+{
+	m_lexerSettings[DEFAULT] = SyntaxStandards::defaultColor();
+	m_lexerSettings[COMMENT] = SyntaxStandards::commentColor();
+	m_lexerSettings[DOC_COMMENT] = SyntaxStandards::docColor();
+	m_lexerSettings[NUMBER] = SyntaxStandards::numberColor();
+	m_lexerSettings[KEYWORD] = SyntaxStandards::keywordColor();
+	m_lexerSettings[STRING] = SyntaxStandards::stringColor();
+	m_lexerSettings[PREPROCESSOR] = SyntaxStandards::preprocessorColor();
+	m_lexerSettings[OPERATOR] = SyntaxStandards::operatorColor();
+	m_lexerSettings[UNCLOSED_STRING] = SyntaxStandards::unclosedStringColor();
+	m_lexerSettings[DOC_KEYWORD] = SyntaxStandards::docKeywordColor();
+	m_lexerSettings[DOC_KEYWORD_ERROR] = SyntaxStandards::docKeywordErrorColor();
+	updateBoxes();
 }
 
 void ThemeSettingsDialog::settingChanged(QColor color)
 {
 	ColorBox *box = (ColorBox *)sender();
-	QString setting = ui->ui_table->item(box->property("row").toInt(), 0)->text();
+	QString setting = ui->table->item(box->property("row").toInt(), 0)->text();
 	m_lexerSettings.insert(setting, color);
+}
+
+void ThemeSettingsDialog::updateBoxes()
+{
+	m_boxes[0]->setColor(m_lexerSettings.value(DEFAULT, SyntaxStandards::defaultColor()));
+	m_boxes[1]->setColor(m_lexerSettings.value(COMMENT, SyntaxStandards::commentColor()));
+	m_boxes[2]->setColor(m_lexerSettings.value(DOC_COMMENT, SyntaxStandards::docColor()));
+	m_boxes[3]->setColor(m_lexerSettings.value(NUMBER, SyntaxStandards::numberColor()));
+	m_boxes[4]->setColor(m_lexerSettings.value(KEYWORD, SyntaxStandards::keywordColor()));
+	m_boxes[5]->setColor(m_lexerSettings.value(STRING, SyntaxStandards::stringColor()));
+	m_boxes[6]->setColor(m_lexerSettings.value(PREPROCESSOR, SyntaxStandards::preprocessorColor()));
+	m_boxes[7]->setColor(m_lexerSettings.value(OPERATOR, SyntaxStandards::operatorColor()));
+	m_boxes[8]->setColor(m_lexerSettings.value(UNCLOSED_STRING, SyntaxStandards::unclosedStringColor()));
+	m_boxes[9]->setColor(m_lexerSettings.value(DOC_KEYWORD, SyntaxStandards::docKeywordColor()));
+	m_boxes[10]->setColor(m_lexerSettings.value(DOC_KEYWORD_ERROR, SyntaxStandards::docKeywordErrorColor()));
 }

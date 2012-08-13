@@ -62,7 +62,9 @@
 
 #define OPEN_PATH "openpath"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0)
+MainWindow::MainWindow(QWidget *parent)
+	: QMainWindow(parent),
+	m_currentTab(0)
 {
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	
@@ -474,7 +476,15 @@ void MainWindow::about()
 		<< KISS_C_VERSION_CODENAME);
 }
 
-void MainWindow::settings() { if(m_editorSettingsDialog.exec()) emit settingsUpdated(); }
+void MainWindow::settings()
+{
+	if(m_editorSettingsDialog.exec()) emit settingsUpdated();
+}
+
+void MainWindow::theme()
+{
+	if(m_themeSettingsDialog.exec()) emit settingsUpdated();
+}
 
 void MainWindow::on_ui_tabWidget_currentChanged(int i) 
 {

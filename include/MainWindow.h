@@ -23,6 +23,7 @@
 
 #include "ui_MainWindow.h"
 #include "EditorSettingsDialog.h"
+#include "ThemeSettingsDialog.h"
 #include "TabbedWidget.h"
 
 #include <Qsci/qscilexercpp.h>
@@ -173,6 +174,7 @@ public slots:
 	bool closeNode(const TinyNode* node);
 	void about();
 	void settings();
+	void theme();
 	
 	void projectAddNew();
 	void projectAddExisting();
@@ -212,6 +214,7 @@ private slots:
 private:
 	TabbedWidget* m_currentTab;
 	EditorSettingsDialog m_editorSettingsDialog;
+	ThemeSettingsDialog m_themeSettingsDialog;
 	QMap<QWidget*, TabbedWidget*> m_lookup;
 	MenuManager m_menuManager;
 	QList<Menuable*> m_menuables;
