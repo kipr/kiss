@@ -9,7 +9,7 @@ class Documentation;
 
 #ifdef BUILD_DOCUMENTATION_TAB
 
-#include "Tab.h"
+#include "TabbedWidget.h"
 #include <QListWidgetItem>
 
 #define UI_EVENT_OPEN_MANUAL "openManual"

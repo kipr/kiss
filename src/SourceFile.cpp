@@ -143,8 +143,8 @@ bool SourceFile::beginSetup()
 	setParentUnit(isProjectAssociated() ? associatedProject() : 0);
 	if(isNewFile()) { if(!selectTemplate()) return false; }
 	else setLexer(Lexer::Factory::ref().constructor(associatedFileSuffix()));
-	if(!target().get()) changeTarget();
-	return target().get();
+	if(!target().data()) changeTarget();
+	return target().data();
 }
 
 void SourceFile::completeSetup()
@@ -395,7 +395,11 @@ void SourceFile::refreshSettings()
 	/* Read font, indent, margin, etc. settings */
 	QSettings settings;
 	settings.beginGroup(EDITOR);
-	ui_editor->setWhitespaceBackgroundColor(settings.value(BACKGROUND_COLOR).value<QColor>());
+	if(ui_editor->lexer()) {
+		QColor backgroundColor = settings.value(BACKGROUND_COLOR).value<QColor>();
+		ui_editor->lexer()->setPaper(backgroundColor);
+		ui_editor->lexer()->setDefaultPaper(backgroundColor);
+	}
 
 	/* Set the default font from settings */
 	QFont defFont(settings.value(FONT).toString(), settings.value(FONT_SIZE).toInt());
@@ -555,7 +559,7 @@ const bool SourceFile::download()
 {
 	if(target()->isQueueExecuting()) return false;
 	if(!save()) return false;
-	if(!target().get()) if(!changeTarget()) return false;
+	if(!target().data()) if(!changeTarget()) return false;
 	
 	mainWindow()->setStatusMessage(tr("Downloading..."));
 	QApplication::flush();
@@ -585,7 +589,7 @@ const bool SourceFile::compile()
 {
 	if(target()->isQueueExecuting()) return false;
 	if(!save()) return false;
-	if(!target().get()) if(!changeTarget()) return false;
+	if(!target().data()) if(!changeTarget()) return false;
 	
 	ui_localCompileFailed->hide();
 	
@@ -619,7 +623,7 @@ const bool SourceFile::run()
 {
 	if(target()->isQueueExecuting()) return false;
 	if(!save()) return false;
-	if(!target().get()) if(!changeTarget()) return false;
+	if(!target().data()) if(!changeTarget()) return false;
 	
 	ui_localCompileFailed->hide();
 	

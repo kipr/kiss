@@ -35,7 +35,7 @@ class TinyArchiveWriter;
 
 #include <kiss-compiler/ArchiveWriter.h>
 
-#define DEVICE_KEY "DEVICE"
+#define TARGET_KEY "TARGET"
 #define SETTINGS_ID 1
 
 typedef QMap<QString, QString> QStringMap;
@@ -69,7 +69,7 @@ public:
 	const bool removeSetting(const QString& key);
 	void setSettings(const QStringMap& settings);
 	QStringMap settings() const;
-	void setDevice(const QString& device);
+	void setTarget(const QString& target);
 	
 	const bool sync();
 	

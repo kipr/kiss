@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -18,88 +18,62 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#ifndef __WEB_TAB_H__
-#define __WEB_TAB_H__
+#ifndef __REPOSITORY_H__
+#define __REPOSITORY_H__
 
 #include "BuildOptions.h"
 
 #include <QObject>
 
-class WebTab;
+class Repository;
 
-#ifdef BUILD_WEB_TAB
+#ifdef BUILD_REPOSITORY_TAB
 
+#include "ui_Repository.h"
 #include "TabbedWidget.h"
-#include "ui_WebTab.h"
-#include "MacroString.h"
-#include "AudioTutorial.h"
 
-#define KISS_BACKGROUND "KISS_BACKGROUND"
+#include <QWidget>
+#include <QMenu>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
 
 class MainWindow;
-class QWebHistory;
-class QWebView;
 
-class WebTab : public QWidget, public TabbedWidget, protected Ui::WebTab
+class Repository : public QWidget, public TabbedWidget, private Ui::Repository
 {
 	Q_OBJECT
 public:
-	WebTab(MainWindow* parent = 0);
-	~WebTab();
+	Repository(MainWindow* parent = 0);
 	
-	virtual void activate();
+	void activate();
 	
 	bool beginSetup();
-	virtual void completeSetup();
+	void completeSetup();
 	
 	bool close();
 	
-	//! Loads an unformatted URL
-	void load(QString url, bool hideUrl = false);
-	QString current();
-	QWebHistory* history();
-	
-	QWebView* webView();
-	
 public slots:
-	void copy();
-	void cut();
-	void paste();
-	
-	void back();
-	void forward();
-	void go();
-	void refresh();
-	
-	//! Opens current web page in system's default browser
-	void openInBrowser();
-	
-	void find();
-	
-signals:
-	void updateActivatable();
-	
-private slots:
-	void updateTitle(const QString& title);
-	void updateUrl(const QUrl& url);
-	
-	void on_actionGo_triggered();
-	
-	void on_ui_prevFind_clicked();
-	void on_ui_nextFind_clicked();
-	
-	//! Check if there was an error loading the page
-	void on_ui_webView_loadFinished(bool ok);
-	
 	void refreshSettings();
 	
 private slots:
-	void linkClicked(const QUrl& url);
+	void on_ui_mark_clicked();
+	void on_ui_unmark_clicked();
+	void on_ui_uninstall_clicked();
+	void on_ui_begin_clicked();
+	void on_ui_source_clicked();
+	
+	void downloadProgress(qint64, qint64);
 
+	void finished(QNetworkReply* reply);
+	void downloadFinished(QNetworkReply* reply);
 private:
-	QUrl m_prevUrl;
-	MacroString m_fragmentMacro;
-	AudioTutorial* m_audioTutorial;
+	void next();
+	
+	QNetworkAccessManager m_network;
+	QMap<QString, QString> m_locations;
+	QString m_source;
 };
 
 #endif

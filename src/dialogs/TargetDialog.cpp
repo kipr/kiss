@@ -42,12 +42,12 @@ void TargetDialog::currentTargetChanged(const QModelIndex& index)
 {
 	TargetPtr target = m_model.indexToTarget(index);
 	const QString unknown = "Unknown";
-	ui_deviceName->setText(target.get() ? target->displayName() : unknown);
-	ui_deviceType->setText(target.get() ? target->type() : unknown);
-	ui_commPort->setText(target.get() ? target->commPort() : unknown);
-	ui_serialNumber->setText(target.get() ? target->serial() : unknown);
-	ui_interface->setText(target.get() ? target->interface()->name() : unknown);
-	ui_version->setText(target.get() ? target->version() : unknown);
+	ui_deviceName->setText(target.data() ? target->displayName() : unknown);
+	ui_deviceType->setText(target.data() ? target->type() : unknown);
+	ui_commPort->setText(target.data() ? target->commPort() : unknown);
+	ui_serialNumber->setText(target.data() ? target->serial() : unknown);
+	ui_interface->setText(target.data() ? target->interface()->name() : unknown);
+	ui_version->setText(target.data() ? target->version() : unknown);
 	ui_buttons->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 

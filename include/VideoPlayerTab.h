@@ -30,7 +30,7 @@ class VideoPlayerTab;
 #ifdef BUILD_VIDEO_PLAYER_TAB
 
 #include "ui_VideoPlayerTab.h"
-#include "Tab.h"
+#include "TabbedWidget.h"
 
 #include <QWidget>
 #ifdef Q_OS_MAC

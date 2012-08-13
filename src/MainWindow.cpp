@@ -246,9 +246,9 @@ void MainWindow::initMenus()
 	m_menuManager.addActivation(mainWindowMenu);
 	m_menuables.append(mainWindowMenu);
 	
-	TargetMenu* deviceMenu = new TargetMenu;
-	m_menuManager.registerMenus(deviceMenu);
-	m_menuables.append(deviceMenu);
+	TargetMenu* targetMenu = new TargetMenu;
+	m_menuManager.registerMenus(targetMenu);
+	m_menuables.append(targetMenu);
 
 	ProjectMenu* projectMenu = new ProjectMenu();
 	m_menuManager.registerMenus(projectMenu);

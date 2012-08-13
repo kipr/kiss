@@ -27,7 +27,7 @@
 
 #ifdef BUILD_DECLARATIVE_TAB
 
-#include "Tab.h"
+#include "TabbedWidget.h"
 
 #include <QUrl>
 

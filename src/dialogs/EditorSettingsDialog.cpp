@@ -19,7 +19,7 @@
  **************************************************************************/
 
 #include "EditorSettingsDialog.h"
-#include "LexerSettingsDialog.h"
+#include "ThemeSettingsDialog.h"
 #include "LexerFactory.h"
 
 #include <QSettings>
@@ -54,10 +54,24 @@ int EditorSettingsDialog::exec()
 	return QDialog::Accepted;
 }
 
-void EditorSettingsDialog::on_ui_lexerSettingsButton_clicked()
+void EditorSettingsDialog::on_ui_themeSettingsButton_clicked()
 {
-	LexerSettingsDialog diag(m_lexerSettings);
-	if(diag.exec()) m_lexerSettings = diag.settings();
+	ThemeSettingsDialog diag(m_lexerSettings, m_backgroundColor, m_font, m_fontSize);
+	if(diag.exec()) {
+		m_lexerSettings = diag.settings();
+		m_backgroundColor = diag.backgroundColor();
+		m_font = diag.font();
+		m_fontSize = diag.fontSize();
+	}
+}
+
+void EditorSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
+{
+	if((QPushButton *)button == ui_buttonBox->button(QDialogButtonBox::RestoreDefaults)) {
+		QSettings settings;
+		settings.remove(EDITOR);
+		readSettings();
+	}
 }
 
 // Save the settings from the dialog
@@ -65,9 +79,9 @@ void EditorSettingsDialog::saveSettings()
 {
 	QSettings settings;
 	settings.beginGroup(EDITOR);
-	settings.setValue(BACKGROUND_COLOR, ui_backgroundColorBox->color());
-	settings.setValue(FONT, ui_fontBox->currentFont().family());
-	settings.setValue(FONT_SIZE, ui_fontSizeSpinBox->value());
+	settings.setValue(BACKGROUND_COLOR, m_backgroundColor);
+	settings.setValue(FONT, m_font);
+	settings.setValue(FONT_SIZE, m_fontSize);
 	
 	settings.beginGroup(LEXER);
 	QMap<QString, QColor>::const_iterator i = m_lexerSettings.constBegin();
@@ -105,8 +119,9 @@ void EditorSettingsDialog::readSettings()
 {
 	// Open up the applications settings and look in the editor group
 	QSettings settings;
+
 	settings.beginGroup(EDITOR);
-	ui_backgroundColorBox->setColor(settings.value(BACKGROUND_COLOR, QColor(255, 255, 255)).value<QColor>());
+	m_backgroundColor = settings.value(BACKGROUND_COLOR, QColor(255, 255, 255)).value<QColor>();
 
 	// Figure out the font and set it
 	#ifdef Q_OS_WIN32
@@ -117,13 +132,13 @@ void EditorSettingsDialog::readSettings()
 	QString fontString = settings.value(FONT, "Monospace").toString();
 	#endif
 	
-	ui_fontBox->setCurrentFont(QFont(fontString));
+	m_font = QFont(fontString);
 	
 	// Figure out the font size and set the widget
 	#ifdef Q_OS_MAC
-	ui_fontSizeSpinBox->setValue(settings.value(FONT_SIZE, 12).toInt());
+	m_fontSize = settings.value(FONT_SIZE, 12).toInt();
 	#else
-	ui_fontSizeSpinBox->setValue(settings.value(FONT_SIZE, 10).toInt());
+	m_fontSize = settings.value(FONT_SIZE, 10).toInt();
 	#endif
 	
 	// Read the lexer settings
