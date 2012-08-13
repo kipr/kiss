@@ -33,10 +33,6 @@
 MainWindowMenu::MainWindowMenu(MainWindow* mainWindow) : ConcreteMenuable(menuName()), m_mainWindow(mainWindow)
 {	
 	MenuNode* packages = new MenuNode("Packages");
-#ifdef BUILD_REPOSITORY_TAB
-	packages->children.append(node(activeAction("", "Manage Packages", QKeySequence::UnknownKey, this, "managePackages")));
-#endif
-	packages->children.append(node(activeAction("cog_go", "Install Local Packages...", QKeySequence::UnknownKey, this, "installLocalPackage")));
 	m_file.append(packages);
 	m_file.append(node(m_hideErrors = action("Hide Errors", QKeySequence::UnknownKey)));
 	m_file.append(MenuNode::separator());

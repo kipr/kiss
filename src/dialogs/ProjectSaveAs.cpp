@@ -55,7 +55,7 @@ void ProjectSaveAs::on_ui_filename_textChanged(const QString& text)
 	ui_error->setText("");
 	
 	if(invalidText) ui_error->setText(tr("Invalid file name"));
-	if(!invalidText && !text.contains('.')) {
+	if(!invalidText && text.section('.', 1).isEmpty()) {
 		ui_error->setText(tr("File does not have an extension"));
 		invalid |= true;
 	}

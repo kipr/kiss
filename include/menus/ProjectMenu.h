@@ -48,10 +48,10 @@ public slots:
 	void update();
 	
 private:
-	MenuNode* addFile;
-	MenuNode* deleteFile;
-	MenuNode* extractFile;
-	MenuNode* extractProject;
+	MenuNode* addExistingFile;
+	MenuNode* addNewFile;
+	MenuNode* removeExistingFile;
+	MenuNode* extractTo;
 };
 
 #endif

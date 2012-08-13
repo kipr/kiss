@@ -138,7 +138,8 @@ void SourceFile::activate()
 	mainWindow()->activateMenuable(TargetMenu::menuName(), this); 
 }
 
-bool SourceFile::beginSetup() {
+bool SourceFile::beginSetup()
+{
 	setParentUnit(isProjectAssociated() ? associatedProject() : 0);
 	if(isNewFile()) { if(!selectTemplate()) return false; }
 	else setLexer(Lexer::Factory::ref().constructor(associatedFileSuffix()));

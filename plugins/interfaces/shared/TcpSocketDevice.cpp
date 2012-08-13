@@ -91,6 +91,47 @@ const bool TcpSocketDevice::run(const QString& name)
 	return true;
 }
 
+const bool TcpSocketDevice::list()
+{
+	if(!connect()) return false;
+	QByteArray block;
+	QDataStream dataStream(&block, QIODevice::WriteOnly);
+	dataStream << (quint32)0;
+	dataStream << QString(LIST_KEY);
+	dataStream.device()->seek(0);
+	dataStream << (quint32)(block.size() - sizeof(quint32));
+	m_socket.write(block);
+	return true;
+}
+
+const bool TcpSocketDevice::deleteProgram(const QString& name)
+{
+	if(!connect()) return false;
+	QByteArray block;
+	QDataStream dataStream(&block, QIODevice::WriteOnly);
+	dataStream << (quint32)0;
+	dataStream << QString(DELETE_KEY);
+	dataStream << name;
+	dataStream.device()->seek(0);
+	dataStream << (quint32)(block.size() - sizeof(quint32));
+	m_socket.write(block);
+	return true;
+}
+
+const bool TcpSocketDevice::interaction(const QString& command)
+{
+	if(!connect()) return false;
+	QByteArray block;
+	QDataStream dataStream(&block, QIODevice::WriteOnly);
+	dataStream << (quint32)0;
+	dataStream << QString(INTERACTION_KEY);
+	dataStream << command;
+	dataStream.device()->seek(0);
+	dataStream << (quint32)(block.size() - sizeof(quint32));
+	m_socket.write(block);
+	return true;
+}
+
 const bool TcpSocketDevice::authenticate(const QByteArray& hash)
 {
 	if(!connect()) return false;
@@ -177,6 +218,18 @@ void TcpSocketDevice::processPayload(const QByteArray& payload)
 	} else if(command == RUN_KEY) {
 		stream >> success;
 		responder()->runResponse(this, success);
+	} else if(command == LIST_KEY) {
+		QStringList programs;
+		stream >> programs;
+		success = true;
+		responder()->listResponse(this, programs);
+	} else if(command == DELETE_KEY) {
+		stream >> success;
+		responder()->deleteResponse(this, success);
+	} else if(command == INTERACTION_KEY) {
+		QString ret;
+		stream >> ret;
+		responder()->interactionResponse(this, ret);
 	} else if(command == AUTHENTICATE_KEY) {
 		stream >> success;
 		bool tryAgain = false;

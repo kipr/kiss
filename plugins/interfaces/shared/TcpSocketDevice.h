@@ -26,6 +26,9 @@ public:
 	virtual const bool compile(const QString& name);
 	virtual const bool download(const QString& name, TinyArchive* archive);
 	virtual const bool run(const QString& name);
+	virtual const bool list();
+	virtual const bool deleteProgram(const QString& name);
+	virtual const bool interaction(const QString& command);
 	virtual const bool authenticate(const QByteArray& hash);
 	virtual const bool sendCustom(const QString& custom, const QByteArray& payload);
 	

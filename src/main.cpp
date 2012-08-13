@@ -24,7 +24,6 @@
 #include "MainWindow.h"
 #include "WelcomeTab.h"
 #include "DeclarativeTab.h"
-#include "KissArchive.h"
 #include "LogStreamBuf.h"
 #include "AudioTutorial.h"
 #include "Log.h"
@@ -36,65 +35,6 @@
 #include <BackendCapabilities>
 
 using namespace std;
-
-void createArchive(const QString& name, const unsigned version, const QString& platforms, const QString& fileList, const QString& out) {
-	QFile f(fileList);
-	if(!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		qWarning() << "Unable to open" << fileList << "for reading.";
-		return;
-	}
-	QFile outf(out);
-	if(!outf.open(QIODevice::WriteOnly)) {
-		qWarning() << "Unable to open" << out << "for writing.";
-		return;
-	}
-	KissReturn ret = KissArchive::create(name, version, platforms.split(','),
-		QString(f.readAll().data()).split('\n'), 
-		&outf);
-		
-	if(ret.error) qWarning() << "Archive creation failed!" << ret.message;
-}
-
-void handleArgs() 
-{
-	const QStringList& args = QApplication::arguments();
-	if(args[1] == "--createArchive") {
-		if(args.size() != 7) {
-			qWarning() << "Wrong number of arguments";
-			return;
-		}
-		createArchive(args[2], args[3].toUInt(), args[4], args[5], args[6]);
-	} if(args[1] == "--uninstall") {
-		if(args.size() != 3) {
-			qWarning() << "Wrong number of arguments";
-			return;
-		}
-		KissArchive::uninstall(args[2]);
-	} else if(args[1] == "--install") {
-		foreach(const QString arg, args.mid(2)) {
-			QFile f(arg);
-			if(!f.open(QIODevice::ReadOnly)) {
-				qWarning() << "Unable to open" << arg << "for reading";
-				continue;
-			}
-	
-			KissArchive::install(&f);
-		}
-	} else if(args[1] == "--list") {
-		foreach(const QString arg, args.mid(2)) {
-			qWarning() << arg << ":";
-			QFile f(arg);
-			if(!f.open(QIODevice::ReadOnly)) {
-				qWarning() << "Unable to open" << arg << "for reading";
-				continue;
-			}
-
-			foreach(const QString& file, KissArchive::list(&f)) {
-				qWarning() << "\t" << file;
-			}
-		}
-	}
-}
 
 int main(int argc, char **argv)
 {
@@ -112,11 +52,6 @@ int main(int argc, char **argv)
 	
 	// Creates everything we need
 	KissStandardEnvironment::createStandardEnvironment();
-	
-	if(QApplication::arguments().size() > 1 && QApplication::arguments()[1].startsWith("--")) {
-		handleArgs();
-		return 0;
-	}
 	
 	QPixmap splashPixmap(":/splash_screen.png");
 	QSplashScreen splash(splashPixmap);

@@ -5,6 +5,9 @@
 #define COMPILE_KEY "compile"
 #define DOWNLOAD_KEY "download"
 #define RUN_KEY "run"
+#define LIST_KEY "list"
+#define DELETE_KEY "delete"
+#define INTERACTION_KEY "interaction"
 #define LOCKED_KEY "locked"
 #define AUTHENTICATE_KEY "authenticate"
 

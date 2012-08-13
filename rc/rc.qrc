@@ -67,6 +67,7 @@
         <file>messages/kipr_script_exception.txt</file>
         <file>messages/about_kiss.txt</file>
         <file>messages/build_error.txt</file>
+        <file>messages/under_construction.txt</file>
         <file>webtab_fail/index.html</file>
         <file>icon_set/icons/Locked.png</file>
         <file>logos/icon.png</file>

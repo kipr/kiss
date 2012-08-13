@@ -22,7 +22,6 @@
 
 #ifdef BUILD_DEVELOPER_TOOLS
 
-#include "KissArchive.h"
 #include <kiss-compiler/ArchiveWriter.h>
 #include "ProjectManager.h"
 #include <QFileDialog>
@@ -38,19 +37,13 @@ DeveloperMenu::DeveloperMenu(MainWindow* mainWindow) : ConcreteMenuable(menuName
 #ifdef BUILD_DECLARATIVE_TAB
 	developer->children.append(node(declTab = action("Create Declarative Tab")));
 #endif
-	developer->children.append(MenuNode::separator());
-	developer->children.append(node(uninstallAll = action("Uninstall All Packages")));
 	m_actions.append(developer);
 }
 
 void DeveloperMenu::triggered()
 {
 	QAction* _ = (QAction*)sender();
-	if(_ == uninstallAll) {
-		QStringList installed = KissArchive::installed();
-		foreach(const QString& install, installed) KissArchive::uninstall(install);
-		qWarning() << "Uninstalled all packages.";
-	} else if(_ == writeFullProject) {
+	if(_ == writeFullProject) {
 		Project* project = m_mainWindow->activeProject();
 		ArchiveWriter* writer = ProjectManager::ref().archiveWriter(project);
 		if(!writer) return;

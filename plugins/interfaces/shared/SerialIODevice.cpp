@@ -11,11 +11,13 @@
 #include <windows.h>
 #endif
 
+#include <QDebug>
+
 SerialIODevice::SerialIODevice(const QString& path)
 	: m_path(path),
 	m_baudRate(115200)
 {
-	
+	qDebug() << "Created serial device at" << m_path << "with BR" << m_baudRate;
 }
 
 SerialIODevice::~SerialIODevice()
@@ -62,6 +64,7 @@ bool SerialIODevice::open(QIODevice::OpenMode mode)
 	if(m_fd <= 0) return false;
 	::fcntl(m_fd, F_SETFL, ~O_NDELAY & ::fcntl(m_fd, F_GETFL, 0));
 #endif
+	qDebug() << "Opening serial port";
 	configurePort();
 	return QIODevice::open(ReadWrite);
 }
@@ -77,6 +80,7 @@ void SerialIODevice::close()
 	::close(m_fd);
 	m_fd = -1;
 #endif
+	qDebug() << "Closing serial port";
 	QIODevice::close();
 }
 
@@ -125,6 +129,7 @@ void SerialIODevice::configurePort()
 
 	tcsetattr(m_fd, TCSADRAIN, &tio);
 #endif
+	qDebug() << "Configured serial port";
 }
 
 void SerialIODevice::setBaudRate(const quint32& baudRate)

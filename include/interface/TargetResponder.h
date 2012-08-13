@@ -19,6 +19,9 @@ public:
 	virtual void compileResponse(Target *target, CompileResult results) = 0;
 	virtual void downloadResponse(Target *target, bool success) = 0;
 	virtual void runResponse(Target *target, bool success) = 0;
+	virtual void listResponse(Target *target, const QStringList& programs) = 0;
+	virtual void deleteResponse(Target *target, bool success) = 0;
+	virtual void interactionResponse(Target *target, const QString& ret) = 0;
 	virtual void unknownResponse(Target *target, const QByteArray& payload) = 0;
 	virtual void customResponse(Target *target, const QString& type, const QByteArray& payload) = 0;
 	virtual void communicationError(Target *target) = 0;

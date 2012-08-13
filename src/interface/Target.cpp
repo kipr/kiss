@@ -87,6 +87,9 @@ const bool Target::executeEntry(const CommunicationEntry *entry)
 		case CommunicationEntry::Download: return download(entry->name(), entry->archive());
 		case CommunicationEntry::Compile: return compile(entry->name());
 		case CommunicationEntry::Run: return run(entry->name());
+		case CommunicationEntry::List: return list();
+		case CommunicationEntry::Delete: return deleteProgram(entry->name());
+		case CommunicationEntry::Interaction: return interaction(entry->name());
 		case CommunicationEntry::Disconnect: return disconnect();
 		default: qCritical() << "Target does not know how to execute queue entry of type" << entry->type();
 	}

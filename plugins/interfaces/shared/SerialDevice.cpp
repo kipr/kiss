@@ -91,6 +91,47 @@ const bool SerialDevice::run(const QString& name)
 	return true;
 }
 
+const bool SerialDevice::list()
+{
+	if(!connect()) return false;
+	QByteArray block;
+	QDataStream dataStream(&block, QIODevice::WriteOnly);
+	dataStream << (quint32)0;
+	dataStream << QString(LIST_KEY);
+	dataStream.device()->seek(0);
+	dataStream << (quint32)(block.size() - sizeof(quint32));
+	m_device.write(block);
+	return true;
+}
+
+const bool SerialDevice::deleteProgram(const QString& name)
+{
+	if(!connect()) return false;
+	QByteArray block;
+	QDataStream dataStream(&block, QIODevice::WriteOnly);
+	dataStream << (quint32)0;
+	dataStream << QString(DELETE_KEY);
+	dataStream << name;
+	dataStream.device()->seek(0);
+	dataStream << (quint32)(block.size() - sizeof(quint32));
+	m_device.write(block);
+	return true;
+}
+
+const bool SerialDevice::interaction(const QString& command)
+{
+	if(!connect()) return false;
+	QByteArray block;
+	QDataStream dataStream(&block, QIODevice::WriteOnly);
+	dataStream << (quint32)0;
+	dataStream << QString(INTERACTION_KEY);
+	dataStream << command;
+	dataStream.device()->seek(0);
+	dataStream << (quint32)(block.size() - sizeof(quint32));
+	m_device.write(block);
+	return true;
+}
+
 const bool SerialDevice::authenticate(const QByteArray& hash)
 {
 	if(!connect()) return false;
@@ -127,7 +168,7 @@ const bool SerialDevice::sendCustom(const QString& custom, const QByteArray& pay
 void SerialDevice::readyRead()
 {
 	for(;;) {
-		qDebug() << "ReadyRead w/" << m_device.bytesAvailable();
+		qDebug() << "Serial ReadyRead w/" << m_device.bytesAvailable();
 		if(!m_payload && m_device.bytesAvailable() < sizeof(quint32)) return;
 		if(!m_payload && m_device.bytesAvailable() >= sizeof(quint32)) {
 			QDataStream stream(&m_device);
@@ -170,6 +211,18 @@ void SerialDevice::processPayload(const QByteArray& payload)
 	} else if(command == RUN_KEY) {
 		stream >> success;
 		responder()->runResponse(this, success);
+	} else if(command == LIST_KEY) {
+		QStringList programs;
+		stream >> programs;
+		success = true;
+		responder()->listResponse(this, programs);
+	} else if(command == DELETE_KEY) {
+		stream >> success;
+		responder()->deleteResponse(this, success);
+	} else if(command == INTERACTION_KEY) {
+		QString ret;
+		stream >> ret;
+		responder()->interactionResponse(this, ret);
 	} else if(command == AUTHENTICATE_KEY) {
 		stream >> success;
 		bool tryAgain = false;
@@ -190,6 +243,7 @@ bool SerialDevice::connect()
 {
 	if(m_device.isOpen()) return true;
 	m_device.open(QIODevice::ReadWrite);
+	qDebug() << "Connecting serial port";
 	return m_device.isOpen();
 }
 

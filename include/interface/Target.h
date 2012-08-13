@@ -3,7 +3,7 @@
 
 #include "Named.h"
 #include "CommunicationQueue.h"
-#include <TinyArchive.h>
+#include <tinyarchive.hpp>
 #include <kiss-compiler/Compiler.h>
 
 #include <QObject>
@@ -54,6 +54,11 @@ public:
 	virtual const bool compile(const QString& name) = 0;
 	virtual const bool download(const QString& name, TinyArchive* archive) = 0;
 	virtual const bool run(const QString& name) = 0;
+	
+	virtual const bool list() = 0;
+	virtual const bool deleteProgram(const QString& name) = 0;
+	virtual const bool interaction(const QString& command) = 0;
+	
 	virtual const bool authenticate(const QByteArray& hash) = 0;
 	virtual const bool sendCustom(const QString& custom, const QByteArray& payload = QByteArray()) = 0;
 	

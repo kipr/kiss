@@ -36,11 +36,14 @@ public:
 	QStringList templates(const QString& type, const QString& _template);
 	QIcon templateIcon(const QString& type, const QString& _template);
 	
-	QStringList userTemplates(const QString& type);
+	
 	bool addUserTemplate(const QString& type, const QString& name, const QString& content);
 	bool deleteUserTemplate(const QString& type, const QString& name);
 	
+	QStringList userTemplateTypes() const;
+	QStringList userTemplates(const QString& type);
 	QString pathForUserTemplate(const QString& type, const QString& _template);
+	
 	QString pathForTemplate(const QString& type, const QString& _template);
 	
 	bool isTemplateDirectory(const QString& type, const QString& _template);

@@ -23,14 +23,12 @@
 #include "SourceFile.h"
 #include "WebTab.h"
 #include "WelcomeTab.h"
-#include "KissArchive.h"
-#include "Repository.h"
 #include "MessageDialog.h"
 #include "Menus.h"
 #include "Project.h"
 #include "ProjectSettingsTab.h"
 #include "ProjectManager.h"
-#include <TinyArchive.h>
+#include <tinyarchive.hpp>
 #include "Log.h"
 
 #include "LexerFactory.h" // Used to query supported extensions
@@ -71,6 +69,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), m_currentTab(0)
 	setupUi(this);
 	m_projectsModel.setProjectManager(&ProjectManager::ref());
 	ui_projects->setModel(&m_projectsModel);
+	ui_projects->viewport()->setAcceptDrops(true);
+	ui_projects->setDropIndicatorShown(true);
+	ui_projects->setDragDropMode(QAbstractItemView::DropOnly);
 	
 	// ui_projects->hide(); // Disabled for now
 	
@@ -217,6 +218,7 @@ bool MainWindow::openProject(const QString& filePath)
 
 bool MainWindow::newProject(const QString& filePath)
 {
+	if(!QDir().mkpath(QFileInfo(filePath).path())) return false;
 	Project* project = Project::create(filePath);
 	Log::ref().info(QString("Creating project at %1").arg(filePath));
 	if(project) ProjectManager::ref().openProject(project);
@@ -250,6 +252,9 @@ void MainWindow::initMenus()
 
 	ProjectMenu* projectMenu = new ProjectMenu();
 	m_menuManager.registerMenus(projectMenu);
+	projectMenu->setActive(this);
+	projectMenu->connect(&ProjectManager::ref(), SIGNAL(projectOpened(Project *)), SLOT(update()));
+	projectMenu->connect(&ProjectManager::ref(), SIGNAL(projectClosed(Project *)), SLOT(update()));
 	m_menuables.append(projectMenu);
 
 #ifdef BUILD_WEB_TAB
@@ -527,44 +532,32 @@ void MainWindow::on_ui_removeFile_clicked()
 	// ui_projects->expandAll();
 }
 
-void MainWindow::managePackages()
+void MainWindow::projectAddNew()
 {
-#ifdef BUILD_REPOSITORY_TAB
-	addTab(new Repository(this));
-#endif
+	on_ui_addFile_clicked();
 }
 
-void MainWindow::installLocalPackage()
+void MainWindow::projectAddExisting()
 {
-	QSettings settings;
-	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
+	Project *project = activeProject();
+	if(!project) return;
+	QString openPath = QSettings().value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
+	filters << "KISS Project (*.kissproj)";
 	filters.removeDuplicates();
-	QStringList filePaths = QFileDialog::getOpenFileNames(this, tr("Open Packages"), openPath, "KISS Archives (*.kiss)");
-	foreach(const QString& filePath, filePaths) {
-		if(filePath.isEmpty())
-			continue;
+	QStringList files = QFileDialog::getOpenFileNames(this, tr("Select One or More Files to Add"), openPath,
+		filters.join(";;") + ";;All Files (*)");
+	foreach(const QString& file, files) project->addFile(file);
+}
 
-		QFileInfo fileInfo(filePath);
-		settings.setValue(OPEN_PATH, fileInfo.absolutePath());
+void MainWindow::projectRemoveExisting()
+{
+	on_ui_removeFile_clicked();
+}
 
-		QFile f(filePath);
-		if(!f.open(QIODevice::ReadOnly)) {
-			MessageDialog::showError(this, "simple_error", QStringList() << 
-				tr("Installation of KISS Archive ") + fileInfo.fileName() + tr(" failed.") <<
-				tr("Unable to open package file for reading."));
-			return;
-		}
-	
-		KissReturn ret(KissArchive::install(&f));
-		if(ret.error) {
-			MessageDialog::showError(this, "simple_error", QStringList() << 
-				tr("Installation of KISS Archive ") + fileInfo.fileName() + tr(" failed.") <<
-				ret.message);
-			return;
-		} 
-	}
-	if(filePaths.size() > 0) QMessageBox::information(this, tr("Install Complete!"), tr("Please restart KISS"));
+void MainWindow::projectExtractTo()
+{
+	MessageDialog::showMessage(this, "Under Construction!", "under_construction", QStringList() << tr("Do not extract projects."));
 }
 
 void MainWindow::showProjectDock(bool show)
@@ -673,12 +666,6 @@ void MainWindow::projectClicked(const QModelIndex& index)
 void MainWindow::projectFileClicked(const QModelIndex& index)
 {
 	// Project* project = m_projectsModel.indexToProject(index);
-	
-	#if 0
-	
-	
-	
-	#endif
 }
 
 void MainWindow::projectOpened(Project* project)
@@ -819,8 +806,8 @@ Project* MainWindow::activeProject() const
 	if(loadedProjects.size() == 0) return 0;
 	if(loadedProjects.size() == 1) return loadedProjects[0];
 	
-	if(m_currentTab && m_currentTab->isProjectAssociated()) return m_currentTab->associatedProject();
 	const QModelIndexList& list = ui_projects->selectionModel()->selectedRows();
+	if(m_currentTab && m_currentTab->isProjectAssociated()) return m_currentTab->associatedProject();
 	return list.size() > 0 ? m_projectsModel.indexToProject(list[0]) : 0;
 }
 

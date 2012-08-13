@@ -173,8 +173,11 @@ public slots:
 	bool closeNode(const TinyNode* node);
 	void about();
 	void settings();
-	void managePackages();
-	void installLocalPackage();
+	
+	void projectAddNew();
+	void projectAddExisting();
+	void projectRemoveExisting();
+	void projectExtractTo();
 	
 	void showProjectDock(bool show = true);
 	void hideProjectDock();
