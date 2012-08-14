@@ -1,5 +1,5 @@
 #include "CommunicationQueue.h"
-#include "TinyArchive.h"
+#include <tinyarchive.hpp>
 
 CommunicationEntry::CommunicationEntry(const Type& type)
 	: m_type(type)
