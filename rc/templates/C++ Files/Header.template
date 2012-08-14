@@ -1,0 +1,9 @@
+KISS_LEXER h
+END_KISS_META
+
+#ifndef __KISS_FILE_H__
+#define __KISS_FILE_H__
+
+
+
+#endif

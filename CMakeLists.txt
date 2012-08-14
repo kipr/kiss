@@ -1,6 +1,6 @@
 PROJECT(KISS)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0)
 
 FIND_PACKAGE(Qt4 REQUIRED)
 
@@ -99,7 +99,12 @@ IF(APPLE)
 		DEPENDS KISS Info.plist MacDeployQt)
 		
 	SET(OSX_INSTALL_NAMES_SCRIPT "${KISS_SOURCE_DIR}/scripts/osx_install_names.sh")
-ENDIF()
+	
+	install(DIRECTORY ${RC}/templates DESTINATION ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents)
+	
+ELSE(APPLE)
+	install(DIRECTORY ${RC}/templates DESTINATION ${KISS_SOURCE_DIR}/deploy)
+ENDIF(APPLE)
 
 # Accessory Programs
 

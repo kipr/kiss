@@ -1,0 +1,42 @@
+import cbccore.sensors.*;
+import cbccore.sensors.analog.*;
+import cbccore.sensors.buttons.*;
+import cbccore.movement.DriveTrain;
+import cbccore.movement.CreateDriveTrain;
+import cbccore.events.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+
+class Main {
+	public static void main(String [] args) {
+		System.out.println("Please press the Black Hardware Button to start.");
+		
+		EventManager.get().connect(ButtonEmitter.BlackButtonReleased, new StartListener(0));
+		ButtonEmitter.get().start();
+	}
+	
+	//****************************
+	//*** Begin actual program ***
+	public static class StartListener implements IEventListener {
+		
+		ETSensor distSensor;
+		DriveTrain dt;
+		
+		public StartListener(int port) {
+			distSensor = new ETSensor(port);
+			dt = new CreateDriveTrain(1., false);
+		}
+		
+		public void event(Event e) {
+			EventManager.get().disconnect(ButtonEmitter.BlackButtonReleased, this);
+			ButtonEmitter.get().exit();
+			
+			double dist = distSensor.getCm(50, 10);
+			System.out.println("Distance is: " + dist + "cm");
+			System.out.println("Moving to 5cm away");
+			dt.moveCm(-dist*.5+5., dt.getMaxCmps()*.5);
+			dist = distSensor.getCm(50, 10);
+			dt.moveCm(-dist+5., dt.getMaxCmps()*.5);
+		}
+	}
+}
