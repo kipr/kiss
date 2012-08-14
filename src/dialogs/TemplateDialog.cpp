@@ -156,7 +156,7 @@ void TemplateDialog::on_ui_remove_clicked()
 
 void TemplateDialog::on_ui_install_clicked()
 {
-	QString path = QFileDialog::getExistingFile(this, "Install Template Pack", QDir::homePath(), KISS_TEMPLATE_PACK_FILTER);
+	QString path = QFileDialog::getOpenFileName(this, "Install Template Pack", QDir::homePath(), KISS_TEMPLATE_PACK_FILTER);
 	if(path.isEmpty()) return;
 	QString name = QFileInfo(path).completeBaseName();
 	TinyArchiveFile file(path.toStdString());
