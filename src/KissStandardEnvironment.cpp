@@ -39,11 +39,11 @@ void KissStandardEnvironment::createStandardEnvironment()
 	qInstallMsgHandler(debugLogHandler);
 	
 	// Setup QApplication
-	#ifdef Q_OS_MAC
-		QDir::setCurrent(QApplication::applicationDirPath() + "/../");
-	#else
-		QDir::setCurrent(QApplication::applicationDirPath());
-	#endif
+#ifdef Q_OS_MAC
+	QDir::setCurrent(QApplication::applicationDirPath() + "/../");
+#else
+	QDir::setCurrent(QApplication::applicationDirPath());
+#endif
 	
 	qRegisterMetaType<TargetPtr>("TargetPtr");
 	

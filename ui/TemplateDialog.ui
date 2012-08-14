@@ -42,6 +42,13 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
+      <widget class="QPushButton" name="ui_install">
+       <property name="text">
+        <string>Install Template Pack...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="ui_remove">
        <property name="enabled">
         <bool>false</bool>

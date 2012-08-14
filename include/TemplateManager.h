@@ -23,19 +23,26 @@
 
 #include <QString>
 #include <QIcon>
+#include <QMap>
+#include <tinyarchive.hpp>
 
 #include "Kiss.h"
 #include "Singleton.h"
 
+#define KISS_TEMPLATE_PACK_EXT "ktp"
+#define KISS_TEMPLATE_PACK_FILTER ("KISS Template Pack (*." KISS_TEMPLATE_PACK_EXT ")")
+
 class TemplateManager : public Singleton<TemplateManager>
 {
 public:
+	TemplateManager();
+	~TemplateManager();
+	
 	QStringList types() const;
 	
 	QStringList templateFolders(const QString& type, const QString& _template);
 	QStringList templates(const QString& type, const QString& _template);
 	QIcon templateIcon(const QString& type, const QString& _template);
-	
 	
 	bool addUserTemplate(const QString& type, const QString& name, const QString& content);
 	bool deleteUserTemplate(const QString& type, const QString& name);
@@ -44,15 +51,25 @@ public:
 	QStringList userTemplates(const QString& type);
 	QString pathForUserTemplate(const QString& type, const QString& _template);
 	
+	QStringList packs() const;
+	QStringList packTemplates(const QString& pack) const;
+	QIcon packTemplateIcon(const QString& pack, const QString& _template) const;
+	QByteArray packTemplateData(const QString& pack, const QString& _template) const;
+	bool installPack(const QString& name, const TinyArchive *archive);
+	
 	QString pathForTemplate(const QString& type, const QString& _template);
 	
 	bool isTemplateDirectory(const QString& type, const QString& _template);
 	bool isTemplateDirectory(const QString& path);
 	
 	static const QString& defaultTemplateName();
+	
 private:
 	void ensureUserTemplateDirExists(const QString& type);
+	QString packPath() const;
 	
+	
+	QMap<QString, TinyArchive *> m_packs;
 	static QString m_defaultName;
 };
 

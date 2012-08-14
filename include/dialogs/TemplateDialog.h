@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright 2007-2011 KISS Institute for Practical Robotics             *
+ *  Copyright 2007-2012 KISS Institute for Practical Robotics             *
  *                                                                        *
  *  This file is part of KISS (Kipr's Instructional Software System).     *
  *                                                                        *
@@ -36,7 +36,8 @@ public:
 	// Returns to the path of the target file for the selected target
 	
 	QString selectedTypeName() const;
-	QString templateFile();
+	QString templateFile() const;
+	QByteArray templateData() const;
 	
 private slots:
 	void on_ui_types_currentItemChanged(QListWidgetItem* current, QListWidgetItem* prev);
@@ -44,10 +45,12 @@ private slots:
 	
 	void on_ui_templates_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem*);
 	void on_ui_remove_clicked();
+	void on_ui_install_clicked();
 	
 private:
 	void addTemplates(const QString& target, QTreeWidgetItem* parentItem, const QString& parent);
 	void addUserTemplates(const QString& target);
+	void addPackTemplates(const QString& pack);
 };
 
 #endif

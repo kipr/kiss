@@ -79,7 +79,7 @@ public:
 		
 
 		const QString& pluginPathString = pluginPath.absoluteFilePath("lib" + name + "." + OS_LIB_EXT);
-		qWarning() << "Path:" << pluginPathString;
+		qDebug() << "\tPath:" << pluginPathString;
 
 		plugin->setFileName(pluginPathString);
 		if(!plugin->load()) {
@@ -98,8 +98,6 @@ public:
 		}
 
 		m_plugins[name] = plugin;
-		
-		qWarning() << "Calling pluginLoaded";
 		pluginLoaded(instance);
 		return true;
 	}

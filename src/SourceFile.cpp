@@ -50,6 +50,7 @@
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
+#include <QBuffer>
 #include <QTextStream>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -914,37 +915,29 @@ void SourceFile::updateErrors(const CompileResult& compileResult)
 
 const bool SourceFile::selectTemplate()
 {
-	QString targetPath;
-	QString templateFile;
-	
 	TemplateDialog tDialog(this);
 	if(tDialog.exec() == QDialog::Rejected) return false;
-	templateFile = tDialog.templateFile();
-	
+
+	QByteArray templateData = tDialog.templateData();
 	Lexer::Constructor* constructor = 0;
 
-	QFile tFile(templateFile);
-	if(!tFile.open(QIODevice::ReadOnly)) {
-		MessageDialog::showError(this, "simple_error_with_action", QStringList() <<
-			tr("Error loading template file ") + templateFile <<
-			tr("Unable to open file for reading.") <<
-			tr("Continuing without selected template."));
-		return true;
-	}
-	QTextStream stream(&tFile);
+	QBuffer buffer(&templateData);
+	buffer.open(QIODevice::ReadOnly);
+	QTextStream stream(&buffer);
 	TemplateFormatReader templateReader(&stream);
 
 	if(templateReader.hasLexerName()) {
 		QString lex = templateReader.lexerName();
-		Log::ref().debug(QString("Template Lexer specified: %1").arg(lex));
+		qDebug() << "Template Lexer specified:" << lex;
 		constructor = Lexer::Factory::ref().constructor(lex);
 		m_templateExt = lex;
 	}
 	
 	ui_editor->setText(templateReader.content());
-	tFile.close();
 	
 	Log::ref().info("Template selected");
+	
+	buffer.close();
 	
 	// m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
 	

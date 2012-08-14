@@ -29,6 +29,11 @@
 #include <QListWidgetItem>
 #include <QDebug>
 #include <QFileInfo>
+#include <QDir>
+#include <QFileDialog>
+
+#define DEPRECATED_TEMPLATE_ROLE (Qt::UserRole)
+#define TEMPLATE_ROLE (Qt::UserRole + 1)
 
 TemplateDialog::TemplateDialog(QWidget* parent) : QDialog(parent) { setupUi(this); }
 
@@ -41,7 +46,19 @@ int TemplateDialog::exec()
 	foreach(const QString& type, types) {
 		QListWidgetItem* item = new QListWidgetItem(type);
 		
-		item->setData(Qt::UserRole, type);
+		item->setData(DEPRECATED_TEMPLATE_ROLE, type);
+		ui_types->addItem(item);
+		if(first) {
+			ui_types->setCurrentItem(item);
+			first = false;
+		}
+	}
+	
+	const QStringList& packs = TemplateManager::ref().packs();
+	foreach(const QString& pack, packs) {
+		QListWidgetItem* item = new QListWidgetItem(pack);
+		
+		item->setData(TEMPLATE_ROLE, pack);
 		ui_types->addItem(item);
 		if(first) {
 			ui_types->setCurrentItem(item);
@@ -57,21 +74,55 @@ QString TemplateDialog::selectedTypeName() const
 	return ui_types->currentItem() ? ui_types->currentItem()->data(Qt::UserRole).toString() : QString();
 }
 
-QString TemplateDialog::templateFile()
+// Deprecated
+QString TemplateDialog::templateFile() const
 {
 	if(!ui_types->currentItem()) return QString();
-	const QString& type = ui_types->currentItem()->data(Qt::UserRole).toString();
+	const QString& type = ui_types->currentItem()->data(DEPRECATED_TEMPLATE_ROLE).toString();
+	if(type.isEmpty()) return QString();
 	return ui_templates->currentItem() ? 
-		ui_templates->currentItem()->data(0, Qt::UserRole).toString() : 
+		ui_templates->currentItem()->data(0, DEPRECATED_TEMPLATE_ROLE).toString() : 
 		TemplateManager::ref().pathForTemplate(type, "Default");
+}
+
+QByteArray TemplateDialog::templateData() const
+{
+	QString path = templateFile();
+	
+	// Deprecated
+	if(!path.isEmpty()) {
+		QFile file(path);
+		if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+			qWarning() << "Failed to open template" << path << "for reading";
+			return QByteArray();
+		}
+		QByteArray ret(file.readAll());
+		file.close();
+		qDebug() << "Read" << ret << "from template" << path;
+		return ret;
+	}
+	
+	QString pack = ui_types->currentItem()->data(TEMPLATE_ROLE).toString();
+	if(!ui_templates->currentItem()) return QByteArray();
+	QString _template = ui_templates->currentItem()->data(0, TEMPLATE_ROLE).toString();
+	return TemplateManager::ref().packTemplateData(pack, _template);
 }
 
 void TemplateDialog::on_ui_types_currentItemChanged(QListWidgetItem* current, QListWidgetItem*)
 {
-	const QString& type = current->data(Qt::UserRole).toString();
+	QString type = current->data(DEPRECATED_TEMPLATE_ROLE).toString();
+	// DEPRECATED
+	if(!type.isEmpty()) {
+		ui_templates->clear();
+		addTemplates(type, 0, "");
+		addUserTemplates(type);
+		ui_templates->setCurrentItem(ui_templates->topLevelItem(0));
+		return;
+	}
+	
+	QString pack = current->data(TEMPLATE_ROLE).toString();
 	ui_templates->clear();
-	addTemplates(type, 0, "");
-	addUserTemplates(type);
+	addPackTemplates(pack);
 	ui_templates->setCurrentItem(ui_templates->topLevelItem(0));
 }
 
@@ -103,6 +154,18 @@ void TemplateDialog::on_ui_remove_clicked()
 	on_ui_types_currentItemChanged(ui_types->currentItem(), 0);
 }
 
+void TemplateDialog::on_ui_install_clicked()
+{
+	QString path = QFileDialog::getExistingFile(this, "Install Template Pack", QDir::homePath(), KISS_TEMPLATE_PACK_FILTER);
+	if(path.isEmpty()) return;
+	QString name = QFileInfo(path).completeBaseName();
+	TinyArchiveFile file(path.toStdString());
+	TinyArchive *pack = TinyArchive::read(&file);
+	if(!pack) return;
+	TemplateManager::ref().installPack(name, pack);
+	delete pack;
+}
+
 void TemplateDialog::addTemplates(const QString& target, QTreeWidgetItem* parentItem, const QString& parent = "")
 {
 	const QStringList& templates = TemplateManager::ref().templates(target, parent);
@@ -111,7 +174,7 @@ void TemplateDialog::addTemplates(const QString& target, QTreeWidgetItem* parent
 		QTreeWidgetItem* item = !parentItem ? new QTreeWidgetItem(ui_templates) : new QTreeWidgetItem(parentItem);
 		item->setText(0, templateName);
 		item->setIcon(0, TemplateManager::ref().templateIcon(target, _template));
-		item->setData(0, Qt::UserRole, TemplateManager::ref().pathForTemplate(target, _template));
+		item->setData(0, DEPRECATED_TEMPLATE_ROLE, TemplateManager::ref().pathForTemplate(target, _template));
 	}
 	
 	const QStringList& folders = TemplateManager::ref().templateFolders(target, parent);
@@ -140,6 +203,21 @@ void TemplateDialog::addUserTemplates(const QString& target)
 		QTreeWidgetItem* item = new QTreeWidgetItem(parent);
 		item->setText(0, templateName);
 		item->setIcon(0, QIcon(":/icon_set/icons/empty.png"));
-		item->setData(0, Qt::UserRole, TemplateManager::ref().pathForUserTemplate(target, _template));
+		item->setData(0, DEPRECATED_TEMPLATE_ROLE, TemplateManager::ref().pathForUserTemplate(target, _template));
+	}
+}
+
+void TemplateDialog::addPackTemplates(const QString& pack)
+{
+	const QStringList& templates = TemplateManager::ref().packTemplates(pack);
+	qDebug() << "Pack templates" << templates;
+	if(templates.isEmpty()) return;
+	
+	foreach(const QString& _template, templates) {
+		const QString& templateName = _template.section(".", 0, 0).section("/", -1);
+		QTreeWidgetItem* item = new QTreeWidgetItem(ui_templates);
+		item->setText(0, templateName);
+		item->setIcon(0, QIcon(":/icon_set/icons/empty.png"));
+		item->setData(0, TEMPLATE_ROLE, _template);
 	}
 }

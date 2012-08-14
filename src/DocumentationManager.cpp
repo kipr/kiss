@@ -8,7 +8,10 @@
 
 DocumentationLocation::DocumentationLocation(const QString& name, const QString& location,
 	const QString& description, const QString& decoration)
-	: m_name(name), m_location(location), m_description(description), m_decoration(decoration)
+	: m_name(name),
+	m_location(location),
+	m_description(description),
+	m_decoration(decoration)
 {
 	
 }

@@ -24,10 +24,44 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+#include <kiss-compiler/QTinyArchiveStream.h>
 
 #define TEMPLATE_EXT_WILDCARD (QString("*.") + TEMPLATE_EXT)
 
 QString TemplateManager::m_defaultName = "Default";
+
+TemplateManager::TemplateManager()
+{
+	qDebug() << "Scanning" << packPath() << "for packs.";
+	QFileInfoList entries = QDir(packPath()).entryInfoList(QStringList() << ("*." KISS_TEMPLATE_PACK_EXT), QDir::NoDot | QDir::NoDotDot | QDir::Files);
+	foreach(const QFileInfo& entry, entries) {
+		qDebug() << "Reading" << entry.canonicalFilePath();
+		QFile file(entry.canonicalFilePath());
+		if(!file.open(QIODevice::ReadOnly)) {
+			qWarning() << "Template pack" << entry.completeBaseName() << "cannot be opened. Ignoring.";
+			continue;
+		}
+		
+		QTinyArchiveStream in(&file);
+		TinyArchive *archive = TinyArchive::read(&in);
+		file.close();
+		
+		if(!archive) {
+			qWarning() << "Template pack" << entry.completeBaseName() << "is malformed. Ignoring.";
+			continue;
+		}
+		// Assuming this is null terminated
+		m_packs[entry.completeBaseName()] = archive;
+	}
+}
+
+TemplateManager::~TemplateManager()
+{
+	QList<TinyArchive *>::iterator it = m_packs.values().begin();
+	for(; it != m_packs.values().end(); ++it) {
+		delete *it;
+	}
+}
 
 QStringList TemplateManager::types() const
 {
@@ -108,9 +142,67 @@ QString TemplateManager::pathForUserTemplate(const QString& type, const QString&
 	return QDir::currentPath() + "/" + USER_FOLDER + "/" + TEMPLATES_FOLDER + "/" + type + (_template.isEmpty() ? "" : "/" + _template);
 }
 
+QStringList TemplateManager::packs() const
+{
+	return QStringList(m_packs.keys());
+}
+
+QStringList TemplateManager::packTemplates(const QString& pack) const
+{
+	QStringList ret;
+	TinyArchive *archive = m_packs.value(pack, 0);
+	if(!archive) {
+		qWarning() << "Failed to lookup template pack" << pack;
+		return ret;
+	}
+	
+	QVector<TinyNode *> children = QVector<TinyNode *>::fromStdVector(archive->lookup("/")->children());
+	QVector<TinyNode *>::const_iterator it = children.begin();
+	for(; it != children.end(); ++it) {
+		TinyNode *child = *it;
+		if(!child->name()) {
+			qWarning() << "TinyNode::name null during template pack lookup for" << pack;
+			continue;
+		}
+		qDebug() << "Found pack template" << child->name();
+		ret << child->name();
+	}
+	
+	return ret;
+}
+
+QIcon TemplateManager::packTemplateIcon(const QString& pack, const QString& _template) const
+{
+	return QIcon();
+}
+
+QByteArray TemplateManager::packTemplateData(const QString& pack, const QString& _template) const
+{
+	TinyArchive *archive = m_packs.value(pack, 0);
+	if(!archive) return QByteArray();
+	
+	const TinyNode *node = archive->lookup(_template.toStdString());
+	
+	return QByteArray(reinterpret_cast<const char *>(node->data()), node->length());
+}
+
+bool TemplateManager::installPack(const QString& name, const TinyArchive *archive)
+{
+	QFile file(QDir(packPath()).filePath(name + ("." KISS_TEMPLATE_PACK_EXT)));
+	if(file.exists()) return false;
+	if(!file.open(QIODevice::WriteOnly)) return false;
+	
+	QTinyArchiveStream stream(&file);
+	archive->write(&stream);
+	
+	file.close();
+	
+	return true;
+}
+
 QString TemplateManager::pathForTemplate(const QString& type, const QString& _template)
 {
-	return QDir::currentPath() + "/" + TEMPLATES_FOLDER + "/" + type + "/" + (_template.isEmpty() ? "" : "/" + _template);
+	return QDir::currentPath() + "/" + TEMPLATES_FOLDER + "/" + type + (_template.isEmpty() ? "" : "/" + _template);
 }
 
 bool TemplateManager::isTemplateDirectory(const QString& type, const QString& _template)
@@ -124,4 +216,9 @@ const QString& TemplateManager::defaultTemplateName() { return m_defaultName; }
 void TemplateManager::ensureUserTemplateDirExists(const QString& type)
 {
 	QDir().mkpath(pathForUserTemplate(type, ""));
+}
+
+QString TemplateManager::packPath() const
+{
+	return QDir::currentPath() + "/" + USER_FOLDER + "/" + TEMPLATES_FOLDER;
 }

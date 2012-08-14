@@ -42,10 +42,10 @@
 #define OS_LIB_EXT "so"
 #endif
 
-#define KISS_C_VERSION_MAJOR 4
-#define KISS_C_VERSION_MINOR 0
-#define KISS_C_VERSION_BUILD 0
+#define KISS_IDE_VERSION_MAJOR 4
+#define KISS_IDE_VERSION_MINOR 0
+#define KISS_IDE_VERSION_BUILD 0
 
-#define KISS_C_VERSION_CODENAME "Oxygen"
+#define KISS_IDE_VERSION_CODENAME "Oxygen"
 
 #endif

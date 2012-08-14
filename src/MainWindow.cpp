@@ -470,10 +470,10 @@ bool MainWindow::closeNode(const TinyNode* node)
 void MainWindow::about()
 {
 	MessageDialog::showMessage(this, "About KISS IDE", "about_kiss", QStringList()
-		<< QString::number(KISS_C_VERSION_MAJOR)
-		<< QString::number(KISS_C_VERSION_MINOR)
-		<< QString::number(KISS_C_VERSION_BUILD)
-		<< KISS_C_VERSION_CODENAME);
+		<< QString::number(KISS_IDE_VERSION_MAJOR)
+		<< QString::number(KISS_IDE_VERSION_MINOR)
+		<< QString::number(KISS_IDE_VERSION_BUILD)
+		<< KISS_IDE_VERSION_CODENAME);
 }
 
 void MainWindow::settings()
