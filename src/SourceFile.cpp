@@ -275,7 +275,8 @@ bool SourceFile::openProjectFile(Project* project, const TinyNode* node)
 void SourceFile::indentAll()
 {
 	if(!ui_editor->lexer()) return;
-	if(!dynamic_cast<Lexer::LexerBase*>(ui_editor->lexer())->cStyleBlocks()) return;
+	LexerBase *lexerBase = dynamic_cast<Lexer::LexerBase*>(ui_editor->lexer());
+	if(!lexerBase || !lexerBase->cStyleBlocks()) return;
 	
 	setUpdatesEnabled(false);
 
