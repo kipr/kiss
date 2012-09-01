@@ -3,7 +3,8 @@
 #include <QListWidget>
 #include <QDebug>
 
-ErrorWidget::ErrorWidget(QWidget* parent) : QWidget(parent), m_unit(0)
+ErrorWidget::ErrorWidget(QWidget* parent)
+	: QWidget(parent), m_current(0), m_unit(0)
 {
 	setupUi(this);
 	setCategorized();
@@ -39,13 +40,16 @@ void ErrorWidget::setCompileResult(const WorkingUnit* unit, const CompileResult&
 	
 	ui_raw->setText(results.raw());
 	
-	if(!ui_tabs->count()) hide();
+	qDebug() << "Compile result set for working unit" << unit;
+	
+	// if(!ui_tabs->count()) hide();
 }
 
 void ErrorWidget::workingUnitChanged(const WorkingUnit* current)
 {
 	m_current = current;
-	setVisible(m_current == m_unit && ui_tabs->count());
+	qDebug() << "Working unit changed to" << current;
+	setVisible(m_current != 0 && m_current == m_unit);
 }
 
 void ErrorWidget::on_ui_viewMode_currentIndexChanged(int index)

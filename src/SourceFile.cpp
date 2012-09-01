@@ -816,7 +816,7 @@ void SourceFile::availableFinished(bool avail)
 
 void SourceFile::compileFinished(CompileResult result)
 {
-	qDebug() << "Compile finished";
+	qDebug() << "Compile finished with " << result.raw();
 	updateErrors(result);
 	mainWindow()->setStatusMessage(tr("Compile ") + (result.success() ? tr("Succeeded") : tr("Failed")));
 	mainWindow()->setErrors(topLevelUnit(), result);
