@@ -1,0 +1,2 @@
+ADD_EXECUTABLE(output_widget_test OutputWidgetTest.cpp)
+TARGET_LINK_LIBRARIES(output_widget_test ${QT_LIBRARIES} kisside)

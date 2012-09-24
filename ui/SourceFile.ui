@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,0">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
    <property name="margin">
     <number>12</number>
    </property>
@@ -29,10 +29,7 @@
     </widget>
    </item>
    <item>
-    <widget class="SourceLocalFailed" name="ui_localCompileFailed" native="true"/>
-   </item>
-   <item>
-    <widget class="SourceFindWidget" name="ui_find" native="true"/>
+    <widget class="Kiss::Widget::SourceFind" name="ui_find" native="true"/>
    </item>
   </layout>
  </widget>
@@ -44,15 +41,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SourceFindWidget</class>
+   <class>Kiss::Widget::SourceFind</class>
    <extends>QWidget</extends>
-   <header>SourceFindWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SourceLocalFailed</class>
-   <extends>QWidget</extends>
-   <header>SourceLocalFailed.h</header>
+   <header>source_find_widget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

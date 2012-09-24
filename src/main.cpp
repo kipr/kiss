@@ -18,30 +18,31 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#include <QApplication>
-#include <QDir>
-#include <QSplashScreen>
-#include "MainWindow.h"
-#include "WelcomeTab.h"
-#include "DeclarativeTab.h"
-#include "LogStreamBuf.h"
-#include "AudioTutorial.h"
-#include "Log.h"
-#include "LogWindow.h"
-#include "KissStandardEnvironment.h"
+#include "main_window.hpp"
+#include "welcome_tab.hpp"
+#include "declarative_tab.hpp"
+#include "log_stream_buf.hpp"
+#include "log.hpp"
+#include "log_window.hpp"
+#include "kiss_standard_environment.hpp"
 
 #include <QTimer>
 #include <QDebug>
 #include <BackendCapabilities>
+#include <QApplication>
+#include <QDir>
+#include <iostream>
+#include <QSplashScreen>
 
 using namespace std;
+using namespace Kiss;
 
 int main(int argc, char **argv)
 {
 	QApplication application(argc, argv);
 	
 #ifdef ENABLE_LOG_WINDOW
-	streambuf* restore = cout.rdbuf();
+	streambuf *restore = cout.rdbuf();
 	LogStreamBuf logRedir;
 	cout.rdbuf(&logRedir);
 	cerr.rdbuf(&logRedir);
@@ -51,34 +52,32 @@ int main(int argc, char **argv)
 	Log::ref().info(QString("KISS is starting up... (Qt version: %1)").arg(qVersion()));
 	
 	// Creates everything we need
-	KissStandardEnvironment::createStandardEnvironment();
+	StandardEnvironment::createStandardEnvironment();
 	
-	QPixmap splashPixmap(":/splash_screen.png");
-	QSplashScreen splash(splashPixmap);
-	splash.raise();
-	splash.show();
-	MainWindow mainWindow;
+	Widget::MainWindow mainWindow;
+	
 #ifdef BUILD_DECLARATIVE_TAB
-	mainWindow.addTab(new DeclarativeTab(QUrl("qrc:/welcome/welcome.qml"), &mainWindow));
+	mainWindow.addTab(new Widget::DeclarativeTab(QUrl("qrc:/welcome/welcome.qml"), &mainWindow));
 #else
 #ifdef BUILD_WEB_TAB
-	mainWindow.addTab(new WelcomeTab(&mainWindow));
+	mainWindow.addTab(new Widget::WelcomeTab(&mainWindow));
 #endif
 #endif
+
 	Log::ref().info(QString("Starting with the following arguments: [%1]").arg(QApplication::arguments().join(", ")));
 	foreach(const QString& arg, QApplication::arguments().mid(1)) mainWindow.openFile(arg);
-	QTimer::singleShot(1500, &splash, SLOT(hide()));
-	QTimer::singleShot(1000, &mainWindow, SLOT(show()));
-	QTimer::singleShot(1000, &mainWindow, SLOT(raise()));
+	
+	mainWindow.show();
+	mainWindow.raise();
 
 #ifdef ENABLE_LOG_WINDOW
 #ifdef BUILD_DEVELOPER_TOOLS
 	Log::ref().info("Built with developer tools. Automatically showing error log.");
-	QTimer::singleShot(500, &LogWindow::ref(), SLOT(show()));
+	QTimer::singleShot(500, &Widget::LogWindow::ref(), SLOT(show()));
 #endif
 #endif
 
-	Log::ref().info("KISS has been launched");
+	Log::ref().info("KISS IDE... hassha!");
 	int ret = application.exec();
 	
 #ifdef ENABLE_LOG_WINDOW

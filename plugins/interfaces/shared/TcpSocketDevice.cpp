@@ -188,8 +188,9 @@ void TcpSocketDevice::readyRead()
 void TcpSocketDevice::error(QAbstractSocket::SocketError socketError)
 {
 	qCritical() << "Socket Error!" << socketError;
-	if(socketError == QAbstractSocket::ConnectionRefusedError) responder()->connectionError(this);
-	else responder()->communicationError(this);
+	if(socketError == QAbstractSocket::ConnectionRefusedError) {
+		foreach(TargetResponder *responder, responders()) responder->connectionError(this);
+	} else responder()->communicationError(this);
 }
 
 void TcpSocketDevice::processPayload(const QByteArray& payload)
@@ -199,37 +200,37 @@ void TcpSocketDevice::processPayload(const QByteArray& payload)
 	stream >> command;
 	qDebug() << "Processing payload" << command;
 	
-	if(command.isEmpty()) responder()->unknownResponse(this, payload);
+	if(command.isEmpty()) foreach(TargetResponder *responder, responders()) responder->unknownResponse(this, payload);
 	
 	bool success = false;
 	if(command == LOCKED_KEY) {
-		responder()->notAuthenticatedError(this);
+		foreach(TargetResponder *responder, responders()) responder->notAuthenticatedError(this);
 	} else if(command == AVAILABLE_KEY) {
 		stream >> success;
-		responder()->availableResponse(this, success);
+		foreach(TargetResponder *responder, responders()) responder->availableResponse(this, success);
 	} else if(command == COMPILE_KEY) {
 		CompileResult results;
 		stream >> results;
 		success = results.success();
-		responder()->compileResponse(this, results);
+		foreach(TargetResponder *responder, responders()) responder->compileResponse(this, results);
 	} else if(command == DOWNLOAD_KEY) {
 		stream >> success;
-		responder()->downloadResponse(this, success);
+		foreach(TargetResponder *responder, responders()) responder->downloadResponse(this, success);
 	} else if(command == RUN_KEY) {
 		stream >> success;
-		responder()->runResponse(this, success);
+		foreach(TargetResponder *responder, responders()) responder->runResponse(this, success);
 	} else if(command == LIST_KEY) {
 		QStringList programs;
 		stream >> programs;
 		success = true;
-		responder()->listResponse(this, programs);
+		foreach(TargetResponder *responder, responders()) responder->listResponse(this, programs);
 	} else if(command == DELETE_KEY) {
 		stream >> success;
-		responder()->deleteResponse(this, success);
+		foreach(TargetResponder *responder, responders()) responder->deleteResponse(this, success);
 	} else if(command == INTERACTION_KEY) {
 		QString ret;
 		stream >> ret;
-		responder()->interactionResponse(this, ret);
+		foreach(TargetResponder *responder, responders()) responder->interactionResponse(this, ret);
 	} else if(command == AUTHENTICATE_KEY) {
 		stream >> success;
 		bool tryAgain = false;
@@ -237,9 +238,9 @@ void TcpSocketDevice::processPayload(const QByteArray& payload)
 		TargetResponder::AuthenticateReturn ret = success ? TargetResponder::AuthSuccess : TargetResponder::AuthWillNotAccept;
 		if(!success && tryAgain)  ret = TargetResponder::AuthTryAgain;
 		qDebug() << "Got success" << success << "and try again" << tryAgain << "==" << ret;
-		responder()->authenticationResponse(this, ret);
+		foreach(TargetResponder *responder, responders()) responder->authenticationResponse(this, ret);
 	} else {
-		responder()->customResponse(this, command, payload);
+		foreach(TargetResponder *responder, responders()) responder->customResponse(this, command, payload);
 		success = true; // TODO: Perhaps not the best assumption
 	}
 	

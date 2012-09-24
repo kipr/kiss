@@ -80,7 +80,7 @@ ADD_LIBRARY(kisside STATIC ${KISS_SRCS_CXX})
 
 SET(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
 SET(LIBRARY_OUTPUT_PATH ${KISS_SOURCE_DIR}/lib)
-TARGET_LINK_LIBRARIES(KISS ${QT_LIBRARIES} qscintilla2 kiss-compiler tinyarchive z)
+TARGET_LINK_LIBRARIES(KISS ${QT_LIBRARIES} qscintilla2 pcompiler tinyarchive z)
 
 IF(APPLE)
 	ADD_CUSTOM_TARGET(MacDeployQt ALL 
@@ -110,9 +110,7 @@ ENDIF(APPLE)
 
 LINK_DIRECTORIES(${KISS_SOURCE_DIR}/lib)
 
-# ADD_EXECUTABLE(command_chain_test tests/CommandChainTest.cpp)
-# TARGET_LINK_LIBRARIES(command_chain_test ${QT_LIBRARIES} kisside)
-
 install(FILES ${INCLUDES} DESTINATION /usr/local/include/kiss/)
 
 add_subdirectory(plugins)
+add_subdirectory(tests)

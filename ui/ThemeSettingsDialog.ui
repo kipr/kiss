@@ -250,7 +250,7 @@
   <customwidget>
    <class>ColorBox</class>
    <extends>QLineEdit</extends>
-   <header>ColorBox.h</header>
+   <header>color_box.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>
