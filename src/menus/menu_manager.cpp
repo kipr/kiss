@@ -36,16 +36,38 @@ struct NodeSingleton : Kiss::Singleton<NodeSingleton>
 	QSet<Node*> nodes;
 };
 
-Node::Node() : name(uniqueName()), rawAction(0), activeControl(false), hideOnDisable(true) { NodeSingleton::ref().nodes += this; }
-Node::Node(const QString& name) : name(name), rawAction(0), activeControl(false), hideOnDisable(true) { NodeSingleton::ref().nodes += this; }
+Node::Node()
+	: name(uniqueName()),
+	rawAction(0),
+	activeControl(false),
+	hideOnDisable(true)
+{
+	NodeSingleton::ref().nodes += this;
+}
+Node::Node(const QString& name)
+	: name(name),
+	rawAction(0),
+	activeControl(false),
+	hideOnDisable(true)
+{
+	NodeSingleton::ref().nodes += this;
+}
 
-Node::Node(const QString& name, Menuable* menuable, QAction* action) : name(name), rawAction(0), activeControl(false), hideOnDisable(true)
+Node::Node(const QString& name, Menuable* menuable, QAction* action)
+	: name(name),
+	rawAction(0),
+	activeControl(false),
+	hideOnDisable(true)
 {
 	registers.append(MenuableActionPair(menuable, action));
 	NodeSingleton::ref().nodes += this;
 }
 
-Node::Node(Menuable* menuable, QAction* action) : name(action->text()), rawAction(0), activeControl(false), hideOnDisable(true)
+Node::Node(Menuable* menuable, QAction* action)
+	: name(action->text()),
+	rawAction(0),
+	activeControl(false),
+	hideOnDisable(true)
 {
 	registers.append(MenuableActionPair(menuable, action));
 	NodeSingleton::ref().nodes += this;
@@ -157,7 +179,10 @@ void Manager::construct(QMenuBar* menuBar, QToolBar* toolBar)
 	refresh();
 }
 
-bool Manager::isConstructed() const { return m_menuBar; }
+bool Manager::isConstructed() const
+{
+	return m_menuBar;
+}
 
 void Manager::refreshToolbar()
 {

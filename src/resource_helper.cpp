@@ -38,6 +38,7 @@ ResourceHelper::ResourceHelper()
 	addSearchLocation(":/welcome/");
 	addSearchLocation(":/sourcefile/icon_set/icons/");
 	addSearchLocation(":/targets/");
+	addSearchLocation(":/");
 	
 	addSearchLocation("resources"); // For user resources
 }
@@ -63,8 +64,8 @@ QString ResourceHelper::lookup(const QString& name)
 		return path;
 	}
 	
-	Log::ref().error(QString("ResourceHelper Failed to lookup resource %1 (tried %2 locations)")
-		.arg(name).arg(m_locations.size()));
+	qWarning() << "ResourceHelper Failed to lookup resource" << name
+		<< "(tried" << m_locations.size() << "locations)";
 	
 	return "";
 }

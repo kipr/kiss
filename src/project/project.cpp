@@ -7,11 +7,6 @@
 
 using namespace Kiss::Project;
 
-QString Project::name() const
-{
-	return QFileInfo(m_location).fileName();
-}
-
 bool Project::addFile(const QString& path)
 {
 	if(m_singleFileMode) return false;
@@ -71,6 +66,12 @@ bool Project::save()
 	return true;
 }
 
+Project *Project::create(const QString& location)
+{
+	if(!QDir().mkpath(location)) return 0;
+	return load(location);
+}
+
 Project *Project::load(const QString& location)
 {
 	if(!QFileInfo(location).isDir()) return 0;
@@ -90,6 +91,8 @@ Project::Project(const QString& location, bool singleFileMode)
 		m_files << m_location;
 		m_location = QFileInfo(m_location).path();
 	}
+	
+	setName(QFileInfo(m_location).fileName());
 }
 
 void Project::refresh()

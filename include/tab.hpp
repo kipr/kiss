@@ -85,7 +85,11 @@ namespace Kiss
 			void setProject(Kiss::Project::Project *project);
 			Kiss::Project::Project *project() const;
 			bool hasProject() const;
-
+			
+		protected:
+			virtual void fileChanged(const QFileInfo& file);
+			virtual void projectChanged(Kiss::Project::Project *project);
+			
 		private:
 			QWidget *m_widget;
 			MainWindow *m_mainWindow;

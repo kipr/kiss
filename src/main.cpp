@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	clog.rdbuf(&logRedir);
 #endif
 	
-	Log::ref().info(QString("KISS is starting up... (Qt version: %1)").arg(qVersion()));
+	Log::ref().info(QString("KISS IDE is starting up... (Qt version: %1)").arg(qVersion()));
 	
 	// Creates everything we need
 	StandardEnvironment::createStandardEnvironment();
@@ -65,7 +65,9 @@ int main(int argc, char **argv)
 #endif
 
 	Log::ref().info(QString("Starting with the following arguments: [%1]").arg(QApplication::arguments().join(", ")));
-	foreach(const QString& arg, QApplication::arguments().mid(1)) mainWindow.openFile(arg);
+	foreach(const QString& arg, QApplication::arguments().mid(1)) {
+		mainWindow.openFile(arg);
+	}
 	
 	mainWindow.show();
 	mainWindow.raise();

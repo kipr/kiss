@@ -36,7 +36,7 @@ SET(QT_USE_PHONON TRUE)
 
 INCLUDE(${QT_USE_FILE})
 
-FILE(GLOB INCLUDES ${INCLUDE}/*.h
+FILE(GLOB INCLUDES ${INCLUDE}/*.hpp
 	${INCLUDE}/lexer/*
 	${INCLUDE}/dialogs/*
 	${INCLUDE}/widgets/*
@@ -80,7 +80,7 @@ ADD_LIBRARY(kisside STATIC ${KISS_SRCS_CXX})
 
 SET(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
 SET(LIBRARY_OUTPUT_PATH ${KISS_SOURCE_DIR}/lib)
-TARGET_LINK_LIBRARIES(KISS ${QT_LIBRARIES} qscintilla2 pcompiler tinyarchive z)
+TARGET_LINK_LIBRARIES(KISS ${QT_LIBRARIES} qscintilla2 pcompiler)
 
 IF(APPLE)
 	ADD_CUSTOM_TARGET(MacDeployQt ALL 
@@ -104,6 +104,26 @@ IF(APPLE)
 	
 ELSE(APPLE)
 	install(DIRECTORY ${RC}/templates DESTINATION ${KISS_SOURCE_DIR}/deploy)
+ENDIF(APPLE)
+
+IF(APPLE)
+SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
+ADD_CUSTOM_TARGET(kiss_osx_install_names ALL 
+	COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/MacOS/KISS
+		QtCore.framework/Versions/4/QtCore
+		QtScript.framework/Versions/4/QtScript
+		QtDBus.framework/Versions/4/QtDBus
+		QtGui.framework/Versions/4/QtGui
+		QtNetwork.framework/Versions/4/QtNetwork
+		QtXml.framework/Versions/4/QtXml
+		QtXmlPatterns.framework/Versions/4/QtXmlPatterns
+		QtSvg.framework/Versions/4/QtSvg
+		QtSql.framework/Versions/4/QtSql
+		QtWebKit.framework/Versions/4/QtWebKit
+		phonon.framework/Versions/4/phonon
+		QtDeclarative.framework/Versions/4/QtDeclarative
+	WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+	DEPENDS KISS Info.plist MacDeployQt)
 ENDIF(APPLE)
 
 # Accessory Programs

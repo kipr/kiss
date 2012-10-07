@@ -21,10 +21,9 @@
 #ifndef _SOURCE_FILE_HPP_
 #define _SOURCE_FILE_HPP_
 
-#include "template_dialog.hpp"
 #include "editor_settings_dialog.hpp"
 #include "tab.hpp"
-#include "working_unit.hpp"
+#include "unit.hpp"
 #include "source_find_widget.hpp"
 #include "qt_target_responder.hpp"
 
@@ -65,7 +64,7 @@ namespace Kiss
 	{
 		class MainWindow;
 
-		class SourceFile : public QWidget, public Tab, public WorkingUnit, private Ui::SourceFile
+		class SourceFile : public QWidget, public Tab, public Unit, private Ui::SourceFile
 		{
 		Q_OBJECT
 		public:
@@ -83,9 +82,6 @@ namespace Kiss
 			bool openProjectFile(Project::Project* project);
 
 			bool close();
-
-			//! \return true if file is new
-			bool isNewFile();
 
 			//! \return Current zoom level
 			int getZoom();
@@ -159,15 +155,12 @@ namespace Kiss
 			void authenticationResponse(const Target::Responder::AuthenticateReturn& response);
 
 		private:
-			bool saveAsFile();
-			bool saveAsProject();
 			const bool selectTemplate();
 
 			void showFind();
 
 			void setLexer(Lexer::Constructor *constructor);
 
-			bool m_isNewFile;
 			int m_zoomLevel;
 		        void dropEvent(QDropEvent *event);
 
@@ -190,10 +183,16 @@ namespace Kiss
 			void clearProblems();
 			void markProblems(const QStringList& errors, const QStringList& warnings);
 			void updateErrors(const Compiler::OutputList& compileResult);
+			
+			void updateTitle();
+			void updateLexer();
 
 			Target::QtResponder m_responder;
+			
 		protected:
 			void keyPressEvent(QKeyEvent *event);
+			virtual void fileChanged(const QFileInfo& file);
+			virtual void projectChanged(Project::Project *project);
 		};
 	}
 }

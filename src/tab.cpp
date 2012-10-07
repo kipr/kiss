@@ -44,6 +44,7 @@ void Tab::setFile(const QString& file)
 void Tab::setFile(const QFileInfo& file)
 {
 	m_file = file;
+	fileChanged(file);
 }
 
 const QFileInfo& Tab::file() const
@@ -59,6 +60,7 @@ bool Tab::hasFile() const
 void Tab::setProject(Kiss::Project::Project *project)
 {
 	m_project = project;
+	projectChanged(project);
 }
 
 Kiss::Project::Project *Tab::project() const
@@ -69,4 +71,12 @@ Kiss::Project::Project *Tab::project() const
 bool Tab::hasProject() const
 {
 	return m_project;
+}
+
+void Tab::fileChanged(const QFileInfo&)
+{
+}
+
+void Tab::projectChanged(Kiss::Project::Project *)
+{
 }

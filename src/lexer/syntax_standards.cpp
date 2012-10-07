@@ -7,7 +7,7 @@ QColor SyntaxStandards::defaultColor()
 
 QColor SyntaxStandards::commentColor()
 {
-	return QColor("green");
+	return QColor(0, 0xAF, 0);
 }
 
 QColor SyntaxStandards::docColor()
@@ -17,22 +17,22 @@ QColor SyntaxStandards::docColor()
 
 QColor SyntaxStandards::numberColor()
 {
-	return QColor(0x00, 0x7f, 0x7f);
+	return QColor(0, 0xAF, 0xAF);
 }
 
 QColor SyntaxStandards::keywordColor()
 {
-	return QColor("darkBlue");
+	return QColor(0, 0, 0xAF);
 }
 
 QColor SyntaxStandards::stringColor()
 {
-	return QColor("darkRed");
+	return QColor(0xFF, 0, 0);
 }
 
 QColor SyntaxStandards::preprocessorColor()
 {
-	return QColor("darkBlue");
+	return QColor(0xAF, 0, 0xAF);
 }
 
 QColor SyntaxStandards::operatorColor()

@@ -27,7 +27,7 @@
 #include "macro_string.hpp"
 #include "lexer_factory.hpp"
 #include "template_manager.hpp"
-#include "template_format.hpp"
+#include "template_dialog.hpp"
 #include "make_template_dialog.hpp"
 #include "password_dialog.hpp"
 #include "source_file_menu.hpp"
@@ -68,16 +68,13 @@
 #define SAVE_PATH "savepath"
 #define DEFAULT_EXTENSION "default_extension"
 
-#define MAX(a, b) (a > b ? a : b)
-
 using namespace Kiss;
 using namespace Kiss::Widget;
 
-SourceFile::SourceFile(MainWindow* parent)
+SourceFile::SourceFile(MainWindow *parent)
 	: QWidget(parent),
 	Tab(this, parent),
-	WorkingUnit("File"),
-	m_isNewFile(true),
+	Unit(),
 	m_debuggerEnabled(false),
 	m_runTab(0)
 {
@@ -100,8 +97,6 @@ SourceFile::SourceFile(MainWindow* parent)
 	
 	ui_find->hide();
 	
-	setFile("Untitled");
-	
 	refreshSettings();
 	
 	connect(&m_responder, SIGNAL(compileFinished(CompileResult)), SLOT(compileFinished(CompileResult)));
@@ -111,7 +106,8 @@ SourceFile::SourceFile(MainWindow* parent)
 	connect(&m_responder, SIGNAL(connectionError()), SLOT(connectionError()));
 	connect(&m_responder, SIGNAL(communicationError()), SLOT(communicationError()));
 	connect(&m_responder, SIGNAL(notAuthenticatedError()), SLOT(notAuthenticatedError()));
-	connect(&m_responder, SIGNAL(authenticationResponse(Target::Responder::AuthenticateReturn)), SLOT(authenticationResponse(Target::Responder::AuthenticateReturn)));
+	connect(&m_responder, SIGNAL(authenticationResponse(Target::Responder::AuthenticateReturn)),
+		SLOT(authenticationResponse(Target::Responder::AuthenticateReturn)));
 }
 
 SourceFile::~SourceFile()
@@ -124,13 +120,8 @@ void SourceFile::activate()
 	// mainWindow()->showErrors(topLevelUnit());
 	mainWindow()->setStatusMessage("");
 	
-	QList<Menu::Menuable *> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus()
+	mainWindow()->deactivateMenuablesExcept(mainWindow()->standardMenus()
 		<< Menu::SourceFileMenu::menuName() << Menu::TargetMenu::menuName());
-	foreach(Menu::Menuable *menu, menus) {
-		Log::ref().debug(QString("Deactivating %1").arg(menu->name()));
-		ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menu);
-		if(activatable) activatable->setActive(0);
-	}
 	
 	mainWindow()->activateMenuable(Menu::SourceFileMenu::menuName(), this);
 	mainWindow()->activateMenuable(Menu::TargetMenu::menuName(), this); 
@@ -138,18 +129,16 @@ void SourceFile::activate()
 
 bool SourceFile::beginSetup()
 {
-	// setParentUnit(hasProject() ? project() : 0);
-	if(isNewFile()) {
+	if(!hasFile()) {
 		if(!selectTemplate()) return false;
-	}
-	else setLexer(Lexer::Factory::ref().constructor(file().completeSuffix()));
+	} else setLexer(Lexer::Factory::ref().constructor(file().completeSuffix()));
 	if(!target().data()) changeTarget();
 	return target().data();
 }
 
 void SourceFile::completeSetup()
 {
-	mainWindow()->setTabName(this, QFileInfo(file()).fileName() + (hasProject() ? (QString(" (") + project()->name() + ")") : QString()));
+	updateTitle();
 	updateMargins();
 }
 
@@ -158,7 +147,7 @@ bool SourceFile::close()
 	if(!ui_editor->isModified()) return true;
 	
 	QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Unsaved Changes"),
-		tr("Save Changes to \"") + file().fileName() + tr("\" before closing?"),
+		tr("Save Changes to \"%1\" before closing?").arg(file().fileName()),
 		QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 
 	if(ret == QMessageBox::Cancel) return false;
@@ -175,8 +164,7 @@ bool SourceFile::close()
 
 bool SourceFile::save()
 {
-	if(m_isNewFile) return saveAs();
-	return fileSaveAs(file().absoluteFilePath());
+	return hasFile() ? fileSaveAs(file().absoluteFilePath()) : saveAs();
 }
 
 bool SourceFile::fileSaveAs(const QString& filePath)
@@ -192,19 +180,13 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 	
 	QFile fileHandle(file().filePath());
 	if(!fileHandle.open(QIODevice::WriteOnly)) return false;
-
 	QTextStream fileStream(&fileHandle);
 	fileStream << ui_editor->text();
 	fileHandle.close();
 	
 	ui_editor->setModified(false);
-	m_isNewFile = false;
-	mainWindow()->setTabName(this, file().fileName() + (hasProject() ? (QString(" (") + project()->name() + ")") : QString()));
 	
-	// Update the lexer to the new spec for that extension
-	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(file().completeSuffix());
-	if(!Lexer::Factory::isLexerFromConstructor((Lexer::Base *)ui_editor->lexer(), constructor))
-		setLexer(constructor);
+	updateLexer();
 	
 	return true;
 }
@@ -223,13 +205,7 @@ bool SourceFile::fileOpen(const QString& filePath)
 
 	ui_editor->setModified(false);
 
-	m_isNewFile = false;
-
-	mainWindow()->setTabName(this, file().fileName());
-
-	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(file().completeSuffix());
-	if(Lexer::Factory::isLexerFromConstructor((Lexer::Base *)ui_editor->lexer(), constructor))
-		setLexer(constructor);
+	updateLexer();
 	
 	setProject(0);
 	
@@ -241,25 +217,16 @@ bool SourceFile::memoryOpen(const QByteArray& ba, const QString& assocPath)
 	setFile(assocPath);
 	
 	ui_editor->setText(ba);
-
 	ui_editor->setModified(false);
-	m_isNewFile = false;
 
-	mainWindow()->setTabName(this, file().fileName());
-
-	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(file().completeSuffix());
-	if(Lexer::Factory::isLexerFromConstructor((Lexer::Base *)ui_editor->lexer(), constructor))
-		setLexer(constructor);
+	updateLexer();
 		
 	return true;
 }
 
-bool SourceFile::openProjectFile(Project::Project* project)
+bool SourceFile::openProjectFile(Project::Project *project)
 {
-	/* if(!node) return false;
-	bool ret = memoryOpen(QTinyNode::data(node), QTinyNode::name(node));
-	setAssociatedProject(ret ? project : 0);
-	return ret; */
+	return false;
 }
 
 void SourceFile::indentAll()
@@ -271,13 +238,15 @@ void SourceFile::indentAll()
 	setUpdatesEnabled(false);
 
 	int indentLevel = 0;
-	int blockStartStyle; ui_editor->lexer()->blockStart(&blockStartStyle);
-	int blockEndStyle; ui_editor->lexer()->blockEnd(&blockEndStyle);
+	int blockStartStyle = 0;
+	ui_editor->lexer()->blockStart(&blockStartStyle);
+	int blockEndStyle = 0;
+	ui_editor->lexer()->blockEnd(&blockEndStyle);
 	
-	int currentLine;
-	int currentIndex;
+	int currentLine = 0;
+	int currentIndex = 0;
 
-	ui_editor->getCursorPosition(&currentLine,&currentIndex);
+	ui_editor->getCursorPosition(&currentLine, &currentIndex);
 	ui_editor->append(" ");
 
 	QString outDocument;
@@ -297,9 +266,9 @@ void SourceFile::indentAll()
 				blockEndCount++;
 		}
 		//The logic here is confusing, but the idea is either a newline is
-		//	of the default style (I can't think of a case other than a comment in which it would not be)
-		//	or it is a comment, but the end of a one line comment so the next line would be a different style
-		//  also, if the indentLevel > 0, we should indent anyway
+		// of the default style (I can't think of a case other than a comment in which it would not be)
+		// or it is a comment, but the end of a one line comment so the next line would be a different style
+		// also, if the indentLevel > 0, we should indent anyway
 		if(blockEndCount > blockStartCount) {
 			indentLevel -= blockEndCount-blockStartCount;
 			blockEndCount = blockStartCount = 0;
@@ -334,47 +303,47 @@ void SourceFile::keyPressEvent(QKeyEvent *event)
 		ui_editor->getCursorPosition(&line, &index);
 		
 		switch(event->key()) {
-			case Qt::Key_A:
-				ui_editor->setCursorPosition(line, 0);
-				break;
-			case Qt::Key_E:
-				if(ui_editor->lines()-1 == line)
-					ui_editor->setCursorPosition(line, ui_editor->lineLength(line));
-				else ui_editor->setCursorPosition(line, ui_editor->lineLength(line)-1);
-				break;
-			case Qt::Key_P:
-				if(ui_editor->lineLength(line-1) < index)
-					ui_editor->setCursorPosition(line-1, ui_editor->lineLength(line-1)-1);
-				else ui_editor->setCursorPosition(line-1, index);
-				break;
-			case Qt::Key_N:
-				if(ui_editor->lineLength(line+1) < index) {
-					if(ui_editor->lines()-1 == line+1)
-						ui_editor->setCursorPosition(line+1, ui_editor->lineLength(line));
-					else
-						ui_editor->setCursorPosition(line+1, ui_editor->lineLength(line+1)-1);
-				} else ui_editor->setCursorPosition(line+1, index);
-				break;
-			case Qt::Key_B:
-				if(index - 1 < 0) ui_editor->setCursorPosition(line-1, ui_editor->lineLength(line-1)-1);
-				else ui_editor->setCursorPosition(line, index-1);
-				break;
-			case Qt::Key_F:
-				if(ui_editor->lineLength(line) < index+1)
-					ui_editor->setCursorPosition(line+1, 0);
-				else ui_editor->setCursorPosition(line, index+1);
-				break;
-			case Qt::Key_D:
-				ui_editor->setSelection(line, index, line, index+1);
-				ui_editor->removeSelectedText();
-				break;
-			case Qt::Key_K:
-				ui_editor->setSelection(line, index, line, ui_editor->lineLength(line)-1);
-				ui_editor->cut();
-				break;
-			case Qt::Key_Y:
-				ui_editor->paste();
-				break;
+		case Qt::Key_A:
+			ui_editor->setCursorPosition(line, 0);
+			break;
+		case Qt::Key_E:
+			if(ui_editor->lines()-1 == line)
+				ui_editor->setCursorPosition(line, ui_editor->lineLength(line));
+			else ui_editor->setCursorPosition(line, ui_editor->lineLength(line) - 1);
+			break;
+		case Qt::Key_P:
+			if(ui_editor->lineLength(line-1) < index)
+				ui_editor->setCursorPosition(line-1, ui_editor->lineLength(line - 1) - 1);
+			else ui_editor->setCursorPosition(line - 1, index);
+			break;
+		case Qt::Key_N:
+			if(ui_editor->lineLength(line + 1) < index) {
+				if(ui_editor->lines() - 1 == line + 1)
+					ui_editor->setCursorPosition(line + 1, ui_editor->lineLength(line));
+				else
+					ui_editor->setCursorPosition(line + 1, ui_editor->lineLength(line + 1) - 1);
+			} else ui_editor->setCursorPosition(line + 1, index);
+			break;
+		case Qt::Key_B:
+			if(index - 1 < 0) ui_editor->setCursorPosition(line - 1, ui_editor->lineLength(line - 1) - 1);
+			else ui_editor->setCursorPosition(line, index - 1);
+			break;
+		case Qt::Key_F:
+			if(ui_editor->lineLength(line) < index + 1)
+				ui_editor->setCursorPosition(line + 1, 0);
+			else ui_editor->setCursorPosition(line, index + 1);
+			break;
+		case Qt::Key_D:
+			ui_editor->setSelection(line, index, line, index + 1);
+			ui_editor->removeSelectedText();
+			break;
+		case Qt::Key_K:
+			ui_editor->setSelection(line, index, line, ui_editor->lineLength(line) - 1);
+			ui_editor->cut();
+			break;
+		case Qt::Key_Y:
+			ui_editor->paste();
+			break;
 		}
 		event->accept();
 	}
@@ -425,8 +394,8 @@ void SourceFile::refreshSettings()
 	settings.endGroup();
 
 	ui_editor->setMarginLineNumbers(0, settings.value(LINE_NUMBERS).toBool());
-	
 	ui_editor->setMarginLineNumbers(1, false);
+	
 	
 	ui_editor->setBraceMatching(settings.value(BRACE_MATCHING).toBool() ? QsciScintilla::StrictBraceMatch : 
 		QsciScintilla::NoBraceMatch);
@@ -442,13 +411,9 @@ void SourceFile::refreshSettings()
 	
 	updateMargins();
 	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
+	ui_editor->setMarginsForegroundColor(QColor(200, 200, 200));
 	
 	Menu::TargetMenu::ref().refresh();
-}
-
-bool SourceFile::isNewFile()
-{
-	return m_isNewFile;
 }
 
 void SourceFile::updateMargins()
@@ -461,7 +426,7 @@ void SourceFile::updateMargins()
 			font.setPointSize(font.pointSize() + getZoom());
 			charWidth = QFontMetrics(font).width("0");
 		}
-		size = charWidth + charWidth / 2 + charWidth * (int)ceil(log10(MAX(ui_editor->lines(), 10) + 1));
+		size = charWidth + charWidth / 2 + charWidth * (int)ceil(log10(std::max(ui_editor->lines(), 10) + 1));
 	}
 	ui_editor->setMarginWidth(0, size);
 	ui_editor->setMarginWidth(1, 16);
@@ -501,16 +466,24 @@ SourceFile *SourceFile::newProjectFile(MainWindow* mainWindow, Project::Project*
 	return sourceFile;
 }
 
-void SourceFile::zoomIn() { ui_editor->zoomIn(); updateMargins(); }
-void SourceFile::zoomOut() { ui_editor->zoomOut(); updateMargins(); }
-void SourceFile::zoomReset() { ui_editor->zoomTo(0); updateMargins(); }
-
-bool SourceFile::saveAs()
+void SourceFile::zoomIn()
 {
-	return hasProject() ? saveAsProject() : saveAsFile();
+	ui_editor->zoomIn();
+	updateMargins();
 }
 
-bool SourceFile::saveAsFile()
+void SourceFile::zoomOut()
+{
+	ui_editor->zoomOut(); updateMargins();
+}
+
+void SourceFile::zoomReset()
+{
+	ui_editor->zoomTo(0);
+	updateMargins();
+}
+
+bool SourceFile::saveAs()
 {
 	QSettings settings;
 	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
@@ -521,7 +494,7 @@ bool SourceFile::saveAsFile()
 	int i = exts.indexOf(reg);
 	if(i != -1) exts.swap(0, i);
 	
-	QString filePath = QFileDialog::getSaveFileName(mainWindow(), "Save File", savePath, 
+	QString filePath = QFileDialog::getSaveFileName(mainWindow(), tr("Save File"), savePath, 
 		exts.join(";;") + (exts.size() < 1 ? "" : ";;") + "All Files (*)");
 	if(filePath.isEmpty()) return false;
 
@@ -536,8 +509,7 @@ bool SourceFile::saveAsFile()
 	const QString fileName = fileInfo.fileName();
 	/* Saves the file with the new associatedFileName and updates the tabWidget label */
 	if(fileSaveAs(fileInfo.absoluteFilePath())) {
-		mainWindow()->setTabName(this, fileName);
-		mainWindow()->setStatusMessage("Saved file \"" + fileName + "\"");
+		mainWindow()->setStatusMessage(tr("Saved file \"%1\"").arg(fileName));
 	} else QMessageBox::critical(mainWindow(), "Error", "Error: Could not write file " + fileName);
 
 	QStringList current = settings.value(RECENTS).toStringList().mid(0, 5);
@@ -548,13 +520,9 @@ bool SourceFile::saveAsFile()
 	return true;
 }
 
-bool SourceFile::saveAsProject()
-{
-}
-
 void SourceFile::sourceModified(bool)
 {
-	mainWindow()->setTabName(this, "* " + file().fileName() + (hasProject() ? (QString(" (") + project()->name() + ")") : QString()));
+	updateTitle();
 }
 
 const bool SourceFile::download()
@@ -641,27 +609,7 @@ void SourceFile::requestFile()
 
 void SourceFile::makeTemplate()
 {
-	save();
-	
-	MakeTemplateDialog makeTemplateDialog(this);
-	makeTemplateDialog.setName(file().baseName());
-	makeTemplateDialog.setTypes(TemplateManager::ref().types());
-	makeTemplateDialog.setExtension(file().completeSuffix());
-	
-	if(makeTemplateDialog.exec() == QDialog::Rejected) return;
-	
-	QString output;
-	QTextStream outputStream(&output);
-	
-	// Write the template with metadata to output
-	TemplateFormatWriter writer(&outputStream);
-	writer.setLexerName(makeTemplateDialog.extension());
-	writer.setContent(ui_editor->text());
-	writer.update();
-	
-	qDebug() << output;
-	
-	TemplateManager::ref().addUserTemplate(makeTemplateDialog.type(), makeTemplateDialog.name(), output);
+
 }
 
 void SourceFile::toggleBreakpoint(bool checked)
@@ -736,7 +684,7 @@ void SourceFile::authenticationResponse(const Target::Responder::AuthenticateRet
 	}
 	
 	if(response == Target::Responder::AuthWillNotAccept) {
-		mainWindow()->setStatusMessage(target()->displayName() + tr(" told KISS not to try authenticating again."));
+		mainWindow()->setStatusMessage(target()->displayName() + tr(" told KISS to not try authenticating again."));
 		return;
 	}
 	
@@ -760,9 +708,8 @@ void SourceFile::setLexer(Lexer::Constructor *constructor)
 	updateMargins();
 }
 
-void SourceFile::dropEvent(QDropEvent *event)
+void SourceFile::dropEvent(QDropEvent *)
 {
-	Q_UNUSED(event);
 }
 
 void SourceFile::clearProblems()
@@ -790,42 +737,56 @@ void SourceFile::updateErrors(const Compiler::OutputList& compileResult)
 {
 	clearProblems();
 	
-	// const QStringList& errors = compileResult.output(DEFAULT_ERROR_KEY);
-	// const QStringList& warnings = compileResult.output(DEFAULT_WARNING_KEY);
+	// mainWindow()->setOutputList(compileResult);
 	
 	// markProblems(errors, warnings);
 }
 
 const bool SourceFile::selectTemplate()
 {
-	TemplateDialog tDialog(this);
+	Dialog::Template tDialog(mainWindow()->templateManager(), this);
 	if(tDialog.exec() == QDialog::Rejected) return false;
 
-	QByteArray templateData = tDialog.templateData();
-	Lexer::Constructor* constructor = 0;
-
-	QBuffer buffer(&templateData);
-	buffer.open(QIODevice::ReadOnly);
-	QTextStream stream(&buffer);
-	TemplateFormatReader templateReader(&stream);
-
-	if(templateReader.hasLexerName()) {
-		QString lex = templateReader.lexerName();
-		qDebug() << "Template Lexer specified:" << lex;
-		constructor = Lexer::Factory::ref().constructor(lex);
-		m_templateExt = lex;
+	Template::File tFile = tDialog.file();
+	
+	Lexer::Constructor *constructor = 0;
+	if(tFile.hasLexer()) {
+		constructor = Lexer::Factory::ref().constructor(tFile.lexer());
+		m_templateExt = tFile.lexer();
 	}
 	
-	ui_editor->setText(templateReader.content());
-	
-	Log::ref().info("Template selected");
-	
-	buffer.close();
+	ui_editor->setText(QString(tFile.data()));
 	
 	// m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
 	
 	if(constructor) setLexer(constructor);
+	
 	refreshSettings();
 	
 	return true;
+}
+
+void SourceFile::fileChanged(const QFileInfo& file)
+{
+	setName(file.fileName());
+	updateTitle();
+}
+
+void SourceFile::projectChanged(Project::Project *project)
+{
+	Unit::setParent(project);
+}
+
+void SourceFile::updateTitle()
+{
+	mainWindow()->setTabName(this, (ui_editor->isModified() ? "* " : "") + (hasFile() ? fullName() : tr("Untitled")));
+}
+
+void SourceFile::updateLexer()
+{
+	// Update the lexer to the new spec for that extension
+	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(file().completeSuffix());
+	if(!Lexer::Factory::isLexerFromConstructor((Lexer::Base *)ui_editor->lexer(), constructor)) {
+		setLexer(constructor);
+	}
 }

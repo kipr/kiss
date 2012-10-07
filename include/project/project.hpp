@@ -1,6 +1,8 @@
 #ifndef _PROJECT_HPP_
 #define _PROJECT_HPP_
 
+#include "unit.hpp"
+
 #include <QMap>
 #include <QString>
 #include <QStringList>
@@ -9,12 +11,10 @@ namespace Kiss
 {
 	namespace Project
 	{
-		class Project
+		class Project : public Unit
 		{
 		public:
 			typedef QMap<QString, QString> Settings;
-			
-			QString name() const;
 			
 			bool addFile(const QString& path);
 			bool removeFile(const QString& path);
@@ -30,6 +30,7 @@ namespace Kiss
 			const QString& location() const;
 	
 			bool save();
+			static Project *create(const QString& location);
 			static Project *load(const QString& location);
 			static Project *loadSingleFile(const QString& location);
 	

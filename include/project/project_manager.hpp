@@ -24,8 +24,8 @@ namespace Kiss
 			
 			ProjectPtrList projects() const;
 		signals:
-			void projectOpened(Project *project);
-			void projectClosed(Project *project);
+			void projectOpened(Kiss::Project::Project *project);
+			void projectClosed(Kiss::Project::Project *project);
 			
 		private:
 			ProjectPtrList m_projects;

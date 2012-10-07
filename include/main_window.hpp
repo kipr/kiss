@@ -28,6 +28,7 @@
 
 #include "menu_manager.hpp"
 #include "project_manager.hpp"
+#include "project_model.hpp"
 #include "main_window_menu.hpp"
 
 #include <Qsci/qscilexercpp.h>
@@ -42,6 +43,11 @@ class QListWidgetItem;
 
 namespace Kiss
 {
+	namespace Template
+	{
+		class Manager;
+	}
+	
 	namespace Widget
 	{
 		class SourceFile;
@@ -67,9 +73,9 @@ namespace Kiss
 			bool openFile(const QString& filePath);
 			bool memoryOpen(const QByteArray& ba, const QString& assocPath);
 			bool openProject(const QString& filePath);
-			bool newProject(const QString& filePath);
+			bool newProject(const QString& folderPath);
 
-			void initMenus(Tab* tab);
+			void initMenus(Tab *tab);
 
 			void initMenus();
 
@@ -142,10 +148,13 @@ namespace Kiss
 
 			Menu::Manager *menuManager();
 			Menu::Menuable* menuable(const QString& name);
-			QList<Menu::Menuable*> menuablesExcept(const QStringList& name);
+			QList<Menu::Menuable*> menuablesExcept(const QStringList& names);
+			void deactivateMenuablesExcept(const QStringList& names);
 			QList<Menu::Menuable*> menuables();
 			void activateMenuable(const QString& name, QObject *on);
 			QStringList standardMenus() const;
+			
+			Template::Manager *templateManager() const;
 
 			void restart();
 
@@ -158,6 +167,8 @@ namespace Kiss
 			friend class Menu::MainWindowMenu;
 
 		public slots:
+			void importTemplatePack();
+			void newTemplatePack();
 			Project::Project *newProject();
 			void newFile();
 			void open();
@@ -198,8 +209,8 @@ namespace Kiss
 			void projectClicked(const QModelIndex& index);
 			void projectFileClicked(const QModelIndex& index);
 
-			void projectOpened(Project::Project *project);
-			void projectClosed(Project::Project *project);
+			void projectOpened(Kiss::Project::Project *project);
+			void projectClosed(Kiss::Project::Project *project);
 
 		private:
 			Tab *m_currentTab;
@@ -207,10 +218,11 @@ namespace Kiss
 			ThemeSettingsDialog m_themeSettingsDialog;
 			QMap<QWidget *, Tab *> m_lookup;
 			Menu::Manager m_menuManager;
+			Template::Manager *m_templateManager;
 			Project::Manager m_projectManager;
 			QList<Menu::Menuable *> m_menuables;
 
-			// ProjectsModel m_projectsModel;
+			Project::Model m_projectsModel;
 
 			void addLookup(Tab *tab);
 			void removeLookup(QWidget* widget);

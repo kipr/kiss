@@ -70,11 +70,7 @@ WebTab::~WebTab()
 
 void WebTab::activate()
 {
-	QList<Menu::Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
-	foreach(Menu::Menuable* menu, menus) {
-		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
-		if(activatable) activatable->setActive(0);
-	}
+	mainWindow()->deactivateMenuablesExcept(mainWindow()->standardMenus());
 	Menu::WebTabMenu *webTabMenu = dynamic_cast<Menu::WebTabMenu *>(mainWindow()->menuable(Menu::WebTabMenu::menuName()));
 	if(webTabMenu) webTabMenu->setActive(this);
 
@@ -175,8 +171,16 @@ void WebTab::on_ui_webView_loadFinished(bool ok)
 }
 
 void WebTab::openInBrowser() { QDesktopServices::openUrl(ui_webView->url()); }
-void WebTab::find() { ui_frameFind->show(); }
-void WebTab::refresh() { ui_webView->reload(); }
+
+void WebTab::find()
+{
+	ui_frameFind->show();
+}
+
+void WebTab::refresh()
+{
+	ui_webView->reload();
+}
 
 void WebTab::refreshSettings() {}
 

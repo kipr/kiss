@@ -31,6 +31,9 @@
 #include "log.hpp"
 #include "lexer_factory.hpp" // Used to query supported extensions
 #include "new_project_wizard.hpp"
+#include "template_manager.hpp"
+#include "template_tab.hpp"
+#include "template_pack.hpp"
 
 #include <QToolTip>
 #include <QMessageBox>
@@ -63,16 +66,21 @@ using namespace Kiss::Widget;
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent),
-	m_currentTab(0)
+	m_currentTab(0),
+	m_templateManager(new Template::Manager)
 {
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	
+	m_templateManager->loadDefaultPacks();
+	
 	setupUi(this);
-/*	m_projectsModel.setProjectManager(&m_projectManager);
+	
 	ui_projects->setModel(&m_projectsModel);
-	ui_projects->viewport()->setAcceptDrops(true);
-	ui_projects->setDropIndicatorShown(true);
-	ui_projects->setDragDropMode(QAbstractItemView::DropOnly); */
+	
+	
+	// ui_projects->viewport()->setAcceptDrops(true);
+	// ui_projects->setDropIndicatorShown(true);
+	// ui_projects->setDragDropMode(QAbstractItemView::DropOnly);
 	
 	// ui_projects->hide(); // Disabled for now
 	
@@ -87,8 +95,8 @@ MainWindow::MainWindow(QWidget *parent)
 	//connect(ui_projects, SIGNAL(clicked(const QModelIndex&)), SLOT(projectFileClicked(const QModelIndex&)));
 	connect(ui_projects, SIGNAL(doubleClicked(const QModelIndex&)), SLOT(projectClicked(const QModelIndex&)));
 	
-	connect(&m_projectManager, SIGNAL(projectOpened(Project*)), SLOT(projectOpened(Project*)));
-	connect(&m_projectManager, SIGNAL(projectClosed(Project*)), SLOT(projectClosed(Project*)));
+	connect(&m_projectManager, SIGNAL(projectOpened(Kiss::Project::Project *)), SLOT(projectOpened(Kiss::Project::Project *)));
+	connect(&m_projectManager, SIGNAL(projectClosed(Kiss::Project::Project *)), SLOT(projectClosed(Kiss::Project::Project *)));
 	
 	ui_projectFrame->setVisible(false);
 	
@@ -105,24 +113,53 @@ MainWindow::~MainWindow()
 	delete ui_menubar; ui_menubar = 0;
 	
 	while(ui_tabWidget->count() > 0) deleteTab(0);
+	
+	delete m_templateManager;
+}
+
+void MainWindow::importTemplatePack()
+{
+	QSettings settings;
+	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
+	QStringList filters;
+	filters << "Template Pack (*.pack)";
+	filters.removeDuplicates();
+	QString filePath = QFileDialog::getOpenFileName(this, tr("Open"), openPath, filters.join(";;") + ";;All Files (*)");
+	
+	if(filePath.isEmpty()) return;
+	
+	Template::Pack *pack = Template::Pack::load(filePath);
+	if(!pack) {
+		Dialog::Message::showError(this, "simple_error_with_action", QStringList()
+			<< tr("Failed to open %1 for reading.").arg(filePath)
+			<< tr("This probably means that the file is malformed.").arg(filePath)
+			<< tr("Aborting import."));
+		return;
+	}
+	m_templateManager->addDefaultPack(pack);
+	m_templateManager->addPack(pack);
+}
+
+void MainWindow::newTemplatePack()
+{
+	addTab(new TemplateTab(Template::Pack::create(), this));
 }
 
 Project::Project* MainWindow::newProject()
 {
-	/* NewProjectWizard wizard(this);
+	Wizard::NewProject wizard(this);
 
 	if(wizard.exec() == QDialog::Rejected) return 0;
 	const QString& saveLocation = wizard.saveLocation();
 	
-	if(QFile::exists(saveLocation)) {
+	if(QDir(saveLocation).exists()) {
 		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
 			tr("Overwrite ") + saveLocation + "?",
 			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-			
 		if(ret == QMessageBox::No) return 0;
 	}
 	
-	Project* project = Project::create(saveLocation);
+	Project::Project *project = Project::Project::create(saveLocation);
 	if(!project) {
 		Dialog::Message::showError(this, "simple_error", QStringList() <<
 			tr("Failed to create project.") <<
@@ -131,8 +168,7 @@ Project::Project* MainWindow::newProject()
 	}
 
 	m_projectManager.openProject(project);
-	return project; */
-	return 0;
+	return project;
 }
 
 void MainWindow::newFile()
@@ -217,13 +253,15 @@ bool MainWindow::openProject(const QString& filePath)
 	return project;
 }
 
-bool MainWindow::newProject(const QString& filePath)
+bool MainWindow::newProject(const QString& folderPath)
 {
-	/* if(!QDir().mkpath(QFileInfo(filePath).path())) return false;
-	Project* project = Project::create(filePath);
-	Log::ref().info(QString("Creating project at %1").arg(filePath));
-	if(project) m_projectManager.openProject(project);
-	return project; */
+	if(!QDir().mkpath(folderPath)) return false;
+	Project::Project *project = Project::Project::create(folderPath);
+	if(!project) return false;
+	
+	m_projectManager.openProject(project);
+	qDebug() << "Creating project at" << folderPath;
+	return project;
 }
 
 
@@ -242,6 +280,10 @@ void MainWindow::initMenus()
 	SourceFileMenu* sourceFileMenu = new SourceFileMenu(this);
 	m_menuManager.registerMenus(sourceFileMenu);
 	m_menuables.append(sourceFileMenu);
+	
+	TemplatePackMenu* templatePackMenu = new TemplatePackMenu(this);
+	m_menuManager.registerMenus(templatePackMenu);
+	m_menuables.append(templatePackMenu);
 	
 	MainWindowMenu* mainWindowMenu = new MainWindowMenu(this);
 	m_menuManager.registerMenus(mainWindowMenu);
@@ -282,10 +324,25 @@ void MainWindow::initMenus()
 	ui_tabWidget->setCornerWidget(cornerButton);
 }
 
-void MainWindow::setTitle(const QString& title) { setWindowTitle(tr(TITLE) + (title.isEmpty() ? "" : (" - " + title))); }
-void MainWindow::setTabName(QWidget* widget, const QString& string) { ui_tabWidget->setTabText(ui_tabWidget->indexOf(widget), string); }
-void MainWindow::setTabIcon(QWidget* widget, const QIcon& icon) { ui_tabWidget->setTabIcon(ui_tabWidget->indexOf(widget), icon); }
-void MainWindow::setStatusMessage(const QString& message, int time) { ui_statusbar->showMessage(message, time); }
+void MainWindow::setTitle(const QString& title)
+{
+	setWindowTitle(tr(TITLE) + (title.isEmpty() ? "" : (" - " + title)));
+}
+
+void MainWindow::setTabName(QWidget *widget, const QString& string)
+{
+	ui_tabWidget->setTabText(ui_tabWidget->indexOf(widget), string);
+}
+
+void MainWindow::setTabIcon(QWidget *widget, const QIcon& icon)
+{
+	ui_tabWidget->setTabIcon(ui_tabWidget->indexOf(widget), icon);
+}
+
+void MainWindow::setStatusMessage(const QString& message, int time)
+{
+	ui_statusbar->showMessage(message, time);
+}
 
 void MainWindow::hideErrors()
 {
@@ -373,13 +430,17 @@ void MainWindow::closeAllOthers(Tab *tab)
 	}
 }
 
-void MainWindow::refreshMenus() { /* initMenus(dynamic_cast<Tab*>(ui_tabWidget->currentWidget())); */ }
+void MainWindow::refreshMenus()
+{
+	
+}
 
 void MainWindow::open()
 {
 	QSettings settings;
 	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
+	filters << "Template Pack (*.pack)";
 	filters << "KISS Project (*.kissproj)";
 	filters.removeDuplicates();
 	QString filePath = QFileDialog::getOpenFileName(this, tr("Open"), openPath, filters.join(";;") + ";;All Files (*)");
@@ -389,7 +450,17 @@ void MainWindow::open()
 	QFileInfo fileInfo(filePath);
 	settings.setValue(OPEN_PATH, fileInfo.absolutePath());
 
-	if(fileInfo.completeSuffix() == "kissproj") openProject(filePath); else openFile(filePath);
+	if(fileInfo.completeSuffix() == "pack") {
+		addTab(new TemplateTab(filePath, this));
+		return;
+	}
+
+	if(fileInfo.completeSuffix() == "kissproj") {
+		openProject(filePath);
+		return;
+	}
+	
+	openFile(filePath);
 }
 
 void MainWindow::openProject()
@@ -490,7 +561,7 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 
 void MainWindow::on_ui_addFile_clicked()
 {
-	/*Project* project = activeProject();
+	Project::Project *project = activeProject();
 	if(!project) {
 		Dialog::Message::showError(this, "simple_error", QStringList() << 
 			tr("Unable to determine active project.") <<
@@ -506,8 +577,7 @@ void MainWindow::on_ui_addFile_clicked()
 
 void MainWindow::on_ui_removeFile_clicked()
 {
-	/*
-	foreach(const QModelIndex& index, ui_projects->selectionModel()->selectedRows()) {
+	/* foreach(const QModelIndex& index, ui_projects->selectionModel()->selectedRows()) {
 		const int type = m_projectsModel.indexType(index);
 		Project::Project* project = m_projectsModel.indexToProject(index);
 		if(type == ProjectsModel::FileType) {
@@ -525,8 +595,7 @@ void MainWindow::on_ui_removeFile_clicked()
 			project->sync();
 			m_projectManager.closeProject(project);
 		}
-	}
-	// ui_projects->expandAll();*/
+	} */
 }
 
 void MainWindow::projectAddNew()
@@ -655,12 +724,14 @@ void MainWindow::projectFileClicked(const QModelIndex& index)
 void MainWindow::projectOpened(Project::Project *project)
 {
 	Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
+	m_projectsModel.addProject(project);
 	if(manager) ui_projectFrame->setVisible(manager->projects().size());
 }
 
 void MainWindow::projectClosed(Project::Project *project)
 {
 	closeProjectTabs(project);
+	m_projectsModel.removeProject(project);
 	Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
 	if(manager) ui_projectFrame->setVisible(manager->projects().size());
 }
@@ -701,6 +772,14 @@ QList<Menu::Menuable *> MainWindow::menuablesExcept(const QStringList& names)
 	return ret;
 }
 
+void MainWindow::deactivateMenuablesExcept(const QStringList& names)
+{
+	foreach(Menu::Menuable *menu, menuablesExcept(names)) {
+		ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menu);
+		if(activatable) activatable->setActive(0);
+	}
+}
+
 QList<Menu::Menuable *> MainWindow::menuables()
 {
 	return m_menuables;
@@ -724,9 +803,9 @@ QStringList MainWindow::standardMenus() const
 	;
 }
 
-// TODO: NYI
-void MainWindow::restart()
+Template::Manager *MainWindow::templateManager() const
 {
+	return m_templateManager;
 }
 
 QList<QObject*> MainWindow::tabs(const QString& name)
@@ -772,6 +851,6 @@ Project::Project* MainWindow::activeProject() const
 	
 	const QModelIndexList& list = ui_projects->selectionModel()->selectedRows();
 	if(m_currentTab && m_currentTab->hasProject()) return m_currentTab->project();
-	// return list.size() > 0 ? m_projectsModel.indexToProject(list[0]) : 0;
+	return list.size() > 0 ? m_projectsModel.indexToProject(list[0]) : 0;
 	return 0;
 }

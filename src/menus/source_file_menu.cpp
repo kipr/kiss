@@ -30,7 +30,7 @@
 using namespace Kiss;
 using namespace Kiss::Menu;
 
-SourceFileMenu::SourceFileMenu(Widget::MainWindow* mainWindow)
+SourceFileMenu::SourceFileMenu(Widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName())
 {
 	const QIcon disk(ResourceHelper::ref().lookup("disk"));
