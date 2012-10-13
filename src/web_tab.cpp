@@ -77,7 +77,10 @@ void WebTab::activate()
 	emit updateActivatable();
 }
 
-bool WebTab::beginSetup() { return true; }
+bool WebTab::beginSetup()
+{
+	return true;
+}
 
 void WebTab::completeSetup()
 {
@@ -105,14 +108,45 @@ void WebTab::updateUrl(const QUrl& url)
 	mainWindow()->setStatusMessage(tr("Loaded ") + url.toString(), 5000);
 }
 
-void WebTab::on_actionGo_triggered() { ui_webView->load(QUrl::fromUserInput(ui_urlBar->text())); }
-void WebTab::copy() { ui_webView->triggerPageAction(QWebPage::Copy); }
-void WebTab::cut() { ui_webView->triggerPageAction(QWebPage::Cut); }
-void WebTab::paste() { ui_webView->triggerPageAction(QWebPage::Paste); }
-void WebTab::back() { ui_webView->triggerPageAction(QWebPage::Back); }
-void WebTab::forward() { ui_webView->triggerPageAction(QWebPage::Forward); }
-void WebTab::go() { on_actionGo_triggered(); }
-bool WebTab::close() { return true; }
+void WebTab::on_actionGo_triggered()
+{
+	ui_webView->load(QUrl::fromUserInput(ui_urlBar->text()));
+}
+
+void WebTab::copy()
+{
+	ui_webView->triggerPageAction(QWebPage::Copy);
+}
+
+void WebTab::cut()
+{
+	ui_webView->triggerPageAction(QWebPage::Cut);
+}
+
+void WebTab::paste()
+{
+	ui_webView->triggerPageAction(QWebPage::Paste);
+}
+
+void WebTab::back()
+{
+	ui_webView->triggerPageAction(QWebPage::Back);
+}
+
+void WebTab::forward()
+{
+	ui_webView->triggerPageAction(QWebPage::Forward);
+}
+
+void WebTab::go()
+{
+	on_actionGo_triggered();
+}
+
+bool WebTab::close()
+{
+	return true;
+}
 
 void WebTab::load(QString url, bool hideUrl)
 {
@@ -140,8 +174,15 @@ QWebView* WebTab::webView()
 	return ui_webView;
 }
 
-void WebTab::on_ui_prevFind_clicked() { ui_webView->findText(ui_find->text(), QWebPage::FindBackward); }
-void WebTab::on_ui_nextFind_clicked() { ui_webView->findText(ui_find->text()); }
+void WebTab::on_ui_prevFind_clicked()
+{
+	ui_webView->findText(ui_find->text(), QWebPage::FindBackward);
+}
+
+void WebTab::on_ui_nextFind_clicked()
+{
+	ui_webView->findText(ui_find->text());
+}
 
 void WebTab::on_ui_webView_loadFinished(bool ok)
 {
@@ -170,7 +211,10 @@ void WebTab::on_ui_webView_loadFinished(bool ok)
 	actionOpenInBrowser->setEnabled(false);
 }
 
-void WebTab::openInBrowser() { QDesktopServices::openUrl(ui_webView->url()); }
+void WebTab::openInBrowser()
+{
+	QDesktopServices::openUrl(ui_webView->url());
+}
 
 void WebTab::find()
 {
@@ -182,7 +226,10 @@ void WebTab::refresh()
 	ui_webView->reload();
 }
 
-void WebTab::refreshSettings() {}
+void WebTab::refreshSettings()
+{
+	
+}
 
 void WebTab::linkClicked(const QUrl& url)
 {

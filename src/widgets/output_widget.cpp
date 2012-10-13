@@ -3,6 +3,7 @@
 
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
+#include <QFileInfo>
 #include <QDebug>
 
 class OutputHighlighter : public QSyntaxHighlighter
@@ -102,6 +103,7 @@ OutputWidget::OutputWidget(QWidget *parent)
 	new OutputHighlighter(document());
 	QFont font("Monospace");
 	font.setStyleHint(QFont::TypeWriter);
+	font.setPointSize(14);
 	setFont(font);
 	setReadOnly(true);
 }
@@ -111,14 +113,25 @@ void OutputWidget::setOutputList(const Compiler::OutputList& outputList)
 	m_outputList = outputList;
 	QString out;
 	foreach(const Compiler::Output& output, outputList) {
+		QString errorString = processString(output.error().trimmed());
+		QString outputString = processString(output.output().trimmed());
+		
+		if(errorString.isEmpty() && outputString.isEmpty()) continue;
+		
 		out += "<p>";
-		if(outputList.size() > 1 && !output.files().isEmpty()) {
-			out += "<b>" + output.files().join(", ") + ":</b> <br />";
+		QStringList transformedFiles;
+		foreach(const QString& file, output.files()) {
+			transformedFiles << QFileInfo(file).fileName();
 		}
-		out += processString(output.error().trimmed()) + "\n";
-		out += processString(output.output().trimmed()) + "\n";
+		if(outputList.size() > 1 && !transformedFiles.isEmpty()) {
+			out += "<b>" + transformedFiles.join(", ") + ":</b> <br />";
+		}
+		if(!errorString.isEmpty()) out += "<pre>" + errorString + "\n</pre>";
+		if(!outputString.isEmpty()) out += "<pre>" + outputString + "</pre>\n";
 		out += "</p>";
 	}
+	out = out.trimmed();
+	setVisible(!out.isEmpty());
 	setHtml(out);
 }
 
@@ -130,12 +143,13 @@ const Compiler::OutputList& OutputWidget::outputList() const
 QString OutputWidget::processString(const QString& string)
 {
 	QString ret = string;
+	ret.replace("<", "&lt;");
+	ret.replace(">", "&gt;");
 	QRegExp rx("([a-zA-Z]:)?(/[a-zA-Z0-9_.-]+)*([a-zA-Z0-9_-]+\\.[a-zA-Z]+)/?:");
-	int count = 0;
 	int pos = 0;
 	while ((pos = rx.indexIn(ret, pos)) != -1) {
 		const QString path = ret.mid(pos, rx.matchedLength() - 1);
-		const QString html = "<a href=\"kiss://" + path + "\">" + path + "</a>";
+		const QString html = "<a href=\"kiss://" + path + "\">" + QFileInfo(path).fileName() + "</a>";
 		ret.replace(pos, path.length(), html);
 		pos += html.length();
 	}

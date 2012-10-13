@@ -33,11 +33,14 @@ namespace Kiss
 			
 		private slots:
 			void selectionChanged(const QItemSelection& selection);
+			void removeSelectedPack();
 			
 		private:
 			Kiss::Template::Manager *m_manager;
 			Kiss::Template::Model *m_model;
 			Ui::TemplateDialog *ui;
+			
+			QString m_helpText;
 		};
 	}
 }

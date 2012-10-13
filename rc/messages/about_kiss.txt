@@ -10,6 +10,7 @@ KISS is a project of the KISS Institute for Practical Robotics <br /> <br />
 
 <b>Contributors:</b> <br />
 Braden McDorman <br />
+Nafis Zaman <br />
 <br />
 <b>Previous Contributors:</b> <br />
 Jorge Villatoro <br />

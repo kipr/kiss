@@ -57,7 +57,7 @@ private:
 	QStringList keys;
 };
 
-ProjectSettings::ProjectSettings(Project::Project *project, MainWindow *mainWindow)
+ProjectSettings::ProjectSettings(const Project::ProjectPtr& project, MainWindow *mainWindow)
 	: QWidget(mainWindow),
 	Tab(this, mainWindow),
 	m_block(false)

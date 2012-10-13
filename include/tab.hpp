@@ -27,16 +27,12 @@
 #include <QFileInfo>
 
 #include "target.hpp"
+#include "project.hpp"
 
 #define TABBED_WIDGET_PROPERTY "_kiss_tabbed_"
 
 namespace Kiss
 {
-	namespace Project
-	{
-		class Project;
-	}
-	
 	namespace Widget
 	{
 		class MainWindow;
@@ -82,20 +78,20 @@ namespace Kiss
 			const QFileInfo& file() const;
 			bool hasFile() const;
 
-			void setProject(Kiss::Project::Project *project);
-			Kiss::Project::Project *project() const;
+			void setProject(const Kiss::Project::ProjectPtr& project);
+			const Kiss::Project::ProjectPtr& project() const;
 			bool hasProject() const;
 			
 		protected:
 			virtual void fileChanged(const QFileInfo& file);
-			virtual void projectChanged(Kiss::Project::Project *project);
+			virtual void projectChanged(const Kiss::Project::ProjectPtr& project);
 			
 		private:
 			QWidget *m_widget;
 			MainWindow *m_mainWindow;
 			QFileInfo m_file;
 
-			Kiss::Project::Project *m_project;
+			Kiss::Project::ProjectPtr m_project;
 		};
 	}
 }

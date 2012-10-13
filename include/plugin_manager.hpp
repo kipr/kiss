@@ -68,13 +68,19 @@ namespace Kiss
 			//! Get plugin instance, loads if not found
 			T *get(const QString& name)
 			{
-				if(!m_plugins.contains(name)) 
+				if(!m_plugins.contains(name)) {
 					if(!loadPlugin(name)) return 0;
+				}
 				return qobject_cast<T*>(m_plugins[name]->instance());
 			}
 
 			//! Unloads all plugins
-			void unloadAll() { while (!m_plugins.isEmpty()) unloadPlugin(m_plugins.begin().key()); }
+			void unloadAll()
+			{
+				while(!m_plugins.isEmpty()) {
+					unloadPlugin(m_plugins.begin().key());
+				}
+			}
 
 			//! Loads plugin by given name
 			bool loadPlugin(const QString& name)
@@ -85,23 +91,21 @@ namespace Kiss
 				QDir pluginPath(QDir::currentPath());
 				pluginPath.cd(getExpectedLocation(name));
 
-
 				const QString& pluginPathString = pluginPath.absoluteFilePath("lib" + name + "." + OS_LIB_EXT);
-				qDebug() << "\tPath:" << pluginPathString;
 
 				plugin->setFileName(pluginPathString);
 				if(!plugin->load()) {
-					qWarning("PluginManager::loadPlugin: %s", qPrintable(plugin->errorString()));
+					qWarning() << "PluginManager::loadPlugin:" << plugin->errorString();
 					delete plugin;
 					return false;
 				}
 
 				T *instance = qobject_cast<T*>(plugin->instance());
 				if(!instance) {
-					qWarning("PluginManager::loadPlugin: %s", qPrintable(plugin->errorString()));
+					qWarning() << "PluginManager::loadPlugin:" << plugin->errorString();
 					plugin->unload();
 					delete plugin;
-					qWarning("PluginManager::loadPlugin: Plugin \"%s\" failed qobject_cast to \"%s\"", qPrintable(name), typeid(T).name());
+					qWarning() << "PluginManager::loadPlugin: Plugin \"" << name << "\" failed qobject_cast to \"" << typeid(T).name() << "\"";
 					return false;
 				}
 

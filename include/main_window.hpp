@@ -29,6 +29,7 @@
 #include "menu_manager.hpp"
 #include "project_manager.hpp"
 #include "project_model.hpp"
+#include "output_widget.hpp"
 #include "main_window_menu.hpp"
 
 #include <Qsci/qscilexercpp.h>
@@ -70,7 +71,7 @@ namespace Kiss
 			 * Opens a file with SourceFile tab
 			 * \param filePath Path to file
 			 */
-			bool openFile(const QString& filePath);
+			bool openFile(const QString& filePath, const Project::ProjectPtr& project = Project::ProjectPtr());
 			bool memoryOpen(const QByteArray& ba, const QString& assocPath);
 			bool openProject(const QString& filePath);
 			bool newProject(const QString& folderPath);
@@ -114,16 +115,16 @@ namespace Kiss
 			 * Adds given tab window. Calls tab setup functions.
 			 * \param tab Tab to add
 			 */
-			void addTab(Tab* tab);
+			void addTab(Tab *tab);
 
-			void moveToTab(Tab* tab);
+			void moveToTab(Tab *tab);
 
 			QTabWidget* tabWidget();
 
 			QList<Tab *> tabs();
 
 			template<typename T>
-			QList<T*> tabs() {
+			QList<T *> tabs() {
 				QList<T *> ret;
 				QList<Tab *> all = tabs();
 				foreach(Tab* tab, all) {
@@ -137,7 +138,7 @@ namespace Kiss
 			 * Closes all but given tab 
 			 * \param tab Tab to keep open
 			 */
-			void closeAllOthers(Tab* tab);
+			void closeAllOthers(Tab *tab);
 
 			/*! Reinits menus for current tab */
 			void refreshMenus();
@@ -147,10 +148,10 @@ namespace Kiss
 			Project::Manager *projectManager();
 
 			Menu::Manager *menuManager();
-			Menu::Menuable* menuable(const QString& name);
-			QList<Menu::Menuable*> menuablesExcept(const QStringList& names);
+			Menu::Menuable *menuable(const QString& name);
+			QList<Menu::Menuable *> menuablesExcept(const QStringList& names);
 			void deactivateMenuablesExcept(const QStringList& names);
-			QList<Menu::Menuable*> menuables();
+			QList<Menu::Menuable *> menuables();
 			void activateMenuable(const QString& name, QObject *on);
 			QStringList standardMenus() const;
 			
@@ -162,25 +163,27 @@ namespace Kiss
 			bool canGoPrevious();
 			bool canGoNext();
 
-			Project::Project *activeProject() const;
+			Project::ProjectPtr activeProject() const;
 
 			friend class Menu::MainWindowMenu;
 
 		public slots:
 			void importTemplatePack();
 			void newTemplatePack();
-			Project::Project *newProject();
+			Project::ProjectPtr newProject();
 			void newFile();
 			void open();
 			void openProject();
 			void next();
 			void previous();
 			void closeTab(bool force = false);
-			void closeProjectTabs(Kiss::Project::Project *project);
+			void closeProjectTabs(const Kiss::Project::ProjectPtr& project);
 			bool closeFile(const QString& file);
 			void about();
 			void settings();
 			void theme();
+			
+			void showCompilerOutput(const Compiler::OutputList& results);
 
 			void projectAddNew();
 			void projectAddExisting();
@@ -190,7 +193,7 @@ namespace Kiss
 			void showProjectDock(bool show = true);
 			void hideProjectDock();
 
-			QList<QObject*> tabs(const QString& type);
+			QList<QObject *> tabs(const QString& type);
 
 		signals:
 			void settingsUpdated();
@@ -202,15 +205,15 @@ namespace Kiss
 			void on_ui_removeFile_clicked();
 			void openRecent();
 
-			void errorClicked(QListWidgetItem* item);
+			void errorClicked(QListWidgetItem *item);
 
 			void showContextMenuForError(const QPoint &pos);
 
 			void projectClicked(const QModelIndex& index);
 			void projectFileClicked(const QModelIndex& index);
 
-			void projectOpened(Kiss::Project::Project *project);
-			void projectClosed(Kiss::Project::Project *project);
+			void projectOpened(const Kiss::Project::ProjectPtr& project);
+			void projectClosed(const Kiss::Project::ProjectPtr& project);
 
 		private:
 			Tab *m_currentTab;
@@ -221,7 +224,7 @@ namespace Kiss
 			Template::Manager *m_templateManager;
 			Project::Manager m_projectManager;
 			QList<Menu::Menuable *> m_menuables;
-
+			
 			Project::Model m_projectsModel;
 
 			void addLookup(Tab *tab);

@@ -1,18 +1,15 @@
 #ifndef _PROJECT_SETTINGS_HPP_
 #define _PROJECT_SETTINGS_HPP_
 
-#include <QWidget>
 #include "tab.hpp"
+#include "project.hpp"
 
 #include "ui_ProjectSettingsTab.h"
 
+#include <QWidget>
+
 namespace Kiss
 {
-	namespace Project
-	{
-		class Project;
-	}
-	
 	namespace Widget
 	{
 		class MainWindow;
@@ -21,7 +18,7 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			ProjectSettings(Project::Project *project, MainWindow *mainWindow);
+			ProjectSettings(const Project::ProjectPtr& project, MainWindow *mainWindow);
 
 			virtual void activate();
 

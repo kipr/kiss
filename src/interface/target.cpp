@@ -102,7 +102,7 @@ const bool Target::executeEntry(const CommunicationEntry *entry)
 {
 	switch(entry->type()) {
 		case CommunicationEntry::Custom: return sendCustom(entry->custom(), entry->payload());
-		case CommunicationEntry::Download: qWarning() << "CommunicationEntry::Download not implemented"; break;
+		case CommunicationEntry::Download: return download(entry->name(), entry->archive());
 		case CommunicationEntry::Compile: return compile(entry->name());
 		case CommunicationEntry::Run: return run(entry->name());
 		case CommunicationEntry::List: return list();

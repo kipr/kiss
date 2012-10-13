@@ -2,6 +2,7 @@
 #define _TEMPLATE_TAB_HPP_
 
 #include "tab.hpp"
+#include "template_pack.hpp"
 
 #include <QItemSelection>
 
@@ -25,7 +26,7 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			TemplateTab(Template::Pack *pack, MainWindow *mainWindow);
+			TemplateTab(const Template::PackPtr& pack, MainWindow *mainWindow);
 			TemplateTab(const QString& path, MainWindow *mainWindow);
 			~TemplateTab();
 			
@@ -61,7 +62,7 @@ namespace Kiss
 			bool m_dirty;
 			
 			Template::Manager *m_manager;
-			Template::Pack *m_pack;
+			Template::PackPtr m_pack;
 			Template::Model *m_model;
 			
 			Ui::TemplateTab *ui;

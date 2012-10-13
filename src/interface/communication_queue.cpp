@@ -1,15 +1,16 @@
 #include "communication_queue.hpp"
 
+using namespace Kiss;
 using namespace Kiss::Target;
 
-CommunicationEntry::CommunicationEntry(const Type& type)
+CommunicationEntry::CommunicationEntry(const CommunicationEntry::Type& type)
 	: m_type(type)
 {
 	
 }
 
-CommunicationEntry::CommunicationEntry(const CommunicationEntry::Type& type, const QString& name)
-	: m_type(type), m_name(name)
+CommunicationEntry::CommunicationEntry(const CommunicationEntry::Type& type, const QString& name, const KarPtr& archive)
+	: m_type(type), m_name(name), m_archive(archive)
 {
 }
 
@@ -38,5 +39,7 @@ const QString& CommunicationEntry::name() const
 	return m_name;
 }
 
-CommunicationEntry::CommunicationEntry(const CommunicationEntry&) {}
-CommunicationEntry& CommunicationEntry::operator=(const CommunicationEntry&) { return *this; }
+const KarPtr& CommunicationEntry::archive() const
+{
+	return m_archive;
+}

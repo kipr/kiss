@@ -1,6 +1,8 @@
 #ifndef _PROJECT_MANAGER_HPP_
 #define _PROJECT_MANAGER_HPP_
 
+#include "project.hpp"
+
 #include <QObject>
 #include <QList>
 
@@ -10,7 +12,7 @@ namespace Kiss
 	{
 		class Project;
 		
-		typedef QList<Project *> ProjectPtrList; 
+		typedef QList<ProjectPtr> ProjectPtrList; 
 		
 		class Manager : public QObject
 		{
@@ -19,13 +21,13 @@ namespace Kiss
 			Manager();
 			~Manager();
 			
-			void openProject(Project *project);
-			void closeProject(Project *project);
+			void openProject(const ProjectPtr& project);
+			void closeProject(const ProjectPtr& project);
 			
-			ProjectPtrList projects() const;
+			const ProjectPtrList& projects() const;
 		signals:
-			void projectOpened(Kiss::Project::Project *project);
-			void projectClosed(Kiss::Project::Project *project);
+			void projectOpened(const Kiss::Project::ProjectPtr& project);
+			void projectClosed(const Kiss::Project::ProjectPtr& project);
 			
 		private:
 			ProjectPtrList m_projects;

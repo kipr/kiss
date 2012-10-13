@@ -56,7 +56,7 @@ namespace Kiss
 
 			virtual const bool available() = 0;
 			virtual const bool compile(const QString& name) = 0;
-			virtual const bool download(const QString& name) = 0;
+			virtual const bool download(const QString& name, const KarPtr& archive) = 0;
 			virtual const bool run(const QString& name) = 0;
 
 			virtual const bool list() = 0;
@@ -82,7 +82,7 @@ namespace Kiss
 			CommunicationQueue m_workingQueue;
 			CommunicationQueue m_queue;
 
-			Interface* m_interface;
+			Interface *m_interface;
 			ResponderPtrList m_responders;
 		};
 

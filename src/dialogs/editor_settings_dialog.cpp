@@ -23,7 +23,8 @@
 
 #include <QSettings>
 
-EditorSettingsDialog::EditorSettingsDialog(QWidget *parent) : QDialog(parent)
+EditorSettingsDialog::EditorSettingsDialog(QWidget *parent)
+	: QDialog(parent)
 {
 	setupUi(this);
 
@@ -42,7 +43,9 @@ EditorSettingsDialog::EditorSettingsDialog(QWidget *parent) : QDialog(parent)
 	saveSettings();
 }
 
-EditorSettingsDialog::~EditorSettingsDialog() {}
+EditorSettingsDialog::~EditorSettingsDialog()
+{
+}
 
 // Show the dialog and save if ok is clicked
 int EditorSettingsDialog::exec()
@@ -51,10 +54,6 @@ int EditorSettingsDialog::exec()
 	if(!QDialog::exec()) return QDialog::Rejected;
 	saveSettings();
 	return QDialog::Accepted;
-}
-
-void EditorSettingsDialog::on_ui_themeSettingsButton_clicked()
-{
 }
 
 void EditorSettingsDialog::on_ui_buttonBox_clicked(QAbstractButton *button)
@@ -89,7 +88,6 @@ void EditorSettingsDialog::saveSettings()
 	settings.setValue(CALL_TIPS, ui_callTipsCheckBox->isChecked());
 	settings.setValue(BRACE_MATCHING, ui_braceMatchingCheckBox->isChecked());
 	settings.setValue(LINE_NUMBERS, ui_marginLineNumbersCheckBox->isChecked());
-	settings.setValue(DEBUGGER_ENABLED, ui_debugger->isChecked());
 	settings.endGroup();
 	settings.sync();
 }
@@ -122,7 +120,6 @@ void EditorSettingsDialog::readSettings()
 	ui_callTipsCheckBox->setChecked(settings.value(CALL_TIPS, true).toBool());
 	ui_braceMatchingCheckBox->setChecked(settings.value(BRACE_MATCHING, true).toBool());
 	ui_marginLineNumbersCheckBox->setChecked(settings.value(LINE_NUMBERS, true).toBool());
-	ui_debugger->setChecked(settings.value(DEBUGGER_ENABLED, false).toBool());
 
 	settings.endGroup();
 }

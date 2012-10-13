@@ -38,7 +38,7 @@ public:
 		return false;
 	}
 	
-	virtual const bool download(const QString& name)
+	virtual const bool download(const QString& name, const KarPtr& archive)
 	{
 		return false;
 	}

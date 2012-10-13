@@ -79,7 +79,7 @@ namespace Kiss
 			bool fileSaveAs(const QString& filePath);
 			bool fileOpen(const QString& filePath);
 			bool memoryOpen(const QByteArray& ba, const QString& assocPath);
-			bool openProjectFile(Project::Project* project);
+			bool openProjectFile(const Project::ProjectPtr& project);
 
 			bool close();
 
@@ -93,7 +93,7 @@ namespace Kiss
 			int currentLine() const;
 			bool breakpointOnLine(int line) const;
 
-			static SourceFile *newProjectFile(MainWindow* mainWindow, Project::Project* project);
+			static SourceFile *newProjectFile(MainWindow* mainWindow, const Project::ProjectPtr& project);
 
 		public slots:
 			bool saveAs();
@@ -118,9 +118,7 @@ namespace Kiss
 			void screenGrab();
 			void requestFile();
 
-			void makeTemplate();
-
-			void toggleBreakpoint(bool checked);
+			void toggleBreakpoint(const bool& checked);
 			void clearBreakpoints();
 
 			void indentAll();
@@ -155,6 +153,9 @@ namespace Kiss
 			void authenticationResponse(const Target::Responder::AuthenticateReturn& response);
 
 		private:
+			bool saveAsFile();
+			bool saveAsProject();
+			
 			const bool selectTemplate();
 
 			void showFind();
@@ -186,13 +187,15 @@ namespace Kiss
 			
 			void updateTitle();
 			void updateLexer();
+			
+			bool actionPreconditions();
 
 			Target::QtResponder m_responder;
 			
 		protected:
 			void keyPressEvent(QKeyEvent *event);
 			virtual void fileChanged(const QFileInfo& file);
-			virtual void projectChanged(Project::Project *project);
+			virtual void projectChanged(const Project::ProjectPtr& project);
 		};
 	}
 }

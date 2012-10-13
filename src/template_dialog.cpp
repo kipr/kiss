@@ -21,9 +21,11 @@ Dialog::Template::Template(Kiss::Template::Manager *manager, QWidget *parent)
 	m_model = new Kiss::Template::Model(m_manager, ui->templates);
 	m_model->setReadOnly(true);
 	ui->templates->setModel(m_model);
-	ui->description->setVisible(false);
+	ui->removePack->setEnabled(false);
 	connect(ui->templates->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
 		this, SLOT(selectionChanged(QItemSelection)));
+	connect(ui->removePack, SIGNAL(clicked()), this, SLOT(removeSelectedPack()));
+	m_helpText = ui->description->toPlainText();
 }
 
 Dialog::Template::~Template()
@@ -43,17 +45,18 @@ void Dialog::Template::selectionChanged(const QItemSelection& selection)
 	const bool singular = selection.indexes().size() == 1;
 	
 	if(!singular) {
-		qDebug() << "Not singular";
-		ui->description->setVisible(false);
+		ui->description->setPlainText(m_helpText);
+		ui->removePack->setEnabled(false);
 		return;
 	}
 	
 	QModelIndex index = selection.indexes()[0];
 	Kiss::Template::Pack *pack = m_model->indexToPack(index);
 	
+	ui->removePack->setEnabled(m_model->isIndexPack(index));
+	
 	if(!pack) {
-		qDebug() << "Pack null";
-		ui->description->setVisible(false);
+		ui->description->setPlainText(m_helpText);
 		return;
 	}
 	
@@ -61,4 +64,14 @@ void Dialog::Template::selectionChanged(const QItemSelection& selection)
 	QString path = (m_model->isIndexPack(index) ? QString() : text);
 	ui->description->setText(pack->description(path));
 	ui->description->setVisible(true);
+}
+
+void Dialog::Template::removeSelectedPack()
+{
+	QItemSelection selection = ui->templates->selectionModel()->selection();
+	if(selection.indexes().size() != 1) return;
+	QModelIndex index = selection.indexes()[0];
+	Kiss::Template::Pack *pack = m_model->indexToPack(index);
+	if(!pack) return;
+	m_manager->removePack(pack, true);
 }

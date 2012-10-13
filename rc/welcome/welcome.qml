@@ -11,7 +11,7 @@ Rectangle {
 		id: welcome
 		anchors.topMargin: 20
 		anchors.horizontalCenter: parent.horizontalCenter
-		text: 'Welcome to the KISS IDE'
+		text: 'Welcome to KISS IDE'
 		font.pointSize: 25
 		y: 10
 		opacity: 0.0
@@ -23,7 +23,7 @@ Rectangle {
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.verticalCenter: parent.verticalCenter
 
-		spacing: parent.width / 18
+		spacing: parent.width / 15
 
 		ImageButton
 		{
@@ -63,7 +63,7 @@ Rectangle {
 	Connections {
 		target: kiss
 		onCompletedSetup: {
-			tab.setTitle('Welcome')
+			tab.setTitle('Start Page')
 			welcome.opacity = 1.0
 			opacity = 1.0
 		}

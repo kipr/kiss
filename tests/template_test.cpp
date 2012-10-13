@@ -22,11 +22,10 @@ int main(int argc, char *argv[])
 	
 	Template::File basicTemplate(testTemplate.toLatin1(), "c");
 	
-	Template::Pack *pack = Template::Pack::create();
+	Template::PackPtr pack = Template::Pack::create();
 	pack->addFile("Basic", basicTemplate);
 	pack->setName("C/C++");
 	pack->save(LOCATION);
-	delete pack;
 	
 	pack = Template::Pack::load(LOCATION);
 	if(!pack) return 1;
@@ -40,9 +39,5 @@ int main(int argc, char *argv[])
 	Dialog::Template dialog(&manager);
 	dialog.exec();
 	
-	int ret = app.exec();
-	
-	delete pack;
-	
-	return ret;
+	return app.exec();
 }

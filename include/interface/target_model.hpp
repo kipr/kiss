@@ -19,7 +19,7 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			TargetModel(InterfaceManager* manager);
+			TargetModel(InterfaceManager *manager);
 			TargetPtr indexToTarget(const QModelIndex& index) const;
 			Interface* indexToInterface(const QModelIndex& index) const;
 

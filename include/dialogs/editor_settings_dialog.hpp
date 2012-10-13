@@ -55,7 +55,6 @@ public:
 	int exec();
 	
 private slots:
-	void on_ui_themeSettingsButton_clicked();
 	void on_ui_buttonBox_clicked(QAbstractButton *button);
 
 private:

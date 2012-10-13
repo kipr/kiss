@@ -1,6 +1,8 @@
 #ifndef _COMMUNICATIONQUEUE_H_
 #define _COMMUNICATIONQUEUE_H_
 
+#include <kar.hpp>
+
 #include <QQueue>
 #include <QString>
 #include <QByteArray>
@@ -27,7 +29,7 @@ namespace Kiss
 			};
 
 			CommunicationEntry(const Type& type);
-			CommunicationEntry(const Type& type, const QString& name);
+			CommunicationEntry(const Type& type, const QString& name, const KarPtr& archive = KarPtr());
 			CommunicationEntry(const QString& custom, const QByteArray& payload = QByteArray());
 
 			const CommunicationEntry::Type& type() const;
@@ -35,15 +37,16 @@ namespace Kiss
 			const QByteArray& payload() const;
 			const QString& name() const;
 			
-			// TinyArchive *archive() const;
+			const KarPtr& archive() const;
+			
 		private:
-			CommunicationEntry(const CommunicationEntry& rhs);
-			CommunicationEntry& operator=(const CommunicationEntry& rhs);
-
+			Q_DISABLE_COPY(CommunicationEntry)
+			
 			Type m_type;
 			QString m_name;
 			QString m_custom;
 			QByteArray m_payload;
+			KarPtr m_archive;
 		};
 
 		typedef QSharedPointer<CommunicationEntry> CommunicationEntryPtr;

@@ -1,6 +1,5 @@
 #include "template_pack.hpp"
 
-#include "kar.hpp"
 #include "resource_helper.hpp"
 
 #include <QFileInfo>
@@ -19,7 +18,6 @@ using namespace Kiss::Template;
 
 Pack::~Pack()
 {
-	delete m_archive;
 }
 
 void Pack::setName(const QString& name)
@@ -152,18 +150,18 @@ QString Pack::lexer(const QString& path) const
 	return QString(m_archive->data(path + LEXER_SUFFIX));
 }
 
-Pack *Pack::create()
+PackPtr Pack::create()
 {
 	Pack *pack = new Pack(Kar::create(), "");
 	pack->setName(tr("My Awesome Pack"));
-	return pack;
+	return PackPtr(pack);
 }
 
-Pack *Pack::load(const QString& path)
+PackPtr Pack::load(const QString& path)
 {
-	Kar *kar = Kar::load(path);
-	if(!kar) return 0;
-	return new Pack(kar, path);
+	KarPtr kar = Kar::load(path);
+	if(kar.isNull()) return PackPtr();
+	return PackPtr(new Pack(kar, path));
 }
 
 bool Pack::save(const QString& path) const
@@ -171,7 +169,7 @@ bool Pack::save(const QString& path) const
 	return m_archive->save(path);
 }
 
-Pack::Pack(Kar *archive, const QString& loadedFrom)
+Pack::Pack(const KarPtr& archive, const QString& loadedFrom)
 	: m_archive(archive),
 	m_loadedFrom(loadedFrom)
 {

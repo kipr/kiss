@@ -2,15 +2,21 @@
 #define _PROJECT_HPP_
 
 #include "unit.hpp"
+#include <kar.hpp>
 
 #include <QMap>
 #include <QString>
 #include <QStringList>
+#include <QSharedPointer>
 
 namespace Kiss
 {
 	namespace Project
 	{
+		class Project;
+		
+		typedef QSharedPointer<Project> ProjectPtr;
+		
 		class Project : public Unit
 		{
 		public:
@@ -20,7 +26,6 @@ namespace Kiss
 			bool removeFile(const QString& path);
 			QStringList files() const;
 	
-			bool settingsEnabled() const;
 			void setSettings(const Settings& settings);
 			const Settings& settings() const;
 	
@@ -30,25 +35,23 @@ namespace Kiss
 			const QString& location() const;
 	
 			bool save();
-			static Project *create(const QString& location);
-			static Project *load(const QString& location);
-			static Project *loadSingleFile(const QString& location);
+			static ProjectPtr create(const QString& location);
+			static ProjectPtr load(const QString& location);
 	
 			void refresh();
+			
+			KarPtr createArchive() const;
 	
 		private:
-			Project(const QString& location, bool singleFileMode);
+			Project(const QString& location);
 		
 			void refresh(const QString& location);
 	
 			QString m_location;
-			bool m_singleFileMode;
 		
 			QStringList m_files;
 			Settings m_settings;
 		};
-		
-		typedef Project* ProjectPtr;
 	}
 }
 

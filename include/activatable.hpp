@@ -27,20 +27,44 @@ template<typename T>
 class Activatable
 {
 public:
-	Activatable() : m_active(0) {}
+	Activatable()
+		: m_active(0)
+	{
+	}
 	
-	void setActive(T* active) { m_active = active; if(active) activated(); else deactivated(); }
-	T* active() { return m_active; }
-	bool isActive() { return m_active; }
+	void setActive(T *active)
+	{
+		m_active = active;
+		if(active) activated();
+		else deactivated();
+	}
 	
-	void deactivateIfActive(T* active) { if(m_active == active) setActive(0); }
+	T *active()
+	{
+		return m_active;
+	}
+	
+	bool isActive()
+	{
+		return m_active;
+	}
+	
+	void deactivateIfActive(T *active)
+	{
+		if(m_active == active) setActive(0);
+	}
 	
 protected:
-	virtual void activated() {}
-	virtual void deactivated() {}
+	virtual void activated()
+	{
+	}
+	
+	virtual void deactivated()
+	{
+	}
 	
 private:
-	T* m_active;
+	T *m_active;
 };
 
 
@@ -48,7 +72,7 @@ class ActivatableObject : public Activatable<QObject>
 {
 public:
 	ActivatableObject();
-	ActivatableObject(const char* slot);
+	ActivatableObject(const char *slot);
 	~ActivatableObject();
 	
 	virtual void activated();
@@ -57,11 +81,11 @@ public:
 	friend class ObjectDestroyed;
 	
 private:
-	void destroyed(QObject* obj);
+	void destroyed(QObject *obj);
 	
-	QObject* m_connected;
+	QObject *m_connected;
 	
-	const char* m_signature;
+	const char *m_signature;
 };
 
 #endif

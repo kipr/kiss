@@ -23,12 +23,12 @@
 #include "declarative_tab.hpp"
 #include "log_stream_buf.hpp"
 #include "log.hpp"
+#include "kiss.hpp"
 #include "log_window.hpp"
 #include "kiss_standard_environment.hpp"
 
 #include <QTimer>
 #include <QDebug>
-#include <BackendCapabilities>
 #include <QApplication>
 #include <QDir>
 #include <iostream>
@@ -49,7 +49,13 @@ int main(int argc, char **argv)
 	clog.rdbuf(&logRedir);
 #endif
 	
-	Log::ref().info(QString("KISS IDE is starting up... (Qt version: %1)").arg(qVersion()));
+	const QString kissIdeVersion = "KISS IDE "
+		+ QString::number(KISS_IDE_VERSION_MAJOR) + "."
+		+ QString::number(KISS_IDE_VERSION_MINOR) + "."
+		+ QString::number(KISS_IDE_VERSION_BUILD)
+		+ " \"" + KISS_IDE_VERSION_CODENAME + "\"";
+	
+	Log::ref().info(QString("%1 is starting up... (Qt version: %2)").arg(kissIdeVersion).arg(qVersion()));
 	
 	// Creates everything we need
 	StandardEnvironment::createStandardEnvironment();
@@ -69,17 +75,20 @@ int main(int argc, char **argv)
 		mainWindow.openFile(arg);
 	}
 	
-	mainWindow.show();
-	mainWindow.raise();
-
+	
 #ifdef ENABLE_LOG_WINDOW
 #ifdef BUILD_DEVELOPER_TOOLS
 	Log::ref().info("Built with developer tools. Automatically showing error log.");
-	QTimer::singleShot(500, &Widget::LogWindow::ref(), SLOT(show()));
+	Widget::LogWindow::ref().move(0, 0);
+	Widget::LogWindow::ref().show();
+	Widget::LogWindow::ref().raise();
 #endif
 #endif
 
-	Log::ref().info("KISS IDE... hassha!");
+	mainWindow.show();
+	mainWindow.raise();
+
+	Log::ref().info(kissIdeVersion + " started!");
 	int ret = application.exec();
 	
 #ifdef ENABLE_LOG_WINDOW

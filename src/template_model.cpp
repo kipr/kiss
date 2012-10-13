@@ -28,7 +28,7 @@ public:
 		return m_path;
 	}
 	
-	Pack *pack()
+	Pack *pack() const
 	{
 		return m_pack;
 	}
@@ -101,13 +101,13 @@ Model::Model(const Manager *manager, QObject *parent)
 	: QStandardItemModel(parent),
 	m_manager(manager)
 {
-	connect(m_manager, SIGNAL(packAdded(Kiss::Template::Pack *)),
-		this, SLOT(packAdded(Kiss::Template::Pack *)));
+	connect(m_manager, SIGNAL(packAdded(Kiss::Template::PackPtr)),
+		this, SLOT(packAdded(Kiss::Template::PackPtr)));
 	connect(m_manager, SIGNAL(packRemoved(Kiss::Template::Pack *)),
 		this, SLOT(packRemoved(Kiss::Template::Pack *)));
 	connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemRenamed(QStandardItem *)));
 	
-	foreach(Pack *pack, manager->packs()) packAdded(pack);
+	foreach(const PackPtr& pack, manager->packs()) packAdded(pack);
 }
 	
 Pack *Model::indexToPack(const QModelIndex& index) const
@@ -153,44 +153,55 @@ const bool& Model::isReadOnly() const
 	return m_readOnly;
 }
 
-void Model::packAdded(Kiss::Template::Pack *pack)
+void Model::packAdded(const Kiss::Template::PackPtr& pack)
 {
-	appendRow(new PackItem(pack, m_readOnly));
+	appendRow(new PackItem(pack.data(), m_readOnly));
 	
-	connect(pack, SIGNAL(nameChanged(QString)),
+	connect(pack.data(), SIGNAL(nameChanged(QString)),
 		this, SLOT(packNameChanged(QString)));
-	connect(pack, SIGNAL(fileAdded(QString, Kiss::Template::File)),
+	connect(pack.data(), SIGNAL(fileAdded(QString, Kiss::Template::File)),
 		this, SLOT(packFileAdded(QString, Kiss::Template::File)));
-	connect(pack, SIGNAL(fileRemoved(QString)),
+	connect(pack.data(), SIGNAL(fileRemoved(QString)),
 		this, SLOT(packFileRemoved(QString)));
 }
 
 void Model::packRemoved(Kiss::Template::Pack *pack)
 {
+	if(!pack) return;
+	
 	pack->disconnect(this);
 	
+	qDebug() << "Pack remove";
 	QStandardItem *root = invisibleRootItem();
 	for(int i = 0; i < root->rowCount(); ++i) {
 		PackItem *packItem = PackItem::cast(root->child(i));
 		if(!packItem) continue;
-		if(pack == packItem->pack()) qDeleteAll(root->takeRow(i));
+		if(pack == packItem->pack()) {
+			qDebug() << "Removing" << i;
+			root->removeRow(i);
+		}
 	}
 }
 
 void Model::packNameChanged(const QString& name)
 {
 	Pack *pack = qobject_cast<Pack *>(sender());
+	
 	QStandardItem *root = invisibleRootItem();
 	for(int i = 0; i < root->rowCount(); ++i) {
 		PackItem *packItem = PackItem::cast(root->child(i));
 		if(!packItem) continue;
-		if(pack == packItem->pack()) packItem->setText(name);
+		if(pack == packItem->pack()) {
+			packItem->setText(name);
+		}
 	}
 }
 
 void Model::packFileAdded(const QString& path, const Kiss::Template::File& file)
 {
 	Pack *pack = qobject_cast<Pack *>(sender());
+	if(!pack) return;
+	
 	QStandardItem *root = invisibleRootItem();
 	for(int i = 0; i < root->rowCount(); ++i) {
 		PackItem *packItem = PackItem::cast(root->child(i));
@@ -204,22 +215,28 @@ void Model::packFileAdded(const QString& path, const Kiss::Template::File& file)
 void Model::packFileRemoved(const QString& path)
 {
 	Pack *pack = qobject_cast<Pack *>(sender());
+	if(!pack) return;
+	
 	QStandardItem *root = invisibleRootItem();
 	for(int i = 0; i < root->rowCount(); ++i) {
 		PackItem *packItem = PackItem::cast(root->child(i));
 		if(!packItem) continue;
-		if(pack == packItem->pack()) packItem->removeChild(path);
+		if(pack == packItem->pack()) {
+			packItem->removeChild(path);
+		}
 	}
 }
 
 void Model::itemRenamed(QStandardItem *item)
 {
 	PackItem *packItem = PackItem::cast(item);
+	
 	if(packItem) {
 		packItem->pack()->setName(packItem->text());
 		return;
 	}
 	TemplateItem *templateItem = TemplateItem::cast(item);
+	
 	if(templateItem) {
 		QFileInfo info(templateItem->path());
 		templateItem->pack()->rename(templateItem->path(),

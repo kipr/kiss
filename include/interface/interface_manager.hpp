@@ -23,7 +23,7 @@ namespace Kiss
 			void removeInterface(Interface *interface);
 
 			const QList<Interface *>& interfaces() const;
-			Interface* interface(const QString& name);
+			Interface *interface(const QString& name);
 
 		signals:
 			void interfaceAdded(Interface *interface);

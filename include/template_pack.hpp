@@ -2,17 +2,21 @@
 #define _TEMPLATE_PACK_HPP_
 
 #include "template_file.hpp"
+#include <kar.hpp>
 
 #include <QString>
 #include <QIcon>
 #include <QStringList>
+#include <QSharedPointer>
 
 namespace Kiss
 {
-	class Kar;
-	
 	namespace Template
 	{
+		class Pack;
+		
+		typedef QSharedPointer<Kiss::Template::Pack> PackPtr;
+		
 		class Pack : public QObject
 		{
 		Q_OBJECT
@@ -45,8 +49,8 @@ namespace Kiss
 			bool setLexer(const QString& path, const QString& lexer);
 			QString lexer(const QString& path) const;
 			
-			static Pack *create();
-			static Pack *load(const QString& path);
+			static PackPtr create();
+			static PackPtr load(const QString& path);
 			bool save(const QString& path) const;
 			
 		signals:
@@ -55,10 +59,10 @@ namespace Kiss
 			void nameChanged(const QString& newName);
 			
 		private:
-			Pack(Kar *archive, const QString& loadedFrom);
+			Pack(const KarPtr& archive, const QString& loadedFrom);
 			bool isSpecialFile(const QString& path) const;
 			
-			Kar *m_archive;
+			KarPtr m_archive;
 			QString m_loadedFrom;
 		};
 	}

@@ -26,7 +26,7 @@ namespace Kiss
 			virtual const QMap<QString, QString> information() const;
 			virtual const bool available();
 			virtual const bool compile(const QString& name);
-			virtual const bool download(const QString& name);
+			virtual const bool download(const QString& name, const KarPtr& archive);
 			virtual const bool run(const QString& name);
 			virtual const bool list();
 			virtual const bool deleteProgram(const QString& name);

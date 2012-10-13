@@ -53,7 +53,7 @@ void DeclarativeTools::open()
 void DeclarativeTools::openWeb(const QString& url)
 {
 #ifdef BUILD_WEB_TAB
-	WebTab* webTab = new WebTab(m_mainWindow);
+	WebTab *webTab = new WebTab(m_mainWindow);
 	webTab->load(url);
 	m_mainWindow->addTab(webTab);
 #endif

@@ -1,7 +1,10 @@
 #include "documentation_manager.hpp"
 
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
+#include <QDir>
+#include <QDebug>
 
 #define DESCRIPTION_FILE "description.txt"
 #define DECORATION_FILE "decoration.html"
@@ -40,11 +43,12 @@ const QString& DocumentationLocation::decoration() const
 
 DocumentationManager::DocumentationManager()
 {
-	
+	loadDefaultDocumentation();
 }
 
 void DocumentationManager::addLocation(const QString& name, const QString& location)
 {
+	qDebug() << "Adding documentation source" << name << "from location" << location;
 	m_locations.push_back(DocumentationLocation(name, location,
 		description(location), decoration(location)));
 }
@@ -52,6 +56,19 @@ void DocumentationManager::addLocation(const QString& name, const QString& locat
 const QList<DocumentationLocation>& DocumentationManager::locations() const
 {
 	return m_locations;
+}
+
+QString DocumentationManager::documentationPath()
+{
+	return QDir::currentPath() + "/docs";
+}
+
+void DocumentationManager::loadDefaultDocumentation()
+{
+	qDebug() << "Loading default documentation from" << documentationPath();
+	
+	QFileInfoList folders = QDir(documentationPath()).entryInfoList(QDir::Dirs | QDir::NoDot | QDir::NoDotDot);
+	foreach(const QFileInfo& folder, folders) addLocation(folder.fileName(), folder.absoluteFilePath());
 }
 
 const QString DocumentationManager::description(const QString& location)

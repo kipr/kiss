@@ -8,9 +8,11 @@
 
 #include <QIcon>
 #include <QApplication>
-#include <BackendCapabilities>
+#include <QMetaType>
 #include <QDir>
 #include <QDebug>
+
+#include <cstdio>
 
 using namespace Kiss;
 
@@ -28,6 +30,8 @@ void debugLogHandler(QtMsgType type, const char *msg)
 		break;
 	case QtFatalMsg:
 		Log::ref().error(msg);
+		fprintf(stderr, "FATAL ERROR: \"%s\"\n", msg);
+		fprintf(stderr, "KISS IDE is unexpectedly going down. Sorry about that. :(\n");
 		abort();
 	}
 }

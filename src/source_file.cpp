@@ -28,8 +28,8 @@
 #include "lexer_factory.hpp"
 #include "template_manager.hpp"
 #include "template_dialog.hpp"
-#include "make_template_dialog.hpp"
 #include "password_dialog.hpp"
+#include "save_as_dialog.hpp"
 #include "source_file_menu.hpp"
 #include "target_menu.hpp"
 #include "main_window_menu.hpp"
@@ -40,6 +40,8 @@
 #include "interface_manager.hpp"
 #include "resource_helper.hpp"
 #include "interface.hpp"
+
+#include <pcompiler/pcompiler.hpp>
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
@@ -99,7 +101,8 @@ SourceFile::SourceFile(MainWindow *parent)
 	
 	refreshSettings();
 	
-	connect(&m_responder, SIGNAL(compileFinished(CompileResult)), SLOT(compileFinished(CompileResult)));
+	connect(&m_responder, SIGNAL(compileFinished(Compiler::OutputList)), SLOT(compileFinished(Compiler::OutputList)));
+	connect(&m_responder, SIGNAL(compileFinished(Compiler::OutputList)), mainWindow(), SLOT(showCompilerOutput(Compiler::OutputList)));
 	connect(&m_responder, SIGNAL(downloadFinished(bool)), SLOT(downloadFinished(bool)));
 	connect(&m_responder, SIGNAL(runFinished(bool)), SLOT(runFinished(bool)));
 	connect(&m_responder, SIGNAL(availableFinished(bool)), SLOT(availableFinished(bool)));
@@ -108,6 +111,8 @@ SourceFile::SourceFile(MainWindow *parent)
 	connect(&m_responder, SIGNAL(notAuthenticatedError()), SLOT(notAuthenticatedError()));
 	connect(&m_responder, SIGNAL(authenticationResponse(Target::Responder::AuthenticateReturn)),
 		SLOT(authenticationResponse(Target::Responder::AuthenticateReturn)));
+		
+	setName(tr("Untitled"));
 }
 
 SourceFile::~SourceFile()
@@ -151,6 +156,7 @@ bool SourceFile::close()
 		QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 
 	if(ret == QMessageBox::Cancel) return false;
+	
 	if(ret == QMessageBox::Yes) {
 		save();
 		if(ui_editor->isModified()) return false;
@@ -207,7 +213,7 @@ bool SourceFile::fileOpen(const QString& filePath)
 
 	updateLexer();
 	
-	setProject(0);
+	setProject(Project::ProjectPtr());
 	
 	return true;
 }
@@ -224,7 +230,7 @@ bool SourceFile::memoryOpen(const QByteArray& ba, const QString& assocPath)
 	return true;
 }
 
-bool SourceFile::openProjectFile(Project::Project *project)
+bool SourceFile::openProjectFile(const Project::ProjectPtr& project)
 {
 	return false;
 }
@@ -298,55 +304,55 @@ void SourceFile::keyPressEvent(QKeyEvent *event)
 	int ctrlMod = Qt::ControlModifier;
 #endif
 	
-	if(event->modifiers() & ctrlMod) {
-		int line, index;
-		ui_editor->getCursorPosition(&line, &index);
-		
-		switch(event->key()) {
-		case Qt::Key_A:
-			ui_editor->setCursorPosition(line, 0);
-			break;
-		case Qt::Key_E:
-			if(ui_editor->lines()-1 == line)
-				ui_editor->setCursorPosition(line, ui_editor->lineLength(line));
-			else ui_editor->setCursorPosition(line, ui_editor->lineLength(line) - 1);
-			break;
-		case Qt::Key_P:
-			if(ui_editor->lineLength(line-1) < index)
-				ui_editor->setCursorPosition(line-1, ui_editor->lineLength(line - 1) - 1);
-			else ui_editor->setCursorPosition(line - 1, index);
-			break;
-		case Qt::Key_N:
-			if(ui_editor->lineLength(line + 1) < index) {
-				if(ui_editor->lines() - 1 == line + 1)
-					ui_editor->setCursorPosition(line + 1, ui_editor->lineLength(line));
-				else
-					ui_editor->setCursorPosition(line + 1, ui_editor->lineLength(line + 1) - 1);
-			} else ui_editor->setCursorPosition(line + 1, index);
-			break;
-		case Qt::Key_B:
-			if(index - 1 < 0) ui_editor->setCursorPosition(line - 1, ui_editor->lineLength(line - 1) - 1);
-			else ui_editor->setCursorPosition(line, index - 1);
-			break;
-		case Qt::Key_F:
-			if(ui_editor->lineLength(line) < index + 1)
-				ui_editor->setCursorPosition(line + 1, 0);
-			else ui_editor->setCursorPosition(line, index + 1);
-			break;
-		case Qt::Key_D:
-			ui_editor->setSelection(line, index, line, index + 1);
-			ui_editor->removeSelectedText();
-			break;
-		case Qt::Key_K:
-			ui_editor->setSelection(line, index, line, ui_editor->lineLength(line) - 1);
-			ui_editor->cut();
-			break;
-		case Qt::Key_Y:
-			ui_editor->paste();
-			break;
-		}
-		event->accept();
+	if(!(event->modifiers() & ctrlMod)) return;
+	
+	int line, index;
+	ui_editor->getCursorPosition(&line, &index);
+	
+	switch(event->key()) {
+	case Qt::Key_A:
+		ui_editor->setCursorPosition(line, 0);
+		break;
+	case Qt::Key_E:
+		if(ui_editor->lines() - 1 == line)
+			ui_editor->setCursorPosition(line, ui_editor->lineLength(line));
+		else ui_editor->setCursorPosition(line, ui_editor->lineLength(line) - 1);
+		break;
+	case Qt::Key_P:
+		if(ui_editor->lineLength(line - 1) < index)
+			ui_editor->setCursorPosition(line - 1, ui_editor->lineLength(line - 1) - 1);
+		else ui_editor->setCursorPosition(line - 1, index);
+		break;
+	case Qt::Key_N:
+		if(ui_editor->lineLength(line + 1) < index) {
+			if(ui_editor->lines() - 1 == line + 1)
+				ui_editor->setCursorPosition(line + 1, ui_editor->lineLength(line));
+			else
+				ui_editor->setCursorPosition(line + 1, ui_editor->lineLength(line + 1) - 1);
+		} else ui_editor->setCursorPosition(line + 1, index);
+		break;
+	case Qt::Key_B:
+		if(index - 1 < 0) ui_editor->setCursorPosition(line - 1, ui_editor->lineLength(line - 1) - 1);
+		else ui_editor->setCursorPosition(line, index - 1);
+		break;
+	case Qt::Key_F:
+		if(ui_editor->lineLength(line) < index + 1)
+			ui_editor->setCursorPosition(line + 1, 0);
+		else ui_editor->setCursorPosition(line, index + 1);
+		break;
+	case Qt::Key_D:
+		ui_editor->setSelection(line, index, line, index + 1);
+		ui_editor->removeSelectedText();
+		break;
+	case Qt::Key_K:
+		ui_editor->setSelection(line, index, line, ui_editor->lineLength(line) - 1);
+		ui_editor->cut();
+		break;
+	case Qt::Key_Y:
+		ui_editor->paste();
+		break;
 	}
+	event->accept();
 }
 
 void SourceFile::refreshSettings()
@@ -385,9 +391,11 @@ void SourceFile::refreshSettings()
 	if(settings.value(ENABLED).toBool()) {
 		if(settings.value(API_SOURCE).toBool()) ui_editor->setAutoCompletionSource(QsciScintilla::AcsAPIs);
 		if(settings.value(DOC_SOURCE).toBool()) {
-			if(ui_editor->autoCompletionSource() == QsciScintilla::AcsAPIs)
+			if(ui_editor->autoCompletionSource() == QsciScintilla::AcsAPIs) {
 				ui_editor->setAutoCompletionSource(QsciScintilla::AcsAll);
-			else ui_editor->setAutoCompletionSource(QsciScintilla::AcsDocument);
+			} else {
+				ui_editor->setAutoCompletionSource(QsciScintilla::AcsDocument);
+			}
 		}
 	}
 	ui_editor->setAutoCompletionThreshold(settings.value(THRESHOLD).toInt());
@@ -459,7 +467,7 @@ bool SourceFile::breakpointOnLine(int line) const
 	return markerOnLine;
 }
 
-SourceFile *SourceFile::newProjectFile(MainWindow* mainWindow, Project::Project* project)
+SourceFile *SourceFile::newProjectFile(MainWindow* mainWindow, const Project::ProjectPtr& project)
 {
 	SourceFile* sourceFile = new SourceFile(mainWindow);
 	sourceFile->setProject(project);
@@ -474,7 +482,8 @@ void SourceFile::zoomIn()
 
 void SourceFile::zoomOut()
 {
-	ui_editor->zoomOut(); updateMargins();
+	ui_editor->zoomOut();
+	updateMargins();
 }
 
 void SourceFile::zoomReset()
@@ -484,6 +493,11 @@ void SourceFile::zoomReset()
 }
 
 bool SourceFile::saveAs()
+{
+	return hasProject() ? saveAsProject() : saveAsFile();
+}
+
+bool SourceFile::saveAsFile()
 {
 	QSettings settings;
 	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
@@ -501,7 +515,9 @@ bool SourceFile::saveAs()
 	QFileInfo fileInfo(filePath);
 	
 	QString ext = m_templateExt;
-	if(!ext.isEmpty() && fileInfo.suffix().isEmpty()) fileInfo.setFile(filePath.section(".", 0, 0) + "." + ext);
+	if(!ext.isEmpty() && fileInfo.suffix().isEmpty()) {
+		fileInfo.setFile(fileInfo.fileName() + "." + ext);
+	}
 	
 	settings.setValue(SAVE_PATH, fileInfo.absolutePath());
 	setFile(fileInfo.absoluteFilePath());
@@ -520,6 +536,39 @@ bool SourceFile::saveAs()
 	return true;
 }
 
+bool SourceFile::saveAsProject()
+{
+	if(!hasProject()) return false;
+	
+	QStringList exts = Lexer::Factory::ref().extensions();
+	QStringList nameFilters;
+	foreach(const QString& ext, exts) {
+		nameFilters << "*." + ext;
+	}
+	
+	Dialog::SaveAs dialog(this);
+	dialog.setNameFilters(nameFilters);
+	dialog.setRootPath(project()->location());
+	dialog.setFileName(file().completeBaseName());
+	if(dialog.exec() == QDialog::Rejected) return false;
+	
+	QFileInfo fileInfo(dialog.filePath());
+	
+	QString ext = m_templateExt;
+	if(!ext.isEmpty() && fileInfo.suffix().isEmpty()) {
+		fileInfo.setFile(fileInfo.fileName() + "." + ext);
+	}
+	
+	setFile(fileInfo.absoluteFilePath());
+	
+	const QString fileName = fileInfo.fileName();
+	if(fileSaveAs(fileInfo.absoluteFilePath())) {
+		mainWindow()->setStatusMessage(tr("Saved file \"%1\"").arg(fileName));
+	} else QMessageBox::critical(mainWindow(), "Error", "Error: Could not write file " + fileName);
+	
+	return true;
+}
+
 void SourceFile::sourceModified(bool)
 {
 	updateTitle();
@@ -527,14 +576,68 @@ void SourceFile::sourceModified(bool)
 
 const bool SourceFile::download()
 {
+	if(!actionPreconditions()) return false;
+	
+	using namespace Target;
+	
+	KarPtr archive;
+	if(hasProject()) {
+		archive = project()->createArchive();
+	} else {
+		archive = Kar::create();
+		archive->addFile(file().fileName(), ui_editor->text().toAscii());
+	}
+	
+	CommunicationQueue queue;
+	QString name = file().baseName();
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, name, archive)));
+	
+	return target()->executeQueue(queue);
 }
 
 const bool SourceFile::compile()
 {
+	if(!actionPreconditions()) return false;
+	
+	using namespace Target;
+	
+	KarPtr archive;
+	if(hasProject()) {
+		archive = project()->createArchive();
+	} else {
+		archive = Kar::create();
+		archive->addFile(file().fileName(), ui_editor->text().toAscii());
+	}
+	
+	CommunicationQueue queue;
+	QString name = file().baseName();
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, name, archive)));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Compile, name)));
+	
+	return target()->executeQueue(queue);
 }
 
 const bool SourceFile::run()
 {
+	if(!actionPreconditions()) return false;
+	
+	using namespace Target;
+	
+	KarPtr archive;
+	if(hasProject()) {
+		archive = project()->createArchive();
+	} else {
+		archive = Kar::create();
+		archive->addFile(file().fileName(), ui_editor->text().toAscii());
+	}
+	
+	CommunicationQueue queue;
+	QString name = file().baseName();
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, name, archive)));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Compile, name)));
+	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Run, name)));
+	
+	return target()->executeQueue(queue);
 }
 
 void SourceFile::stop()
@@ -607,12 +710,7 @@ void SourceFile::requestFile()
 {
 }
 
-void SourceFile::makeTemplate()
-{
-
-}
-
-void SourceFile::toggleBreakpoint(bool checked)
+void SourceFile::toggleBreakpoint(const bool& checked)
 {
 	if(checked) m_breakpoints.append(ui_editor->markerAdd(m_currentLine, m_breakIndicator));
  	else {
@@ -644,6 +742,11 @@ void SourceFile::availableFinished(const bool& avail)
 
 void SourceFile::compileFinished(const Compiler::OutputList& result)
 {
+	bool error = false;
+	foreach(const Compiler::Output& out, result) {
+		error |= out.exitCode() != 0 || !out.error().isEmpty();
+	}
+	mainWindow()->setStatusMessage(tr("Compile ") + (!error ? tr("Succeeded") : tr("Failed")));
 }
 
 void SourceFile::downloadFinished(const bool& success)
@@ -660,12 +763,12 @@ void SourceFile::runFinished(const bool& success)
 
 void SourceFile::connectionError()
 {
-	mainWindow()->setStatusMessage(tr("Unable to establish a connection with ") + target()->displayName());
+	mainWindow()->setStatusMessage(tr("Unable to establish a connection with \"%1\"").arg(target()->displayName()));
 }
 
 void SourceFile::communicationError()
 {
-	mainWindow()->setStatusMessage(tr("Error communicating with ") + target()->displayName());
+	mainWindow()->setStatusMessage(tr("Error communicating with \"%1\"").arg(target()->displayName()));
 }
 
 void SourceFile::notAuthenticatedError()
@@ -772,21 +875,35 @@ void SourceFile::fileChanged(const QFileInfo& file)
 	updateTitle();
 }
 
-void SourceFile::projectChanged(Project::Project *project)
+void SourceFile::projectChanged(const Project::ProjectPtr& project)
 {
-	Unit::setParent(project);
+	Unit::setParent(project.data());
+	updateTitle();
 }
 
 void SourceFile::updateTitle()
 {
-	mainWindow()->setTabName(this, (ui_editor->isModified() ? "* " : "") + (hasFile() ? fullName() : tr("Untitled")));
+	mainWindow()->setTabName(this, (ui_editor->isModified() ? "* " : "") + fullName());
 }
 
 void SourceFile::updateLexer()
 {
 	// Update the lexer to the new spec for that extension
-	Lexer::Constructor* constructor = Lexer::Factory::ref().constructor(file().completeSuffix());
+	Lexer::Constructor *constructor = Lexer::Factory::ref().constructor(file().completeSuffix());
 	if(!Lexer::Factory::isLexerFromConstructor((Lexer::Base *)ui_editor->lexer(), constructor)) {
 		setLexer(constructor);
 	}
+}
+
+bool SourceFile::actionPreconditions()
+{
+	if(!save()) return false;
+	if(!target()->available()) {
+		changeTarget();
+		if(!target()->available()) {
+			mainWindow()->setStatusMessage(tr("Target \"%1\" is not available for communication.").arg(target()->displayName()));
+			return false;
+		}
+	}
+	return true;
 }

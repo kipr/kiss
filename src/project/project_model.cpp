@@ -60,6 +60,7 @@ public:
 		: PathItem(path)
 	{
 		refresh();
+		setEditable(false);
 	}
 	
 	virtual void refresh()
@@ -79,7 +80,6 @@ class FolderItem : public PathItem
 public:
 	FolderItem(const QString& path)
 		: PathItem(path)
-		
 	{
 		refresh();
 	}
@@ -131,7 +131,7 @@ MultiRootFilesystemModel::MultiRootFilesystemModel(QObject *parent)
 {
 	connect(&m_watcher, SIGNAL(directoryChanged(QString)), this, SLOT(pathChanged(QString)));
 	connect(&m_watcher, SIGNAL(fileChanged(QString)), this, SLOT(pathChanged(QString)));
-	connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemRenamed(QStandardItem *)));
+	connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
 }
 
 void MultiRootFilesystemModel::pathChanged(const QString& path)
@@ -192,14 +192,32 @@ Model::~Model()
 	m_projects.clear();
 }
 
-Kiss::Project::Project *Model::indexToProject(const QModelIndex& index) const
+Kiss::Project::ProjectPtr Model::indexToProject(const QModelIndex& index) const
 {
 	PathItem *pathItem = PathItem::pathitem_cast(itemFromIndex(index));
-	if(!pathItem) return 0;
-	return m_projects.value(pathItem->path(), 0);
+	if(!pathItem) return ProjectPtr();
+	ProjectPtr ret;
+	QString path = pathItem->path();
+	while(ret.isNull() && !path.isEmpty()) {
+		ret = m_projects.value(path);
+		path = QFileInfo(path).path();
+	}
+	return ret;
 }
 
-void Model::addProject(Kiss::Project::Project *project)
+bool Model::isIndexProject(const QModelIndex& index) const
+{
+	return RootItem::rootitem_cast(itemFromIndex(index));
+}
+
+QString Model::indexToPath(const QModelIndex& index) const
+{
+	PathItem *pathItem = PathItem::pathitem_cast(itemFromIndex(index));
+	if(!pathItem) return QString();
+	return pathItem->path();
+}
+
+void Model::addProject(const Kiss::Project::ProjectPtr& project)
 {
 	const QString& location = project->location();
 	if(m_projects.contains(location)) return;
@@ -207,7 +225,7 @@ void Model::addProject(Kiss::Project::Project *project)
 	addRootPath(location);
 }
 
-void Model::removeProject(Kiss::Project::Project *project)
+void Model::removeProject(const Kiss::Project::ProjectPtr& project)
 {
 	const QString& location = project->location();
 	m_projects.remove(location);

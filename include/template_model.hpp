@@ -2,6 +2,7 @@
 #define _TEMPLATE_MODEL_HPP_
 
 #include "template_file.hpp"
+#include "template_pack.hpp"
 
 #include <QStandardItemModel>
 
@@ -28,7 +29,7 @@ namespace Kiss
 			const bool& isReadOnly() const;
 			
 		private slots:
-			void packAdded(Kiss::Template::Pack *pack);
+			void packAdded(const Kiss::Template::PackPtr& pack);
 			void packRemoved(Kiss::Template::Pack *pack);
 			void packNameChanged(const QString& name);
 			void packFileAdded(const QString& path, const Kiss::Template::File& file);

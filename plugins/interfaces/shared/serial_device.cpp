@@ -61,7 +61,7 @@ const bool SerialDevice::compile(const QString& name)
 	return true;
 }
 
-const bool SerialDevice::download(const QString& name)
+const bool SerialDevice::download(const QString& name, const KarPtr& archive)
 {
 }
 

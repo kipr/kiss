@@ -10,12 +10,10 @@ Manager::Manager()
 
 Manager::~Manager()
 {
-	while(!m_projects.isEmpty()) {
-		closeProject(m_projects.first());
-	}
+	m_projects.clear();
 }
 
-void Manager::openProject(Project *project)
+void Manager::openProject(const ProjectPtr& project)
 {
 	if(m_projects.contains(project)) return;
 	
@@ -23,16 +21,15 @@ void Manager::openProject(Project *project)
 	emit projectOpened(project);
 }
 
-void Manager::closeProject(Project *project)
+void Manager::closeProject(const ProjectPtr& project)
 {
 	if(!m_projects.contains(project)) return;
-	
+	ProjectPtr ref = project;
 	m_projects.removeAll(project);
-	emit projectClosed(project);
-	delete project;
+	emit projectClosed(ref);
 }
 
-ProjectPtrList Manager::projects() const
+const ProjectPtrList& Manager::projects() const
 {
 	return m_projects;
 }

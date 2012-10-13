@@ -5,58 +5,50 @@
 
 #define PROJECT_SETTINGS_FILE "kiss.settings"
 
+using namespace Kiss;
 using namespace Kiss::Project;
 
-bool Project::addFile(const QString& path)
+bool Kiss::Project::Project::addFile(const QString& path)
 {
-	if(m_singleFileMode) return false;
-
 	return false;
 }
 
-bool Project::removeFile(const QString& path)
+bool Kiss::Project::Project::removeFile(const QString& path)
 {
-	if(m_singleFileMode) return false;
-	
 	return QFile::remove(m_location + "/" + path);
 }
 
-QStringList Project::files() const
+QStringList Kiss::Project::Project::files() const
 {
 	return m_files;
 }
 
-bool Project::settingsEnabled() const
-{
-	return !m_singleFileMode;
-}
-
-void Project::setSettings(const Project::Settings& settings)
+void Kiss::Project::Project::setSettings(const Kiss::Project::Project::Settings& settings)
 {
 	m_settings = settings;
 }
 
-const Project::Settings& Project::settings() const
+const Kiss::Project::Project::Settings& Kiss::Project::Project::settings() const
 {
 	return m_settings;
 }
 
-void Project::setSetting(const QString& key, const QString& value)
+void Kiss::Project::Project::setSetting(const QString& key, const QString& value)
 {
 	m_settings[key] = value;
 }
 
-void Project::removeSetting(const QString& key)
+void Kiss::Project::Project::removeSetting(const QString& key)
 {
 	m_settings.remove(key);
 }
 
-const QString& Project::location() const
+const QString& Kiss::Project::Project::location() const
 {
 	return m_location;
 }
 
-bool Project::save()
+bool Kiss::Project::Project::save()
 {
 	QFile settingsFile(m_location + "/" + PROJECT_SETTINGS_FILE);
 	if(!settingsFile.open(QIODevice::WriteOnly)) return false;
@@ -66,45 +58,41 @@ bool Project::save()
 	return true;
 }
 
-Project *Project::create(const QString& location)
+ProjectPtr Kiss::Project::Project::create(const QString& location)
 {
-	if(!QDir().mkpath(location)) return 0;
+	if(!QDir().mkpath(location)) return ProjectPtr();
 	return load(location);
 }
 
-Project *Project::load(const QString& location)
+ProjectPtr Kiss::Project::Project::load(const QString& location)
 {
-	if(!QFileInfo(location).isDir()) return 0;
-	return new Project(location, false);
+	if(!QFileInfo(location).isDir()) return ProjectPtr();
+	return ProjectPtr(new Project(location));
 }
 
-Project *Project::loadSingleFile(const QString& location)
+Kiss::Project::Project::Project(const QString& location)
+	: m_location(location)
 {
-	return new Project(location, true);
-}
-
-Project::Project(const QString& location, bool singleFileMode)
-	: m_location(location), m_singleFileMode(singleFileMode)
-{
-	if(!m_singleFileMode) refresh();
-	else {
-		m_files << m_location;
-		m_location = QFileInfo(m_location).path();
-	}
+	refresh();
 	
 	setName(QFileInfo(m_location).fileName());
 }
 
-void Project::refresh()
+void Kiss::Project::Project::refresh()
 {
 	refresh(m_location);
 }
 
-void Project::refresh(const QString& location)
+KarPtr Kiss::Project::Project::createArchive() const
+{
+	return Kar::create(m_location);
+}
+
+void Kiss::Project::Project::refresh(const QString& location)
 {
 	QFileInfoList files = QDir(location).entryInfoList(QDir::NoDot | QDir::NoDotDot);
 	foreach(const QFileInfo& file, files) {
-		if(file.filePath() == PROJECT_SETTINGS_FILE) continue;
+		if(file.fileName() == PROJECT_SETTINGS_FILE) continue;
 		
 		if(file.isDir()) refresh(file.filePath());
 		else m_files << file.filePath();

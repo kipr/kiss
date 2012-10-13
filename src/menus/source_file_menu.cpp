@@ -55,7 +55,7 @@ SourceFileMenu::SourceFileMenu(Widget::MainWindow *mainWindow)
 	m_edit.append(Node::separator());
 	m_edit.append(node(activeAction("magnifier_zoom_in", "Zoom In", QKeySequence::ZoomIn, this, "zoomIn")));
 	m_edit.append(node(activeAction("magnifier_zoom_out", "Zoom Out", QKeySequence::ZoomOut, this, "zoomOut")));
-	m_edit.append(node(activeAction("magnifier", "Reset Zoom", QKeySequence("Ctrl+0"), this, "zoomReset")));
+	m_edit.append(node(activeAction("magnifier.png", "Reset Zoom", QKeySequence("Ctrl+0"), this, "zoomReset")));
 	m_edit.append(Node::separator());
 	m_edit.append(node(activeAction("find", "Find", QKeySequence::Find, this, "find")));
 	

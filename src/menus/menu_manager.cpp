@@ -283,7 +283,7 @@ void Manager::construct(QMenu* menu, Node* node)
 	}
 	if(node->children.size() == 0) { // Terminal node
 		if(node->registers.size() == 0) {
-			Log::ref().warning(QString("Terminal node %1 has no registers. Ignoring.").arg(node->name));
+			Log::ref().warning(QString("Terminal menu node %1 has no registers. Ignoring.").arg(node->name));
 			return;
 		}
 		if(node->rawAction) return;
@@ -305,7 +305,7 @@ void Manager::construct(QToolBar* toolbar, Node* node)
 {
 	if(node->children.size() == 0) { // Terminal node
 		if(node->registers.size() == 0) {
-			Log::ref().warning(QString("Terminal node %1 has no registers. Ignoring.").arg(node->name));
+			Log::ref().warning(QString("Terminal menu node %1 has no registers. Ignoring.").arg(node->name));
 			return;
 		}
 		if(node->rawAction) return;
@@ -316,7 +316,7 @@ void Manager::construct(QToolBar* toolbar, Node* node)
 		action->setData(QVariant::fromValue((void*)node));
 		node->rawAction = action;
 	} else  // Non-terminal node
-		Log::ref().warning(QString("Non-terminal nodes not supported on toolbar. Ignoring %1").arg(node->name));
+		Log::ref().warning(QString("Non-terminal menu nodes not supported on toolbar. Ignoring %1").arg(node->name));
 	
 }
 

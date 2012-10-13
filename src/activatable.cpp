@@ -5,7 +5,6 @@
 ActivatableObject::ActivatableObject()
 	: m_connected(0)
 {
-	
 }
 
 ActivatableObject::~ActivatableObject()

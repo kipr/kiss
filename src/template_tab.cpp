@@ -14,7 +14,7 @@
 using namespace Kiss;
 using namespace Kiss::Widget;
 
-TemplateTab::TemplateTab(Template::Pack *pack, MainWindow *mainWindow)
+TemplateTab::TemplateTab(const Template::PackPtr& pack, MainWindow *mainWindow)
 	: QWidget(mainWindow),
 	Tab(this, mainWindow),
 	m_dirty(true),
@@ -194,7 +194,8 @@ void TemplateTab::dirty()
 
 void TemplateTab::updateTitle()
 {
-	mainWindow()->setTabName(this, (m_dirty ? "* " : "") + (hasFile() ? file().fileName() : tr("Untitled")));
+	mainWindow()->setTabName(this, (m_dirty ? "* " : "")
+		+ (hasFile() ? file().fileName() : tr("Untitled")));
 }
 
 void TemplateTab::init()

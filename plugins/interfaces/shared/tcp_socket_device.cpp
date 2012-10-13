@@ -64,8 +64,21 @@ const bool TcpSocketDevice::compile(const QString& name)
 	return true;
 }
 
-const bool TcpSocketDevice::download(const QString& name)
+const bool TcpSocketDevice::download(const QString& name, const KarPtr& archive)
 {
+	if(name.isEmpty() || archive.isNull()) return false;
+	
+	QByteArray block;
+	QDataStream dataStream(&block, QIODevice::WriteOnly);
+	dataStream << (quint32)0;
+	dataStream << QString(DOWNLOAD_KEY);
+	dataStream << name;
+	dataStream << *archive.data();
+	dataStream.device()->seek(0);
+	dataStream << (quint32)(block.size() - sizeof(quint32));
+	m_socket.write(block);
+	
+	return true;
 }
 
 const bool TcpSocketDevice::run(const QString& name)
