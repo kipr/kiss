@@ -1,5 +1,7 @@
 #include "template_file.hpp"
 
+#include <QDateTime>
+
 #define KISS_LEXER "KISS_LEXER"
 #define KISS_DATE "KISS_DATE"
 #define END_KISS "END_KISS_META"
@@ -34,6 +36,13 @@ const QString& File::lexer() const
 const QByteArray& File::data() const
 {
 	return m_data;
+}
+
+QString File::resolvedData() const
+{
+	QString dataString(m_data);
+	dataString.replace("KISS_DATE", QDateTime::currentDateTime().toString("ddd MMMM d yyyy"));
+	return dataString;
 }
 
 void File::setLexer(const QString& lexer)

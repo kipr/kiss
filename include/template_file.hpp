@@ -20,6 +20,8 @@ namespace Kiss
 			const QString& lexer() const;
 			const QByteArray& data() const;
 			
+			QString resolvedData() const;
+			
 			void setLexer(const QString& lexer);
 			void setData(const QByteArray& data);
 			

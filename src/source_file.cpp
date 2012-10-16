@@ -40,6 +40,7 @@
 #include "interface_manager.hpp"
 #include "resource_helper.hpp"
 #include "interface.hpp"
+#include "output_helper.hpp"
 
 #include <pcompiler/pcompiler.hpp>
 
@@ -419,7 +420,7 @@ void SourceFile::refreshSettings()
 	
 	updateMargins();
 	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
-	ui_editor->setMarginsForegroundColor(QColor(200, 200, 200));
+	ui_editor->setMarginsForegroundColor(QColor(185, 185, 185));
 	
 	Menu::TargetMenu::ref().refresh();
 }
@@ -694,6 +695,7 @@ const bool SourceFile::changeTarget()
 {
 	Dialog::Target targetDialog(&Target::InterfaceManager::ref(), this);
 	if(targetDialog.exec() == QDialog::Rejected) return false;
+	if(targetDialog.target().isNull()) return false;
 	setTarget(targetDialog.target());
 	
 	target()->clearResponders();
@@ -747,6 +749,7 @@ void SourceFile::compileFinished(const Compiler::OutputList& result)
 		error |= out.exitCode() != 0 || !out.error().isEmpty();
 	}
 	mainWindow()->setStatusMessage(tr("Compile ") + (!error ? tr("Succeeded") : tr("Failed")));
+	updateErrors(result);
 }
 
 void SourceFile::downloadFinished(const bool& success)
@@ -821,28 +824,24 @@ void SourceFile::clearProblems()
 	ui_editor->markerDeleteAll(m_warningIndicator);
 }
 
-void SourceFile::markProblems(const QStringList& errors, const QStringList& warnings)
+void SourceFile::markProblems(const Lines& lines)
 {
-	foreach(const QString& error, errors) {
-		int line = error.section(":", 1, 1).toInt();
-		if(--line < 0) continue;
-		ui_editor->markerAdd(line, m_errorIndicator);
-	}
-	
-	foreach(const QString& warning, warnings) {
-		int line = warning.section(":", 1, 1).toInt();
-		if(--line < 0) continue;
+	foreach(const Lines::line_t& line, lines.warningLines()) {
 		ui_editor->markerAdd(line, m_warningIndicator);
+	}
+	foreach(const Lines::line_t& line, lines.errorLines()) {
+		ui_editor->markerAdd(line, m_errorIndicator);
 	}
 }
 
 void SourceFile::updateErrors(const Compiler::OutputList& compileResult) 
 {
 	clearProblems();
-	
-	// mainWindow()->setOutputList(compileResult);
-	
-	// markProblems(errors, warnings);
+	Lines lines;
+	foreach(const Compiler::Output& output, compileResult) {
+		lines = lines + OutputHelper::lines(output);
+	}
+	markProblems(lines);
 }
 
 const bool SourceFile::selectTemplate()
@@ -858,7 +857,7 @@ const bool SourceFile::selectTemplate()
 		m_templateExt = tFile.lexer();
 	}
 	
-	ui_editor->setText(QString(tFile.data()));
+	ui_editor->setText(tFile.resolvedData());
 	
 	// m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
 	

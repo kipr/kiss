@@ -52,6 +52,7 @@ void SourceFind::show()
 	ui_find->clear();
 	ui_replace->clear();
 	QWidget::show();
+	ui_find->setFocus(Qt::PopupFocusReason);
 }
 
 void SourceFind::on_ui_next_clicked()

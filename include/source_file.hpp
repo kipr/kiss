@@ -24,6 +24,7 @@
 #include "editor_settings_dialog.hpp"
 #include "tab.hpp"
 #include "unit.hpp"
+#include "output_helper.hpp"
 #include "source_find_widget.hpp"
 #include "qt_target_responder.hpp"
 
@@ -182,7 +183,7 @@ namespace Kiss
 			QWidget *m_runTab;
 
 			void clearProblems();
-			void markProblems(const QStringList& errors, const QStringList& warnings);
+			void markProblems(const Lines& lines);
 			void updateErrors(const Compiler::OutputList& compileResult);
 			
 			void updateTitle();
