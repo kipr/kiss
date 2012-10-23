@@ -362,7 +362,7 @@ void SourceFile::refreshSettings()
 	QSettings settings;
 	settings.beginGroup(EDITOR);
 	if(ui_editor->lexer()) {
-		QColor backgroundColor = settings.value(BACKGROUND_COLOR).value<QColor>();
+		QColor backgroundColor = settings.value(BACKGROUND_COLOR, QColor(255, 255, 255)).value<QColor>();
 		ui_editor->lexer()->setPaper(backgroundColor);
 		ui_editor->lexer()->setDefaultPaper(backgroundColor);
 	}
