@@ -100,9 +100,9 @@ IF(APPLE)
 		
 	SET(OSX_INSTALL_NAMES_SCRIPT "${KISS_SOURCE_DIR}/scripts/osx_install_names.sh")
 	
-	install(DIRECTORY ${RC}/templates DESTINATION ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents)
+	install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents)
 ELSE(APPLE)
-	install(DIRECTORY ${RC}/templates DESTINATION ${KISS_SOURCE_DIR}/deploy)
+	install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_SOURCE_DIR}/deploy)
 ENDIF(APPLE)
 
 IF(APPLE)

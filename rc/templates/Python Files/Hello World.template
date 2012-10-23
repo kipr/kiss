@@ -1,5 +1,0 @@
-KISS_LEXER py
-END_KISS_META
-# Created on KISS_DATE
-
-print "Hello, World!"

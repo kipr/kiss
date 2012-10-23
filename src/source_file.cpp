@@ -435,7 +435,8 @@ void SourceFile::updateMargins()
 			font.setPointSize(font.pointSize() + getZoom());
 			charWidth = QFontMetrics(font).width("0");
 		}
-		size = charWidth + charWidth / 2 + charWidth * (int)ceil(log10(std::max(ui_editor->lines(), 10) + 1));
+		size = charWidth + charWidth / 2
+			+ charWidth * (int)ceil(log10(std::max(ui_editor->lines(), 10) + 1));
 	}
 	ui_editor->setMarginWidth(0, size);
 	ui_editor->setMarginWidth(1, 16);
@@ -451,7 +452,7 @@ void SourceFile::moveTo(const int& line, const int& pos)
 	if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos);
 }
 
-QsciScintilla* SourceFile::editor()
+QsciScintilla *SourceFile::editor()
 {
 	return ui_editor;
 }
