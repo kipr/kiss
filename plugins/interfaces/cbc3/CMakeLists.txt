@@ -46,6 +46,7 @@ ADD_CUSTOM_TARGET(${PLUGIN_NAME}_osx_install_names ALL
 		phonon.framework/Versions/4/phonon
 		QtDeclarative.framework/Versions/4/QtDeclarative
 		libkar.dylib
+		libpcompiler.dylib
 	WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH}
 	DEPENDS ${PLUGIN_NAME})
 INSTALL(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/interfaces)
