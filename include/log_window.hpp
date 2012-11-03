@@ -16,9 +16,6 @@ namespace Kiss
 		{
 		public:
 			LogWindow();
-
-			friend class LogStreamBuf;
-		private:
 			void append(const QString& str);
 		};
 	}
