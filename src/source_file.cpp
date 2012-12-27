@@ -587,7 +587,7 @@ const bool SourceFile::download()
 		archive = project()->createArchive();
 	} else {
 		archive = Kar::create();
-		archive->addFile(file().fileName(), ui_editor->text().toAscii());
+		
 	}
 	
 	CommunicationQueue queue;
@@ -905,5 +905,11 @@ bool SourceFile::actionPreconditions()
 			return false;
 		}
 	}
+	return true;
+}
+
+bool SourceFile::visitSelf(const Kiss::KarPtr &archive)
+{
+	archive->addFile(file().fileName(), ui_editor->text().toAscii());
 	return true;
 }

@@ -1,5 +1,9 @@
 #include "unit.hpp"
 
+#include <kar.hpp>
+
+#include <QDebug>
+
 using namespace Kiss;
 
 Unit::Unit(Unit *parent)
@@ -48,6 +52,30 @@ const Unit *Unit::top() const
 	return m_parent ? m_parent->top() : this;
 }
 
+bool Unit::execute(const Unit::Action &action) const
+{
+	if(top() != this) return top()->execute(action);
+	
+	if(action == Unit::Download) {
+		qDebug() << "Unit" << m_name << "download";
+		Kiss::KarPtr archive = Kiss::Kar::create();
+		visit(archive);
+		CommunicationManager::ref().admit(CommunicationEntryPtr(
+			new CommunicationEntry(CommunicationEntry::Download,
+			m_name, archive)));
+	} else if(action == Unit::Compile) {
+		qDebug() << "Unit" << m_name << "compile";
+		CommunicationManager::ref().admit(CommunicationEntryPtr(
+			new CommunicationEntry(CommunicationEntry::Compile, m_name));
+	} else if(action == Unit::Run) {
+		qDebug() << "Unit" << m_name << "run";
+		CommunicationManager::ref().admit(CommunicationEntryPtr(
+			new CommunicationEntry(CommunicationEntry::Run, m_name));
+	}
+	
+	qWarning() << "Unit doesn't know how to execute action" << action;
+}
+
 void Unit::setName(const QString& name)
 {
 	m_name = name;
@@ -82,4 +110,12 @@ bool Unit::unitActionRequested()
 		if(!child->unitActionRequested()) return false;
 	}
 	return true;
+}
+
+bool Unit::visit(const Kiss::KarPtr &archive) const
+{
+	visitSelf(archive);
+	foreach(Unit *child, m_children) {
+		child->visit(archive);
+	}
 }

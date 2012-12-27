@@ -16,6 +16,7 @@ public:
 	
 	virtual const bool scan(Kiss::Target::InterfaceResponder *responder);
 	virtual void invalidateResponder();
+	
 private slots:
 	void scanStarted();
 	void found(EasyDevice::DeviceInfo deviceInfo, const QHostAddress& address);

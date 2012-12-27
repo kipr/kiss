@@ -1,3 +1,3 @@
 add_subdirectory(computer)
-add_subdirectory(cbc3)
+add_subdirectory(kovan)
 # add_subdirectory(serial)

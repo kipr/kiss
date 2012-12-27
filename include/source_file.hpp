@@ -197,6 +197,7 @@ namespace Kiss
 			void keyPressEvent(QKeyEvent *event);
 			virtual void fileChanged(const QFileInfo& file);
 			virtual void projectChanged(const Project::ProjectPtr& project);
+			virtual bool visitSelf(const Kiss::KarPtr &archive);
 		};
 	}
 }

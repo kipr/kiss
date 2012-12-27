@@ -52,9 +52,6 @@ void ComputerInterface::scanStarted()
 void ComputerInterface::found(DeviceInfo deviceInfo, const QHostAddress& address)
 {
 	if(!m_responder) return;
-	Kiss::Target::TcpSocketDevice *device = new Kiss::Target::TcpSocketDevice(this, address, 8075);
-	device->setDeviceInfo(deviceInfo);
-	m_responder->targetFound(this, Target::TargetPtr(device));
 }
 
 Q_EXPORT_PLUGIN2(computer_interface, ComputerInterface);

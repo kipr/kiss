@@ -2,6 +2,7 @@
 
 #include <QFileInfo>
 #include <QDir>
+#include <QDebug>
 
 #define PROJECT_SETTINGS_FILE "kiss.settings"
 
@@ -97,4 +98,10 @@ void Kiss::Project::Project::refresh(const QString& location)
 		if(file.isDir()) refresh(file.filePath());
 		else m_files << file.filePath();
 	}
+}
+
+bool Kiss::Project::visitSelf(const Kiss::KarPtr &archive)
+{
+	qDebug() << "Visited project";
+	return true;
 }

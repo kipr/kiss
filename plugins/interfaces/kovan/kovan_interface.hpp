@@ -3,8 +3,7 @@
 
 #include <QtPlugin>
 #include "interface.hpp"
-#include <easydevice/DiscoveryServer.h>
-#include <easydevice/DeviceInfo.h>
+#include <kovanserial/udp_advertiser.hpp>
 
 class KovanInterface : public QObject, public Kiss::Target::Interface
 {
@@ -16,12 +15,13 @@ public:
 	
 	virtual const bool scan(Kiss::Target::InterfaceResponder *responder);
 	virtual void invalidateResponder();
+	
 private slots:
 	void scanStarted();
-	void found(EasyDevice::DeviceInfo deviceInfo, const QHostAddress& address);
+	void found(const Advert &ad, const QHostAddress& address);
 	
 private:
-	EasyDevice::DiscoveryServer *m_server;
+	UdpAdvertiser *m_advertiser;
 	Kiss::Target::InterfaceResponder *m_responder;
 };
 

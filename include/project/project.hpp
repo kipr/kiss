@@ -41,7 +41,10 @@ namespace Kiss
 			void refresh();
 			
 			KarPtr createArchive() const;
-	
+			
+		protected:
+			bool visitSelf(const Kiss::KarPtr &archive);
+			
 		private:
 			Project(const QString& location);
 		

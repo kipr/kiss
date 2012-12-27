@@ -1,5 +1,5 @@
-#ifndef _KEYS_H_
-#define _KEYS_H_
+#ifndef _KEYS_HPP_
+#define _KEYS_HPP_
 
 #define AVAILABLE_KEY "available?"
 #define COMPILE_KEY "compile"

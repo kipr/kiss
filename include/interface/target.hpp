@@ -48,10 +48,6 @@ namespace Kiss
 
 			virtual const QMap<QString, QString> information() const = 0; // Needs to be cached
 
-			const bool retryLastQueue();
-			const bool executeQueue(const CommunicationQueue& queue);
-			const bool isQueueExecuting() const;
-
 			virtual const bool disconnect() = 0;
 
 			virtual const bool available() = 0;

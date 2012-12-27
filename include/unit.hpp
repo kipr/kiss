@@ -6,11 +6,19 @@
 
 #include "target.hpp"
 
+#include <kar.hpp>
+
 namespace Kiss
 {
 	class Unit
 	{
 	public:
+		enum Action {
+			Download,
+			Compile,
+			Run
+		}
+		
 		Unit(Unit *parent = 0);
 		
 		void setParent(Unit *parent);
@@ -24,6 +32,8 @@ namespace Kiss
 		Unit *top();
 		const Unit *top() const;
 		
+		virtual bool execute(const Action &action) const;
+		
 		void setName(const QString& name);
 		const QString& name() const;
 		QString fullName() const;
@@ -32,8 +42,13 @@ namespace Kiss
 		Target::TargetPtr target() const;
 		
 		virtual bool unitActionRequested();
-	private:
 		
+		virtual bool visit(const Kiss::KarPtr &archive);
+		
+	protected:
+		virtual bool visitSelf(const Kiss::KarPtr &archive) = 0;
+		
+	private:
 		Unit *m_parent;
 		QList<Unit *> m_children;
 		Target::TargetPtr m_target;
