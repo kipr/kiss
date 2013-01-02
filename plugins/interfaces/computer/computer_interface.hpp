@@ -1,10 +1,8 @@
-#ifndef _COMPUTERINTERFACE_H_
-#define _COMPUTERINTERFACE_H_
+#ifndef _COMPUTER_INTERFACE_HPP_
+#define _COMPUTER_INTERFACE_HPP_
 
 #include <QtPlugin>
 #include "interface.hpp"
-#include <easydevice/DiscoveryServer.h>
-#include <easydevice/DeviceInfo.h>
 
 class ComputerInterface : public QObject, public Kiss::Target::Interface
 {
@@ -22,7 +20,6 @@ private slots:
 	void found(EasyDevice::DeviceInfo deviceInfo, const QHostAddress& address);
 	
 private:
-	EasyDevice::DiscoveryServer *m_server;
 	Kiss::Target::InterfaceResponder *m_responder;
 };
 

@@ -17,7 +17,7 @@ namespace Kiss
 			Download,
 			Compile,
 			Run
-		}
+		};
 		
 		Unit(Unit *parent = 0);
 		
@@ -43,10 +43,7 @@ namespace Kiss
 		
 		virtual bool unitActionRequested();
 		
-		virtual bool visit(const Kiss::KarPtr &archive);
-		
-	protected:
-		virtual bool visitSelf(const Kiss::KarPtr &archive) = 0;
+		virtual Kiss::KarPtr archive() const = 0;
 		
 	private:
 		Unit *m_parent;

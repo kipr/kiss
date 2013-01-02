@@ -23,6 +23,8 @@
 #include "interface.hpp"
 #include "interface_manager.hpp"
 
+#include "manual_target_dialog.hpp"
+
 using namespace Kiss::Dialog;
 
 Target::Target(Kiss::Target::InterfaceManager *manager, QWidget *parent)
@@ -59,6 +61,7 @@ Target::~Target()
 
 Kiss::Target::TargetPtr Target::target() const
 {
+	if(!m_manualTarget.isNull()) return m_manualTarget;	
 	return m_model.indexToTarget(ui_targets->selectionModel()->currentIndex());
 }
 
@@ -90,4 +93,15 @@ void Target::on_ui_refresh_clicked()
 	m_model.clear();
 	foreach(Kiss::Target::Interface *interface, m_manager->interfaces())
 		interface->scan(&m_model);
+}
+
+void Target::on_ui_manual_clicked()
+{
+	ManualTarget dialog;
+	if(dialog.exec() == QDialog::Rejected) {
+		m_manualTarget = Kiss::Target::TargetPtr();
+		return;
+	}
+	m_manualTarget = dialog.target();
+	accept();
 }

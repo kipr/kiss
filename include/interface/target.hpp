@@ -1,8 +1,9 @@
-#ifndef _TARGET_H_
-#define _TARGET_H_
+#ifndef _TARGET_HPP_
+#define _TARGET_HPP_
 
-#include "communication_queue.hpp"
 #include "target_responder.hpp"
+
+#include <kar.hpp>
 
 #include <QObject>
 #include <QString>
@@ -32,8 +33,9 @@ namespace Kiss
 	{
 		class Interface;
 		
-		class Target
+		class Target : public QObject
 		{
+		Q_OBJECT
 		public:
 			Target(Interface* interface, const QString& name);
 			virtual ~Target();
@@ -51,35 +53,36 @@ namespace Kiss
 			virtual const bool disconnect() = 0;
 
 			virtual const bool available() = 0;
-			virtual const bool compile(const QString& name) = 0;
-			virtual const bool download(const QString& name, const KarPtr& archive) = 0;
-			virtual const bool run(const QString& name) = 0;
+			virtual const bool compile(quint64 id, const QString &name) = 0;
+			virtual const bool download(quint64 id, const QString &name, const KarPtr& archive) = 0;
+			virtual const bool run(quint64 id, const QString &name) = 0;
 
-			virtual const bool list() = 0;
-			virtual const bool deleteProgram(const QString& name) = 0;
-			virtual const bool interaction(const QString& command) = 0;
+			virtual const bool list(quint64 id) = 0;
+			virtual const bool deleteProgram(quint64 id, const QString& name) = 0;
+			virtual const bool interaction(quint64 id, const QString& command) = 0;
 
-			virtual const bool authenticate(const QByteArray& hash) = 0;
-			virtual const bool sendCustom(const QString& custom, const QByteArray& payload = QByteArray()) = 0;
-
-			void addResponder(Responder *responder);
-			void addResponders(const ResponderPtrList& responders);
-			void removeResponder(Responder *responder);
-			void clearResponders();
-			const ResponderPtrList& responders() const;
+			virtual const bool authenticate(quint64 id, const QByteArray& hash) = 0;
+			virtual const bool sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray()) = 0;
+			
+			void setResponder(Responder *responder);
+			Responder *responder() const;
+			
+			
+			// This is pretty jank. Basically we use sigslots to get us back
+			// on the GUI thread once an asynchronous event happens.
+		signals:
+			void response(const Response &response);
+			
+		private slots:
+			void responseRedirect(const Response& response);
 			
 		protected:
 			void notifyQueue(const bool success);
 
 		private:
-			const bool executeEntry(const CommunicationEntry *entry);
-			void clearEntries();
-
-			CommunicationQueue m_workingQueue;
-			CommunicationQueue m_queue;
 
 			Interface *m_interface;
-			ResponderPtrList m_responders;
+			Responder *m_responder;
 		};
 
 		typedef QSharedPointer<Target> TargetPtr;

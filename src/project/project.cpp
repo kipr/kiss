@@ -84,11 +84,6 @@ void Kiss::Project::Project::refresh()
 	refresh(m_location);
 }
 
-KarPtr Kiss::Project::Project::createArchive() const
-{
-	return Kar::create(m_location);
-}
-
 void Kiss::Project::Project::refresh(const QString& location)
 {
 	QFileInfoList files = QDir(location).entryInfoList(QDir::NoDot | QDir::NoDotDot);
@@ -100,8 +95,7 @@ void Kiss::Project::Project::refresh(const QString& location)
 	}
 }
 
-bool Kiss::Project::visitSelf(const Kiss::KarPtr &archive)
+Kiss::KarPtr Kiss::Project::Project::archive() const
 {
-	qDebug() << "Visited project";
-	return true;
+	return Kar::create(m_location);
 }

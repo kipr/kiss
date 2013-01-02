@@ -26,7 +26,6 @@
 #include <QDebug>
 #include <QFileInfo>
 
-#include "target.hpp"
 #include "project.hpp"
 
 #define TABBED_WIDGET_PROPERTY "_kiss_tabbed_"

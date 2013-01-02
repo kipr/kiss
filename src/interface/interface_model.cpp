@@ -35,8 +35,9 @@ private:
 	bool m_all;
 };
 
-InterfaceModel::InterfaceModel(InterfaceManager *manager)
-	: m_manager(manager)
+InterfaceModel::InterfaceModel(InterfaceManager *manager, QObject *parent)
+	: QStandardItemModel(parent),
+	m_manager(manager)
 {
 	connect(m_manager, SIGNAL(interfaceAdded(Interface *)), SLOT(interfaceAdded(Interface *)));
 	connect(m_manager, SIGNAL(interfaceRemoved(Interface *)), SLOT(interfaceRemoved(Interface *)));

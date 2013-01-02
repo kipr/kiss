@@ -20,18 +20,21 @@ public:
 		setIcon(ResourceHelper::ref().icon("default_target"));
 	}
 	
-	TargetPtr target() {
+	TargetPtr target()
+	{
 		return m_target;
 	}
 	
 	template<typename T>
-	static TargetPtr target_cast(T *t) {
+	static TargetPtr target_cast(T *t)
+	{
 		TargetItem *item = dynamic_cast<TargetItem*>(t);
 		return item ? item->target() : TargetPtr();
 	}
 	
 	template<typename T>
-	static Interface *interface_cast(T *t) {
+	static Interface *interface_cast(T *t)
+	{
 		TargetPtr target = target_cast(t);
 		return target.data() ? target->interface() : 0;
 	}

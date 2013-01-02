@@ -17,17 +17,8 @@
    <property name="spacing">
     <number>5</number>
    </property>
-   <property name="leftMargin">
-    <number>12</number>
-   </property>
-   <property name="topMargin">
-    <number>12</number>
-   </property>
-   <property name="rightMargin">
-    <number>12</number>
-   </property>
-   <property name="bottomMargin">
-    <number>5</number>
+   <property name="margin">
+    <number>6</number>
    </property>
    <item>
     <widget class="QLabel" name="label_4">
@@ -230,6 +221,16 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <property name="spacing">
+      <number>8</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="ui_manual">
+       <property name="text">
+        <string>Manual...</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QPushButton" name="ui_refresh">
        <property name="text">

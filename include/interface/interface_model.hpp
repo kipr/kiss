@@ -14,10 +14,10 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			InterfaceModel(InterfaceManager *manager);
+			InterfaceModel(InterfaceManager *manager, QObject *parent = 0);
 
-			Interface* rowToInterface(const int& row) const;
-			Interface* indexToInterface(const QModelIndex& index) const;
+			Interface *rowToInterface(const int& row) const;
+			Interface *indexToInterface(const QModelIndex& index) const;
 
 			void setAllInterface(const bool& on);
 

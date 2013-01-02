@@ -33,42 +33,42 @@ public:
 		return false;
 	}
 	
-	virtual const bool compile(const QString& name)
+	virtual const bool compile(quint64 id, const QString& name)
 	{
 		return false;
 	}
 	
-	virtual const bool download(const QString& name, const KarPtr& archive)
+	virtual const bool download(quint64 id, const QString& name, const KarPtr& archive)
 	{
 		return false;
 	}
 	
-	virtual const bool run(const QString& name)
+	virtual const bool run(quint64 id, const QString& name)
 	{
 		return false;
 	}
 
-	virtual const bool list()
+	virtual const bool list(quint64 id)
 	{
 		return false;
 	}
 	
-	virtual const bool deleteProgram(const QString& name)
+	virtual const bool deleteProgram(quint64 id, const QString& name)
 	{
 		return false;
 	}
 	
-	virtual const bool interaction(const QString& command)
+	virtual const bool interaction(quint64 id, const QString& command)
 	{
 		return false;
 	}
 
-	virtual const bool authenticate(const QByteArray& hash)
+	virtual const bool authenticate(quint64 id, const QByteArray& hash)
 	{
 		return false;
 	}
 	
-	virtual const bool sendCustom(const QString& custom, const QByteArray& payload = QByteArray())
+	virtual const bool sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray())
 	{
 		return false;
 	}
@@ -84,6 +84,11 @@ DummyInterface::DummyInterface()
 	: Interface("Dummy")
 {
 	
+}
+
+TargetPtr DummyInterface::createTarget(const QString &address)
+{
+	return TargetPtr();
 }
 
 const bool DummyInterface::scan(Kiss::Target::InterfaceResponder *responder)

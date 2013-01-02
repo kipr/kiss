@@ -1,5 +1,5 @@
-#ifndef _COMMUNICATIONQUEUE_H_
-#define _COMMUNICATIONQUEUE_H_
+#ifndef _COMMUNICATION_QUEUE_HPP_
+#define _COMMUNICATION_QUEUE_HPP_
 
 #include "target.hpp"
 
@@ -9,6 +9,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QSharedPointer>
+#include <QMetaType>
 
 namespace Kiss
 {
@@ -36,6 +37,7 @@ namespace Kiss
 
 			const TargetPtr &target() const;
 			const CommunicationEntry::Type& type() const;
+			QString typeString() const;
 			const QString& custom() const;
 			const QByteArray& payload() const;
 			const QString& name() const;
@@ -63,5 +65,7 @@ namespace Kiss
 		typedef QQueue<CommunicationEntryPtr> CommunicationQueue;
 	}
 }
+
+Q_DECLARE_METATYPE(Kiss::Target::CommunicationEntryPtr);
 
 #endif

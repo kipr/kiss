@@ -26,7 +26,6 @@
 #include "unit.hpp"
 #include "output_helper.hpp"
 #include "source_find_widget.hpp"
-#include "qt_target_responder.hpp"
 
 #include "ui_SourceFile.h"
 
@@ -138,21 +137,19 @@ namespace Kiss
 
 			void sourceModified(bool m);
 
+			virtual Kiss::KarPtr archive() const;
+
 		signals:
 			void updateActivatable();
+			
+		protected:
+			void keyPressEvent(QKeyEvent *event);
+			virtual void fileChanged(const QFileInfo& file);
+			virtual void projectChanged(const Project::ProjectPtr& project);
 
 		private slots:
 			void on_ui_editor_cursorPositionChanged(int line, int index);
-
-			void availableFinished(const bool& avail);
-			void compileFinished(const Compiler::OutputList& result);
-			void downloadFinished(const bool& success);
-			void runFinished(const bool& success);
-			void connectionError();
-			void communicationError();
-			void notAuthenticatedError();
-			void authenticationResponse(const Target::Responder::AuthenticateReturn& response);
-
+			
 		private:
 			bool saveAsFile();
 			bool saveAsProject();
@@ -190,14 +187,6 @@ namespace Kiss
 			void updateLexer();
 			
 			bool actionPreconditions();
-
-			Target::QtResponder m_responder;
-			
-		protected:
-			void keyPressEvent(QKeyEvent *event);
-			virtual void fileChanged(const QFileInfo& file);
-			virtual void projectChanged(const Project::ProjectPtr& project);
-			virtual bool visitSelf(const Kiss::KarPtr &archive);
 		};
 	}
 }

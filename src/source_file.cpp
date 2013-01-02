@@ -101,17 +101,6 @@ SourceFile::SourceFile(MainWindow *parent)
 	ui_find->hide();
 	
 	refreshSettings();
-	
-	connect(&m_responder, SIGNAL(compileFinished(Compiler::OutputList)), SLOT(compileFinished(Compiler::OutputList)));
-	connect(&m_responder, SIGNAL(compileFinished(Compiler::OutputList)), mainWindow(), SLOT(showCompilerOutput(Compiler::OutputList)));
-	connect(&m_responder, SIGNAL(downloadFinished(bool)), SLOT(downloadFinished(bool)));
-	connect(&m_responder, SIGNAL(runFinished(bool)), SLOT(runFinished(bool)));
-	connect(&m_responder, SIGNAL(availableFinished(bool)), SLOT(availableFinished(bool)));
-	connect(&m_responder, SIGNAL(connectionError()), SLOT(connectionError()));
-	connect(&m_responder, SIGNAL(communicationError()), SLOT(communicationError()));
-	connect(&m_responder, SIGNAL(notAuthenticatedError()), SLOT(notAuthenticatedError()));
-	connect(&m_responder, SIGNAL(authenticationResponse(Target::Responder::AuthenticateReturn)),
-		SLOT(authenticationResponse(Target::Responder::AuthenticateReturn)));
 		
 	setName(tr("Untitled"));
 }
@@ -123,14 +112,14 @@ SourceFile::~SourceFile()
 void SourceFile::activate()
 {
 	mainWindow()->setTitle(target()->displayName());
-	// mainWindow()->showErrors(topLevelUnit());
+	
 	mainWindow()->setStatusMessage("");
 	
 	mainWindow()->deactivateMenuablesExcept(mainWindow()->standardMenus()
 		<< Menu::SourceFileMenu::menuName() << Menu::TargetMenu::menuName());
 	
 	mainWindow()->activateMenuable(Menu::SourceFileMenu::menuName(), this);
-	mainWindow()->activateMenuable(Menu::TargetMenu::menuName(), this); 
+	mainWindow()->activateMenuable(Menu::TargetMenu::menuName(), this);
 }
 
 bool SourceFile::beginSetup()
@@ -280,8 +269,8 @@ void SourceFile::indentAll()
 			indentLevel -= blockEndCount-blockStartCount;
 			blockEndCount = blockStartCount = 0;
 		}
-		if((ui_editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos-1) == ui_editor->lexer()->defaultStyle() ||
-			ui_editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos-1) 
+		if((ui_editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos - 1) == ui_editor->lexer()->defaultStyle() ||
+			ui_editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos - 1) 
 				!= ui_editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos)) || indentLevel)
 			outDocument += QString(line).replace(QRegExp("^[ \\t]*"), QString(indentLevel,'\t'));
 		else
@@ -579,67 +568,26 @@ void SourceFile::sourceModified(bool)
 const bool SourceFile::download()
 {
 	if(!actionPreconditions()) return false;
-	
-	using namespace Target;
-	
-	KarPtr archive;
-	if(hasProject()) {
-		archive = project()->createArchive();
-	} else {
-		archive = Kar::create();
-		
-	}
-	
-	CommunicationQueue queue;
-	QString name = file().baseName();
-	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, name, archive)));
-	
-	return target()->executeQueue(queue);
+	return execute(Unit::Download);
 }
 
 const bool SourceFile::compile()
 {
 	if(!actionPreconditions()) return false;
-	
-	using namespace Target;
-	
-	KarPtr archive;
-	if(hasProject()) {
-		archive = project()->createArchive();
-	} else {
-		archive = Kar::create();
-		archive->addFile(file().fileName(), ui_editor->text().toAscii());
-	}
-	
-	CommunicationQueue queue;
-	QString name = file().baseName();
-	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, name, archive)));
-	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Compile, name)));
-	
-	return target()->executeQueue(queue);
+	bool success = true;
+	success &= execute(Unit::Download);
+	success &= execute(Unit::Compile);
+	return success;
 }
 
 const bool SourceFile::run()
 {
 	if(!actionPreconditions()) return false;
-	
-	using namespace Target;
-	
-	KarPtr archive;
-	if(hasProject()) {
-		archive = project()->createArchive();
-	} else {
-		archive = Kar::create();
-		archive->addFile(file().fileName(), ui_editor->text().toAscii());
-	}
-	
-	CommunicationQueue queue;
-	QString name = file().baseName();
-	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Download, name, archive)));
-	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Compile, name)));
-	queue.enqueue(CommunicationEntryPtr(new CommunicationEntry(CommunicationEntry::Run, name)));
-	
-	return target()->executeQueue(queue);
+	bool success = true;
+	success &= execute(Unit::Download);
+	success &= execute(Unit::Compile);
+	success &= execute(Unit::Run);
+	return success;
 }
 
 void SourceFile::stop()
@@ -699,8 +647,8 @@ const bool SourceFile::changeTarget()
 	if(targetDialog.target().isNull()) return false;
 	setTarget(targetDialog.target());
 	
-	target()->clearResponders();
-	target()->addResponder(&m_responder);
+	// This hooks up all important callbacks
+	target()->setResponder(mainWindow()->mainResponder());
 	
 	return true;
 }
@@ -736,68 +684,6 @@ void SourceFile::on_ui_editor_cursorPositionChanged(int line, int)
 {
 	m_currentLine = line;
 	emit updateActivatable();
-}
-
-void SourceFile::availableFinished(const bool& avail)
-{
-	qDebug() << "Available finished";
-}
-
-void SourceFile::compileFinished(const Compiler::OutputList& result)
-{
-	bool error = false;
-	foreach(const Compiler::Output& out, result) {
-		error |= out.exitCode() != 0 || !out.error().isEmpty();
-	}
-	mainWindow()->setStatusMessage(tr("Compile ") + (!error ? tr("Succeeded") : tr("Failed")));
-	updateErrors(result);
-}
-
-void SourceFile::downloadFinished(const bool& success)
-{
-	qDebug() << "Download finished";
-	mainWindow()->setStatusMessage(tr("Download ") + (success ? tr("Succeeded") : tr("Failed")));
-}
-
-void SourceFile::runFinished(const bool& success)
-{
-	qDebug() << "Run finished";
-	mainWindow()->setStatusMessage(tr("Run ") + (success ? tr("Succeeded") : tr("Failed")));
-}
-
-void SourceFile::connectionError()
-{
-	mainWindow()->setStatusMessage(tr("Unable to establish a connection with \"%1\"").arg(target()->displayName()));
-}
-
-void SourceFile::communicationError()
-{
-	mainWindow()->setStatusMessage(tr("Error communicating with \"%1\"").arg(target()->displayName()));
-}
-
-void SourceFile::notAuthenticatedError()
-{
-	Dialog::Password dialog(this);
-	if(dialog.exec() == QDialog::Rejected) return;
-	target()->authenticate(dialog.hash());
-}
-
-void SourceFile::authenticationResponse(const Target::Responder::AuthenticateReturn& response)
-{
-	qDebug() << "Authed?" << (response == Target::Responder::AuthSuccess);
-	if(response == Target::Responder::AuthSuccess) {
-		target()->retryLastQueue();
-		return;
-	}
-	
-	if(response == Target::Responder::AuthWillNotAccept) {
-		mainWindow()->setStatusMessage(target()->displayName() + tr(" told KISS to not try authenticating again."));
-		return;
-	}
-	
-	Dialog::Password dialog(this);
-	if(dialog.exec() == QDialog::Rejected) return;
-	target()->authenticate(dialog.hash());
 }
 
 void SourceFile::showFind()
@@ -908,8 +794,9 @@ bool SourceFile::actionPreconditions()
 	return true;
 }
 
-bool SourceFile::visitSelf(const Kiss::KarPtr &archive)
+Kiss::KarPtr SourceFile::archive() const
 {
+	Kiss::KarPtr archive = Kiss::Kar::create();
 	archive->addFile(file().fileName(), ui_editor->text().toAscii());
-	return true;
+	return archive;
 }

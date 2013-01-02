@@ -34,6 +34,9 @@
 #include "template_manager.hpp"
 #include "template_tab.hpp"
 #include "template_pack.hpp"
+#include "main_responder.hpp"
+#include "communication_progress_bar.hpp"
+#include "communication_manager.hpp"
 
 #include <QToolTip>
 #include <QMessageBox>
@@ -60,14 +63,15 @@
 
 #define OPEN_PATH "openpath"
 
-
 using namespace Kiss;
 using namespace Kiss::Widget;
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent),
 	m_currentTab(0),
-	m_templateManager(new Template::Manager)
+	m_templateManager(new Template::Manager),
+	m_mainResponder(new Target::MainResponder(this)),
+	m_commProgress(new CommunicationProgressBar(&Target::CommunicationManager::ref(), this))
 {
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	
@@ -92,13 +96,19 @@ MainWindow::MainWindow(QWidget *parent)
 
 	hideErrors();
 	
-	connect(ui_projects, SIGNAL(clicked(const QModelIndex&)), SLOT(projectFileClicked(const QModelIndex&)));
-	connect(ui_projects, SIGNAL(doubleClicked(const QModelIndex&)), SLOT(projectClicked(const QModelIndex&)));
+	connect(ui_projects, SIGNAL(clicked(QModelIndex)),
+		SLOT(projectFileClicked(QModelIndex)));
+	connect(ui_projects, SIGNAL(doubleClicked(QModelIndex)),
+		SLOT(projectClicked(QModelIndex)));
 	
-	connect(&m_projectManager, SIGNAL(projectOpened(Kiss::Project::ProjectPtr)), SLOT(projectOpened(Kiss::Project::ProjectPtr)));
-	connect(&m_projectManager, SIGNAL(projectClosed(Kiss::Project::ProjectPtr)), SLOT(projectClosed(Kiss::Project::ProjectPtr)));
+	connect(&m_projectManager, SIGNAL(projectOpened(Kiss::Project::ProjectPtr)),
+		SLOT(projectOpened(Kiss::Project::ProjectPtr)));
+	connect(&m_projectManager, SIGNAL(projectClosed(Kiss::Project::ProjectPtr)),
+		SLOT(projectClosed(Kiss::Project::ProjectPtr)));
 	
 	ui_projectFrame->setVisible(false);
+	
+	ui_statusbar->addPermanentWidget(m_commProgress);
 	
 	initMenus();
 	
@@ -115,6 +125,7 @@ MainWindow::~MainWindow()
 	while(ui_tabWidget->count() > 0) deleteTab(0);
 	
 	delete m_templateManager;
+	delete m_mainResponder;
 }
 
 void MainWindow::importTemplatePack()
@@ -267,7 +278,6 @@ bool MainWindow::newProject(const QString& folderPath)
 	return project;
 }
 
-
 void MainWindow::initMenus()
 {
 	using namespace Kiss::Menu;
@@ -347,12 +357,16 @@ void MainWindow::setStatusMessage(const QString& message, int time)
 	ui_statusbar->showMessage(message, time);
 }
 
+void MainWindow::setOutputList(const Compiler::OutputList &output)
+{
+	ui_errors->setOutputList(output);
+}
+
 void MainWindow::hideErrors()
 {
 	ui_errors->hide();
 }
 
-/* Handles closing all of the open editor windows when the window is closed */
 void MainWindow::closeEvent(QCloseEvent *e)
 {
 	int widgetCount = ui_tabWidget->count();
@@ -373,8 +387,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 	QListIterator<QWidget *> i(qApp->topLevelWidgets());
 	while(i.hasNext()) {
 		QWidget *w = i.next();
-		if(w->isVisible())
-			w->close();
+		if(w->isVisible()) w->close();
 	}
 	
 	QMainWindow::closeEvent(e);
@@ -383,8 +396,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 void MainWindow::deleteTab(int index)
 {
 	QWidget* w = ui_tabWidget->widget(index);
-	Tab *tab = lookup(w);
-	qWarning() << tab;
+	// Tab *tab = lookup(w);
 	ui_tabWidget->removeTab(index);
 	removeLookup(w);
 	delete w;
@@ -545,12 +557,14 @@ void MainWindow::about()
 
 void MainWindow::settings()
 {
-	if(m_editorSettingsDialog.exec()) emit settingsUpdated();
+	if(m_editorSettingsDialog.exec() == QDialog::Rejected) return;
+	emit settingsUpdated();
 }
 
 void MainWindow::theme()
 {
-	if(m_themeSettingsDialog.exec()) emit settingsUpdated();
+	if(m_themeSettingsDialog.exec() == QDialog::Rejected) return;
+	emit settingsUpdated();
 }
 
 void MainWindow::showCompilerOutput(const Compiler::OutputList& results)
@@ -745,6 +759,11 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event) {
                 event->accept();
                 return true;
         } else return QMainWindow::eventFilter(target, event);
+}
+
+Target::Responder *MainWindow::mainResponder() const
+{
+	return m_mainResponder;
 }
 
 Project::Manager *MainWindow::projectManager()

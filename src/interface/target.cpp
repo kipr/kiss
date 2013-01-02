@@ -8,7 +8,9 @@ using namespace Kiss::Target;
 Target::Target(Interface* interface, const QString& name)
 	: m_interface(interface)
 {
-	
+	qRegisterMetaType<Response>("Response");
+	connect(this, SIGNAL(response(Response)),
+		SLOT(responseRedirect(Response)));
 }
 
 Target::~Target()
@@ -45,28 +47,18 @@ const QString Target::version() const {
 	return information().value(VERSION);
 }
 
-void Target::addResponder(Responder *responder)
+void Target::Target::setResponder(Responder *responder)
 {
-	m_responders.append(responder);
+	m_responder = responder;
 }
 
-void Target::addResponders(const ResponderPtrList& responders)
+Responder *Target::responder() const
 {
-	m_responders.append(responders);
+	return m_responder;
 }
 
-void Target::removeResponder(Responder *responder)
+void Target::responseRedirect(const Response &response)
 {
-	m_responders.removeAll(responder);
+	if(!m_responder) return;
+	m_responder->response(this, response);
 }
-
-void Target::clearResponders()
-{
-	m_responders.clear();
-}
-
-const ResponderPtrList& Target::responders() const
-{
-	return m_responders;
-}
-

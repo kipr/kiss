@@ -1,4 +1,4 @@
-SET(PLUGIN_NAME serial_interface)
+SET(PLUGIN_NAME kovan_serial_interface)
 
 PROJECT(${PLUGIN_NAME})
 cmake_minimum_required(VERSION 2.6.0)
@@ -27,7 +27,7 @@ ADD_DEFINITIONS(-DQT_DLL)
 ADD_LIBRARY(${PLUGIN_NAME} SHARED ${LOCAL_SOURCES} ${INCLUDES_MOC})
 LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
 
-TARGET_LINK_LIBRARIES(${PLUGIN_NAME} ${QT_LIBRARIES} kisside pcompiler easydevice)
+TARGET_LINK_LIBRARIES(${PLUGIN_NAME} ${QT_LIBRARIES} kisside pcompiler kovanserial kar)
 
 IF(APPLE)
 SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
@@ -45,6 +45,8 @@ ADD_CUSTOM_TARGET(${PLUGIN_NAME}_osx_install_names ALL
 		QtWebKit.framework/Versions/4/QtWebKit
 		phonon.framework/Versions/4/phonon
 		QtDeclarative.framework/Versions/4/QtDeclarative
+		libkar.dylib
+		libpcompiler.dylib
 	WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH}
 	DEPENDS ${PLUGIN_NAME})
 INSTALL(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/interfaces)

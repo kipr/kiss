@@ -1,5 +1,7 @@
 #include "kovan_interface.hpp"
-#include "tcp_socket_device.hpp"
+#include "kovan_proto_target.hpp"
+
+#include <kovanserial/tcp_serial.hpp>
 
 #include <QProcess>
 #include <QDir>
@@ -8,32 +10,66 @@
 
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <QRunnable>
+#include <QThreadPool>
 #include <QBuffer>
 
-using namespace EasyDevice;
 using namespace Kiss::Target;
+
+AdvertSampler::AdvertSampler(UdpAdvertiser *advertiser, const quint64 &sampleTime, const quint16 &samples)
+	: m_advertiser(advertiser),
+	m_sampleTime(sampleTime),
+	m_samples(samples)
+{
+}
+
+AdvertSampler::~AdvertSampler()
+{
+}
+
+void AdvertSampler::run()
+{
+	for(quint16 i = 0; i < m_samples; ++i) {
+		std::list<IncomingAdvert> adverts = m_advertiser->sample(m_sampleTime);
+		std::list<IncomingAdvert>::const_iterator it = adverts.begin();
+		for(; it != adverts.end(); ++it) {
+			QHostAddress addr((sockaddr *)&(*it).sender);
+			if(m_found.contains(addr)) continue;
+			m_found.push_back(addr);
+			emit found((*it).ad, (*it).sender);
+		}
+	}
+}
 
 KovanInterface::KovanInterface()
 	: Interface("Kovan (Networked)"),
-	m_server(new DiscoveryServer()),
+	m_advertiser(new UdpAdvertiser(false)),
 	m_responder(0)
 {
-	connect(m_server, SIGNAL(discoveryStarted()), SLOT(scanStarted()));
-	connect(m_server,
-		SIGNAL(discoveredDevice(EasyDevice::DeviceInfo, const QHostAddress&)),
-		SLOT(found(EasyDevice::DeviceInfo, const QHostAddress&)));
 }
 
 KovanInterface::~KovanInterface()
 {
-	delete m_server;
+	delete m_advertiser;
+}
+
+Kiss::Target::TargetPtr KovanInterface::createTarget(const QString &address)
+{
+	// TODO: Add input verification
+	TcpSerial *serial = new TcpSerial(address.toAscii(), KOVAN_SERIAL_PORT);
+	KovanProtoTarget *device = new Kiss::Target::KovanProtoTarget(serial, this);
+	return TargetPtr(device);
 }
 
 const bool KovanInterface::scan(InterfaceResponder *responder)
 {
 	m_responder = responder;
-	m_server->setup();
-	m_server->discover("kovan");
+	m_advertiser->reset();
+	AdvertSampler *sampler = new AdvertSampler(m_advertiser, 100, 100);
+	qRegisterMetaType<Advert>("Advert");
+	qRegisterMetaType<sockaddr_in>("sockaddr_in");
+	connect(sampler, SIGNAL(found(Advert, sockaddr_in)), SLOT(found(Advert, sockaddr_in)));
+	QThreadPool::globalInstance()->start(sampler);
 	return true;
 }
 
@@ -48,11 +84,14 @@ void KovanInterface::scanStarted()
 	m_responder->targetScanStarted(this);
 }
 
-void KovanInterface::found(DeviceInfo deviceInfo, const QHostAddress& address)
+void KovanInterface::found(const Advert &ad, const sockaddr_in& addr)
 {
 	if(!m_responder) return;
-	TcpSocketDevice *device = new Kiss::Target::TcpSocketDevice(this, address, 8075);
-	device->setDeviceInfo(deviceInfo);
+	QHostAddress ha((sockaddr *)&addr);
+	
+	TcpSerial *serial = new TcpSerial(ha.toString().toAscii(), KOVAN_SERIAL_PORT);
+	KovanProtoTarget *device = new Kiss::Target::KovanProtoTarget(serial, this);
+	device->fillInformation(ad);
 	m_responder->targetFound(this, TargetPtr(device));
 }
 

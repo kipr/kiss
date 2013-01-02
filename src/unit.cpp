@@ -1,5 +1,7 @@
 #include "unit.hpp"
 
+#include "communication_manager.hpp"
+
 #include <kar.hpp>
 
 #include <QDebug>
@@ -56,24 +58,32 @@ bool Unit::execute(const Unit::Action &action) const
 {
 	if(top() != this) return top()->execute(action);
 	
+	using namespace Target;
+	
 	if(action == Unit::Download) {
 		qDebug() << "Unit" << m_name << "download";
-		Kiss::KarPtr archive = Kiss::Kar::create();
-		visit(archive);
 		CommunicationManager::ref().admit(CommunicationEntryPtr(
-			new CommunicationEntry(CommunicationEntry::Download,
-			m_name, archive)));
-	} else if(action == Unit::Compile) {
+			new CommunicationEntry(target(), CommunicationEntry::Download,
+			m_name, archive())));
+		return true;
+	}
+	
+	if(action == Unit::Compile) {
 		qDebug() << "Unit" << m_name << "compile";
 		CommunicationManager::ref().admit(CommunicationEntryPtr(
-			new CommunicationEntry(CommunicationEntry::Compile, m_name));
-	} else if(action == Unit::Run) {
+			new CommunicationEntry(target(), CommunicationEntry::Compile, m_name)));
+		return true;
+	}
+	
+	if(action == Unit::Run) {
 		qDebug() << "Unit" << m_name << "run";
 		CommunicationManager::ref().admit(CommunicationEntryPtr(
-			new CommunicationEntry(CommunicationEntry::Run, m_name));
+			new CommunicationEntry(target(), CommunicationEntry::Run, m_name)));
+		return true;
 	}
 	
 	qWarning() << "Unit doesn't know how to execute action" << action;
+	return false;
 }
 
 void Unit::setName(const QString& name)
@@ -110,12 +120,4 @@ bool Unit::unitActionRequested()
 		if(!child->unitActionRequested()) return false;
 	}
 	return true;
-}
-
-bool Unit::visit(const Kiss::KarPtr &archive) const
-{
-	visitSelf(archive);
-	foreach(Unit *child, m_children) {
-		child->visit(archive);
-	}
 }

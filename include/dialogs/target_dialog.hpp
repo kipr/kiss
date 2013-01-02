@@ -47,11 +47,13 @@ namespace Kiss
 			void targetChosen(const QModelIndex& index);
 			void on_ui_interfaces_currentIndexChanged(int index);
 			void on_ui_refresh_clicked();
+			void on_ui_manual_clicked();
 
 		private:
 			Kiss::Target::InterfaceManager *m_manager;
 			Kiss::Target::TargetModel m_model;
 			Kiss::Target::InterfaceModel m_interfaceModel;
+			Kiss::Target::TargetPtr m_manualTarget;
 		};
 	}
 }

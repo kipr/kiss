@@ -2,6 +2,7 @@
 #define _INTERFACE_HPP_
 
 #include "interface_responder.hpp"
+#include "target.hpp"
 
 #include <QList>
 #include <QString>
@@ -16,7 +17,8 @@ namespace Kiss
 			Interface(const QString& name);
 
 			const QString& name() const;
-
+			
+			virtual Kiss::Target::TargetPtr createTarget(const QString &address) = 0;
 			virtual const bool scan(InterfaceResponder *responder) = 0;
 			virtual void invalidateResponder() = 0;
 		private:

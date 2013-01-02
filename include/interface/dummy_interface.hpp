@@ -16,6 +16,7 @@ namespace Kiss
 		public:
 			DummyInterface();
 			
+			virtual Kiss::Target::TargetPtr createTarget(const QString &address);
 			virtual const bool scan(Kiss::Target::InterfaceResponder *responder);
 			virtual void invalidateResponder();
 		};

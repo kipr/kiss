@@ -41,9 +41,16 @@
 #define RECENTS "recents"
 
 class QListWidgetItem;
+class QProgressBar;
 
 namespace Kiss
 {
+	namespace Target
+	{
+		class Responder;
+		class MainResponder;
+	}
+	
 	namespace Template
 	{
 		class Manager;
@@ -61,7 +68,7 @@ namespace Kiss
 		class MainWindow : public QMainWindow, private Ui::MainWindow
 		{
 		Q_OBJECT
-		public:	
+		public:
 			MainWindow(QWidget *parent = 0);
 			~MainWindow();
 
@@ -102,7 +109,9 @@ namespace Kiss
 			 * \param time Time to display in milliseconds
 			 */
 			void setStatusMessage(const QString& message, int time = 0);
-
+		
+			void setOutputList(const Compiler::OutputList &output);
+			
 			void hideErrors();
 
 			/*! 
@@ -162,7 +171,9 @@ namespace Kiss
 			bool canClose();
 			bool canGoPrevious();
 			bool canGoNext();
-
+			
+			Target::Responder *mainResponder() const;
+			
 			Project::ProjectPtr activeProject() const;
 
 			friend class Menu::MainWindowMenu;
@@ -225,11 +236,15 @@ namespace Kiss
 			Project::Manager m_projectManager;
 			QList<Menu::Menuable *> m_menuables;
 			
+			QProgressBar *m_commProgress;
+			
 			Project::Model m_projectsModel;
 
 			void addLookup(Tab *tab);
 			void removeLookup(QWidget* widget);
 			Tab *lookup(QWidget* widget) const;
+			
+			Target::Responder *m_mainResponder;
 
 			void showErrorMessages(bool verbose = false);
 		};
