@@ -2,6 +2,8 @@
 #include "kovan_proto_target.hpp"
 
 #include <kovanserial/usb_serial.hpp>
+#include <kovanserial/kovan_serial.hpp>
+#include <kovanserial/transport_layer.hpp>
 
 #include <QProcess>
 #include <QDir>
@@ -26,13 +28,26 @@ PortSampler::~PortSampler()
 
 void PortSampler::run()
 {
+	QStringList paths;
 #ifdef Q_OS_MAC
 	QDir dir("/dev/");
-	const QStringList list = dir.entryList(QStringList() << "tty.usbmodem*", QDir::System);
-	
+	QFileInfoList list = dir.entryInfoList(QStringList() << "tty.usbmodem*", QDir::System);
+	foreach(const QFileInfo &info, list) paths << info.filePath();
 #elif defined(Q_OS_WIN)
 	qDebug() << "Device discovery not yet implemented for windows!";
 #endif
+	foreach(const QString &path, paths) {
+		UsbSerial usb(path.toAscii());
+		if(!usb.makeAvailable()) {
+			qWarning() << "Failed to make port" << path << "available";
+			continue;
+		}
+		TransportLayer transport(&usb);
+		KovanSerial proto(&transport);
+		if(proto.knockKnock(350)) emit found(path);
+		proto.hangup();
+		usb.endSession();
+	}
 }
 
 KovanSerialInterface::KovanSerialInterface()
@@ -57,6 +72,10 @@ Kiss::Target::TargetPtr KovanSerialInterface::createTarget(const QString &addres
 const bool KovanSerialInterface::scan(InterfaceResponder *responder)
 {
 	m_responder = responder;
+	PortSampler *sampler = new PortSampler();
+	sampler->setAutoDelete(true);
+	connect(sampler, SIGNAL(found(QString)), SLOT(found(QString)));
+	QThreadPool::globalInstance()->start(sampler);
 	return true;
 }
 

@@ -89,7 +89,7 @@ const bool KovanProtoTarget::compile(quint64 id, const QString& name)
 	
 	Packet p;
 	if(!m_transport.recv(p, 15000) || p.type != Command::FileHeader) {
-		qWarning() << "Failed to recv results of compile";
+		qWarning() << "Failed to recv results of compile" << p.type;
 		emit response(Response(id, KEY_COMPILE, true));
 		m_transmitter->endSession();
 		return false;

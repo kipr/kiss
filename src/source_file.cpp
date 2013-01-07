@@ -638,6 +638,9 @@ void SourceFile::print()
 
 void SourceFile::convertToProject()
 {
+	Project::ProjectPtr project = mainWindow()->newProject();
+	fileSaveAs(project->location() + "/" + file().fileName());
+	setProject(project);
 }
 
 const bool SourceFile::changeTarget()
@@ -797,6 +800,14 @@ bool SourceFile::actionPreconditions()
 Kiss::KarPtr SourceFile::archive() const
 {
 	Kiss::KarPtr archive = Kiss::Kar::create();
-	archive->addFile(file().fileName(), ui_editor->text().toAscii());
+	QString raw = ui_editor->text();
+	// TODO: This assumes our input language is C or C++
+	QStringList localIncludes = raw.split("\n").filter(QRegExp("^\\s*#include.*\".+\""));
+	foreach(const QString &localInclude, localIncludes) {
+		int start = localInclude.indexOf('\"');
+		int end = localInclude.indexOf('\"', start + 1);
+		QString path = QFileInfo(file().path() + "/" + localInclude.mid(start, end - start)).canonicalPath();
+	}
+	archive->addFile(file().fileName(), raw.toAscii());
 	return archive;
 }

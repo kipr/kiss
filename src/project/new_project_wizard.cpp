@@ -8,7 +8,8 @@
 
 using namespace Kiss::Wizard;
 
-NewProject::NewProject(QWidget* parent) : QDialog(parent)
+NewProject::NewProject(QWidget* parent)
+	: QDialog(parent)
 {
 	setupUi(this);
 		

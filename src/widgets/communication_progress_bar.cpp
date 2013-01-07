@@ -32,6 +32,11 @@ void CommunicationProgressBar::paintEvent(QPaintEvent *event)
 	QProgressBar::paintEvent(event);
 }
 
+void CommunicationProgressBar::mousePressEvent(QMouseEvent *event)
+{
+	emit clicked();
+}
+
 void CommunicationProgressBar::admitted()
 {
 	setMaximum(++m_total);
