@@ -5,17 +5,18 @@
 
 #include <kar.hpp>
 
+#include <kovanserial/transmitter.hpp>
 #include <kovanserial/transport_layer.hpp>
 #include <kovanserial/kovan_serial.hpp>
 #include <kovanserial/udp_advertiser.hpp>
 
-class Transmitter;
+#undef interface
 
 namespace Kiss
 {
 	namespace Target
 	{
-		class KovanProtoTarget : public Target
+		class KovanProtoTarget : public Kiss::Target::Target
 		{
 		Q_OBJECT
 		public:
