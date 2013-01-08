@@ -20,8 +20,12 @@ namespace Kiss
 			
 			Target::CommunicationManager *manager() const;
 			
+		signals:
+			void clicked();
+			
 		protected:
 			void paintEvent(QPaintEvent *event);
+			void mousePressEvent(QMouseEvent *event);
 			
 		private slots:
 			void admitted();

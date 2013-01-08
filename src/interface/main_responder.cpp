@@ -23,12 +23,26 @@ void MainResponder::response(Target *target, const Response &response)
 		m_mainWindow->setStatusMessage(QObject::tr("Connection Failed!"), 5000);
 		return; 
 	} else if(response.type() == "compile") {
+		bool success = false;
 		if(response.data().canConvert<bool>()) {
-			m_mainWindow->setStatusMessage(response.data().toBool()
-				? QObject::tr("Compile Succeeded!")
-				: QObject::tr("Compile Failed!"), 5000);
+			success = response.data().toBool();
 		} else if(response.data().canConvert<Compiler::OutputList>()) {
-			m_mainWindow->setOutputList(response.data().value<Compiler::OutputList>());
+			Compiler::OutputList output = response.data().value<Compiler::OutputList>();
+			m_mainWindow->setOutputList(output);
+			success = Compiler::Output::isSuccess(output);
 		}
+		m_mainWindow->setStatusMessage(success
+			? QObject::tr("Compile Succeeded!")
+			: QObject::tr("Compile Failed!"), 5000);
+	} else if(response.type() == "download") {
+		bool success = response.data().toBool();
+		m_mainWindow->setStatusMessage(success
+			? QObject::tr("Download Succeeded!")
+			: QObject::tr("Download Failed!"), 5000);
+	} else if(response.type() == "run") {
+		bool success = response.data().toBool();
+		m_mainWindow->setStatusMessage(success
+			? QObject::tr("Run Succeeded!")
+			: QObject::tr("Run Failed!"), 5000);
 	}
 }

@@ -37,6 +37,7 @@
 #include "main_responder.hpp"
 #include "communication_progress_bar.hpp"
 #include "communication_manager.hpp"
+#include "file_utils.hpp"
 
 #include <QToolTip>
 #include <QMessageBox>
@@ -70,8 +71,8 @@ MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent),
 	m_currentTab(0),
 	m_templateManager(new Template::Manager),
-	m_mainResponder(new Target::MainResponder(this)),
-	m_commProgress(new CommunicationProgressBar(&Target::CommunicationManager::ref(), this))
+	m_commProgress(new CommunicationProgressBar(&Target::CommunicationManager::ref(), this)),
+	m_mainResponder(new Target::MainResponder(this))
 {
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	
@@ -109,6 +110,10 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projectFrame->setVisible(false);
 	
 	ui_statusbar->addPermanentWidget(m_commProgress);
+	
+	ui_comm->hide();
+	
+	connect(m_commProgress, SIGNAL(clicked()), SLOT(toggleCommunicationWidget()));
 	
 	initMenus();
 	
@@ -161,25 +166,16 @@ Project::ProjectPtr MainWindow::newProject()
 	Wizard::NewProject wizard(this);
 
 	if(wizard.exec() == QDialog::Rejected) return Project::ProjectPtr();
-	const QString& saveLocation = wizard.saveLocation();
+	const QString &saveLocation = wizard.saveLocation();
 	
 	if(QDir(saveLocation).exists()) {
 		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
-			tr("Overwrite ") + saveLocation + "?",
+			tr("Overwrite %1?").arg(saveLocation),
 			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 		if(ret == QMessageBox::No) return Project::ProjectPtr();
 	}
 	
-	Project::ProjectPtr project = Project::Project::create(saveLocation);
-	if(!project) {
-		Dialog::Message::showError(this, "simple_error", QStringList() <<
-			tr("Failed to create project.") <<
-			tr("Attempted save location: ") + saveLocation);
-		return Project::ProjectPtr();
-	}
-
-	m_projectManager.openProject(project);
-	return project;
+	return newProject(saveLocation);
 }
 
 void MainWindow::newFile()
@@ -267,11 +263,12 @@ bool MainWindow::openProject(const QString& filePath)
 	return project;
 }
 
-bool MainWindow::newProject(const QString& folderPath)
+Project::ProjectPtr MainWindow::newProject(const QString& folderPath)
 {
-	if(!QDir().mkpath(folderPath)) return false;
+	if(!FileUtils::remove(folderPath)) return Project::ProjectPtr();
+	if(!QDir().mkpath(folderPath)) return Project::ProjectPtr();
 	Project::ProjectPtr project = Project::Project::create(folderPath);
-	if(!project) return false;
+	if(!project) return Project::ProjectPtr();
 	
 	m_projectManager.openProject(project);
 	qDebug() << "Creating project at" << folderPath;
@@ -646,6 +643,11 @@ void MainWindow::showProjectDock(bool show)
 void MainWindow::hideProjectDock()
 {
 	showProjectDock(false);
+}
+
+void MainWindow::toggleCommunicationWidget()
+{
+	ui_comm->setVisible(!ui_comm->isVisible());
 }
 
 void MainWindow::openRecent()

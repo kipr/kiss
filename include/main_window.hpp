@@ -81,7 +81,7 @@ namespace Kiss
 			bool openFile(const QString& filePath, const Project::ProjectPtr& project = Project::ProjectPtr());
 			bool memoryOpen(const QByteArray& ba, const QString& assocPath);
 			bool openProject(const QString& filePath);
-			bool newProject(const QString& folderPath);
+			Project::ProjectPtr newProject(const QString& folderPath);
 
 			void initMenus(Tab *tab);
 
@@ -203,6 +203,8 @@ namespace Kiss
 
 			void showProjectDock(bool show = true);
 			void hideProjectDock();
+			
+			void toggleCommunicationWidget();
 
 			QList<QObject *> tabs(const QString& type);
 
