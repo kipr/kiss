@@ -15,7 +15,6 @@ Target::Target(Interface* interface, const QString& name)
 
 Target::~Target()
 {
-	
 }
 
 Interface *Target::interface() const

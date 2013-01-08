@@ -6,10 +6,25 @@
 #include "template_pack.hpp"
 
 #include <QItemSelection>
+#include <QItemDelegate>
 #include <QDebug>
 
 using namespace Kiss;
 using namespace Kiss::Dialog;
+
+class ItemDelegate : public QItemDelegate
+{
+public:
+	ItemDelegate(QObject *parent = 0)
+		: QItemDelegate(parent)
+	{
+	}
+	
+	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+	{
+		return QSize(100, 22);
+	}
+};
 
 Dialog::Template::Template(Kiss::Template::Manager *manager, QWidget *parent)
 	: QDialog(parent),
@@ -21,11 +36,13 @@ Dialog::Template::Template(Kiss::Template::Manager *manager, QWidget *parent)
 	m_model = new Kiss::Template::Model(m_manager, ui->templates);
 	m_model->setReadOnly(true);
 	ui->templates->setModel(m_model);
+	ui->templates->setItemDelegate(new ItemDelegate(this));
 	ui->removePack->setEnabled(false);
 	connect(ui->templates->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
 		this, SLOT(selectionChanged(QItemSelection)));
 	connect(ui->removePack, SIGNAL(clicked()), this, SLOT(removeSelectedPack()));
 	m_helpText = ui->description->toPlainText();
+	ui->templates->expandAll();
 }
 
 Dialog::Template::~Template()
@@ -54,6 +71,7 @@ void Dialog::Template::selectionChanged(const QItemSelection& selection)
 	Kiss::Template::Pack *pack = m_model->indexToPack(index);
 	
 	ui->removePack->setEnabled(m_model->isIndexPack(index));
+	ui->buttons->button(QDialogButtonBox::Ok)->setEnabled(!m_model->isIndexPack(index));
 	
 	if(!pack) {
 		ui->description->setPlainText(m_helpText);

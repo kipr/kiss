@@ -71,8 +71,8 @@ MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent),
 	m_currentTab(0),
 	m_templateManager(new Template::Manager),
-	m_mainResponder(new Target::MainResponder(this)),
-	m_commProgress(new CommunicationProgressBar(&Target::CommunicationManager::ref(), this))
+	m_commProgress(new CommunicationProgressBar(&Target::CommunicationManager::ref(), this)),
+	m_mainResponder(new Target::MainResponder(this))
 {
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	

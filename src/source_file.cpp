@@ -638,8 +638,10 @@ void SourceFile::print()
 
 void SourceFile::convertToProject()
 {
+	if(!save()) return;
 	Project::ProjectPtr project = mainWindow()->newProject();
 	fileSaveAs(project->location() + "/" + file().fileName());
+	project->setTarget(target());
 	setProject(project);
 }
 
@@ -652,6 +654,8 @@ const bool SourceFile::changeTarget()
 	
 	// This hooks up all important callbacks
 	target()->setResponder(mainWindow()->mainResponder());
+	
+	updateTitle();
 	
 	return true;
 }
