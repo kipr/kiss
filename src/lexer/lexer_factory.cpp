@@ -37,6 +37,8 @@ const QString& Constructor::name() const
 
 Constructor::~Constructor() {}
 
+Base::~Base() {}
+
 Settings::Settings() {}
 
 Settings::~Settings() {}

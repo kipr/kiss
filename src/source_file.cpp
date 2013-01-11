@@ -229,9 +229,7 @@ bool SourceFile::openProjectFile(const Project::ProjectPtr& project)
 
 void SourceFile::indentAll()
 {
-	if(!ui_editor->lexer()) return;
-	Lexer::Base *lexerBase = dynamic_cast<Lexer::Base *>(ui_editor->lexer());
-	if(!lexerBase || !lexerBase->cStyleBlocks()) return;
+	if(!m_currentLexer || !m_currentLexer->cStyleBlocks()) return;
 	
 	setUpdatesEnabled(false);
 
@@ -702,12 +700,20 @@ void SourceFile::showFind()
 
 void SourceFile::setLexer(Lexer::Constructor *constructor)
 {
-	if(m_currentLexer) m_currentLexer->constructor()->_delete(m_currentLexer);
+	ui_editor->setLexer(0);
+	if(m_currentLexer) {
+#ifdef Q_OS_WIN
+		m_currentLexer->constructor()->_delete(m_currentLexer);
+#else
+		// TODO: Move away from QScintilla before I lose my mind.
+		// delete m_currentLexer;
+#endif
+	}
 	m_currentLexer = 0;
 	if(!constructor) return;
 	m_currentLexer = constructor->construct();
 	ui_editor->setLexer(m_currentLexer->lexer());
-	Lexer::Factory::setAPIsForLexer(m_currentLexer, m_lexAPI);
+	// Lexer::Factory::setAPIsForLexer(m_currentLexer, m_lexAPI);
 	refreshSettings();
 	updateMargins();
 }

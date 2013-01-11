@@ -67,9 +67,7 @@ namespace Kiss
 			{	
 			}
 			
-			virtual ~Base()
-			{
-			}
+			virtual ~Base();
 			
 			const Constructor *constructor() const
 			{

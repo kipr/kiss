@@ -30,7 +30,7 @@ void KovanProtoTarget::fillDisplayName(const QString &displayName)
 
 void KovanProtoTarget::fillCommPort(const QString &commPort)
 {
-	m_information[SERIAL] = commPort;
+	m_information[COMM_PORT] = commPort;
 }
 
 void KovanProtoTarget::fillInformation(const Advert &advert)

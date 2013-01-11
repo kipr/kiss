@@ -46,8 +46,6 @@ namespace Kiss
 			~C();
 
 			const bool cStyleBlocks() const;
-		private:
-			CLexer *m_lexer;
 		};
 
 		class ConstructorC : public Constructor

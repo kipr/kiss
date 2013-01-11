@@ -102,6 +102,7 @@ void KovanInterface::found(const Advert &ad, const sockaddr_in& addr)
 	TcpSerial *serial = new TcpSerial(ha.toString().toAscii(), KOVAN_SERIAL_PORT);
 	KovanProtoTarget *device = new Kiss::Target::KovanProtoTarget(serial, this);
 	device->fillInformation(ad);
+	device->fillCommPort(ha.toString());
 	m_responder->targetFound(this, TargetPtr(device));
 }
 
