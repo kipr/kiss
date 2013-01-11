@@ -34,7 +34,7 @@ namespace Kiss
 {
 	namespace Lexer
 	{
-		struct Base;
+		class Base;
 
 		class Constructor : public QObject
 		{
@@ -57,13 +57,18 @@ namespace Kiss
 			QString m_name;
 		};
 
-		struct Base
+		class Base
 		{
+		public:
 			Base(QsciLexer *lexer, const Constructor *constructor)
 				: m_lexer(lexer),
 				m_constructor(constructor),
 				m_apis(lexer)
 			{	
+			}
+			
+			virtual ~Base()
+			{
 			}
 			
 			const Constructor *constructor() const
