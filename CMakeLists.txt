@@ -9,6 +9,7 @@ SET(RC ${KISS_SOURCE_DIR}/rc)
 SET(SRC ${KISS_SOURCE_DIR}/src)
 SET(UI ${KISS_SOURCE_DIR}/ui)
 SET(TRADEMARKS ${KISS_SOURCE_DIR}/trademarks)
+SET(COMPAT ${KISS_SOURCE_DIR}/compat)
 
 SET(KISS_INCLUDE_DIRS ${INCLUDE} 
 	${INCLUDE}/dialogs
@@ -50,7 +51,16 @@ FILE(GLOB INCLUDES ${INCLUDE}/*.hpp
 	${INCLUDE}/compiler/*
 	${INCLUDE}/interface/*)
 
-FILE(GLOB SOURCES ${SRC}/* ${SRC}/lexer/* ${SRC}/dialogs/* ${SRC}/widgets/* ${SRC}/menus/* ${SRC}/js/* ${SRC}/project/* ${SRC}/compiler/* ${SRC}/interface/*)
+FILE(GLOB SOURCES ${SRC}/*
+	${SRC}/lexer/*
+	${SRC}/dialogs/*
+	${SRC}/widgets/*
+	${SRC}/menus/*
+	${SRC}/js/*
+	${SRC}/project/*
+	${SRC}/compiler/*
+	${SRC}/interface/*)
+
 FILE(GLOB UIS ${UI}/*)
 
 SET(KISS_SRCS_CXX ${SOURCES})
@@ -79,17 +89,25 @@ ELSEIF(UNIX)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 	ADD_EXECUTABLE(KISS ${KISS_SRCS_CXX})
 ELSEIF(WIN32)
-  SET(CMAKE_CXX_FLAGS "-Wl,--enable-auto-import")
-  ADD_EXECUTABLE(KISS WIN32 ${KISS_SRCS_CXX} rc/logos/kiss.rc)
+	SET(COMPAT_SRCS ${COMPAT}/mingw.c)
+	SET(CMAKE_CXX_FLAGS "-Wl,--enable-auto-import")
+	ADD_EXECUTABLE(KISS ${KISS_SRCS_CXX} ${COMPAT_SRCS} ${CMAKE_SOURCE_DIR}/rc/logos/kiss.rc)
 ENDIF()
-
-
 
 ADD_LIBRARY(kisside STATIC ${KISS_SRCS_CXX})
 
 SET(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
+IF(WIN32)
+SET(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../prefix/lib)
+ELSE(WIN32)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
-TARGET_LINK_LIBRARIES(KISS ${QT_LIBRARIES} qscintilla2 pcompiler kar)
+ENDIF(WIN32)
+
+TARGET_LINK_LIBRARIES(KISS ${QT_LIBRARIES} qscintilla2 pcompiler kar libkovanserial)
+
+IF(WIN32)
+	TARGET_LINK_LIBRARIES(KISS ws2_32)
+ENDIF(WIN32)
 
 IF(APPLE)
 	ADD_CUSTOM_TARGET(MacDeployQt ALL

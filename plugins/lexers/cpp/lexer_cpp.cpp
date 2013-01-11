@@ -48,17 +48,27 @@ Base *ConstructorCPP::_new() const
 	return new CPP(this);
 }
 
+void ConstructorCPP::_delete(Base *base) const
+{
+	delete base;
+}
+
 QStringList ConstructorCPP::extensions() const
 {
 	return QStringList() << "cpp" << "cxx" << "h" << "hpp" << "hh";
 }
 
 CPP::CPP(const Constructor* constructor)
-	: Base(this, constructor)
+	: Base(new CPPLexer(), constructor)
 {
 }
 
-QColor CPP::defaultColor(int style) const
+CPP::~CPP()
+{
+	delete lexer();
+}
+
+QColor CPPLexer::defaultColor(int style) const
 {
 	qDebug() << "MYNAMEIFISIAHFKDLSH";
     switch (style)
@@ -121,7 +131,7 @@ QColor CPP::defaultColor(int style) const
     return QsciLexerCPP::defaultColor(style);
 }
 
-QFont CPP::font(int style) const
+QFont CPPLexer::font(int style) const
 {
 	QFont f = QsciLexer::font(style);
 
@@ -138,7 +148,7 @@ QFont CPP::font(int style) const
 	return f;
 }
 
-QFont CPP::defaultFont(int style) const
+QFont CPPLexer::defaultFont(int style) const
 {
 	QFont f = QsciLexer::defaultFont(style);
 

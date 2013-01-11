@@ -30,19 +30,23 @@ AdvertSampler::~AdvertSampler()
 void AdvertSampler::run()
 {
 	for(quint16 i = 0; i < m_samples; ++i) {
+		fprintf(stderr, "Sampling...\n");
 		std::list<IncomingAdvert> adverts = m_advertiser->sample(m_sampleTime);
+		fprintf(stderr, "Sampled!\n");
 		std::list<IncomingAdvert>::const_iterator it = adverts.begin();
 		for(; it != adverts.end(); ++it) {
 			QHostAddress addr((sockaddr *)&(*it).sender);
 			if(m_found.contains(addr)) continue;
 			m_found.push_back(addr);
+			fprintf(stderr, "Emitting found\n");
 			emit found((*it).ad, (*it).sender);
 		}
 	}
+	fprintf(stderr, "AdvertSampler::run finished\n");
 }
 
 KovanInterface::KovanInterface()
-	: Interface("Kovan (Networked)"),
+	: Interface("Network"),
 	m_advertiser(new UdpAdvertiser(false)),
 	m_responder(0)
 {
@@ -55,6 +59,7 @@ KovanInterface::~KovanInterface()
 
 Kiss::Target::TargetPtr KovanInterface::createTarget(const QString &address)
 {
+	fprintf(stderr, "createTarget\n");
 	// TODO: Add input verification
 	TcpSerial *serial = new TcpSerial(address.toAscii(), KOVAN_SERIAL_PORT);
 	KovanProtoTarget *device = new Kiss::Target::KovanProtoTarget(serial, this);
@@ -63,9 +68,11 @@ Kiss::Target::TargetPtr KovanInterface::createTarget(const QString &address)
 
 const bool KovanInterface::scan(InterfaceResponder *responder)
 {
+	fprintf(stderr, "scan\n");
 	m_responder = responder;
 	m_advertiser->reset();
 	AdvertSampler *sampler = new AdvertSampler(m_advertiser, 100, 100);
+	sampler->setAutoDelete(true);
 	qRegisterMetaType<Advert>("Advert");
 	qRegisterMetaType<sockaddr_in>("sockaddr_in");
 	connect(sampler, SIGNAL(found(Advert, sockaddr_in)), SLOT(found(Advert, sockaddr_in)));
@@ -75,17 +82,20 @@ const bool KovanInterface::scan(InterfaceResponder *responder)
 
 void KovanInterface::invalidateResponder()
 {
+	fprintf(stderr, "invalidateResponder\n");
 	m_responder = 0;
 }
 
 void KovanInterface::scanStarted()
 {
+	fprintf(stderr, "scanStarted\n");
 	if(!m_responder) return;
 	m_responder->targetScanStarted(this);
 }
 
 void KovanInterface::found(const Advert &ad, const sockaddr_in& addr)
 {
+	fprintf(stderr, "found\n");
 	if(!m_responder) return;
 	QHostAddress ha((sockaddr *)&addr);
 	

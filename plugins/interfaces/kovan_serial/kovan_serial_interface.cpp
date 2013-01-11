@@ -53,7 +53,7 @@ void PortSampler::run()
 }
 
 KovanSerialInterface::KovanSerialInterface()
-	: Interface("Kovan (Serial)"),
+	: Interface("USB Serial"),
 	m_responder(0)
 {
 }

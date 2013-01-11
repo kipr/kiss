@@ -20,6 +20,8 @@
 
 #include "lexer_java.hpp"
 
+#include "syntax_standards.hpp"
+
 #include <QtPlugin>
 
 using namespace Kiss::Lexer;
@@ -43,17 +45,27 @@ Base *ConstructorJava::_new() const
 	return new Java(this);
 }
 
+void ConstructorJava::_delete(Base *base) const
+{
+	delete base;
+}
+
 QStringList ConstructorJava::extensions() const
 {
 	return QStringList() << "java";
 }
 
 Java::Java(const Constructor* constructor)
-	: CPP(constructor)
+	: Base(new JavaLexer(), constructor)
 {
 }
 
-QColor Java::defaultColor(int style) const
+Java::~Java()
+{
+	delete lexer();
+}
+
+QColor JavaLexer::defaultColor(int style) const
 {
     switch (style)
     {
@@ -68,7 +80,7 @@ QColor Java::defaultColor(int style) const
 	case CommentDoc:
 	case CommentLineDoc:
 	case InactiveCommentDoc:
-		return Lexer::Settings::ref().getSetting(DOC_COMMENT, SyntaxStandards::docColorColor());
+		return Lexer::Settings::ref().getSetting(DOC_COMMENT, SyntaxStandards::docColor());
 
 	case Number: return Lexer::Settings::ref().getSetting(NUMBER, SyntaxStandards::numberColor());
 	case Keyword: return Lexer::Settings::ref().getSetting(KEYWORD, SyntaxStandards::keywordColor());
@@ -115,7 +127,7 @@ QColor Java::defaultColor(int style) const
     return QsciLexerCPP::defaultColor(style);
 }
 
-QFont Java::font(int style) const
+QFont JavaLexer::font(int style) const
 {
 	QFont f = QsciLexer::font(style);
 
@@ -132,7 +144,7 @@ QFont Java::font(int style) const
 	return f;
 }
 
-QFont Java::defaultFont(int style) const
+QFont JavaLexer::defaultFont(int style) const
 {
 	QFont f = QsciLexer::defaultFont(style);
 

@@ -30,17 +30,24 @@ namespace Kiss
 {
 	namespace Lexer
 	{
-		class C : public Base, virtual public QsciLexerCPP
+		class CLexer : public QsciLexerCPP
 		{
 		public:
-			C(const Constructor *constructor);
-		
 			QColor defaultColor(int style) const;
 			QFont font(int style) const;
 			QFont defaultFont(int style) const;
 			const char *keywords(int set) const;
-		
+		};
+
+		class C : public Base
+		{
+		public:
+			C(const Constructor *constructor);
+			~C();
+
 			const bool cStyleBlocks() const;
+		private:
+			CLexer *m_lexer;
 		};
 
 		class ConstructorC : public Constructor
@@ -54,6 +61,7 @@ namespace Kiss
 			Base *construct(const QString& apis) const;
 		
 			Base *_new() const;
+			void _delete(Base *base) const;
 		
 			QStringList extensions() const;
 		};

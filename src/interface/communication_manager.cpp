@@ -17,8 +17,10 @@ CommunicationWorker::CommunicationWorker(const CommunicationEntryPtr &entry)
 
 void CommunicationWorker::run()
 {
+	fprintf(stderr, "Entry %d executing...\n", m_entry->id());
 	const bool success = m_entry->execute();
-	qDebug() << "Entry" << m_entry->id() << (!success ? "failed." : "finished!");
+	fprintf(stderr, "Entry %d finished!\n", m_entry->id());
+	// qDebug() << "Entry" << m_entry->id() << (!success ? "failed." : "finished!");
 	emit finished(m_entry, success);
 }
 
@@ -45,7 +47,7 @@ quint64 CommunicationManager::admit(const CommunicationEntryPtr &entry)
 
 void CommunicationManager::saturate()
 {
-	qDebug() << "Saturating work queue";
+	// qDebug() << "Saturating work queue";
 	while(m_running.size() < 1 && !m_queue.isEmpty()) {
 		m_queueMutex.lock();
 		CommunicationEntryPtr entry = m_queue.dequeue();

@@ -49,6 +49,7 @@ namespace Kiss
 			LexerBase* construct(const QString& apis) const;
 
 			LexerBase* _new() const;
+			void _delete(Base *base) const;
 
 			QStringList extensions() const;
 		};
