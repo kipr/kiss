@@ -28,6 +28,11 @@ void KovanProtoTarget::fillDisplayName(const QString &displayName)
 	m_information[DISPLAY_NAME] = displayName;
 }
 
+void KovanProtoTarget::fillCommPort(const QString &commPort)
+{
+	m_information[SERIAL] = commPort;
+}
+
 void KovanProtoTarget::fillInformation(const Advert &advert)
 {
 	m_information[DISPLAY_NAME] = advert.name;

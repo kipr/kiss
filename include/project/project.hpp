@@ -22,9 +22,11 @@ namespace Kiss
 		public:
 			typedef QMap<QString, QString> Settings;
 			
-			bool addFile(const QString& path);
+			bool linkFile(const QString &path);
+			bool copyFile(const QString& path);
 			bool removeFile(const QString& path);
 			QStringList files() const;
+			QStringList links() const;
 	
 			void setSettings(const Settings& settings);
 			const Settings& settings() const;
@@ -32,7 +34,7 @@ namespace Kiss
 			void setSetting(const QString& key, const QString& value);
 			void removeSetting(const QString& key);
 	
-			const QString& location() const;
+			const QString &location() const;
 	
 			bool save();
 			static ProjectPtr create(const QString& location);
@@ -47,13 +49,11 @@ namespace Kiss
 			
 		private:
 			Project(const QString& location);
-		
 			void refresh(const QString& location);
 	
 			QString m_location;
-		
-			QStringList m_files;
 			Settings m_settings;
+			Kiss::KarPtr m_archive;
 		};
 	}
 }

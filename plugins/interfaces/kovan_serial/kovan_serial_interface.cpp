@@ -34,7 +34,9 @@ void PortSampler::run()
 	QFileInfoList list = dir.entryInfoList(QStringList() << "tty.usbmodem*", QDir::System);
 	foreach(const QFileInfo &info, list) paths << info.filePath();
 #elif defined(Q_OS_WIN)
-	qDebug() << "Device discovery not yet implemented for windows!";
+	for(int i = 0; i < 15; ++i) paths << QString("COM%1").arg(i);
+#else
+	qWarning() << "Serial port enumeration NYI for your platform";
 #endif
 	foreach(const QString &path, paths) {
 		UsbSerial usb(path.toAscii());
@@ -96,6 +98,7 @@ void KovanSerialInterface::found(const QString &port)
 	
 	UsbSerial *serial = new UsbSerial(port.toAscii());
 	KovanProtoTarget *device = new Kiss::Target::KovanProtoTarget(serial, this);
+	device->fillCommPort(port);
 	m_responder->targetFound(this, TargetPtr(device));
 }
 

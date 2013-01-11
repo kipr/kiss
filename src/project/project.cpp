@@ -9,22 +9,23 @@
 using namespace Kiss;
 using namespace Kiss::Project;
 
-bool Kiss::Project::Project::addFile(const QString& path)
+bool Kiss::Project::Project::copyFile(const QString& path)
 {
-	return false;
+	qWarning() << "NYI: copyFile";
+	return false; // m_archive->addFile();
 }
 
 bool Kiss::Project::Project::removeFile(const QString& path)
 {
-	return QFile::remove(m_location + "/" + path);
+	return m_archive->removeFile(path);
 }
 
 QStringList Kiss::Project::Project::files() const
 {
-	return m_files;
+	return m_archive->files();
 }
 
-void Kiss::Project::Project::setSettings(const Kiss::Project::Project::Settings& settings)
+void Kiss::Project::Project::setSettings(const Kiss::Project::Project::Settings &settings)
 {
 	m_settings = settings;
 }
@@ -51,12 +52,11 @@ const QString& Kiss::Project::Project::location() const
 
 bool Kiss::Project::Project::save()
 {
-	QFile settingsFile(m_location + "/" + PROJECT_SETTINGS_FILE);
-	if(!settingsFile.open(QIODevice::WriteOnly)) return false;
-	QDataStream settingsStream(&settingsFile);
-	settingsStream << m_settings; // TODO: Make plain text
-	settingsFile.close();
-	return true;
+	QByteArray data;
+	QDataStream stream(&data, QIODevice::WriteOnly);
+	stream << m_settings; // TODO: Make plain text
+	m_archive->setFile(PROJECT_SETTINGS_FILE, data);
+	return m_archive->save(m_location);
 }
 
 ProjectPtr Kiss::Project::Project::create(const QString& location)
@@ -67,7 +67,7 @@ ProjectPtr Kiss::Project::Project::create(const QString& location)
 
 ProjectPtr Kiss::Project::Project::load(const QString& location)
 {
-	if(!QFileInfo(location).isDir()) return ProjectPtr();
+	if(!QFileInfo(location).isFile()) return ProjectPtr();
 	return ProjectPtr(new Project(location));
 }
 
@@ -86,16 +86,9 @@ void Kiss::Project::Project::refresh()
 
 void Kiss::Project::Project::refresh(const QString& location)
 {
-	QFileInfoList files = QDir(location).entryInfoList(QDir::NoDot | QDir::NoDotDot);
-	foreach(const QFileInfo& file, files) {
-		if(file.fileName() == PROJECT_SETTINGS_FILE) continue;
-		
-		if(file.isDir()) refresh(file.filePath());
-		else m_files << file.filePath();
-	}
 }
 
 Kiss::KarPtr Kiss::Project::Project::archive() const
 {
-	return Kar::create(m_location);
+	return m_archive;
 }

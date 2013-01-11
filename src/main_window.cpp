@@ -585,7 +585,7 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 
 void MainWindow::on_ui_addFile_clicked()
 {
-	Project::ProjectPtr project = activeProject();
+	/*Project::ProjectPtr project = activeProject();
 	if(!project) {
 		Dialog::Message::showError(this, "simple_error", QStringList() << 
 			tr("Unable to determine active project.") <<
@@ -595,17 +595,17 @@ void MainWindow::on_ui_addFile_clicked()
 	
 	SourceFile* source = new SourceFile(this);
 	source->setProject(project);
-	addTab(source);
+	addTab(source);*/
 }
 
 void MainWindow::on_ui_removeFile_clicked()
 {
-	foreach(const QModelIndex& index, ui_projects->selectionModel()->selectedRows()) {
+	/*foreach(const QModelIndex& index, ui_projects->selectionModel()->selectedRows()) {
 		Project::ProjectPtr project = m_projectsModel.indexToProject(index);
 		if(m_projectsModel.isIndexProject(index)) {
 			m_projectManager.closeProject(project);
 		}
-	}
+	}*/
 }
 
 void MainWindow::projectAddNew()
@@ -615,7 +615,7 @@ void MainWindow::projectAddNew()
 
 void MainWindow::projectAddExisting()
 {
-	Project::ProjectPtr project = activeProject();
+	/* Project::ProjectPtr project = activeProject();
 	if(!project) return;
 	QString openPath = QSettings().value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
@@ -623,7 +623,7 @@ void MainWindow::projectAddExisting()
 	filters.removeDuplicates();
 	QStringList files = QFileDialog::getOpenFileNames(this, tr("Select One or More Files to Add"),
 		openPath, filters.join(";;") + ";;All Files (*)");
-	foreach(const QString& file, files) project->addFile(file);
+	foreach(const QString& file, files) project->copyFile(file); */
 }
 
 void MainWindow::projectRemoveExisting()
@@ -734,24 +734,24 @@ void MainWindow::projectClicked(const QModelIndex& index)
 
 void MainWindow::projectFileClicked(const QModelIndex& index)
 {
-	if(m_projectsModel.isIndexProject(index)) return;
+	/* if(m_projectsModel.isIndexProject(index)) return;
 	QString path = m_projectsModel.indexToPath(index);
-	openFile(path, m_projectsModel.indexToProject(index));
+	openFile(path, m_projectsModel.indexToProject(index));*/
 }
 
 void MainWindow::projectOpened(const Project::ProjectPtr& project)
 {
-	Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
+	/*Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
 	m_projectsModel.addProject(project);
-	if(manager) ui_projectFrame->setVisible(manager->projects().size());
+	if(manager) ui_projectFrame->setVisible(manager->projects().size());*/
 }
 
 void MainWindow::projectClosed(const Project::ProjectPtr& project)
 {
-	closeProjectTabs(project);
+	/*closeProjectTabs(project);
 	m_projectsModel.removeProject(project);
 	Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
-	if(manager) ui_projectFrame->setVisible(manager->projects().size());
+	if(manager) ui_projectFrame->setVisible(manager->projects().size());*/
 }
 
 bool MainWindow::eventFilter(QObject *target, QEvent *event) {
@@ -872,8 +872,8 @@ Project::ProjectPtr MainWindow::activeProject() const
 	if(loadedProjects.size() == 0) return Project::ProjectPtr();
 	if(loadedProjects.size() == 1) return loadedProjects[0];
 	
-	const QModelIndexList& list = ui_projects->selectionModel()->selectedRows();
 	if(m_currentTab && m_currentTab->hasProject()) return m_currentTab->project();
-	return list.size() > 0 ? m_projectsModel.indexToProject(list[0]) : Project::ProjectPtr();
+	const QModelIndexList& list = ui_projects->selectionModel()->selectedRows();
+//	return list.size() > 0 ? m_projectsModel.indexToProject(list[0]) : Project::ProjectPtr();
 	return Project::ProjectPtr();
 }

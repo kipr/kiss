@@ -5,10 +5,14 @@ using namespace Kiss::Menu;
 FileOperationsMenu::FileOperationsMenu()
 	: ConcreteMenuable(menuName())
 {
-	Node* newFile = node(activeAction(ResourceHelper::ref().icon("page_white.png"), "File", QKeySequence("Ctrl+Shift+N"), this, "newFile"));
-	Node* newProject = node(activeAction(ResourceHelper::ref().icon("brick.png"), "Project", QKeySequence::New, this, "newProject"));
-	Node* newTemplatePack = node(activeAction(ResourceHelper::ref().icon("package"), "Template Pack", QKeySequence::UnknownKey, this, "newTemplatePack"));
-	Node* openFile = node(activeAction(ResourceHelper::ref().icon("folder"), "Open...", QKeySequence::Open, this, "open"));
+	Node* newFile = node(activeAction(ResourceHelper::ref().icon("page_white.png"), "New File",
+		QKeySequence::New, this, "newFile"));
+	Node* newProject = node(activeAction(ResourceHelper::ref().icon("brick.png"), "New Project",
+		QKeySequence("Ctrl+Shift+N"), this, "newProject"));
+	Node* newTemplatePack = node(activeAction(ResourceHelper::ref().icon("package"), "New Template Pack",
+		QKeySequence::UnknownKey, this, "newTemplatePack"));
+	Node* openFile = node(activeAction(ResourceHelper::ref().icon("folder"), "Open...",
+		QKeySequence::Open, this, "open"));
 
 	Node* newSubmenu = node(action(ResourceHelper::ref().icon("page_white.png"), "New"));
 	newSubmenu->children.append(newFile);
@@ -17,7 +21,8 @@ FileOperationsMenu::FileOperationsMenu()
 	newSubmenu->children.append(newTemplatePack);
 	
 	Node* importSubmenu = node(action(ResourceHelper::ref().icon("bullet_go.png"), "Import"));
-	Node* importTemplatePack = node(activeAction(ResourceHelper::ref().icon("package"), "Template Pack", QKeySequence::UnknownKey, this, "importTemplatePack"));
+	Node* importTemplatePack = node(activeAction(ResourceHelper::ref().icon("package"), "Template Pack",
+		QKeySequence::UnknownKey, this, "importTemplatePack"));
 	importSubmenu->children.append(importTemplatePack);
 	
 	m_file.append(newSubmenu);

@@ -14,7 +14,8 @@ class TargetItem : public QStandardItem
 {
 public:
 	TargetItem(TargetPtr target)
-		: QStandardItem(target->displayName()), m_target(target)
+		: QStandardItem(target->displayName().isEmpty() ? target->commPort()
+			: target->displayName()), m_target(target)
 	{
 		setEditable(false);
 		setIcon(ResourceHelper::ref().icon("default_target"));

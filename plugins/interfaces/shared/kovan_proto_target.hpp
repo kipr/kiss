@@ -23,6 +23,7 @@ namespace Kiss
 			~KovanProtoTarget();
 			
 			void fillDisplayName(const QString &displayName);
+			void fillCommPort(const QString &commPort);
 			void fillInformation(const Advert &advert);
 			
 			virtual const QMap<QString, QString> information() const; // Needs to be cached
