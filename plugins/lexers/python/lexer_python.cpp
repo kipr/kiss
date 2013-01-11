@@ -22,6 +22,11 @@ Base *ConstructorPython::_new() const
 	return new Python(this);
 }
 
+void ConstructorPython::_delete(Base *base) const
+{
+	delete base;
+}
+
 QStringList ConstructorPython::extensions() const
 {
 	return QStringList() << "py" << "python";
@@ -33,11 +38,16 @@ ConstructorPython::ConstructorPython()
 }
 
 Python::Python(const Constructor *constructor)
-	: Base(this, constructor)
+	: Base(new PythonLexer(), constructor)
 {
 }
 
-QColor Python::defaultColor(int style) const
+Python::~Python()
+{
+	delete lexer();
+}
+
+QColor PythonLexer::defaultColor(int style) const
 {
     switch (style)
     {
@@ -68,7 +78,7 @@ QColor Python::defaultColor(int style) const
     return QsciLexerPython::defaultColor(style);
 }
 
-QFont Python::font(int style) const
+QFont PythonLexer::font(int style) const
 {
 	QFont f = QsciLexer::font(style);
 
@@ -83,7 +93,7 @@ QFont Python::font(int style) const
 	return f;
 }
 
-QFont Python::defaultFont(int style) const
+QFont PythonLexer::defaultFont(int style) const
 {
 	QFont f = QsciLexer::defaultFont(style);
 

@@ -35,5 +35,10 @@ namespace Kiss
 	}
 }
 
+#define REGISTER_INTERFACE(x) __attribute__((constructor)) \
+static void __##x##_register() \
+{ \
+	InterfaceManager::ref().addInterface(new x()); \
+}
 
 #endif

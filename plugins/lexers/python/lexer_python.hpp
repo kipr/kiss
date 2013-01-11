@@ -30,15 +30,20 @@ namespace Kiss
 {
 	namespace Lexer
 	{
-		class Python : public Base, virtual public QsciLexerPython
+		class PythonLexer : public QsciLexerPython
 		{
 		public:
-			Python(const Constructor *constructor);
-		
 			QColor defaultColor(int style) const;
 			QFont font(int style) const;
 			QFont defaultFont(int style) const;
-		
+		};
+
+		class Python : public Base
+		{
+		public:
+			Python(const Constructor *constructor);
+			~Python();
+
 			virtual const bool cStyleBlocks() const;
 		};
 	
@@ -53,6 +58,8 @@ namespace Kiss
 			Base *construct(const QString& apis) const;
 		
 			Base *_new() const;
+			void _delete(Base *base) const;
+
 			QStringList extensions() const;
 		};
 	}

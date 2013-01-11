@@ -79,7 +79,8 @@ SourceFile::SourceFile(MainWindow *parent)
 	Tab(this, parent),
 	Unit(),
 	m_debuggerEnabled(false),
-	m_runTab(0)
+	m_runTab(0),
+	m_currentLexer(0)
 {
 	setupUi(this);
 	
@@ -107,6 +108,7 @@ SourceFile::SourceFile(MainWindow *parent)
 
 SourceFile::~SourceFile()
 {
+	setLexer(0);
 }
 
 void SourceFile::activate()
@@ -700,10 +702,12 @@ void SourceFile::showFind()
 
 void SourceFile::setLexer(Lexer::Constructor *constructor)
 {
-	delete ui_editor->lexer();
-	Lexer::Base *lex = constructor->construct();
-	ui_editor->setLexer(lex->lexer());
-	Lexer::Factory::setAPIsForLexer(lex, m_lexAPI);
+	if(m_currentLexer) m_currentLexer->constructor()->_delete(m_currentLexer);
+	m_currentLexer = 0;
+	if(!constructor) return;
+	m_currentLexer = constructor->construct();
+	ui_editor->setLexer(m_currentLexer->lexer());
+	Lexer::Factory::setAPIsForLexer(m_currentLexer, m_lexAPI);
 	refreshSettings();
 	updateMargins();
 }
@@ -783,9 +787,7 @@ void SourceFile::updateLexer()
 {
 	// Update the lexer to the new spec for that extension
 	Lexer::Constructor *constructor = Lexer::Factory::ref().constructor(file().completeSuffix());
-	if(!Lexer::Factory::isLexerFromConstructor((Lexer::Base *)ui_editor->lexer(), constructor)) {
-		setLexer(constructor);
-	}
+	if(!Lexer::Factory::isLexerFromConstructor(m_currentLexer, constructor)) setLexer(constructor);
 }
 
 bool SourceFile::actionPreconditions()

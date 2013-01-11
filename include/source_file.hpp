@@ -58,6 +58,7 @@ namespace Kiss
 	namespace Lexer
 	{
 		class Constructor;
+		class Base;
 	}
 	
 	namespace Widget
@@ -187,6 +188,8 @@ namespace Kiss
 			void updateLexer();
 			
 			bool actionPreconditions();
+
+			Kiss::Lexer::Base *m_currentLexer;
 		};
 	}
 }

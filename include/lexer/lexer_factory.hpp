@@ -49,6 +49,7 @@ namespace Kiss
 			virtual Base *construct(const QString& apis) const = 0;
 
 			virtual Base *_new() const = 0;
+			virtual void _delete(Base *base) const = 0;
 
 			virtual QStringList extensions() const = 0;
 			
@@ -62,8 +63,7 @@ namespace Kiss
 				: m_lexer(lexer),
 				m_constructor(constructor),
 				m_apis(lexer)
-			{
-				
+			{	
 			}
 			
 			const Constructor *constructor() const

@@ -47,17 +47,27 @@ Base* ConstructorC::_new() const
 	return new C(this);
 }
 
+void ConstructorC::_delete(Base *base) const
+{
+	delete base;
+}
+
 QStringList ConstructorC::extensions() const
 {
 	return QStringList() << "c";
 }
 
 C::C(const Constructor* constructor)
-	: Base(this, constructor)
+	: Base(new CLexer(), constructor)
 {
 }
 
-QColor C::defaultColor(int style) const
+C::~C()
+{
+	delete lexer();
+}
+
+QColor CLexer::defaultColor(int style) const
 {
 
     switch (style)
@@ -120,7 +130,7 @@ QColor C::defaultColor(int style) const
     return QsciLexerCPP::defaultColor(style);
 }
 
-QFont C::font(int style) const
+QFont CLexer::font(int style) const
 {
 	QFont f = QsciLexer::font(style);
 
@@ -137,7 +147,7 @@ QFont C::font(int style) const
 	return f;
 }
 
-QFont C::defaultFont(int style) const
+QFont CLexer::defaultFont(int style) const
 {
 	QFont f = QsciLexer::defaultFont(style);
 
@@ -155,7 +165,7 @@ QFont C::defaultFont(int style) const
 	return f;
 }
 
-const char *C::keywords(int set) const
+const char *CLexer::keywords(int set) const
 {
 	if(set != 1) return 0;
 	

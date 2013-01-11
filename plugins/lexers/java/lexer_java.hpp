@@ -30,15 +30,20 @@ namespace Kiss
 {
 	namespace Lexer
 	{
-		class Java : public Base, virtual public QsciLexerCPP
+		class JavaLexer : public QsciLexerCPP
 		{
 		public:
-			Java(const Constructor *constructor);
-		
 			QColor defaultColor(int style) const;
 			QFont font(int style) const;
 			QFont defaultFont(int style) const;
-		
+		};
+
+		class Java : public Base
+		{
+		public:
+			Java(const Constructor *constructor);
+			~Java();
+
 			virtual const bool cStyleBlocks() const;
 		};
 	
@@ -53,6 +58,7 @@ namespace Kiss
 			Base *construct(const QString& apis) const;
 		
 			Base *_new() const;
+			void _delete(Base *base) const;
 		
 			QStringList extensions() const;
 		};
