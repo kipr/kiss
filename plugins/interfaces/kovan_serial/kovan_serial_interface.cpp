@@ -46,7 +46,7 @@ void PortSampler::run()
 		}
 		TransportLayer transport(&usb);
 		KovanSerial proto(&transport);
-		if(proto.knockKnock(350)) emit found(path);
+		if(proto.knockKnock(150)) emit found(path);
 		proto.hangup();
 		usb.endSession();
 	}

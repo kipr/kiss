@@ -128,7 +128,7 @@ bool SourceFile::beginSetup()
 {
 	if(!hasFile()) {
 		if(!selectTemplate()) return false;
-	} else setLexer(Lexer::Factory::ref().constructor(file().completeSuffix()));
+	} else updateLexer();
 	if(!target().data()) changeTarget();
 	return target().data();
 }
@@ -792,7 +792,9 @@ void SourceFile::updateTitle()
 void SourceFile::updateLexer()
 {
 	// Update the lexer to the new spec for that extension
-	Lexer::Constructor *constructor = Lexer::Factory::ref().constructor(file().completeSuffix());
+	Lexer::Constructor *constructor1 = Lexer::Factory::ref().constructor(file().completeSuffix());
+	Lexer::Constructor *constructor2 = Lexer::Factory::ref().constructor(file().suffix());
+	Lexer::Constructor *constructor = constructor1 ? constructor1 : constructor2;
 	if(!Lexer::Factory::isLexerFromConstructor(m_currentLexer, constructor)) setLexer(constructor);
 }
 

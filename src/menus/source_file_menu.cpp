@@ -37,7 +37,8 @@ SourceFileMenu::SourceFileMenu(Widget::MainWindow *mainWindow)
 	
 	m_file.append(node(activeAction(disk, "Save", QKeySequence::Save, this, "save")));
 	m_file.append(node(activeAction(disk, "Save As...", QKeySequence::SaveAs, this, "saveAs")));
-	m_file.append(convertToProject = node(activeAction("cog_go", "Convert to Project", QKeySequence::UnknownKey, this, "convertToProject")));
+	// m_file.append(convertToProject = node(activeAction("cog_go", "Convert to Project",
+	//	QKeySequence::UnknownKey, this, "convertToProject")));
 	m_file.append(node(activeAction("print", "Print", QKeySequence::Print, this, "print")));
 	m_file.append(Node::separator());
 	
@@ -58,17 +59,9 @@ SourceFileMenu::SourceFileMenu(Widget::MainWindow *mainWindow)
 	m_edit.append(node(activeAction("magnifier.png", "Reset Zoom", QKeySequence("Ctrl+0"), this, "zoomReset")));
 	m_edit.append(Node::separator());
 	m_edit.append(node(activeAction("find", "Find", QKeySequence::Find, this, "find")));
-	
-	// undo->activeControl = redo->activeControl = true;
-	
-	Node* source = new Node("Source");
-	
-	source->children.append(node(activeAction("text_indent", "Indent All", QKeySequence("Ctrl+I"), this, "indentAll")));
-	source->children.append(Node::separator());
-	source->children.append(breakpoint = node(activeCheckedAction("bullet_blue", "Toggle Breakpoint", QKeySequence("Ctrl+Shift+B"), this, "toggleBreakpoint")));
-	source->children.append(node(activeAction("bullet_delete", "Clear All Breakpoints", QKeySequence("Ctrl+Alt+Shift+B"), this, "clearBreakpoints")));
-	
-	m_actions.append(source);
+	m_edit.append(Node::separator());
+	m_edit.append(node(activeAction("text_indent", "Indent All",
+		QKeySequence("Ctrl+I"), this, "indentAll")));
 	
 	m_toolbar.append(copy);
 	m_toolbar.append(cut);
@@ -90,9 +83,8 @@ void SourceFileMenu::update()
 {
 	Widget::SourceFile* sourceFile = dynamic_cast<Widget::SourceFile*>(active());
 	if(!sourceFile) return;
-	qWarning() << "Called";
-	breakpoint->rawAction->setEnabled(sourceFile->breakpointOnLine(sourceFile->currentLine()));
-	convertToProject->rawAction->setEnabled(!sourceFile->hasProject());
+	// breakpoint->rawAction->setEnabled(sourceFile->breakpointOnLine(sourceFile->currentLine()));
+	// convertToProject->rawAction->setEnabled(!sourceFile->hasProject());
 }
 
 QString SourceFileMenu::menuName()
