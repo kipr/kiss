@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.6.0)
 
 IF(APPLE)
 SET(CMAKE_OSX_SYSROOT "${OSX_DEVELOPER_ROOT}/SDKs/MacOSX10.6.sdk")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -g")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -arch i386 -g")
 ENDIF(APPLE)
 
 FIND_PACKAGE(Qt4 REQUIRED)
@@ -48,6 +48,7 @@ ADD_CUSTOM_TARGET(${PLUGIN_NAME}_osx_install_names ALL
 		QtDeclarative.framework/Versions/4/QtDeclarative
 		libkar.dylib
 		libpcompiler.dylib
+		libkovanserial.dylib
 	WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH}
 	DEPENDS ${PLUGIN_NAME})
 INSTALL(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/interfaces)
