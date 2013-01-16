@@ -702,12 +702,8 @@ void SourceFile::setLexer(Lexer::Constructor *constructor)
 {
 	ui_editor->setLexer(0);
 	if(m_currentLexer) {
-#ifdef Q_OS_WIN
-		m_currentLexer->constructor()->_delete(m_currentLexer);
-#else
 		// TODO: Move away from QScintilla before I lose my mind.
 		// delete m_currentLexer;
-#endif
 	}
 	m_currentLexer = 0;
 	if(!constructor) return;

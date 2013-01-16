@@ -125,6 +125,10 @@ const bool KovanProtoTarget::compile(quint64 id, const QString& name)
 	
 	Compiler::OutputList results;
 	stream >> results;
+
+	foreach(Compiler::Output o, results) {
+		qDebug() << o.error();
+	}
 	
 	emit response(Response(id, KEY_COMPILE, QVariant::fromValue(results)));
 	
