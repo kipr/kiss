@@ -31,7 +31,7 @@ namespace Kiss
 	public:
 		DocumentationManager();
 		
-		void addLocation(const QString& name, const QString& location);
+		void addLocation(const QString& location);
 		const QList<DocumentationLocation>& locations() const;
 	
 		static QString documentationPath();

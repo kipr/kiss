@@ -46,10 +46,19 @@ DocumentationManager::DocumentationManager()
 	loadDefaultDocumentation();
 }
 
-void DocumentationManager::addLocation(const QString& name, const QString& location)
+void DocumentationManager::addLocation(const QString& location)
 {
+	const QString name = QFileInfo(location).fileName();
+	QString realLocation = location;
+	QFile file(location + "/goto.txt");
+	if(file.open(QIODevice::ReadOnly)) {
+		realLocation = file.readAll();
+		realLocation = realLocation.trimmed();
+		realLocation = location + "/" + realLocation;
+		file.close();
+	}
 	qDebug() << "Adding documentation source" << name << "from location" << location;
-	m_locations.push_back(DocumentationLocation(name, location,
+	m_locations.push_back(DocumentationLocation(name, realLocation,
 		description(location), decoration(location)));
 }
 
@@ -68,7 +77,7 @@ void DocumentationManager::loadDefaultDocumentation()
 	qDebug() << "Loading default documentation from" << documentationPath();
 	
 	QFileInfoList folders = QDir(documentationPath()).entryInfoList(QDir::Dirs | QDir::NoDot | QDir::NoDotDot);
-	foreach(const QFileInfo& folder, folders) addLocation(folder.fileName(), folder.absoluteFilePath());
+	foreach(const QFileInfo& folder, folders) addLocation(folder.absoluteFilePath());
 }
 
 const QString DocumentationManager::description(const QString& location)

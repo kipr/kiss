@@ -48,19 +48,19 @@ bool Documentation::beginSetup()
 			new TitleDescription(
 				location.name(),
 				location.description(),
-				location.decoration(),
 				list)
 			);
 	}
 	list->setIconSize(QSize(50, 50));
-	connect(list, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(itemDoubleClicked(QListWidgetItem*)));
+	connect(list, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+		SLOT(itemDoubleClicked(QListWidgetItem*)));
 	
 	return true;
 }
 
 void Documentation::completeSetup()
 {
-	mainWindow()->setTabName(widget(), "Documentation");
+	mainWindow()->setTabName(widget(), tr("Documentation"));
 }
 
 bool Documentation::close()
@@ -87,22 +87,7 @@ void Documentation::itemDoubleClicked(QListWidgetItem* item)
 	const QString& sysLocation = "file://" + location;
 #endif
 
-#ifdef BUILD_WEB_TAB
-	QList<WebTab*> webTabs = mainWindow()->tabs<WebTab>();
-	foreach(WebTab* tab, webTabs) {
-		if(tab->current() == sysLocation) {
-			mainWindow()->moveToTab(tab);
-			return;
-		}
-	}
-	
-	WebTab* tab = new WebTab(mainWindow());
-	mainWindow()->addTab(tab);
-	
-	tab->load(sysLocation, true);
-#else
 	QDesktopServices::openUrl(QUrl::fromUserInput(sysLocation));
-#endif
 }
 
 #endif
