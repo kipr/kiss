@@ -26,10 +26,10 @@
 #include <QGraphicsObject>
 
 #include <QtDeclarative>
+#include <QDesktopServices>
 
 #include "developer_menu.hpp"
 #include "main_window.hpp"
-#include "web_tab.hpp"
 
 using namespace Kiss;
 using namespace Kiss::Widget;
@@ -50,13 +50,9 @@ void DeclarativeTools::open()
 	m_mainWindow->open();
 }
 
-void DeclarativeTools::openWeb(const QString& url)
+void DeclarativeTools::openWeb(const QString &url)
 {
-#ifdef BUILD_WEB_TAB
-	WebTab *webTab = new WebTab(m_mainWindow);
-	webTab->load(url);
-	m_mainWindow->addTab(webTab);
-#endif
+	QDesktopServices::openUrl(QUrl::fromUserInput(url));
 }
 
 void DeclarativeTools::settings()
@@ -64,7 +60,7 @@ void DeclarativeTools::settings()
 	m_mainWindow->settings();
 }
 
-const QStringList DeclarativeTools::templates(const QString& target)
+const QStringList DeclarativeTools::templates(const QString &target)
 {
 	return QStringList();
 }

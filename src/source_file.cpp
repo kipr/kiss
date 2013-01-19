@@ -21,7 +21,6 @@
 #include "source_file.hpp"
 
 #include "main_window.hpp"
-#include "web_tab.hpp"
 #include "singleton.hpp"
 #include "message_dialog.hpp"
 #include "macro_string.hpp"
@@ -355,10 +354,8 @@ void SourceFile::refreshSettings()
 		ui_editor->lexer()->setPaper(backgroundColor);
 		ui_editor->lexer()->setDefaultPaper(backgroundColor);
 	}
-
-	/* Set the default font from settings */
-	QFont defFont(settings.value(FONT).toString(), settings.value(FONT_SIZE).toInt());
 	
+	QFont defFont(settings.value(FONT).toString(), settings.value(FONT_SIZE).toInt());
 	if(ui_editor->lexer()) {
 		ui_editor->lexer()->setFont(defFont, -1);
 	}

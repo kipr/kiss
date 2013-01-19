@@ -37,38 +37,46 @@ namespace Ui
 	class ThemeSettingsDialog;
 }
 
-class ThemeSettingsDialog : public QDialog
+namespace Kiss
 {
-Q_OBJECT
-public:
-	ThemeSettingsDialog(QWidget *parent = 0);
-	~ThemeSettingsDialog();
-	
-	virtual int exec();
-	
-	const QMap<QString, QColor>& settings() const;
-	QColor backgroundColor() const;
-	QFont font() const;
-	int fontSize() const;
-	
-	void readSettings();
-	void writeSettings();
-	
-public slots:
-	void setDefaults();
-	
-private slots:
-	void settingChanged(QColor color);
-	
-private:
-	void updateBoxes();
-	
-	Ui::ThemeSettingsDialog *ui;
-	QMap<QString, QColor> m_lexerSettings;
-	ColorBox **m_boxes;
-	int m_fontSize;
-	QFont m_font;
-	QColor m_backgroundColor;
-};
+	namespace Dialog
+	{
+		class ThemeSettings : public QDialog
+		{
+		Q_OBJECT
+		public:
+			ThemeSettings(QWidget *parent = 0);
+			~ThemeSettings();
+
+			virtual int exec();
+
+			const QMap<QString, QColor>& settings() const;
+			QColor backgroundColor() const;
+			QFont font() const;
+			int fontSize() const;
+
+			void readSettings();
+			void writeSettings();
+
+			static void initializeDefaults();
+
+		public slots:
+			void setDefaults();
+
+		private slots:
+			void settingChanged(QColor color);
+
+		private:
+			void updateBoxes();
+
+			::Ui::ThemeSettingsDialog *ui;
+			QMap<QString, QColor> m_lexerSettings;
+			ColorBox **m_boxes;
+			int m_fontSize;
+			QFont m_font;
+			QColor m_backgroundColor;
+		};
+	}
+}
 
 #endif

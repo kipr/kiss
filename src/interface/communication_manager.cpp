@@ -17,9 +17,9 @@ CommunicationWorker::CommunicationWorker(const CommunicationEntryPtr &entry)
 
 void CommunicationWorker::run()
 {
-	fprintf(stderr, "Entry %d executing...\n", m_entry->id());
+	fprintf(stderr, "Entry %llu executing...\n", m_entry->id());
 	const bool success = m_entry->execute();
-	fprintf(stderr, "Entry %d finished!\n", m_entry->id());
+	fprintf(stderr, "Entry %llu finished!\n", m_entry->id());
 	// qDebug() << "Entry" << m_entry->id() << (!success ? "failed." : "finished!");
 	emit finished(m_entry, success);
 }

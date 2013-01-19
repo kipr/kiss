@@ -21,7 +21,6 @@
 #include "main_window.hpp"
 #include "kiss.hpp"
 #include "source_file.hpp"
-#include "web_tab.hpp"
 #include "welcome_tab.hpp"
 #include "message_dialog.hpp"
 #include "menus.hpp"

@@ -26,6 +26,7 @@
 #include "kiss.hpp"
 #include "log_window.hpp"
 #include "kiss_standard_environment.hpp"
+#include "theme_settings_dialog.hpp"
 
 #include <QTimer>
 #include <QDebug>
@@ -57,6 +58,8 @@ int main(int argc, char **argv)
 	
 	Log::ref().info(QString("%1 is starting up... (Qt version: %2)").arg(kissIdeVersion).arg(qVersion()));
 	
+	Dialog::ThemeSettings::initializeDefaults();
+	
 	// Creates everything we need
 	StandardEnvironment::createStandardEnvironment();
 	
@@ -64,17 +67,10 @@ int main(int argc, char **argv)
 	
 #ifdef BUILD_DECLARATIVE_TAB
 	mainWindow.addTab(new Widget::DeclarativeTab(QUrl("qrc:/welcome/welcome.qml"), &mainWindow));
-#else
-#ifdef BUILD_WEB_TAB
-	mainWindow.addTab(new Widget::WelcomeTab(&mainWindow));
-#endif
 #endif
 
 	Log::ref().info(QString("Starting with the following arguments: [%1]").arg(QApplication::arguments().join(", ")));
-	foreach(const QString& arg, QApplication::arguments().mid(1)) {
-		mainWindow.openFile(arg);
-	}
-	
+	foreach(const QString& arg, QApplication::arguments().mid(1)) mainWindow.openFile(arg);
 	
 #ifdef ENABLE_LOG_WINDOW
 #ifdef BUILD_DEVELOPER_TOOLS

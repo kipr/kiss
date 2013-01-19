@@ -5,7 +5,6 @@
 #include "main_window.hpp"
 #include "resource_helper.hpp"
 #include "title_description_widget.hpp"
-#include "web_tab.hpp"
 #include "documentation_manager.hpp"
 
 #include <QListWidget>

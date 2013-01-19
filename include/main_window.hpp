@@ -231,7 +231,7 @@ namespace Kiss
 		private:
 			Tab *m_currentTab;
 			EditorSettingsDialog m_editorSettingsDialog;
-			ThemeSettingsDialog m_themeSettingsDialog;
+			Dialog::ThemeSettings m_themeSettingsDialog;
 			QMap<QWidget *, Tab *> m_lookup;
 			Menu::Manager m_menuManager;
 			Template::Manager *m_templateManager;

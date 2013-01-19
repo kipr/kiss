@@ -71,7 +71,7 @@ const bool KovanInterface::scan(InterfaceResponder *responder)
 	fprintf(stderr, "scan\n");
 	m_responder = responder;
 	m_advertiser->reset();
-	AdvertSampler *sampler = new AdvertSampler(m_advertiser, 100, 100);
+	AdvertSampler *sampler = new AdvertSampler(m_advertiser, 100, 75);
 	sampler->setAutoDelete(true);
 	qRegisterMetaType<Advert>("Advert");
 	qRegisterMetaType<sockaddr_in>("sockaddr_in");

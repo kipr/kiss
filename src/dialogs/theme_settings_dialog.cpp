@@ -31,11 +31,12 @@
 #include <QDebug>
 
 using namespace Kiss;
+using namespace Kiss::Dialog;
 
-ThemeSettingsDialog::ThemeSettingsDialog(QWidget *parent)
-	: QDialog(parent)
+ThemeSettings::ThemeSettings(QWidget *parent)
+	: QDialog(parent),
+	ui(new Ui::ThemeSettingsDialog())
 {
-	ui = new Ui::ThemeSettingsDialog();
 	ui->setupUi(this);
 	
 	ui->table->setColumnWidth(0, 180);
@@ -53,14 +54,14 @@ ThemeSettingsDialog::ThemeSettingsDialog(QWidget *parent)
 	connect(ui->reset, SIGNAL(clicked()), SLOT(setDefaults()));
 }
 
-ThemeSettingsDialog::~ThemeSettingsDialog()
+ThemeSettings::~ThemeSettings()
 {
 	for(quint16 i = 0; i < ui->table->rowCount(); ++i) delete m_boxes[i];
 	delete m_boxes;
 	delete ui;
 }
 
-int ThemeSettingsDialog::exec()
+int ThemeSettings::exec()
 {
 	readSettings();
 	if(!QDialog::exec()) return QDialog::Rejected;
@@ -68,27 +69,27 @@ int ThemeSettingsDialog::exec()
 	return QDialog::Accepted;
 }
 
-const QMap<QString, QColor>& ThemeSettingsDialog::settings() const
+const QMap<QString, QColor>& ThemeSettings::settings() const
 {
 	return m_lexerSettings;
 }
 
-QColor ThemeSettingsDialog::backgroundColor() const
+QColor ThemeSettings::backgroundColor() const
 {
 	return ui->backgroundColorBox->color();
 }
 
-QFont ThemeSettingsDialog::font() const
+QFont ThemeSettings::font() const
 {
 	return ui->fontBox->currentFont();
 }
 
-int ThemeSettingsDialog::fontSize() const
+int ThemeSettings::fontSize() const
 {
 	return ui->fontSizeBox->value();
 }
 
-void ThemeSettingsDialog::readSettings()
+void ThemeSettings::readSettings()
 {
 	QSettings settings;
 
@@ -128,7 +129,7 @@ void ThemeSettingsDialog::readSettings()
 	updateBoxes();
 }
 
-void ThemeSettingsDialog::writeSettings()
+void ThemeSettings::writeSettings()
 {
 	QSettings settings;
 	
@@ -146,7 +147,7 @@ void ThemeSettingsDialog::writeSettings()
 	settings.endGroup();
 }
 
-void ThemeSettingsDialog::setDefaults()
+void ThemeSettings::setDefaults()
 {
 	m_lexerSettings[DEFAULT] = SyntaxStandards::defaultColor();
 	m_lexerSettings[COMMENT] = SyntaxStandards::commentColor();
@@ -162,14 +163,20 @@ void ThemeSettingsDialog::setDefaults()
 	updateBoxes();
 }
 
-void ThemeSettingsDialog::settingChanged(QColor color)
+void ThemeSettings::initializeDefaults()
+{
+	// This is sooo jank
+	delete new ThemeSettings(0);
+}
+
+void ThemeSettings::settingChanged(QColor color)
 {
 	ColorBox *box = (ColorBox *)sender();
 	QString setting = ui->table->item(box->property("row").toInt(), 0)->text();
 	m_lexerSettings.insert(setting, color);
 }
 
-void ThemeSettingsDialog::updateBoxes()
+void ThemeSettings::updateBoxes()
 {
 	m_boxes[0]->setColor(m_lexerSettings.value(DEFAULT, SyntaxStandards::defaultColor()));
 	m_boxes[1]->setColor(m_lexerSettings.value(COMMENT, SyntaxStandards::commentColor()));
