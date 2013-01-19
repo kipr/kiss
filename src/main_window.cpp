@@ -87,7 +87,6 @@ MainWindow::MainWindow(QWidget *parent)
 	
 	// ui_projects->hide(); // Disabled for now
 	
-	/* Turns off updates so all of these things are drawn at once */
 	setUpdatesEnabled(false);
 
 	/* Deletes the tab that QTabWidget starts with by default */
@@ -302,12 +301,6 @@ void MainWindow::initMenus()
 	TargetMenu* targetMenu = new TargetMenu;
 	m_menuManager.registerMenus(targetMenu);
 	m_menuables.append(targetMenu);
-
-#ifdef BUILD_WEB_TAB
-	WebTabMenu* webTabMenu = new WebTabMenu;
-	m_menuManager.registerMenus(webTabMenu);
-	m_menuables.append(webTabMenu);
-#endif
 
 #ifdef BUILD_DEVELOPER_TOOLS
 	DeveloperMenu* developerMenu = new DeveloperMenu(this);
