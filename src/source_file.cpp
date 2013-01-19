@@ -112,7 +112,8 @@ SourceFile::~SourceFile()
 
 void SourceFile::activate()
 {
-	mainWindow()->setTitle(target()->displayName());
+	mainWindow()->setTitle(target()->displayName().isEmpty()
+		? target()->commPort() : target()->displayName());
 	
 	mainWindow()->setStatusMessage("");
 	
