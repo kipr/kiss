@@ -19,7 +19,6 @@
  **************************************************************************/
 
 #include "main_window.hpp"
-#include "welcome_tab.hpp"
 #include "declarative_tab.hpp"
 #include "log_stream_buf.hpp"
 #include "log.hpp"
