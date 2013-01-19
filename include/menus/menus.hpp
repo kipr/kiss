@@ -25,7 +25,6 @@
 #include "target_menu.hpp"
 #include "source_file_menu.hpp"
 #include "template_pack_menu.hpp"
-#include "web_tab_menu.hpp"
 #include "main_window_menu.hpp"
 #include "developer_menu.hpp"
 #include "documentation_menu.hpp"
