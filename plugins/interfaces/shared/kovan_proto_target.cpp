@@ -61,6 +61,7 @@ const bool KovanProtoTarget::available()
 
 const bool KovanProtoTarget::compile(quint64 id, const QString& name)
 {
+	emit response(Response(id, "began_" KEY_COMPILE));
 	qDebug() << "Compiling...";
 	bool success = m_transmitter->makeAvailable();
 	if(!success) perror("makeAvailable");
@@ -141,6 +142,7 @@ const bool KovanProtoTarget::compile(quint64 id, const QString& name)
 
 const bool KovanProtoTarget::download(quint64 id, const QString& name, const KarPtr& archive)
 {
+	emit response(Response(id, "began_" KEY_DOWNLOAD));
 	qDebug() << "Downloading" << name << "...";
 	bool success = m_transmitter->makeAvailable();
 	if(!success) perror("makeAvailable");
@@ -169,6 +171,7 @@ const bool KovanProtoTarget::download(quint64 id, const QString& name, const Kar
 
 const bool KovanProtoTarget::run(quint64 id, const QString& name)
 {
+	emit response(Response(id, "began_" KEY_RUN));
 	qDebug() << "Running...";
 	bool success = m_transmitter->makeAvailable();
 	if(!success) perror("makeAvailable");

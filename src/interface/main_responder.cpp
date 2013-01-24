@@ -16,6 +16,7 @@ MainResponder::~MainResponder()
 	
 }
 
+// TODO: Create defines or something for all of these keys
 void MainResponder::response(Target *target, const Response &response)
 {
 	qDebug() << response.type();
@@ -44,5 +45,11 @@ void MainResponder::response(Target *target, const Response &response)
 		m_mainWindow->setStatusMessage(success
 			? QObject::tr("Run Succeeded!")
 			: QObject::tr("Run Failed!"), 5000);
+	} else if(response.type() == "began_compile") {
+		m_mainWindow->setStatusMessage(QObject::tr("Compiling..."));
+	} else if(response.type() == "began_download") {
+		m_mainWindow->setStatusMessage(QObject::tr("Downloading..."));
+	} else if(response.type() == "began_run") {
+		m_mainWindow->setStatusMessage(QObject::tr("Running..."));
 	}
 }
