@@ -23,8 +23,9 @@ void ActivatableObject::activated()
 		qWarning() << "?";
 		return;
 	}
+	qDebug() << "Activated" << us->metaObject()->className() << "on" << meta->className();
 	m_connected = connect;
-
+	
 	QMetaObject::invokeMethod(us, "update");
 	QObject::connect(m_connected, SIGNAL(updateActivatable()), us, SLOT(update()));
 }

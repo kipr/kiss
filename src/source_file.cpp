@@ -37,6 +37,7 @@
 #include "log.hpp"
 #include "target_dialog.hpp"
 #include "interface_manager.hpp"
+#include "communication_manager.hpp"
 #include "resource_helper.hpp"
 #include "interface.hpp"
 #include "output_helper.hpp"
@@ -98,6 +99,9 @@ SourceFile::SourceFile(MainWindow *parent)
 	connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
 	connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
 	
+	connect(&Target::CommunicationManager::ref(), SIGNAL(admitted(CommunicationEntryPtr)), SIGNAL(updateActivatable()));
+	connect(&Target::CommunicationManager::ref(), SIGNAL(queueFinished()), SIGNAL(updateActivatable()));
+	
 	ui_find->hide();
 	
 	refreshSettings();
@@ -122,6 +126,8 @@ void SourceFile::activate()
 	
 	mainWindow()->activateMenuable(Menu::SourceFileMenu::menuName(), this);
 	mainWindow()->activateMenuable(Menu::TargetMenu::menuName(), this);
+	
+	emit updateActivatable();
 }
 
 bool SourceFile::beginSetup()

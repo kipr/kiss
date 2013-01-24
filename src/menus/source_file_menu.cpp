@@ -79,14 +79,6 @@ void SourceFileMenu::deactivated()
 	menuManager()->removeActivation(this);
 }
 
-void SourceFileMenu::update()
-{
-	Widget::SourceFile* sourceFile = dynamic_cast<Widget::SourceFile*>(active());
-	if(!sourceFile) return;
-	// breakpoint->rawAction->setEnabled(sourceFile->breakpointOnLine(sourceFile->currentLine()));
-	// convertToProject->rawAction->setEnabled(!sourceFile->hasProject());
-}
-
 QString SourceFileMenu::menuName()
 {
 	return "Source";

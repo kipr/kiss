@@ -34,6 +34,8 @@ namespace Kiss
 			CommunicationManager();
 			~CommunicationManager();
 			
+			bool isIdle() const;
+			
 			quint64 admit(const CommunicationEntryPtr &entry);
 			
 		signals:
@@ -51,7 +53,7 @@ namespace Kiss
 			quint64 m_id;
 			QList<CommunicationEntryPtr> m_running;
 			CommunicationQueue m_queue;
-			QMutex m_queueMutex;
+			mutable QMutex m_queueMutex;
 		};
 	}
 }

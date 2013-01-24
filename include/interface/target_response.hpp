@@ -13,7 +13,7 @@ namespace Kiss
 		{
 		public:
 			Response();
-			Response(quint64 id, const QString &type, const QVariant &data);
+			Response(quint64 id, const QString &type, const QVariant &data = QVariant());
 			
 			const quint64 &id() const;
 			const QString &type() const;

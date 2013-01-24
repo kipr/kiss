@@ -42,6 +42,9 @@ namespace Kiss
 
 			static QString menuName();
 
+		public slots:
+			void update();
+
 		protected:
 			void activated();
 			void deactivated();

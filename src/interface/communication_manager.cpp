@@ -34,6 +34,14 @@ CommunicationManager::~CommunicationManager()
 {
 }
 
+bool CommunicationManager::isIdle() const
+{
+	m_queueMutex.lock();
+	bool ret = m_running.isEmpty() && m_queue.isEmpty();
+	m_queueMutex.unlock();
+	return ret;
+}
+
 quint64 CommunicationManager::admit(const CommunicationEntryPtr &entry)
 {
 	entry->setId(++m_id);

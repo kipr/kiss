@@ -24,6 +24,7 @@
 #include "documentation.hpp"
 #include "main_window.hpp"
 #include "interface.hpp"
+#include "communication_manager.hpp"
 
 using namespace Kiss::Menu;
 
@@ -42,6 +43,10 @@ TargetMenu::TargetMenu()
 	m_targetMenu->children.append(node(activeAction("computer", "Change Target", QKeySequence("Alt+T"), this, "changeTarget")));
 	m_targetMenu->children.append(Node::separator());
 	
+	compileNode->hideOnDisable = false;
+	downloadNode->hideOnDisable = false;
+	runNode->hideOnDisable = false;
+	
 	m_actions.append(m_targetMenu);
 }
 
@@ -53,6 +58,7 @@ void TargetMenu::refresh()
 
 void TargetMenu::activated()
 {
+	ActivatableObject::activated();
 	menuManager()->addActivation(this);
 	refresh();
 }
@@ -60,6 +66,16 @@ void TargetMenu::activated()
 void TargetMenu::deactivated()
 {
 	menuManager()->removeActivation(this);
+	ActivatableObject::deactivated();
+}
+
+void TargetMenu::update()
+{
+	const bool enabled = Target::CommunicationManager::ref().isIdle();
+	compileNode->rawAction->setEnabled(enabled);
+	downloadNode->rawAction->setEnabled(enabled);
+	runNode->rawAction->setEnabled(enabled);
+	refresh();
 }
 
 QString TargetMenu::menuName()
