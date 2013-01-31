@@ -36,7 +36,9 @@ void PortSampler::run()
 #elif defined(Q_OS_WIN)
 	for(int i = 0; i < 15; ++i) paths << QString("COM%1").arg(i);
 #else
-	qWarning() << "Serial port enumeration NYI for your platform";
+	QDir dir("/dev/");
+	QFileInfoList list = dir.entryInfoList(QStringList() << "ttyACM*", QDir::System);
+	foreach(const QFileInfo &info, list) paths << info.filePath();
 #endif
 	foreach(const QString &path, paths) {
 		UsbSerial usb(path.toAscii());
