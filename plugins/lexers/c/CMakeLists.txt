@@ -1,4 +1,4 @@
-SET(PLUGIN_NAME C_lexer)
+SET(PLUGIN_NAME c_lexer)
 
 PROJECT(${PLUGIN_NAME})
 cmake_minimum_required(VERSION 2.6.0)
