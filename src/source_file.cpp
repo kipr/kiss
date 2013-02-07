@@ -41,6 +41,7 @@
 #include "resource_helper.hpp"
 #include "interface.hpp"
 #include "output_helper.hpp"
+#include "language_helper_manager.hpp"
 
 #include <pcompiler/pcompiler.hpp>
 
@@ -813,15 +814,12 @@ bool SourceFile::actionPreconditions()
 
 Kiss::KarPtr SourceFile::archive() const
 {
+	// TODO: Projects
 	Kiss::KarPtr archive = Kiss::Kar::create();
-	QString raw = ui_editor->text();
-	// TODO: This assumes our input language is C or C++
-	QStringList localIncludes = raw.split("\n").filter(QRegExp("^\\s*#include.*\".+\""));
-	foreach(const QString &localInclude, localIncludes) {
-		int start = localInclude.indexOf('\"');
-		int end = localInclude.indexOf('\"', start + 1);
-		QString path = QFileInfo(file().path() + "/" + localInclude.mid(start, end - start)).canonicalPath();
-	}
-	archive->addFile(file().fileName(), raw.toAscii());
-	return archive;
+	archive->addFile(file().fileName(), ui_editor->text().toAscii());
+	Compiler::OutputList out = LanguageHelperManager::ref().preprocess(archive, QStringList() << file().path());
+	// TODO: I really don't like that this is here.
+	if(Compiler::Output::isSuccess(out)) return archive;
+	mainWindow()->setOutputList(out);
+	return Kiss::KarPtr();
 }

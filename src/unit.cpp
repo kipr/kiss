@@ -62,9 +62,11 @@ bool Unit::execute(const Unit::Action &action) const
 	
 	if(action == Unit::Download) {
 		qDebug() << "Unit" << m_name << "download";
+		Kiss::KarPtr package = archive();
+		if(package.isNull()) return false;
 		CommunicationManager::ref().admit(CommunicationEntryPtr(
 			new CommunicationEntry(target(), CommunicationEntry::Download,
-			m_name, archive())));
+			m_name, package)));
 		return true;
 	}
 	
