@@ -36,6 +36,8 @@ Compiler::OutputList LanguageHelperC::preprocess(const Kiss::KarPtr &archive, co
 	
 	Compiler::OutputList out;
 	
+	const QStringList searchPathsAndAbsolute = searchPaths + (QStringList() << "");
+	
 	qDebug() << "Language helper found the following pertinent files:" << pertinentFiles;
 	foreach(const QString &file, pertinentFiles) {
 		
@@ -54,7 +56,7 @@ Compiler::OutputList LanguageHelperC::preprocess(const Kiss::KarPtr &archive, co
 			int end = line.indexOf('\"', start + 1);
 			const QString include = line.mid(start + 1, end - start - 1);
 			bool found = false;
-			foreach(const QString &path, searchPaths) {
+			foreach(const QString &path, searchPathsAndAbsolute) {
 				QFileInfo fileLocation(path, include);
 				qDebug() << fileLocation.filePath();
 				if(!fileLocation.exists()) continue;
