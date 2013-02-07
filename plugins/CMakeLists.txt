@@ -1,2 +1,3 @@
 add_subdirectory(interfaces)
 add_subdirectory(lexers)
+add_subdirectory(language_helpers)
