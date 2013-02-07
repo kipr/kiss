@@ -4,6 +4,7 @@
 #include "target.hpp"
 #include "interface_manager.hpp"
 #include "interface_plugin_manager.hpp"
+#include "language_helper_plugin_manager.hpp"
 #include "lexer_plugin_manager.hpp"
 
 #include <QIcon>
@@ -55,6 +56,7 @@ void StandardEnvironment::createStandardEnvironment()
 	QApplication::setApplicationName("KISS");
 	QApplication::setWindowIcon(QIcon(":/icon.png"));
 	
+	LanguageHelperPluginManager::ref().loadAll();
 	Target::InterfacePluginManager::ref().loadAll();
 	Lexer::PluginManager::ref().loadAll();
 }
