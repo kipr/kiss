@@ -42,6 +42,7 @@ ADD_CUSTOM_TARGET(${PLUGIN_NAME}_osx_install_names ALL
 		phonon.framework/Versions/4/phonon
 		QtDeclarative.framework/Versions/4/QtDeclarative
 		libkar.dylib
+		libqscintilla2.9.dylib
 		libpcompiler.dylib
 	WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH}
 	DEPENDS ${PLUGIN_NAME})

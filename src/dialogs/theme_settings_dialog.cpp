@@ -166,7 +166,9 @@ void ThemeSettings::setDefaults()
 void ThemeSettings::initializeDefaults()
 {
 	// This is sooo jank
-	delete new ThemeSettings(0);
+	ThemeSettings *settings = new ThemeSettings(0);
+	settings->writeSettings();
+	delete settings;
 }
 
 void ThemeSettings::settingChanged(QColor color)

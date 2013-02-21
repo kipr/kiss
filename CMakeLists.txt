@@ -80,7 +80,6 @@ SET(CMAKE_CXX_FLAGS "-Wall")
 ADD_DEFINITIONS(-O2)
 
 IF(APPLE)
-	SET(CMAKE_OSX_SYSROOT "${OSX_DEVELOPER_ROOT}/SDKs/MacOSX10.6.sdk")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -g")
 	LINK_DIRECTORIES(/Library/Frameworks/)
 	ADD_EXECUTABLE(KISS MACOSX_BUNDLE ${KISS_SRCS_CXX})
@@ -113,11 +112,17 @@ IF(APPLE)
 		COMMAND ${QT_BINARY_DIR}/macdeployqt ${KISS_SOURCE_DIR}/deploy/KISS.app -verbose=0
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS)
-	
+
 	ADD_CUSTOM_TARGET(Info.plist ALL
 		COMMAND ${CMAKE_COMMAND} -E copy ${RC}/Info.plist ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS)
+	
+	ADD_CUSTOM_TARGET(qscintilla ALL
+		COMMAND ${CMAKE_COMMAND} -E copy /Library/Frameworks/libqscintilla2.9.dylib
+			${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Frameworks
+		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+		DEPENDS KISS MacDeployQt)
 	
 	ADD_CUSTOM_TARGET(Icons ALL
 		COMMAND ${CMAKE_COMMAND} -E copy ${RC}/logos/mac_icon.icns ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Resources
@@ -135,6 +140,22 @@ IF(APPLE)
 SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
 ADD_CUSTOM_TARGET(kiss_osx_install_names ALL 
 	COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/MacOS/KISS
+		QtCore.framework/Versions/4/QtCore
+		QtScript.framework/Versions/4/QtScript
+		QtDBus.framework/Versions/4/QtDBus
+		QtGui.framework/Versions/4/QtGui
+		QtNetwork.framework/Versions/4/QtNetwork
+		QtXml.framework/Versions/4/QtXml
+		QtXmlPatterns.framework/Versions/4/QtXmlPatterns
+		QtSvg.framework/Versions/4/QtSvg
+		QtSql.framework/Versions/4/QtSql
+		QtWebKit.framework/Versions/4/QtWebKit
+		phonon.framework/Versions/4/phonon
+		QtDeclarative.framework/Versions/4/QtDeclarative
+	WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+	DEPENDS KISS Info.plist MacDeployQt)
+ADD_CUSTOM_TARGET(qscintilla_install_names ALL 
+	COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/Frameworks/libqscintilla2.9.dylib
 		QtCore.framework/Versions/4/QtCore
 		QtScript.framework/Versions/4/QtScript
 		QtDBus.framework/Versions/4/QtDBus

@@ -43,6 +43,7 @@ ADD_CUSTOM_TARGET(${PLUGIN_NAME}_osx_install_names ALL
 		QtDeclarative.framework/Versions/4/QtDeclarative
 		libkar.dylib
 		libpcompiler.dylib
+		libqscintilla2.9.dylib
 	WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH}
 	DEPENDS ${PLUGIN_NAME})
 INSTALL(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/lexers)
