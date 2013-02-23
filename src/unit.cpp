@@ -4,6 +4,7 @@
 
 #include <kar.hpp>
 
+#include <QFileInfo>
 #include <QDebug>
 
 using namespace Kiss;
@@ -60,27 +61,29 @@ bool Unit::execute(const Unit::Action &action) const
 	
 	using namespace Target;
 	
+	QString name = QFileInfo(m_name).baseName();
+	
 	if(action == Unit::Download) {
 		qDebug() << "Unit" << m_name << "download";
 		Kiss::KarPtr package = archive();
 		if(package.isNull()) return false;
 		CommunicationManager::ref().admit(CommunicationEntryPtr(
 			new CommunicationEntry(target(), CommunicationEntry::Download,
-			m_name, package)));
+			name, package)));
 		return true;
 	}
 	
 	if(action == Unit::Compile) {
 		qDebug() << "Unit" << m_name << "compile";
 		CommunicationManager::ref().admit(CommunicationEntryPtr(
-			new CommunicationEntry(target(), CommunicationEntry::Compile, m_name)));
+			new CommunicationEntry(target(), CommunicationEntry::Compile, name)));
 		return true;
 	}
 	
 	if(action == Unit::Run) {
 		qDebug() << "Unit" << m_name << "run";
 		CommunicationManager::ref().admit(CommunicationEntryPtr(
-			new CommunicationEntry(target(), CommunicationEntry::Run, m_name)));
+			new CommunicationEntry(target(), CommunicationEntry::Run, name)));
 		return true;
 	}
 	
