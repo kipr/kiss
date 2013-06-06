@@ -31,6 +31,7 @@
 #include "project_model.hpp"
 #include "output_widget.hpp"
 #include "main_window_menu.hpp"
+#include "target.hpp"
 
 #include <Qsci/qscilexercpp.h>
 #include <pcompiler/output.hpp>
@@ -49,6 +50,7 @@ namespace Kiss
 	{
 		class Responder;
 		class MainResponder;
+		class CommunicationManager;
 	}
 	
 	namespace Template
@@ -227,6 +229,11 @@ namespace Kiss
 
 			void projectOpened(const Kiss::Project::ProjectPtr& project);
 			void projectClosed(const Kiss::Project::ProjectPtr& project);
+			
+			// FIXME: This will cause issues if we ever support
+			// more than one main window
+			void authenticateTarget(const Kiss::Target::TargetPtr &target,
+				Kiss::Target::CommunicationManager *manager);
 
 		private:
 			Tab *m_currentTab;

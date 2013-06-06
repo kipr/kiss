@@ -1,5 +1,6 @@
 #include "kovan_proto_target.hpp"
 
+#include "keys.hpp"
 #include <kovanserial/transmitter.hpp>
 #include <pcompiler/output.hpp>
 
@@ -41,32 +42,44 @@ void KovanProtoTarget::fillInformation(const Advert &advert)
 	m_information[DEVICE_TYPE] = advert.device;
 }
 
-const QMap<QString, QString> KovanProtoTarget::information() const
+QMap<QString, QString> KovanProtoTarget::information() const
 {
 	return m_information;
 }
 
-const bool KovanProtoTarget::disconnect()
+bool KovanProtoTarget::disconnect()
 {
 	// We will be auto-disconnected by libkovanserial
 	return true;
 }
 
-const bool KovanProtoTarget::available()
+bool KovanProtoTarget::available()
 {
 	return true;
 }
 
 #define KEY_COMPILE "compile"
 
-const bool KovanProtoTarget::compile(quint64 id, const QString& name)
+Kiss::Target::Target::ReturnCode KovanProtoTarget::compile(quint64 id, const QString& name)
 {
 	emit response(Response(id, "began_" KEY_COMPILE));
 	qDebug() << "Compiling...";
 	bool success = m_transmitter->makeAvailable();
 	if(!success) perror("makeAvailable");
+	
 	emit response(Response(id, "connection", success));
-	if(!success) return false;
+	
+	if(!success) return Target::Error;
+	
+	{
+		Target::ReturnCode authRet = Target::Error;
+		if((authRet = authenticate(id)) != Target::Success) {
+			m_proto.hangup();
+			m_transmitter->endSession();
+			return authRet;
+		}
+	}
+	
 	
 	qDebug() << "Compiling" << name;
 	if(!m_proto.sendFileAction(COMMAND_ACTION_COMPILE, name.toStdString())) {
@@ -74,7 +87,7 @@ const bool KovanProtoTarget::compile(quint64 id, const QString& name)
 		qWarning() << "Send file action failed.";
 		m_proto.hangup();
 		m_transmitter->endSession();
-		return false;
+		return Target::Error;
 	}
 	
 	bool finished = false;
@@ -86,19 +99,21 @@ const bool KovanProtoTarget::compile(quint64 id, const QString& name)
 		if(!m_proto.recvFileActionProgress(finished, progress, 30000)) {
 			emit response(Response(id, KEY_COMPILE, false));
 			qWarning() << "recv file action progress failed.";
+			m_proto.hangup();
 			m_transmitter->endSession();
-			return false;
+			return Target::Error;
 		}
 	} while(!finished);
 	
 	qDebug() << "Waiting for results...";
 	
 	Packet p;
-	if(m_transport.recv(p, 15000) != Transmitter::Success || p.type != Command::FileHeader) {
+	if(m_transport.recv(p, 15000) != TransportLayer::Success || p.type != Command::FileHeader) {
 		qWarning() << "Failed to recv results of compile" << p.type;
 		emit response(Response(id, KEY_COMPILE, true));
+		m_proto.hangup();
 		m_transmitter->endSession();
-		return false;
+		return Target::Error;
 	}
 	
 	Command::FileHeaderData header;
@@ -108,7 +123,7 @@ const bool KovanProtoTarget::compile(quint64 id, const QString& name)
 		qWarning() << "Failed to confirm incoming compile results";
 		m_proto.hangup();
 		m_transmitter->endSession();
-		return false;
+		return Target::Error;
 	};
 	
 	std::ostringstream sstream;
@@ -116,7 +131,7 @@ const bool KovanProtoTarget::compile(quint64 id, const QString& name)
 		qWarning() << "Recv compile results failed";
 		m_proto.hangup();
 		m_transmitter->endSession();
-		return false;
+		return Target::Error;
 	}
 	
 	m_proto.hangup();
@@ -135,19 +150,30 @@ const bool KovanProtoTarget::compile(quint64 id, const QString& name)
 	
 	m_transmitter->endSession();
 	
-	return true;
+	return Target::Success;
 }
 
 #define KEY_DOWNLOAD "download"
 
-const bool KovanProtoTarget::download(quint64 id, const QString& name, const KarPtr& archive)
+Kiss::Target::Target::ReturnCode KovanProtoTarget::download(quint64 id, const QString& name, const KarPtr& archive)
 {
 	emit response(Response(id, "began_" KEY_DOWNLOAD));
 	qDebug() << "Downloading" << name << "...";
 	bool success = m_transmitter->makeAvailable();
 	if(!success) perror("makeAvailable");
 	emit response(Response(id, "connection", success));
-	if(!success) return false;
+	if(!success) return Target::Error;
+	
+	{
+		Target::ReturnCode authRet = Target::Error;
+		if((authRet = authenticate(id)) != Target::Success) {
+			m_proto.hangup();
+			m_transmitter->endSession();
+			return authRet;
+		}
+	}
+
+	
 	QByteArray data;
 	QDataStream qStream(&data, QIODevice::ReadWrite);
 	qStream << (*archive);
@@ -157,31 +183,40 @@ const bool KovanProtoTarget::download(quint64 id, const QString& name, const Kar
 		emit response(Response(id, KEY_DOWNLOAD, false));
 		m_proto.hangup();
 		m_transmitter->endSession();
-		return false;
+		return Target::Error;
 	}
 	
 	emit response(Response(id, KEY_DOWNLOAD, true));
 	
 	m_proto.hangup();
 	m_transmitter->endSession();
-	return true;
+	return Target::Success;
 }
 
 #define KEY_RUN "run"
 
-const bool KovanProtoTarget::run(quint64 id, const QString& name)
+Kiss::Target::Target::ReturnCode KovanProtoTarget::run(quint64 id, const QString& name)
 {
 	emit response(Response(id, "began_" KEY_RUN));
 	qDebug() << "Running...";
 	bool success = m_transmitter->makeAvailable();
 	if(!success) perror("makeAvailable");
 	emit response(Response(id, "connection", success));
-	if(!success) return false;
+	if(!success) return Target::Error;
+	
+	{
+		Target::ReturnCode authRet = Target::Error;
+		if((authRet = authenticate(id)) != Target::Success) {
+			m_proto.hangup();
+			m_transmitter->endSession();
+			return authRet;
+		}
+	}
 	
 	if(!m_proto.sendFileAction(COMMAND_ACTION_RUN, name.toStdString())) {
 		emit response(Response(id, KEY_RUN, false));
 		m_proto.hangup();
-		return false;
+		return Target::Error;
 	}
 	
 	bool finished = false;
@@ -190,7 +225,9 @@ const bool KovanProtoTarget::run(quint64 id, const QString& name)
 	do {
 		if(!m_proto.recvFileActionProgress(finished, progress, 5000)) {
 			emit response(Response(id, KEY_RUN, false));
-			return false;
+			m_proto.hangup();
+			m_transmitter->endSession();
+			return Target::Error;
 		}
 	} while(!finished);
 	m_proto.hangup();
@@ -198,30 +235,60 @@ const bool KovanProtoTarget::run(quint64 id, const QString& name)
 	
 	emit response(Response(id, KEY_RUN, true));
 	
-	return true;
+	return Target::Success;
 }
 
-const bool KovanProtoTarget::list(quint64 id)
+Kiss::Target::Target::ReturnCode KovanProtoTarget::list(quint64 id)
 {
-	return false;
+	return Target::NotImplemented;
 }
 
-const bool KovanProtoTarget::deleteProgram(quint64 id, const QString& name)
+Kiss::Target::Target::ReturnCode KovanProtoTarget::deleteProgram(quint64 id, const QString& name)
 {
-	return false;
+	return Target::NotImplemented;
 }
 
-const bool KovanProtoTarget::interaction(quint64 id, const QString& command)
+Kiss::Target::Target::ReturnCode KovanProtoTarget::interaction(quint64 id, const QString& command)
 {
-	return false;
+	return Target::NotImplemented;
 }
 
-const bool KovanProtoTarget::authenticate(quint64 id, const QByteArray& hash)
+Kiss::Target::Target::ReturnCode KovanProtoTarget::sendCustom(quint64 id, const QString& custom, const QByteArray& payload)
 {
-	return false;
+	return Target::NotImplemented;
 }
 
-const bool KovanProtoTarget::sendCustom(quint64 id, const QString& custom, const QByteArray& payload)
+bool KovanProtoTarget::setPassword(const QString &password)
 {
-	return false;
+	return m_proto.setPassword(password.toStdString());
+}
+
+void KovanProtoTarget::clearPassword()
+{
+	m_proto.setNoPassword();
+}
+
+Kiss::Target::Target::ReturnCode KovanProtoTarget::authenticate(const quint64 id)
+{
+	bool authNecessary = false;
+	if(!m_proto.authenticationInfo(authNecessary)) {
+		std::cerr << "Failed to fetch authorization info." << std::endl;
+		emit response(Response(id, AUTHENTICATION_KEY, false));
+		return Target::Error;
+	}
+	
+	if(!authNecessary) {
+		std::cout << "Authorized (No authorization necessary)" << std::endl;
+		emit response(Response(id, AUTHENTICATION_KEY, true));
+		return Target::Success;
+	}
+	
+	bool authed = false;
+	uint8_t sessionKey[KOVAN_SERIAL_SESSION_KEY_SIZE];
+	if(!m_proto.requestAuthentication(authed, sessionKey) || !authed) {
+		std::cout << "Authorization failed. Try again." << std::endl;
+	}
+	
+	emit response(Response(id, AUTHENTICATION_KEY, authed));
+	return authed ? Target::Success : Target::AuthenticationFailed;
 }

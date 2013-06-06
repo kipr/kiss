@@ -36,6 +36,7 @@
 #include "communication_progress_bar.hpp"
 #include "communication_manager.hpp"
 #include "file_utils.hpp"
+#include "password_dialog.hpp"
 
 #include <QToolTip>
 #include <QMessageBox>
@@ -103,6 +104,10 @@ MainWindow::MainWindow(QWidget *parent)
 		SLOT(projectOpened(Kiss::Project::ProjectPtr)));
 	connect(&m_projectManager, SIGNAL(projectClosed(Kiss::Project::ProjectPtr)),
 		SLOT(projectClosed(Kiss::Project::ProjectPtr)));
+		
+	connect(&Target::CommunicationManager::ref(),
+		SIGNAL(targetNeedsAuthentication(Kiss::Target::TargetPtr, Kiss::Target::CommunicationManager *)),
+		SLOT(authenticateTarget(Kiss::Target::TargetPtr, Kiss::Target::CommunicationManager *)));
 	
 	ui_projectFrame->setVisible(false);
 	
@@ -743,6 +748,19 @@ void MainWindow::projectClosed(const Project::ProjectPtr& project)
 	m_projectsModel.removeProject(project);
 	Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
 	if(manager) ui_projectFrame->setVisible(manager->projects().size());*/
+}
+
+void MainWindow::authenticateTarget(const Kiss::Target::TargetPtr &target,
+	Kiss::Target::CommunicationManager *manager)
+{
+	Dialog::Password dialog(this);
+	if(dialog.exec() != QDialog::Accepted) {
+		manager->clearQueue(target);
+	} else {
+		target->setPassword(dialog.password());
+	}
+	
+	manager->setPaused(false);
 }
 
 bool MainWindow::eventFilter(QObject *target, QEvent *event) {

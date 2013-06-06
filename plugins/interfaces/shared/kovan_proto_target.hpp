@@ -27,24 +27,28 @@ namespace Kiss
 			void fillCommPort(const QString &commPort);
 			void fillInformation(const Advert &advert);
 			
-			virtual const QMap<QString, QString> information() const; // Needs to be cached
+			virtual QMap<QString, QString> information() const; // Needs to be cached
 
-			virtual const bool disconnect();
+			virtual bool disconnect();
 
-			virtual const bool available();
+			virtual bool available();
 			
-			virtual const bool compile(quint64 id, const QString& name);
-			virtual const bool download(quint64 id, const QString& name, const Kiss::KarPtr& archive);
-			virtual const bool run(quint64 id, const QString& name);
+			virtual Target::Target::ReturnCode compile(quint64 id, const QString& name);
+			virtual Target::Target::ReturnCode download(quint64 id, const QString& name, const Kiss::KarPtr& archive);
+			virtual Target::Target::ReturnCode run(quint64 id, const QString& name);
 
-			virtual const bool list(quint64 id);
-			virtual const bool deleteProgram(quint64 id, const QString& name);
-			virtual const bool interaction(quint64 id, const QString& command);
+			virtual Target::Target::ReturnCode list(quint64 id);
+			virtual Target::Target::ReturnCode deleteProgram(quint64 id, const QString& name);
+			virtual Target::Target::ReturnCode interaction(quint64 id, const QString& command);
 
-			virtual const bool authenticate(quint64 id, const QByteArray& hash);
-			virtual const bool sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray());
+			virtual Target::Target::ReturnCode sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray());
+
+			virtual bool setPassword(const QString &password);
+			virtual void clearPassword();
 
 		private:
+			Target::Target::ReturnCode authenticate(const quint64 id);
+			
 			Transmitter *m_transmitter;
 			TransportLayer m_transport;
 			KovanSerial m_proto;

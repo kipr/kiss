@@ -19,7 +19,7 @@ namespace Kiss
 			Password(QWidget *parent = 0);
 			~Password();
 
-			QByteArray hash() const; // Get SHA1 Hash of password
+			QString password() const;
 		private:
 			Ui::PasswordDialog *ui;
 		};

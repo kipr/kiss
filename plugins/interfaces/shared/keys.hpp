@@ -9,6 +9,6 @@
 #define DELETE_KEY "delete"
 #define INTERACTION_KEY "interaction"
 #define LOCKED_KEY "locked"
-#define AUTHENTICATE_KEY "authenticate"
+#define AUTHENTICATION_KEY "authentication"
 
 #endif

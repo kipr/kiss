@@ -4,18 +4,17 @@
 #include "target.hpp"
 
 using namespace Kiss;
-using namespace Kiss::Target;
 
 class DummyTarget : public Kiss::Target::Target
 {
 public:
-	DummyTarget(Interface *parent)
+	DummyTarget(Kiss::Target::Interface *parent)
 		: Target(parent, "Dummy Target")
 	{
 		
 	}
 	
-	virtual const QMap<QString, QString> information() const
+	virtual QMap<QString, QString> information() const
 	{
 		QMap<QString, QString> ret;
 		ret[DISPLAY_NAME] = "No Target";
@@ -23,56 +22,63 @@ public:
 		return ret;
 	}
 
-	virtual const bool disconnect()
+	virtual bool disconnect()
 	{
 		return false;
 	}
 
-	virtual const bool available()
+	virtual bool available()
 	{
 		return false;
 	}
 	
-	virtual const bool compile(quint64 id, const QString& name)
+	virtual Target::ReturnCode compile(quint64 id, const QString& name)
 	{
-		return false;
+		return Target::NotImplemented;
 	}
 	
-	virtual const bool download(quint64 id, const QString& name, const KarPtr& archive)
+	virtual Target::ReturnCode download(quint64 id, const QString& name, const KarPtr& archive)
 	{
-		return false;
+		return Target::NotImplemented;
 	}
 	
-	virtual const bool run(quint64 id, const QString& name)
+	virtual Target::ReturnCode run(quint64 id, const QString& name)
 	{
-		return false;
+		return Target::NotImplemented;
 	}
 
-	virtual const bool list(quint64 id)
+	virtual Target::ReturnCode list(quint64 id)
 	{
-		return false;
+		return Target::NotImplemented;
 	}
 	
-	virtual const bool deleteProgram(quint64 id, const QString& name)
+	virtual Target::ReturnCode deleteProgram(quint64 id, const QString& name)
 	{
-		return false;
+		return Target::NotImplemented;
 	}
 	
-	virtual const bool interaction(quint64 id, const QString& command)
+	virtual Target::ReturnCode interaction(quint64 id, const QString& command)
 	{
-		return false;
+		return Target::NotImplemented;
 	}
+	
+	virtual Target::ReturnCode sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray())
+	{
+		return Target::NotImplemented;
+	}
+	
+	virtual bool setPassword(const QString &password)
+	{
+		return true;
+	}
+	
+	virtual void clearPassword()
+	{
 
-	virtual const bool authenticate(quint64 id, const QByteArray& hash)
-	{
-		return false;
-	}
-	
-	virtual const bool sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray())
-	{
-		return false;
 	}
 };
+
+using namespace Kiss::Target;
 
 __attribute__((constructor))
 static void __registerDummy()

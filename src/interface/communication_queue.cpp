@@ -89,7 +89,7 @@ const quint64 &CommunicationEntry::id() const
 	return m_id;
 }
 
-bool CommunicationEntry::execute() const
+Kiss::Target::Target::ReturnCode CommunicationEntry::execute() const
 {
 	switch(m_type) {
 	case CommunicationEntry::Custom: return m_target->sendCustom(m_id, m_custom, m_payload);
@@ -99,9 +99,9 @@ bool CommunicationEntry::execute() const
 	case CommunicationEntry::List: return m_target->list(m_id);
 	case CommunicationEntry::Delete: return m_target->deleteProgram(m_id, m_name);
 	case CommunicationEntry::Interaction: return m_target->interaction(m_id, m_name);
-	case CommunicationEntry::Disconnect: return m_target->disconnect();
+	case CommunicationEntry::Disconnect: return m_target->disconnect() ? Target::Target::Success : Target::Target::Error;
 	default: qCritical() << "Target does not know how to execute queue entry of type" << m_type;
 	}
 	
-	return false;
+	return Target::Error;
 }

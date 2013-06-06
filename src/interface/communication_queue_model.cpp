@@ -85,14 +85,14 @@ CommunicationQueueModel::CommunicationQueueModel(CommunicationManager *manager, 
 	: QStandardItemModel(parent),
 	m_manager(manager)
 {
-	connect(m_manager, SIGNAL(admitted(CommunicationEntryPtr)),
-		SLOT(admitted(CommunicationEntryPtr)));
-	connect(m_manager, SIGNAL(began(CommunicationEntryPtr)),
-		SLOT(began(CommunicationEntryPtr)));
-	connect(m_manager, SIGNAL(progress(CommunicationEntryPtr, double)),
-		SLOT(progress(CommunicationEntryPtr, double)));
-	connect(m_manager, SIGNAL(finished(CommunicationEntryPtr, bool)),
-		SLOT(finished(CommunicationEntryPtr, bool)));
+	connect(m_manager, SIGNAL(admitted(Kiss::Target::CommunicationEntryPtr)),
+		SLOT(admitted(Kiss::Target::CommunicationEntryPtr)));
+	connect(m_manager, SIGNAL(began(Kiss::Target::CommunicationEntryPtr)),
+		SLOT(began(Kiss::Target::CommunicationEntryPtr)));
+	connect(m_manager, SIGNAL(progress(Kiss::Target::CommunicationEntryPtr, double)),
+		SLOT(progress(Kiss::Target::CommunicationEntryPtr, double)));
+	connect(m_manager, SIGNAL(finished(Kiss::Target::CommunicationEntryPtr, Kiss::Target::Target::ReturnCode)),
+		SLOT(finished(Kiss::Target::CommunicationEntryPtr, Kiss::Target::Target::ReturnCode)));
 	connect(m_manager, SIGNAL(queueFinished()), SLOT(queueFinished()));
 }
 
@@ -128,7 +128,7 @@ void CommunicationQueueModel::progress(const CommunicationEntryPtr &entry, doubl
 
 }
 
-void CommunicationQueueModel::finished(const CommunicationEntryPtr &entry, bool success)
+void CommunicationQueueModel::finished(const CommunicationEntryPtr &entry, Kiss::Target::Target::ReturnCode ret)
 {
 	for(int i = 0; i < rowCount(); ++i) {
 		CommunicationItem *commItem = CommunicationItem::cast(item(i));

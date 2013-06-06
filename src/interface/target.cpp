@@ -11,6 +11,7 @@ Target::Target(Interface* interface, const QString& name)
 	qRegisterMetaType<Response>("Response");
 	connect(this, SIGNAL(response(Response)),
 		SLOT(responseRedirect(Response)));
+	qRegisterMetaType<Kiss::Target::Target::ReturnCode>("Kiss::Target::Target::ReturnCode");
 }
 
 Target::~Target()
@@ -22,27 +23,27 @@ Interface *Target::interface() const
 	return m_interface;
 }
 
-const QString Target::displayName() const
+QString Target::displayName() const
 {
 	return information().value(DISPLAY_NAME);
 }
 
-const QString Target::commPort() const
+QString Target::commPort() const
 {
 	return information().value(COMM_PORT);
 }
 
-const QString Target::type() const
+QString Target::type() const
 {
 	return information().value(DEVICE_TYPE);
 }
 
-const QString Target::serial() const
+QString Target::serial() const
 {
 	return information().value(SERIAL);
 }
 
-const QString Target::version() const {
+QString Target::version() const {
 	return information().value(VERSION);
 }
 

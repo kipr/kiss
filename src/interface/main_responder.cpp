@@ -1,5 +1,6 @@
 #include "main_responder.hpp"
 #include "main_window.hpp"
+#include "password_dialog.hpp"
 
 #include <QDebug>
 
@@ -23,6 +24,11 @@ void MainResponder::response(Target *target, const Response &response)
 	if(response.type() == "connection" && !response.data().toBool()) {
 		m_mainWindow->setStatusMessage(QObject::tr("Connection Failed!"), 5000);
 		return; 
+	} else if(response.type() == "authentication") {
+		m_mainWindow->setStatusMessage(response.data().toBool()
+			? QObject::tr("Authentication Succeeded!")
+			: QObject::tr("Authentication Failed!"), 5000);
+		return;
 	} else if(response.type() == "compile") {
 		bool success = false;
 		if(response.data().canConvert<bool>()) {

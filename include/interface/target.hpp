@@ -37,36 +37,44 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
+			enum ReturnCode {
+				Success = 0,
+				Error,
+				AuthenticationFailed,
+				NotImplemented
+			};
+			
 			Target(Interface* interface, const QString& name);
 			virtual ~Target();
 
 			Interface* interface() const;
 
-			virtual const QString displayName() const;
-			const QString type() const;
-			const QString commPort() const;
-			const QString serial() const;
-			const QString version() const;
+			virtual QString displayName() const;
+			QString type() const;
+			QString commPort() const;
+			QString serial() const;
+			QString version() const;
 
-			virtual const QMap<QString, QString> information() const = 0; // Needs to be cached
+			virtual QMap<QString, QString> information() const = 0; // Needs to be cached
 
-			virtual const bool disconnect() = 0;
+			virtual bool disconnect() = 0;
 
-			virtual const bool available() = 0;
-			virtual const bool compile(quint64 id, const QString &name) = 0;
-			virtual const bool download(quint64 id, const QString &name, const KarPtr& archive) = 0;
-			virtual const bool run(quint64 id, const QString &name) = 0;
+			virtual bool available() = 0;
+			virtual ReturnCode compile(quint64 id, const QString &name) = 0;
+			virtual ReturnCode download(quint64 id, const QString &name, const KarPtr& archive) = 0;
+			virtual ReturnCode run(quint64 id, const QString &name) = 0;
 
-			virtual const bool list(quint64 id) = 0;
-			virtual const bool deleteProgram(quint64 id, const QString& name) = 0;
-			virtual const bool interaction(quint64 id, const QString& command) = 0;
+			virtual ReturnCode list(quint64 id) = 0;
+			virtual ReturnCode deleteProgram(quint64 id, const QString& name) = 0;
+			virtual ReturnCode interaction(quint64 id, const QString& command) = 0;
 
-			virtual const bool authenticate(quint64 id, const QByteArray& hash) = 0;
-			virtual const bool sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray()) = 0;
+			virtual ReturnCode sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray()) = 0;
 			
 			void setResponder(Responder *responder);
 			Responder *responder() const;
 			
+			virtual bool setPassword(const QString &password) = 0;
+			virtual void clearPassword() = 0; 
 			
 			// This is pretty jank. Basically we use sigslots to get us back
 			// on the GUI thread once an asynchronous event happens.

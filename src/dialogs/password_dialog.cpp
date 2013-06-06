@@ -17,9 +17,7 @@ Password::~Password()
 	delete ui;
 }
 
-QByteArray Password::hash() const
+QString Password::password() const
 {
-	QCryptographicHash hash(QCryptographicHash::Sha1);
-	hash.addData(ui->password->text().toUtf8());
-	return hash.result();
+	return ui->password->text();
 }

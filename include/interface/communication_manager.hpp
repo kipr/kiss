@@ -20,8 +20,8 @@ namespace Kiss
 			virtual void run();
 			
 		signals:
-			void progress(const CommunicationEntryPtr &entry);
-			void finished(const CommunicationEntryPtr &entry, const bool &success);
+			void progress(const Kiss::Target::CommunicationEntryPtr &entry);
+			void finished(const Kiss::Target::CommunicationEntryPtr &entry, const Kiss::Target::Target::ReturnCode success);
 			
 		private:
 			CommunicationEntryPtr m_entry;
@@ -36,20 +36,31 @@ namespace Kiss
 			
 			bool isIdle() const;
 			
+			// TODO: Pause by target
+			bool isPaused() const;
+			void setPaused(const bool pause);
+			
+			void clearQueue();
+			void clearQueue(const TargetPtr &target);
+			
 			quint64 admit(const CommunicationEntryPtr &entry);
 			
 		signals:
-			void admitted(const CommunicationEntryPtr &entry);
-			void began(const CommunicationEntryPtr &entry);
-			void progress(const CommunicationEntryPtr &entry, double fraction);
-			void finished(const CommunicationEntryPtr &entry, bool success);
+			void admitted(const Kiss::Target::CommunicationEntryPtr &entry);
+			void began(const Kiss::Target::CommunicationEntryPtr &entry);
+			void progress(const Kiss::Target::CommunicationEntryPtr &entry, double fraction);
+			void finished(const Kiss::Target::CommunicationEntryPtr &entry, Kiss::Target::Target::ReturnCode success);
 			void queueFinished();
+			
+			void targetNeedsAuthentication(const Kiss::Target::TargetPtr &target,
+				Kiss::Target::CommunicationManager *manager);
 			
 		private slots:
 			void saturate();
-			void workerFinished(CommunicationEntryPtr entry, const bool &success);
+			void workerFinished(Kiss::Target::CommunicationEntryPtr entry, const Kiss::Target::Target::ReturnCode success);
 			
 		private:
+			bool m_paused;
 			quint64 m_id;
 			QList<CommunicationEntryPtr> m_running;
 			CommunicationQueue m_queue;

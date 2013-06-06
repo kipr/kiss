@@ -16,8 +16,8 @@ CommunicationProgressBar::CommunicationProgressBar(Target::CommunicationManager 
 	
 	setMaximumSize(QSize(100, 100));
 	
-	connect(m_manager, SIGNAL(admitted(CommunicationEntryPtr)), SLOT(admitted()));
-	connect(m_manager, SIGNAL(finished(CommunicationEntryPtr, bool)), SLOT(finished()));
+	connect(m_manager, SIGNAL(admitted(Kiss::Target::CommunicationEntryPtr)), SLOT(admitted()));
+	connect(m_manager, SIGNAL(finished(Kiss::Target::CommunicationEntryPtr, Kiss::Target::Target::ReturnCode)), SLOT(finished()));
 	connect(m_manager, SIGNAL(queueFinished()), SLOT(queueFinished()));
 }
 

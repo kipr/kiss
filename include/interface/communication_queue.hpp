@@ -45,7 +45,7 @@ namespace Kiss
 			void setId(const quint64 &id);
 			const quint64 &id() const;
 			
-			bool execute() const;
+			Target::Target::ReturnCode execute() const;
 			
 			const KarPtr& archive() const;
 			

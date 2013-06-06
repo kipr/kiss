@@ -21,10 +21,10 @@ namespace Kiss
 			CommunicationManager *manager() const;
 			
 		private slots:
-			void admitted(const CommunicationEntryPtr &entry);
-			void began(const CommunicationEntryPtr &entry);
-			void progress(const CommunicationEntryPtr &entry, double success);
-			void finished(const CommunicationEntryPtr &entry, bool success);
+			void admitted(const Kiss::Target::CommunicationEntryPtr &entry);
+			void began(const Kiss::Target::CommunicationEntryPtr &entry);
+			void progress(const Kiss::Target::CommunicationEntryPtr &entry, double success);
+			void finished(const Kiss::Target::CommunicationEntryPtr &entry, Kiss::Target::Target::ReturnCode ret);
 			void queueFinished();
 			
 		private:

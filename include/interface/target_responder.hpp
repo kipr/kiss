@@ -12,14 +12,8 @@ namespace Kiss
 		class Responder
 		{
 		public:
-			enum AuthenticateReturn {
-				AuthWillNotAccept,
-				AuthTryAgain,
-				AuthSuccess
-			};
-			
 			virtual ~Responder();
-
+			
 			virtual void response(Target *target, const Response &response) = 0; 
 		};
 	}
