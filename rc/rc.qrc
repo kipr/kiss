@@ -11,6 +11,7 @@
         <file>icon_set/icons/magnifier.png</file>
         <file>icon_set/icons/magnifier_zoom_in.png</file>
         <file>icon_set/icons/magnifier_zoom_out.png</file>
+        <file>icon_set/icons/palette.png</file>
     </qresource>
     <qresource prefix="/debugger">
         <file>icon_set/icons/control_end.png</file>
