@@ -234,6 +234,9 @@ namespace Kiss
 			// more than one main window
 			void authenticateTarget(const Kiss::Target::TargetPtr &target,
 				Kiss::Target::CommunicationManager *manager);
+				
+			void oldDeviceSoftware(const Kiss::Target::TargetPtr &target);
+			void oldHostSoftware(const Kiss::Target::TargetPtr &target);
 
 		private:
 			Tab *m_currentTab;

@@ -47,6 +47,7 @@ namespace Kiss
 			virtual void clearPassword();
 
 		private:
+			Target::Target::ReturnCode verifyProtocolVersion();
 			Target::Target::ReturnCode authenticate(const quint64 id);
 			
 			Transmitter *m_transmitter;

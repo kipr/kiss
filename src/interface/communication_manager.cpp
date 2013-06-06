@@ -119,6 +119,16 @@ void CommunicationManager::workerFinished(CommunicationEntryPtr entry, const Tar
 		m_queue.prepend(entry);
 		m_queueMutex.unlock();
 		emit targetNeedsAuthentication(entry->target(), this);
+	} else if(success == Target::Target::OldDeviceSoftware) {
+		// We can't talk to this target, so clear
+		// all pending entries
+		clearQueue(entry->target());
+		emit oldDeviceSoftware(entry->target());
+	} else if(success == Target::Target::OldHostSoftware) {
+		// We can't talk to this target, so clear
+		// all pending entries
+		clearQueue(entry->target());
+		emit oldHostSoftware(entry->target());
 	} else if(success != Target::Target::Success) {
 		
 		// If one comm entry fails for a target, we

@@ -72,14 +72,23 @@ Kiss::Target::Target::ReturnCode KovanProtoTarget::compile(quint64 id, const QSt
 	if(!success) return Target::Error;
 	
 	{
-		Target::ReturnCode authRet = Target::Error;
-		if((authRet = authenticate(id)) != Target::Success) {
+		Target::ReturnCode ret = Target::Error;
+		if((ret = verifyProtocolVersion()) != Target::Success) {
 			m_proto.hangup();
 			m_transmitter->endSession();
-			return authRet;
+			return ret;
 		}
 	}
 	
+	{
+		Target::ReturnCode ret = Target::Error;
+		if((ret = authenticate(id)) != Target::Success) {
+			m_proto.hangup();
+			m_transmitter->endSession();
+			return ret;
+		}
+	}
+
 	
 	qDebug() << "Compiling" << name;
 	if(!m_proto.sendFileAction(COMMAND_ACTION_COMPILE, name.toStdString())) {
@@ -165,13 +174,23 @@ Kiss::Target::Target::ReturnCode KovanProtoTarget::download(quint64 id, const QS
 	if(!success) return Target::Error;
 	
 	{
-		Target::ReturnCode authRet = Target::Error;
-		if((authRet = authenticate(id)) != Target::Success) {
+		Target::ReturnCode ret = Target::Error;
+		if((ret = verifyProtocolVersion()) != Target::Success) {
 			m_proto.hangup();
 			m_transmitter->endSession();
-			return authRet;
+			return ret;
 		}
 	}
+	
+	{
+		Target::ReturnCode ret = Target::Error;
+		if((ret = authenticate(id)) != Target::Success) {
+			m_proto.hangup();
+			m_transmitter->endSession();
+			return ret;
+		}
+	}
+
 
 	
 	QByteArray data;
@@ -205,11 +224,20 @@ Kiss::Target::Target::ReturnCode KovanProtoTarget::run(quint64 id, const QString
 	if(!success) return Target::Error;
 	
 	{
-		Target::ReturnCode authRet = Target::Error;
-		if((authRet = authenticate(id)) != Target::Success) {
+		Target::ReturnCode ret = Target::Error;
+		if((ret = verifyProtocolVersion()) != Target::Success) {
 			m_proto.hangup();
 			m_transmitter->endSession();
-			return authRet;
+			return ret;
+		}
+	}
+	
+	{
+		Target::ReturnCode ret = Target::Error;
+		if((ret = authenticate(id)) != Target::Success) {
+			m_proto.hangup();
+			m_transmitter->endSession();
+			return ret;
 		}
 	}
 	
@@ -266,6 +294,26 @@ bool KovanProtoTarget::setPassword(const QString &password)
 void KovanProtoTarget::clearPassword()
 {
 	m_proto.setNoPassword();
+}
+
+Kiss::Target::Target::ReturnCode KovanProtoTarget::verifyProtocolVersion()
+{
+	// All firmwares will reply to
+	// knock knock. This helps us
+	// distinguish between the next case,
+	// which is whether a timeout means no
+	// communication or the message isn't implemented
+	if(!m_proto.knockKnock()) return Target::Error;
+	
+	std::string version;
+	if(!m_proto.protocolVersion(version)) {
+		// This message wasn't introduced until recently, so
+		// older firmwares will ignore it.
+		return Target::OldDeviceSoftware;
+	}
+	const int cmp = version.compare(KOVAN_SERIAL_PROTOCOL_VERSION);
+	if(cmp == 0) return Target::Success;
+	return cmp > 0 ? Target::OldDeviceSoftware : Target::OldHostSoftware;
 }
 
 Kiss::Target::Target::ReturnCode KovanProtoTarget::authenticate(const quint64 id)

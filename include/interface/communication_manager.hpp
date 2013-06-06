@@ -54,6 +54,8 @@ namespace Kiss
 			
 			void targetNeedsAuthentication(const Kiss::Target::TargetPtr &target,
 				Kiss::Target::CommunicationManager *manager);
+			void oldDeviceSoftware(const Kiss::Target::TargetPtr &target);
+			void oldHostSoftware(const Kiss::Target::TargetPtr &target);
 			
 		private slots:
 			void saturate();

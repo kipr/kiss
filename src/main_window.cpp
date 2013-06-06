@@ -108,6 +108,14 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(&Target::CommunicationManager::ref(),
 		SIGNAL(targetNeedsAuthentication(Kiss::Target::TargetPtr, Kiss::Target::CommunicationManager *)),
 		SLOT(authenticateTarget(Kiss::Target::TargetPtr, Kiss::Target::CommunicationManager *)));
+		
+	connect(&Target::CommunicationManager::ref(),
+		SIGNAL(oldDeviceSoftware(Kiss::Target::TargetPtr)),
+		SLOT(oldDeviceSoftware(Kiss::Target::TargetPtr)));
+		
+	connect(&Target::CommunicationManager::ref(),
+		SIGNAL(oldHostSoftware(Kiss::Target::TargetPtr)),
+		SLOT(oldHostSoftware(Kiss::Target::TargetPtr)));
 	
 	ui_projectFrame->setVisible(false);
 	
@@ -761,6 +769,26 @@ void MainWindow::authenticateTarget(const Kiss::Target::TargetPtr &target,
 	}
 	
 	manager->setPaused(false);
+}
+
+void MainWindow::oldDeviceSoftware(const Kiss::Target::TargetPtr &target)
+{
+	Dialog::Message::showError(this, "simple_error_with_action", QStringList() <<
+		tr("Communication failed with %1.").arg(target->displayName().isEmpty()
+			? tr("the active target") : target->displayName()) <<
+		tr("The target has outdated software installed. It isn't compatible with this version "
+			"of KISS IDE.") <<
+		tr("Please update the target's software or use an older version of KISS IDE."));
+}
+
+void MainWindow::oldHostSoftware(const Kiss::Target::TargetPtr &target)
+{
+	Dialog::Message::showError(this, "simple_error_with_action", QStringList() <<
+		tr("Communication failed with %1.").arg(target->displayName().isEmpty()
+			? tr("the active target") : target->displayName()) <<
+		tr("The target's installed software is too new. It isn't compatible with this version "
+			"of KISS IDE.") <<
+		tr("Please update KISS IDE or downgrade the target's installed software."));
 }
 
 bool MainWindow::eventFilter(QObject *target, QEvent *event) {

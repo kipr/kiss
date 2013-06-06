@@ -41,7 +41,9 @@ namespace Kiss
 				Success = 0,
 				Error,
 				AuthenticationFailed,
-				NotImplemented
+				NotImplemented,
+				OldDeviceSoftware,
+				OldHostSoftware
 			};
 			
 			Target(Interface* interface, const QString& name);
