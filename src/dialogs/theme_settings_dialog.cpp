@@ -39,8 +39,9 @@ ThemeSettings::ThemeSettings(QWidget *parent)
 {
 	ui->setupUi(this);
 	
-	ui->table->setColumnWidth(0, 180);
+	connect(ui->reset, SIGNAL(clicked()), SLOT(setDefaults()));
 	
+	ui->table->setColumnWidth(0, 180);
 	const int rows = ui->table->rowCount();
 	m_boxes = new ColorBox *[rows];
 	for(int i = 0; i < rows; ++i) {
@@ -49,9 +50,9 @@ ThemeSettings::ThemeSettings(QWidget *parent)
 		connect(m_boxes[i], SIGNAL(colorChanged(QColor)), SLOT(settingChanged(QColor)));
 		ui->table->setCellWidget(i, 1, m_boxes[i]);
 	}
+	
 	readSettings();
-	setDefaults();
-	connect(ui->reset, SIGNAL(clicked()), SLOT(setDefaults()));
+	Lexer::Settings::ref().setSettings(m_lexerSettings);
 }
 
 ThemeSettings::~ThemeSettings()
