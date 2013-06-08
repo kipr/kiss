@@ -17,6 +17,13 @@ Password::~Password()
 	delete ui;
 }
 
+int Password::exec()
+{
+	ui->password->setFocus();
+	if(!QDialog::exec()) return QDialog::Rejected;
+	return QDialog::Accepted;
+}
+
 QString Password::password() const
 {
 	return ui->password->text();

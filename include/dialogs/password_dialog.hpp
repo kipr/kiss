@@ -19,6 +19,7 @@ namespace Kiss
 			Password(QWidget *parent = 0);
 			~Password();
 
+			virtual int exec();
 			QString password() const;
 		private:
 			Ui::PasswordDialog *ui;
