@@ -122,19 +122,19 @@ void CommunicationManager::workerFinished(CommunicationEntryPtr entry, const Tar
 	} else if(success == Target::Target::OldDeviceSoftware) {
 		// We can't talk to this target, so clear
 		// all pending entries
-		clearQueue(entry->target());
+		clearQueue();
 		emit oldDeviceSoftware(entry->target());
 	} else if(success == Target::Target::OldHostSoftware) {
 		// We can't talk to this target, so clear
 		// all pending entries
-		clearQueue(entry->target());
+		clearQueue();
 		emit oldHostSoftware(entry->target());
 	} else if(success != Target::Target::Success) {
 		
 		// If one comm entry fails for a target, we
 		// clear the queue of all entries for said
 		// target.
-		clearQueue(entry->target());
+		clearQueue();
 	} else {
 		emit finished(entry, success);
 		saturate();

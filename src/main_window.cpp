@@ -763,7 +763,7 @@ void MainWindow::authenticateTarget(const Kiss::Target::TargetPtr &target,
 {
 	Dialog::Password dialog(this);
 	if(dialog.exec() != QDialog::Accepted) {
-		manager->clearQueue(target);
+		manager->clearQueue();
 	} else {
 		target->setPassword(dialog.password());
 	}
