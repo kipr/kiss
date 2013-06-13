@@ -27,10 +27,9 @@ namespace Kiss
 
 			virtual bool close();
 
-			virtual void refreshSettings();
-
 		public slots:
 			void reload();
+			virtual void refreshSettings();
 
 		private slots:
 			void on_ui_settingsTable_cellChanged(int row, int column);

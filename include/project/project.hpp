@@ -3,11 +3,15 @@
 
 #include "unit.hpp"
 #include <kar.hpp>
+#include <pcompiler/options.hpp>
 
 #include <QMap>
 #include <QString>
 #include <QStringList>
 #include <QSharedPointer>
+
+#define PROJECT_SETTINGS_FILE "kiss.settings"
+#define LINKS_FILE "project.links"
 
 namespace Kiss
 {
@@ -20,19 +24,18 @@ namespace Kiss
 		class Project : public Unit
 		{
 		public:
-			typedef QMap<QString, QString> Settings;
-			
-			bool linkFile(const QString &path);
-			bool copyFile(const QString& path);
+			bool addAsCopy(const QString& path);
 			bool removeFile(const QString& path);
 			QStringList files() const;
+
+			bool addAsLink(const QString &path);
+			bool removeLink(const QString &path);
 			QStringList links() const;
 	
-			void setSettings(const Settings& settings);
-			const Settings& settings() const;
-	
 			void setSetting(const QString& key, const QString& value);
+			void setSettings(const Compiler::Options& settings);
 			void removeSetting(const QString& key);
+			const Compiler::Options& settings() const;
 	
 			const QString &location() const;
 	
@@ -51,9 +54,9 @@ namespace Kiss
 			Project(const QString& location);
 			void refresh(const QString& location);
 	
+			QStringList m_files;
 			QString m_location;
-			Settings m_settings;
-			Kiss::KarPtr m_archive;
+			Compiler::Options m_settings;
 		};
 	}
 }

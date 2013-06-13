@@ -2,7 +2,6 @@
 #define _NEW_PROJECT_WIZARD_HPP_
 
 #include <QDialog>
-#include <QList>
 
 #include "ui_NewProjectWizard.h"
 

@@ -82,8 +82,8 @@ namespace Kiss
 			 */
 			bool openFile(const QString& filePath, const Project::ProjectPtr& project = Project::ProjectPtr());
 			bool memoryOpen(const QByteArray& ba, const QString& assocPath);
-			bool openProject(const QString& filePath);
-			Project::ProjectPtr newProject(const QString& folderPath);
+			bool openProject(const QString& projectFilePath);
+			Project::ProjectPtr newProject(const QString& projectPath);
 
 			void initMenus(Tab *tab);
 
@@ -198,15 +198,17 @@ namespace Kiss
 			
 			void showCompilerOutput(const Compiler::OutputList& results);
 
-			void projectAddNew();
+			/*void projectAddNew();
 			void projectAddExisting();
-			void projectRemoveExisting();
+			void projectRemoveExisting();*/
 			void projectExtractTo();
 
 			void showProjectDock(bool show = true);
 			void hideProjectDock();
 			
 			void toggleCommunicationWidget();
+
+			void projectContextMenu(const QPoint& pos);
 
 			QList<QObject *> tabs(const QString& type);
 
@@ -216,8 +218,11 @@ namespace Kiss
 
 		private slots:
 			void on_ui_tabWidget_currentChanged(int i);
-			void on_ui_addFile_clicked();
-			void on_ui_removeFile_clicked();
+			void copyProjectFile();
+			void linkProjectFile();
+			void renameProjectFile();
+			void removeProjectFile();
+			void closeProject();
 			void openRecent();
 
 			void errorClicked(QListWidgetItem *item);
@@ -225,7 +230,7 @@ namespace Kiss
 			void showContextMenuForError(const QPoint &pos);
 
 			void projectClicked(const QModelIndex& index);
-			void projectFileClicked(const QModelIndex& index);
+			void projectDoubleClicked(const QModelIndex& index);
 
 			void projectOpened(const Kiss::Project::ProjectPtr& project);
 			void projectClosed(const Kiss::Project::ProjectPtr& project);
@@ -251,6 +256,8 @@ namespace Kiss
 			QProgressBar *m_commProgress;
 			
 			Project::Model m_projectsModel;
+			QList<QAction*> m_projectRootActions;
+			QList<QAction*> m_projectFileActions;
 
 			void addLookup(Tab *tab);
 			void removeLookup(QWidget* widget);

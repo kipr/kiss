@@ -105,7 +105,7 @@ void ProjectSettings::refreshSettings()
 
 void ProjectSettings::reload()
 {
-	const Project::Project::Settings& settings = project()->settings();
+	const Compiler::Options& settings = project()->settings();
 
 	m_block = true;
 

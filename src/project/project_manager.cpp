@@ -1,6 +1,8 @@
 #include "project_manager.hpp"
 #include "project.hpp"
 
+#include <QDebug>
+
 using namespace Kiss::Project;
 
 Manager::Manager()

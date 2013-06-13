@@ -7,8 +7,8 @@ FileOperationsMenu::FileOperationsMenu()
 {
 	Node* newFile = node(activeAction(ResourceHelper::ref().icon("page_white.png"), "New File",
 		QKeySequence::New, this, "newFile"));
-	/* Node* newProject = node(activeAction(ResourceHelper::ref().icon("brick.png"), "New Project",
-		QKeySequence("Ctrl+Shift+N"), this, "newProject")); */
+	Node* newProject = node(activeAction(ResourceHelper::ref().icon("brick.png"), "New Project",
+		QKeySequence("Ctrl+Shift+N"), this, "newProject"));
 	Node* newTemplatePack = node(activeAction(ResourceHelper::ref().icon("package"), "New Template Pack",
 		QKeySequence::UnknownKey, this, "newTemplatePack"));
 	Node* openFile = node(activeAction(ResourceHelper::ref().icon("folder"), "Open...",
@@ -16,7 +16,7 @@ FileOperationsMenu::FileOperationsMenu()
 
 	Node* newSubmenu = node(action(ResourceHelper::ref().icon("page_white.png"), "New"));
 	newSubmenu->children.append(newFile);
-	// newSubmenu->children.append(newProject);
+	newSubmenu->children.append(newProject);
 	newSubmenu->children.append(Node::separator());
 	newSubmenu->children.append(newTemplatePack);
 	
@@ -31,7 +31,7 @@ FileOperationsMenu::FileOperationsMenu()
 	
 	
 	m_toolbar.append(newFile);
-	// m_toolbar.append(newProject);
+	m_toolbar.append(newProject);
 	m_toolbar.append(openFile);
 	m_toolbar.append(Node::separator());
 }

@@ -2,6 +2,7 @@
 
 #include <QFileDialog>
 #include <QSettings>
+#include <QDebug>
 
 #define SETTINGS_GROUP "New Project Wizard"
 #define SETTINGS_KEY "Save Location"
@@ -11,6 +12,7 @@ using namespace Kiss::Wizard;
 NewProject::NewProject(QWidget* parent)
 	: QDialog(parent)
 {
+	qDebug() << "NewProject::NewProject";
 	setupUi(this);
 		
 	QSettings settings;
@@ -32,7 +34,7 @@ QString NewProject::saveLocation() const
 
 void NewProject::on_ui_browse_clicked()
 {
-	m_savePath = QFileDialog::getExistingDirectory(this, tr("Choose a Path"));
+	m_savePath = QFileDialog::getExistingDirectory(this, tr("Choose a Save Location"));
 	QSettings settings;
 	settings.beginGroup(SETTINGS_GROUP);
 	settings.setValue(SETTINGS_KEY, m_savePath);
@@ -47,5 +49,5 @@ void NewProject::on_ui_projectName_textChanged(const QString&)
 
 void NewProject::updateSaveLocation()
 {
-	ui_saveLocation->setText(m_savePath + "/" + ui_projectName->text() + ".kissproj");
+	ui_saveLocation->setText(m_savePath + "/" + ui_projectName->text());
 }
