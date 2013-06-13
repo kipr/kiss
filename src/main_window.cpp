@@ -84,8 +84,8 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projects->setContextMenuPolicy(Qt::CustomContextMenu);
 	ui_projectFrame->setVisible(false);
 
-	m_projectRootActions << new QAction(tr("Add file (by copy)"), this)
-						<< new QAction(tr("Add file (by link)"), this)
+	m_projectRootActions << new QAction(tr("Add files (by copy)"), this)
+						<< new QAction(tr("Add files (by link)"), this)
 						<< new QAction(tr("Close project"), this);
 	connect(m_projectRootActions[0], SIGNAL(triggered()), this, SLOT(copyProjectFile()));
 	connect(m_projectRootActions[1], SIGNAL(triggered()), this, SLOT(linkProjectFile()));
@@ -599,10 +599,10 @@ void MainWindow::copyProjectFile()
 	QString openPath = QSettings().value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
-	QString file = QFileDialog::getOpenFileName(this, tr("Select File to Copy"),
+	QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Files to Copy"),
 		openPath, filters.join(";;") + ";;All Files (*)");
 
-	project->addAsCopy(file);
+	foreach(QString file, files) project->addAsCopy(file);
 }
 
 void MainWindow::linkProjectFile()
@@ -613,10 +613,10 @@ void MainWindow::linkProjectFile()
 	QString openPath = QSettings().value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
-	QString file = QFileDialog::getOpenFileName(this, tr("Select File to Link"),
+	QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Files to Link"),
 		openPath, filters.join(";;") + ";;All Files (*)");
 
-	project->addAsLink(file);
+	foreach(QString file, files) project->addAsLink(file);
 }
 
 void MainWindow::renameProjectFile()
