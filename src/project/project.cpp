@@ -2,8 +2,6 @@
 
 #include <QFileInfo>
 #include <QDir>
-#include <QSettings>
-#include <QMessageBox>
 #include <QDebug>
 
 using namespace Kiss;

@@ -70,7 +70,6 @@ CPP::~CPP()
 
 QColor CPPLexer::defaultColor(int style) const
 {
-	qDebug() << "MYNAMEIFISIAHFKDLSH";
     switch (style)
     {
 	case Default: return Lexer::Settings::ref().getSetting(DEFAULT, SyntaxStandards::defaultColor());

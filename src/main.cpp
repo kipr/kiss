@@ -27,12 +27,9 @@
 #include "kiss_standard_environment.hpp"
 #include "theme_settings_dialog.hpp"
 
-#include <QTimer>
 #include <QDebug>
 #include <QApplication>
-#include <QDir>
 #include <iostream>
-#include <QSplashScreen>
 
 using namespace std;
 using namespace Kiss;

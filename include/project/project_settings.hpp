@@ -6,7 +6,6 @@
 
 #include "ui_ProjectSettingsTab.h"
 
-#include <QWidget>
 
 namespace Kiss
 {

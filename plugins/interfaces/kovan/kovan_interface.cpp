@@ -3,16 +3,10 @@
 
 #include <kovanserial/tcp_serial.hpp>
 
-#include <QProcess>
-#include <QDir>
-#include <QTextStream>
 #include <QDebug>
 
-#include <QTcpSocket>
 #include <QHostAddress>
-#include <QRunnable>
 #include <QThreadPool>
-#include <QBuffer>
 
 using namespace Kiss::Target;
 
@@ -30,19 +24,15 @@ AdvertSampler::~AdvertSampler()
 void AdvertSampler::run()
 {
 	for(quint16 i = 0; i < m_samples; ++i) {
-		fprintf(stderr, "Sampling...\n");
 		std::list<IncomingAdvert> adverts = m_advertiser->sample(m_sampleTime);
-		fprintf(stderr, "Sampled!\n");
 		std::list<IncomingAdvert>::const_iterator it = adverts.begin();
 		for(; it != adverts.end(); ++it) {
 			QHostAddress addr((sockaddr *)&(*it).sender);
 			if(m_found.contains(addr)) continue;
 			m_found.push_back(addr);
-			fprintf(stderr, "Emitting found\n");
 			emit found((*it).ad, (*it).sender);
 		}
 	}
-	fprintf(stderr, "AdvertSampler::run finished\n");
 }
 
 KovanInterface::KovanInterface()

@@ -5,9 +5,6 @@
 #include <kar.hpp>
 #include <pcompiler/options.hpp>
 
-#include <QMap>
-#include <QString>
-#include <QStringList>
 #include <QSharedPointer>
 
 #define PROJECT_EXT "kissproj"

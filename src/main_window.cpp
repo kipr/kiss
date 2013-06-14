@@ -38,18 +38,15 @@
 #include "file_utils.hpp"
 #include "password_dialog.hpp"
 
-#include <QToolTip>
+#include <QToolButton>
 #include <QMessageBox>
 #include <QCloseEvent>
-#include <QInputDialog>
 #include <QDir>
 #include <QFileDialog>
 #include <QMenu>
 #include <QAction>
-#include <QWidgetList>
 #include <QList>
 #include <QDebug>
-#include <QPrintDialog>
 #include <QNetworkProxyFactory>
 #include <QFileOpenEvent>
 #include <QSettings>

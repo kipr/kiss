@@ -36,7 +36,6 @@
 #include <Qsci/qscilexercpp.h>
 #include <pcompiler/output.hpp>
 #include <QEvent>
-#include <QToolButton>
 #include <QListWidget>
 
 #define RECENTS "recents"
