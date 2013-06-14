@@ -119,7 +119,7 @@ const QString& Kiss::Project::Project::location() const
 bool Kiss::Project::Project::save()
 {
 	QDir dir(m_location);
-	return m_settings.save(dir.absoluteFilePath(dir.dirName() + ".kissproj"));
+	return m_settings.save(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
 }
 
 ProjectPtr Kiss::Project::Project::create(const QString& location)
@@ -146,7 +146,7 @@ Kiss::Project::Project::Project(const QString& location)
 	refresh();
 	setName(QFileInfo(m_location).fileName());
 	QDir dir(m_location);
-	m_settings = Compiler::Options::load(dir.absoluteFilePath(dir.dirName() + ".kissproj"));
+	m_settings = Compiler::Options::load(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
 	m_settings.insert("", "");
 	save();
 }
@@ -163,12 +163,17 @@ void Kiss::Project::Project::refresh(const QString& location)
 Kiss::KarPtr Kiss::Project::Project::archive() const
 {
 	Kiss::KarPtr archive = Kiss::Kar::create();
-	QStringList paths = files();
 	QString linkExt = QFileInfo(LINKS_FILE).suffix();
+	QStringList paths = files();
 	foreach(QString path, paths) {
 		QFile file(path);
-		if(QFileInfo(file).suffix() == linkExt) continue;
+		QFileInfo fileInfo(file);
+		if(fileInfo.suffix() == linkExt) continue;
 		if(file.open(QIODevice::ReadOnly)) {
+			if(fileInfo.suffix() == PROJECT_EXT) {
+				path.chop(QString(PROJECT_EXT).length());
+				path += "ops";
+			}
 			archive->addFile(path, file.readAll());
 			file.close();
 		}

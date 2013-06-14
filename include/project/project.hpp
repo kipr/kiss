@@ -10,7 +10,7 @@
 #include <QStringList>
 #include <QSharedPointer>
 
-#define PROJECT_SETTINGS_FILE "kiss.settings"
+#define PROJECT_EXT "kissproj"
 #define LINKS_FILE "project.links"
 
 namespace Kiss
