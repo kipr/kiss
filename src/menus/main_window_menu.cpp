@@ -42,7 +42,7 @@ MainWindowMenu::MainWindowMenu(Widget::MainWindow* mainWindow)
 	m_file.append(Node::separator());
 	m_file.append(m_nextNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_right")), "Next", QKeySequence::NextChild, this, "next")));
 	m_file.append(m_prevNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_left")), "Previous", QKeySequence::PreviousChild, this, "previous")));
-	m_file.append(m_closeNode = node(activeAction("cross", "Close", QKeySequence::Close, this, "closeTab")));
+	m_file.append(m_closeNode = node(activeAction("cross", "Close", QKeySequence::Close, this, "closeCurrentTab")));
 	m_file.append(Node::separator());
 	QAction* quit = activeAction("cross", "Quit", QKeySequence::Quit, this, "close");
 	quit->setMenuRole(QAction::QuitRole);

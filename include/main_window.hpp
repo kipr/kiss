@@ -188,7 +188,8 @@ namespace Kiss
 			void openProject();
 			void next();
 			void previous();
-			void closeTab(bool force = false);
+			void closeTab(int index, bool force = false);
+			void closeCurrentTab(bool force = false);
 			void closeProjectTabs(const Kiss::Project::ProjectPtr& project);
 			bool closeFile(const QString& file);
 			void about();
