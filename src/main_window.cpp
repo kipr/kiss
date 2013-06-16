@@ -337,15 +337,6 @@ void MainWindow::initMenus()
 
 	m_menuManager.construct(ui_menubar, ui_toolBar);
 	
-	/* Sets up the QTabWidget that handles the editor windows */
-	/*QToolButton *cornerButton = new QToolButton(ui_tabWidget);
-	cornerButton->setDefaultAction(mainWindowMenu->closeNode()->rawAction);
-	cornerButton->setAutoRaise(true);
-	ui_tabWidget->setCornerWidget(cornerButton);
-
-	QPushButton *closeButton = new QPushButton();
-	connect(closeButton, SIGNAL(clicked()), this, SLOT(closeTab(false)));
-	ui_tabWidget->tabBar()->setTabButton(0, QTabBar::RightSide, closeButton);*/
 	ui_tabWidget->setTabsClosable(true);
 	connect(ui_tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
 }
