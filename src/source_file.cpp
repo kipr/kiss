@@ -151,7 +151,7 @@ bool SourceFile::close()
 	if(!ui_editor->isModified()) return true;
 	
 	QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Unsaved Changes"),
-		tr("Save Changes to \"%1\" before closing?").arg(file().fileName()),
+		tr("Save changes to \"%1\" before closing?").arg(file().fileName()),
 		QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 
 	if(ret == QMessageBox::Cancel) return false;
