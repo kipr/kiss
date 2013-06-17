@@ -21,7 +21,6 @@ namespace Kiss
 			void dragMoveEvent(QDragMoveEvent* event);
 			void dropEvent(QDropEvent *event);
 		signals:
-			void filesDraggedOn(QModelIndex index);
 			void filesDropped(QStringList files);
 		private:
 			Model* m_model;
