@@ -443,7 +443,7 @@ void MainWindow::closeAllOthers(Tab *tab)
 	int i = 0;
 	while(ui_tabWidget->count() > 1) {
 		if(lookup(ui_tabWidget->widget(i)) == tab) ++i;
-		deleteTab(i);
+		closeTab(i);
 	}
 }
 
@@ -526,7 +526,7 @@ void MainWindow::closeProjectTabs(const Project::ProjectPtr& project)
 	int i = 0;
 	while(i < ui_tabWidget->count()) {
 		Tab *current = lookup(ui_tabWidget->widget(i));
-		if(current->project() == project) deleteTab(i);
+		if(current->project() == project) closeTab(i);
 		else i++;
 	}
 	ui_errors->hide();
