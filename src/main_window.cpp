@@ -83,11 +83,13 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui_projects, SIGNAL(filesDropped(QStringList)), this, SLOT(addToProject(QStringList)));
 
 	m_projectRootActions << new QAction(tr("Add files"), this)
+						<< new QAction(tr("Project settings"), this)
 						<< new QAction(tr("Close project"), this)
 						<< new QAction(tr("Delete project"), this);
 	connect(m_projectRootActions[0], SIGNAL(triggered()), this, SLOT(addToProject()));
-	connect(m_projectRootActions[1], SIGNAL(triggered()), this, SLOT(closeProject()));
-	connect(m_projectRootActions[2], SIGNAL(triggered()), this, SLOT(deleteProject()));
+	connect(m_projectRootActions[1], SIGNAL(triggered()), this, SLOT(openProjectSettings()));
+	connect(m_projectRootActions[2], SIGNAL(triggered()), this, SLOT(closeProject()));
+	connect(m_projectRootActions[3], SIGNAL(triggered()), this, SLOT(deleteProject()));
 
 	m_projectFileActions << new QAction(tr("Rename"), this)
 						<< new QAction(tr("Remove"), this);
@@ -666,6 +668,25 @@ void MainWindow::deleteProject()
 	if(!FileUtils::remove(project->location())) qWarning() << "Failed to delete project at " << project->location();
 }
 
+void MainWindow::openProjectSettings()
+{
+	openProjectSettings(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+void MainWindow::openProjectSettings(const Project::ProjectPtr &project)
+{
+	for(int i = 0; i < ui_tabWidget->count(); ++i) {
+		ProjectSettings* tab = dynamic_cast<ProjectSettings*>(ui_tabWidget->widget(i));
+		if(tab && tab->project() == project) {
+			ui_tabWidget->setCurrentIndex(i);
+			on_ui_tabWidget_currentChanged(i);
+			return;
+		}
+	}
+
+	addTab(new ProjectSettings(project, this));
+}
+
 void MainWindow::projectExtractTo()
 {
 }
@@ -745,16 +766,7 @@ void MainWindow::projectDoubleClicked(const QModelIndex& index)
 	if(m_projectsModel.isFile(index))
 		openFile(m_projectsModel.filePath(index), project);
 	else if(m_projectsModel.isProjectRoot(index)) {
-		for(int i = 0; i < ui_tabWidget->count(); ++i) {
-			ProjectSettings* tab = dynamic_cast<ProjectSettings*>(ui_tabWidget->widget(i));
-			if(tab && tab->project() == project) {
-				ui_tabWidget->setCurrentIndex(i);
-				on_ui_tabWidget_currentChanged(i);
-				return;
-			}
-		}
-
-		addTab(new ProjectSettings(project, this));
+		openProjectSettings(project);
 	}
 }
 
