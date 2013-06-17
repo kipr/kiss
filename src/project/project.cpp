@@ -168,11 +168,12 @@ Kiss::KarPtr Kiss::Project::Project::archive() const
 		QFileInfo fileInfo(file);
 		if(fileInfo.suffix() == linkExt) continue;
 		if(file.open(QIODevice::ReadOnly)) {
+			QString fileName = fileInfo.fileName();
 			if(fileInfo.suffix() == PROJECT_EXT) {
-				path.chop(QString(PROJECT_EXT).length());
-				path += "ops";
+				fileName.chop(QString(PROJECT_EXT).length());
+				fileName += "ops";
 			}
-			archive->addFile(path, file.readAll());
+			archive->addFile(fileName, file.readAll());
 			file.close();
 		}
 	}
