@@ -80,15 +80,14 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projects->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::EditKeyPressed);
 	ui_projects->setContextMenuPolicy(Qt::CustomContextMenu);
 	ui_projectFrame->setVisible(false);
+	connect(ui_projects, SIGNAL(filesDropped(QStringList)), this, SLOT(addToProject(QStringList)));
 
-	m_projectRootActions << new QAction(tr("Add files (by copy)"), this)
-						<< new QAction(tr("Add files (by link)"), this)
+	m_projectRootActions << new QAction(tr("Add files"), this)
 						<< new QAction(tr("Close project"), this)
 						<< new QAction(tr("Delete project"), this);
-	connect(m_projectRootActions[0], SIGNAL(triggered()), this, SLOT(copyProjectFile()));
-	connect(m_projectRootActions[1], SIGNAL(triggered()), this, SLOT(linkProjectFile()));
-	connect(m_projectRootActions[2], SIGNAL(triggered()), this, SLOT(closeProject()));
-	connect(m_projectRootActions[3], SIGNAL(triggered()), this, SLOT(deleteProject()));
+	connect(m_projectRootActions[0], SIGNAL(triggered()), this, SLOT(addToProject()));
+	connect(m_projectRootActions[1], SIGNAL(triggered()), this, SLOT(closeProject()));
+	connect(m_projectRootActions[2], SIGNAL(triggered()), this, SLOT(deleteProject()));
 
 	m_projectFileActions << new QAction(tr("Rename"), this)
 						<< new QAction(tr("Remove"), this);
@@ -591,32 +590,32 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	setUpdatesEnabled(true);
 }
 
-void MainWindow::copyProjectFile()
+void MainWindow::addToProject()
 {
-	Project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
-	if(!project) return;
-
 	QString openPath = QSettings().value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
-	QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Files to Copy"),
+	QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Files to Add"),
 		openPath, filters.join(";;") + ";;All Files (*)");
-
-	foreach(QString file, files) project->addAsCopy(file);
+	addToProject(files);
 }
 
-void MainWindow::linkProjectFile()
+void MainWindow::addToProject(QStringList files)
 {
+	if(files.isEmpty()) return;
+
 	Project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
 	if(!project) return;
 
-	QString openPath = QSettings().value(OPEN_PATH, QDir::homePath()).toString();
-	QStringList filters = Lexer::Factory::ref().formattedExtensions();
-	filters.removeDuplicates();
-	QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Files to Link"),
-		openPath, filters.join(";;") + ";;All Files (*)");
+	QMessageBox* question = new QMessageBox(QMessageBox::Question, "Copy or Link?",
+		"Would you like to copy the files into the project folder or link them?", QMessageBox::Cancel, this);
+	QAbstractButton* copyButton = question->addButton("Copy", QMessageBox::AcceptRole);
+	QAbstractButton* linkButton = question->addButton("Link", QMessageBox::AcceptRole);
+	question->exec();
 
-	foreach(QString file, files) project->addAsLink(file);
+	QAbstractButton* clicked = question->clickedButton();
+	if(clicked == copyButton) foreach(QString file, files) project->addAsCopy(file);
+	else if(clicked == linkButton) foreach(QString file, files) project->addAsLink(file);
 }
 
 void MainWindow::renameProjectFile()

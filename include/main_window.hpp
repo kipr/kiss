@@ -218,8 +218,8 @@ namespace Kiss
 
 		private slots:
 			void on_ui_tabWidget_currentChanged(int i);
-			void copyProjectFile();
-			void linkProjectFile();
+			void addToProject();
+			void addToProject(QStringList files);
 			void renameProjectFile();
 			void removeProjectFile();
 			void closeProject();
