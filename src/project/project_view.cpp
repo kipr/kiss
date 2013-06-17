@@ -14,11 +14,19 @@ ProjectView::ProjectView(QWidget* parent)
 
 void ProjectView::dragEnterEvent(QDragEnterEvent *event)
 {
+	activateWindow();
+	raise();
 	event->accept();
 }
 
 void ProjectView::dragMoveEvent(QDragMoveEvent *event)
 {
+	const QModelIndex& index = indexAt(event->pos());
+	if(index.isValid()) {
+		if(m_model->isProjectRoot(index)) setCurrentIndex(index);
+		// TODO: This assumes a strictly two-level project model
+		else setCurrentIndex(index.parent());
+	}
 	event->setDropAction(Qt::MoveAction);
 	event->accept();
 }
@@ -31,4 +39,10 @@ void ProjectView::dropEvent(QDropEvent *event)
 	if(url.isLocalFile()) files << url.toLocalFile();
 
 	emit filesDropped(files);
+}
+
+void ProjectView::setModel(Model* model)
+{
+	m_model = model;
+	QTreeView::setModel(model);
 }
