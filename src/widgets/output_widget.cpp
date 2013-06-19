@@ -113,8 +113,8 @@ void OutputWidget::setOutputList(const Compiler::OutputList& outputList)
 	m_outputList = outputList;
 	QString out;
 	foreach(const Compiler::Output& output, outputList) {
-		QString errorString = processString(output.error().trimmed());
-		QString outputString = processString(output.output().trimmed());
+		QString errorString = processString(QString::fromLocal8Bit(output.error().trimmed()));
+		QString outputString = processString(QString::fromLocal8Bit(output.output().trimmed()));
 		
 		if(errorString.isEmpty() && outputString.isEmpty()) continue;
 		
