@@ -103,7 +103,7 @@ OutputWidget::OutputWidget(QWidget *parent)
 	new OutputHighlighter(document());
 	QFont font("Monospace");
 	font.setStyleHint(QFont::TypeWriter);
-	font.setPointSize(14);
+	font.setPointSize(12);
 	setFont(font);
 	setReadOnly(true);
 }
@@ -124,7 +124,7 @@ void OutputWidget::setOutputList(const Compiler::OutputList& outputList)
 			transformedFiles << QFileInfo(file).fileName();
 		}
 		if(outputList.size() > 1 && !transformedFiles.isEmpty()) {
-			out += "<b>" + transformedFiles.join(", ") + ":</b> <br />";
+			out += "<b>" + transformedFiles.join(", ") + ":</b>";
 		}
 		if(!errorString.isEmpty()) out += "<pre>" + errorString + "\n</pre>";
 		if(!outputString.isEmpty()) out += "<pre>" + outputString + "</pre>\n";
