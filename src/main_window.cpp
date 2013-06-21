@@ -765,9 +765,6 @@ void MainWindow::projectDoubleClicked(const QModelIndex& index)
 	Project::ProjectPtr project = m_projectsModel.project(index);
 	if(m_projectsModel.isFile(index))
 		openFile(m_projectsModel.filePath(index), project);
-	else if(m_projectsModel.isProjectRoot(index)) {
-		openProjectSettings(project);
-	}
 }
 
 void MainWindow::projectOpened(const Project::ProjectPtr& project)

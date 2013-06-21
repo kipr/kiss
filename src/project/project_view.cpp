@@ -8,6 +8,7 @@ using namespace Kiss::Project;
 ProjectView::ProjectView(QWidget* parent)
 : QTreeView(parent)
 {
+	setExpandsOnDoubleClick(true);
 	setAcceptDrops(true);
 	setDropIndicatorShown(true);
 }
