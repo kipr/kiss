@@ -23,7 +23,7 @@ void ProjectView::dragMoveEvent(QDragMoveEvent *event)
 {
 	const QModelIndex& index = indexAt(event->pos());
 	if(index.isValid()) {
-		if(m_model->isProjectRoot(index)) setCurrentIndex(index);
+		if(index.parent() == QModelIndex()) setCurrentIndex(index);
 		// TODO: This assumes a strictly two-level project model
 		else setCurrentIndex(index.parent());
 	}
@@ -39,10 +39,4 @@ void ProjectView::dropEvent(QDropEvent *event)
 	if(url.isLocalFile()) files << url.toLocalFile();
 
 	emit filesDropped(files);
-}
-
-void ProjectView::setModel(Model* model)
-{
-	m_model = model;
-	QTreeView::setModel(model);
 }

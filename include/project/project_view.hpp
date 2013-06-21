@@ -15,15 +15,12 @@ namespace Kiss
 			Q_OBJECT
 		public:
 			ProjectView(QWidget* parent = 0);
-			void setModel(Model* model);
 		protected:
 			void dragEnterEvent(QDragEnterEvent* event);
 			void dragMoveEvent(QDragMoveEvent* event);
 			void dropEvent(QDropEvent *event);
 		signals:
 			void filesDropped(QStringList files);
-		private:
-			Model* m_model;
 		};
 	}
 }
