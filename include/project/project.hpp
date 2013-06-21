@@ -22,6 +22,7 @@ namespace Kiss
 		{
 		public:
 			bool addAsCopy(const QString& path);
+			bool addAsMovedCopy(const QString& path);
 			bool removeFile(const QString& path);
 			QStringList files() const;
 

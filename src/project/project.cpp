@@ -15,6 +15,11 @@ bool Kiss::Project::Project::addAsCopy(const QString& path)
 	return QFile::copy(path, m_location + "/" + info.fileName());
 }
 
+bool Kiss::Project::Project::addAsMovedCopy(const QString& path)
+{
+	return (addAsCopy(path) && QFile::remove(path));
+}
+
 bool Kiss::Project::Project::removeFile(const QString& path)
 {
 	QFileInfo info(path);

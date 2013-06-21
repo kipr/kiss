@@ -614,6 +614,7 @@ void MainWindow::addToProject(QStringList files)
 	if(dialog.exec() != QDialog::Accepted) return;
 	switch(dialog.type()) {
 		case AddToProjectDialog::Move:
+			foreach(QString file, files) project->addAsMovedCopy(file);
 			break;
 		case AddToProjectDialog::Copy:
 			foreach(QString file, files) project->addAsCopy(file);
