@@ -52,7 +52,7 @@ public:
 		return dynamic_cast<PathItem *>(item);
 	}
 
-private:
+protected:
 	QString m_path;
 };
 
@@ -133,7 +133,7 @@ public:
 
 		QStringList list = m_project->links();
 		foreach(const QString& entry, list) {
-			PathItem* item = (PathItem*)new FileItem(entry);
+			PathItem* item = (PathItem*)new FileItem(QDir::cleanPath(QDir(m_path).absoluteFilePath(entry)));
 			item->setForeground(Qt::gray);
 			appendRow(item);
 		}
@@ -220,8 +220,15 @@ bool Model::isIndexProject(const QModelIndex& index) const
 bool Model::isLink(const QModelIndex &index) const
 {
 	ProjectPtr proj = project(index);
-	FileItem *file = FileItem::fileitem_cast(itemFromIndex(index));
-	return proj->links().contains(file->path());
+	QStringList list = proj->links();
+	const QString &path = FileItem::fileitem_cast(itemFromIndex(index))->path();
+	if(list.contains(path)) return true;
+
+	QString otherPath;
+	if(QFileInfo(path).isAbsolute()) otherPath = QDir(proj->location()).relativeFilePath(path);
+	else otherPath = QDir::cleanPath(QDir(proj->location()).absoluteFilePath(path));
+
+	return list.contains(otherPath);
 }
 
 bool Model::isFile(const QModelIndex &index) const

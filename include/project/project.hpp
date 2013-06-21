@@ -26,6 +26,7 @@ namespace Kiss
 			QStringList files() const;
 
 			bool addAsLink(const QString &path);
+			bool addAsRelativeLink(const QString &path);
 			bool removeLink(const QString &path);
 			QStringList links() const;
 	

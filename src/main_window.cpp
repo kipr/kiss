@@ -37,6 +37,7 @@
 #include "communication_manager.hpp"
 #include "file_utils.hpp"
 #include "password_dialog.hpp"
+ #include "add_to_project_dialog.hpp"
 
 #include <QToolButton>
 #include <QMessageBox>
@@ -609,15 +610,23 @@ void MainWindow::addToProject(QStringList files)
 	Project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
 	if(!project) return;
 
-	QMessageBox* question = new QMessageBox(QMessageBox::Question, "Copy or Link?",
-		"Would you like to copy the files into the project folder or link them?", QMessageBox::Cancel, this);
-	QAbstractButton* copyButton = question->addButton("Copy", QMessageBox::AcceptRole);
-	QAbstractButton* linkButton = question->addButton("Link", QMessageBox::AcceptRole);
-	question->exec();
-
-	QAbstractButton* clicked = question->clickedButton();
-	if(clicked == copyButton) foreach(QString file, files) project->addAsCopy(file);
-	else if(clicked == linkButton) foreach(QString file, files) project->addAsLink(file);
+	AddToProjectDialog dialog(this);
+	if(dialog.exec() != QDialog::Accepted) return;
+	switch(dialog.type()) {
+		case AddToProjectDialog::Move:
+			break;
+		case AddToProjectDialog::Copy:
+			foreach(QString file, files) project->addAsCopy(file);
+			break;
+		case AddToProjectDialog::AbsoluteReference:
+			foreach(QString file, files) project->addAsLink(file);
+			break;
+		case AddToProjectDialog::RelativeReference:
+			foreach(QString file, files) project->addAsRelativeLink(file);
+			break;
+		default:
+			return;
+	}
 }
 
 void MainWindow::renameProjectFile()

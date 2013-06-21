@@ -35,10 +35,15 @@ QStringList Kiss::Project::Project::files() const
 
 bool Kiss::Project::Project::addAsLink(const QString &path)
 {
-	if(!QFileInfo(path).isFile()) return false;
-
 	QStringList list = links();
-	if(list.contains(path)) return false;
+	QDir projectDir(m_location);
+	if(!projectDir.exists(path) || list.contains(path)) return false;
+
+	QString otherPath;
+	if(QFileInfo(path).isAbsolute()) otherPath = projectDir.relativeFilePath(path);
+	else otherPath = QDir::cleanPath(projectDir.absoluteFilePath(path));
+
+	if(list.contains(otherPath)) return false;
 
 	QFile linkFile(m_location + "/" + LINKS_FILE);
     if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
@@ -52,12 +57,22 @@ bool Kiss::Project::Project::addAsLink(const QString &path)
     return true;
 }
 
+bool Kiss::Project::Project::addAsRelativeLink(const QString &path)
+{
+	return addAsLink(QDir(m_location).relativeFilePath(path));
+}
+
 bool Kiss::Project::Project::removeLink(const QString &path)
 {
-	if(!QFileInfo(path).isFile()) return false;
+	QDir projectDir(m_location);
+	if(!projectDir.exists(path)) return false;
 
 	QStringList list = links();
-	if(!list.removeOne(path)) return false;
+	QString otherPath;
+	if(QFileInfo(path).isAbsolute()) otherPath = projectDir.relativeFilePath(path);
+	else otherPath = QDir::cleanPath(projectDir.absoluteFilePath(path));
+
+	if(!list.removeOne(path) && !list.removeOne(otherPath)) return false;
 
 	QFile linkFile(m_location + "/" + LINKS_FILE);
     if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
