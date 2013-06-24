@@ -13,14 +13,14 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			NewProject(QWidget* parent = 0);
+			NewProject(QWidget *parent = 0);
 
 			QString projectName() const;
 			QString saveLocation() const;
 
 		public slots:
 			void on_ui_browse_clicked();
-			void on_ui_projectName_textChanged(const QString& text);
+			void on_ui_projectName_textChanged(const QString &text);
 			
 		private:
 			void updateSaveLocation();

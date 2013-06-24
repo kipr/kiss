@@ -7,7 +7,19 @@
 using namespace Kiss;
 using namespace Kiss::Project;
 
-bool Kiss::Project::Project::addAsCopy(const QString& path)
+ProjectPtr Kiss::Project::Project::load(const QString &location)
+{
+	if(!QFileInfo(location).isDir()) return ProjectPtr();
+	return ProjectPtr(new Project(location));
+}
+
+bool Kiss::Project::Project::save()
+{
+	QDir dir(m_location);
+	return m_settings.save(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
+}
+
+bool Kiss::Project::Project::addAsCopy(const QString &path)
 {
 	QFileInfo info(path);
 	if(!info.isFile()) return false;
@@ -15,16 +27,15 @@ bool Kiss::Project::Project::addAsCopy(const QString& path)
 	return QFile::copy(path, m_location + "/" + info.fileName());
 }
 
-bool Kiss::Project::Project::addAsMovedCopy(const QString& path)
+bool Kiss::Project::Project::addAsMovedCopy(const QString &path)
 {
 	return (addAsCopy(path) && QFile::remove(path));
 }
 
-bool Kiss::Project::Project::removeFile(const QString& path)
+bool Kiss::Project::Project::removeFile(const QString &path)
 {
-	QFileInfo info(path);
-	if(!info.isFile()) return false;
-
+	if(!QFileInfo(path).isFile()) return false;
+	
 	return QFile::remove(path);
 }
 
@@ -85,7 +96,7 @@ bool Kiss::Project::Project::removeLink(const QString &path)
         return false;
     }
     QTextStream out(&linkFile);
-    foreach(const QString& entry, list) out << entry << "\n";
+    foreach(const QString &entry, list) out << entry << "\n";
     linkFile.close();
 
     return true;
@@ -106,64 +117,32 @@ QStringList Kiss::Project::Project::links() const
     return list;
 }
 
-void Kiss::Project::Project::setSetting(const QString& key, const QString& value)
+void Kiss::Project::Project::setSetting(const QString &key, const QString &value)
 {
 	m_settings[key] = value;
 	save();
 }
 
-void Kiss::Project::Project::setSettings(const Compiler::Options& settings)
+void Kiss::Project::Project::setSettings(const Compiler::Options &settings)
 {
 	m_settings = settings;
 	save();
 }
 
-void Kiss::Project::Project::removeSetting(const QString& key)
+void Kiss::Project::Project::removeSetting(const QString &key)
 {
 	m_settings.remove(key);
 	save();
 }
 
-const Compiler::Options& Kiss::Project::Project::settings() const
+const Compiler::Options &Kiss::Project::Project::settings() const
 {
 	return m_settings;
 }
 
-const QString& Kiss::Project::Project::location() const
+const QString &Kiss::Project::Project::location() const
 {
 	return m_location;
-}
-
-bool Kiss::Project::Project::save()
-{
-	QDir dir(m_location);
-	return m_settings.save(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
-}
-
-ProjectPtr Kiss::Project::Project::load(const QString& location)
-{
-	if(!QFileInfo(location).isDir()) return ProjectPtr();
-	return ProjectPtr(new Project(location));
-}
-
-Kiss::Project::Project::Project(const QString& location)
-	: m_location(location)
-{
-	refresh();
-	setName(QFileInfo(m_location).fileName());
-	QDir dir(m_location);
-	m_settings = Compiler::Options::load(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
-	m_settings.insert("", "");
-	save();
-}
-
-void Kiss::Project::Project::refresh()
-{
-	refresh(m_location);
-}
-
-void Kiss::Project::Project::refresh(const QString& location)
-{
 }
 
 Kiss::KarPtr Kiss::Project::Project::archive() const
@@ -186,4 +165,14 @@ Kiss::KarPtr Kiss::Project::Project::archive() const
 		}
 	}
 	return archive;
+}
+
+Kiss::Project::Project::Project(const QString &location)
+	: m_location(location)
+{
+	setName(QFileInfo(m_location).fileName());
+	QDir dir(m_location);
+	m_settings = Compiler::Options::load(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
+	m_settings.insert("", "");
+	save();
 }

@@ -13,7 +13,7 @@ namespace Kiss
 	{	
 		class Model : public QStandardItemModel
 		{
-			Q_OBJECT
+		Q_OBJECT
 		public:
 			Model(QObject *parent = 0);
 			~Model();
@@ -22,10 +22,10 @@ namespace Kiss
 			void removeProject(ProjectPtr project);
 
 			void addRootPath(ProjectPtr project);
-			void removeRootPath(const QString& path);
-			const QStringList& rootPaths() const;
+			void removeRootPath(const QString &path);
+			const QStringList &rootPaths() const;
 
-			bool isIndexProject(const QModelIndex& index) const;
+			bool isIndexProject(const QModelIndex &index) const;
 			bool isLink(const QModelIndex &index) const;
 			bool isFile(const QModelIndex &index) const;
 			bool isProjectRoot(const QModelIndex &index) const;
@@ -33,7 +33,7 @@ namespace Kiss
 			ProjectPtr project(const QModelIndex &index) const;
 
 		private slots:
-			void pathChanged(const QString& path);
+			void pathChanged(const QString &path);
 			void itemChanged(QStandardItem *item);
 
 		private:

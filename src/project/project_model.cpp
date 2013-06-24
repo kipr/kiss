@@ -1,7 +1,5 @@
 #include "project_model.hpp"
 
-#include "linked_kar.hpp"
-
 #include <QFileInfo>
 #include <QDir>
 #include <QFileIconProvider>
@@ -13,19 +11,14 @@ using namespace Kiss::Project;
 class PathItem : public QStandardItem
 {
 public:
-	PathItem(const QString& path)
+	PathItem(const QString &path)
 			: QStandardItem(QFileInfo(path).fileName()),
 			m_path(path)
 	{
 		refresh();
 	}
 
-	const QString& path()
-	{
-		return m_path;
-	}
-
-	bool rename(const QString& name)
+	bool rename(const QString &name)
 	{
 		qDebug() << "Renaming to " << name;
 		QFileInfo info(m_path);
@@ -34,10 +27,15 @@ public:
 		return true;
 	}
 
-	void setPath(const QString& path)
+	void setPath(const QString &path)
 	{
 		m_path = path;
 		refresh();
+	}
+
+	const QString &path()
+	{
+		return m_path;
 	}
 
 	virtual void refresh()
@@ -59,7 +57,7 @@ protected:
 class FileItem : public PathItem
 {
 public:
-	FileItem(const QString& path)
+	FileItem(const QString &path)
 			: PathItem(path)
 	{
 		refresh();
@@ -80,7 +78,7 @@ public:
 class FolderItem : public PathItem
 {
 public:
-	FolderItem(const QString& path)
+	FolderItem(const QString &path)
 			: PathItem(path)
 
 	{
@@ -97,7 +95,7 @@ public:
 		PathItem::refresh();
 		for(int i = 0; i < rowCount(); ++i) removeRow(i--);
 		QFileInfoList entries = dir().entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDot | QDir::NoDotDot);
-		foreach(const QFileInfo& entry, entries) {
+		foreach(const QFileInfo &entry, entries) {
 			appendRow(entry.isDir() ? (PathItem *)new FolderItem(entry.absoluteFilePath())
 				: (PathItem *)new FileItem(entry.absoluteFilePath()));
 		}
@@ -113,7 +111,7 @@ public:
 class RootItem : public FolderItem
 {
 public:
-	RootItem(const QString& path, ProjectPtr project)
+	RootItem(const QString &path, ProjectPtr project)
 			: FolderItem(path),
 			m_project(project)
 	{
@@ -132,7 +130,7 @@ public:
 		FolderItem::refresh();
 
 		QStringList list = m_project->links();
-		foreach(const QString& entry, list) {
+		foreach(const QString &entry, list) {
 			PathItem* item = (PathItem*)new FileItem(QDir::cleanPath(QDir(m_path).absoluteFilePath(entry)));
 			item->setForeground(Qt::gray);
 			appendRow(item);
@@ -148,14 +146,6 @@ private:
 	ProjectPtr m_project;
 };
 
-/*MultiRootFilesystemModel::MultiRootFilesystemModel(QObject *parent)
-: QStandardItemModel(parent)
-{
-	connect(&m_watcher, SIGNAL(directoryChanged(QString)), this, SLOT(pathChanged(QString)));
-	connect(&m_watcher, SIGNAL(fileChanged(QString)), this, SLOT(pathChanged(QString)));
-	connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
-}*/
-
 Model::Model(QObject *parent)
 			: QStandardItemModel(parent)
 {
@@ -170,7 +160,6 @@ Model::~Model()
 
 void Model::addProject(ProjectPtr project)
 {
-	//if(m_projects.contains(location)) return;
 	addRootPath(project);
 }
 
@@ -181,7 +170,7 @@ void Model::removeProject(ProjectPtr project)
 
 void Model::addRootPath(ProjectPtr project)
 {
-	const QString& path = project->location();
+	const QString &path = project->location();
 	if(m_paths.contains(path)) return;
 
 	m_paths.append(path);
@@ -190,7 +179,7 @@ void Model::addRootPath(ProjectPtr project)
 	m_watcher.addPath(path + "/" + LINKS_FILE);
 }
 
-void Model::removeRootPath(const QString& path)
+void Model::removeRootPath(const QString &path)
 {
 	m_paths.removeAll(path);
 	m_watcher.removePath(path);
@@ -207,12 +196,12 @@ void Model::removeRootPath(const QString& path)
 	}
 }
 
-const QStringList& Model::rootPaths() const
+const QStringList &Model::rootPaths() const
 {
 	return m_paths;
 }
 
-bool Model::isIndexProject(const QModelIndex& index) const
+bool Model::isIndexProject(const QModelIndex &index) const
 {
 	return RootItem::rootitem_cast(itemFromIndex(index));
 }
@@ -255,14 +244,14 @@ ProjectPtr Model::project(const QModelIndex &index) const
 	if(!projectRoot) {
 		FileItem *projectFile = FileItem::fileitem_cast(item);
 		if(!projectFile) return ProjectPtr();
-	// TODO: This assumes a strictly two-level project model
+		// TODO: This assumes a strictly two-level project model
 		projectRoot = RootItem::rootitem_cast(projectFile->parent());
 	}
 
 	return projectRoot ? projectRoot->project() : ProjectPtr();
 }
 
-void Model::pathChanged(const QString& path)
+void Model::pathChanged(const QString &path)
 {
 	QString absolutePath = QFileInfo(path).absoluteFilePath();
 

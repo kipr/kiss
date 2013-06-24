@@ -17,13 +17,11 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			ProjectSettings(const Project::ProjectPtr& project, MainWindow *mainWindow);
+			ProjectSettings(const Project::ProjectPtr &project, MainWindow *mainWindow);
 
 			virtual void activate();
-
 			virtual bool beginSetup();
 			virtual void completeSetup();
-
 			virtual bool close();
 
 		public slots:
@@ -36,8 +34,8 @@ namespace Kiss
 			void on_ui_remove_clicked();
 
 		signals:
-			void settingRemoved(const QString& key);
-			void settingUpdated(const QString& key, const QString& value);
+			void settingRemoved(const QString &key);
+			void settingUpdated(const QString &key, const QString &value);
 
 		private:
 			bool m_block;

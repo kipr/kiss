@@ -18,7 +18,7 @@ using namespace Kiss::Widget;
 class ComboDelegate : public QStyledItemDelegate
 {
 public:
-	ComboDelegate(QObject *parent, const QStringList& keys)
+	ComboDelegate(QObject *parent, const QStringList &keys)
 		: QStyledItemDelegate(parent)
 	{
 		this->keys = keys;
@@ -37,7 +37,7 @@ public:
 	
 	virtual void setEditorData(QWidget *editor, const QModelIndex &index) const
 	{
-		QComboBox *box = qobject_cast<QComboBox*>(editor);
+		QComboBox *box = qobject_cast<QComboBox *>(editor);
 		if(box) {
 			QString currentText = index.data(Qt::EditRole).toString();
 			int boxIndex = box->findText(currentText);
@@ -57,7 +57,7 @@ private:
 	QStringList keys;
 };
 
-ProjectSettings::ProjectSettings(const Project::ProjectPtr& project, MainWindow *mainWindow)
+ProjectSettings::ProjectSettings(const Project::ProjectPtr &project, MainWindow *mainWindow)
 	: QWidget(mainWindow),
 	Tab(this, mainWindow),
 	m_block(false)
@@ -72,9 +72,9 @@ ProjectSettings::ProjectSettings(const Project::ProjectPtr& project, MainWindow 
 
 void ProjectSettings::activate()
 {
-	QList<Menu::Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
-	foreach(Menu::Menuable* menu, menus) {
-		ActivatableObject* activatable = dynamic_cast<ActivatableObject *>(menu);
+	QList<Menu::Menuable *> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
+	foreach(Menu::Menuable *menu, menus) {
+		ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menu);
 		if(activatable) activatable->setActive(0);
 	}
 
@@ -98,14 +98,9 @@ bool ProjectSettings::close()
 	return true;
 }
 
-void ProjectSettings::refreshSettings()
-{
-
-}
-
 void ProjectSettings::reload()
 {
-	const Compiler::Options& settings = project()->settings();
+	const Compiler::Options &settings = project()->settings();
 
 	m_block = true;
 
@@ -113,7 +108,7 @@ void ProjectSettings::reload()
 	ui_settingsTable->setRowCount(settings.keys().size());
 	
 	quint16 i = 0;
-	foreach(const QString& key, settings.keys()) {
+	foreach(const QString &key, settings.keys()) {
 		ui_settingsTable->setItem(i, 0, new QTableWidgetItem(key));
 		ui_settingsTable->setItem(i, 1, new QTableWidgetItem(settings[key]));
 
@@ -121,6 +116,11 @@ void ProjectSettings::reload()
 	}
 
 	m_block = false;
+}
+
+void ProjectSettings::refreshSettings()
+{
+
 }
 
 void ProjectSettings::on_ui_settingsTable_cellChanged(int row, int column)

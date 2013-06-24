@@ -5,7 +5,7 @@
 
 using namespace Kiss::Project;
 
-ProjectView::ProjectView(QWidget* parent)
+ProjectView::ProjectView(QWidget *parent)
 : QTreeView(parent)
 {
 	setExpandsOnDoubleClick(true);
@@ -34,10 +34,10 @@ void ProjectView::dragMoveEvent(QDragMoveEvent *event)
 
 void ProjectView::dropEvent(QDropEvent *event)
 {
-	QList<QUrl> urls = event->mimeData()->urls();
 	QStringList files;
-	foreach(QUrl url, urls)
-	if(url.isLocalFile()) files << url.toLocalFile();
+	foreach(QUrl url, event->mimeData()->urls()) {
+		if(url.isLocalFile()) files << url.toLocalFile();
+	}
 
 	emit filesDropped(files);
 }

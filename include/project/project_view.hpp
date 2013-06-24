@@ -14,10 +14,10 @@ namespace Kiss
 		{
 			Q_OBJECT
 		public:
-			ProjectView(QWidget* parent = 0);
+			ProjectView(QWidget *parent = 0);
 		protected:
-			void dragEnterEvent(QDragEnterEvent* event);
-			void dragMoveEvent(QDragMoveEvent* event);
+			void dragEnterEvent(QDragEnterEvent *event);
+			void dragMoveEvent(QDragMoveEvent *event);
 			void dropEvent(QDropEvent *event);
 		signals:
 			void filesDropped(QStringList files);

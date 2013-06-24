@@ -21,13 +21,13 @@ namespace Kiss
 			Manager();
 			~Manager();
 			
-			void openProject(const ProjectPtr& project);
-			void closeProject(const ProjectPtr& project);
+			void openProject(const ProjectPtr &project);
+			void closeProject(const ProjectPtr &project);
 			
-			const ProjectPtrList& projects() const;
+			const ProjectPtrList &projects() const;
 		signals:
-			void projectOpened(const Kiss::Project::ProjectPtr& project);
-			void projectClosed(const Kiss::Project::ProjectPtr& project);
+			void projectOpened(const Kiss::Project::ProjectPtr &project);
+			void projectClosed(const Kiss::Project::ProjectPtr &project);
 			
 		private:
 			ProjectPtrList m_projects;

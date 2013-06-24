@@ -9,10 +9,9 @@
 
 using namespace Kiss::Wizard;
 
-NewProject::NewProject(QWidget* parent)
+NewProject::NewProject(QWidget *parent)
 	: QDialog(parent)
 {
-	qDebug() << "NewProject::NewProject";
 	setupUi(this);
 		
 	QSettings settings;
