@@ -271,11 +271,13 @@ bool MainWindow::memoryOpen(const QByteArray& ba, const QString& assocPath)
 	return true;
 }
 
-bool MainWindow::openProject(const QString& projectFilePath)
+Project::ProjectPtr MainWindow::openProject(const QString& projectPath)
 {
-	Project::ProjectPtr project = Project::Project::load(QFileInfo(projectFilePath).absolutePath());
-	Log::ref().info(QString("Opening project at %1").arg(projectFilePath));
-	if(project) m_projectManager.openProject(project);
+	Project::ProjectPtr project = Project::Project::load(projectPath);
+	Log::ref().info(QString("Opening project at %1").arg(projectPath));
+	if(!project) return Project::ProjectPtr();
+
+	m_projectManager.openProject(project);
 
 	return project;
 }
@@ -285,12 +287,7 @@ Project::ProjectPtr MainWindow::newProject(const QString& projectPath)
 	if(!FileUtils::remove(projectPath)) return Project::ProjectPtr();
 	if(!QDir().mkpath(projectPath)) return Project::ProjectPtr();
 
-	Project::ProjectPtr project = Project::Project::create(projectPath);
-	if(!project) return Project::ProjectPtr();
-	
-	m_projectManager.openProject(project);
-
-	return project;
+	return openProject(projectPath);
 }
 
 void MainWindow::initMenus()
@@ -475,7 +472,7 @@ void MainWindow::open()
 	}
 
 	if(fileInfo.completeSuffix() == "kissproj") {
-		openProject(filePath);
+		openProject(QFileInfo(filePath).absolutePath());
 		return;
 	}
 	

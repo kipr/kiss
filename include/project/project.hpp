@@ -39,7 +39,6 @@ namespace Kiss
 			const QString &location() const;
 	
 			bool save();
-			static ProjectPtr create(const QString& location);
 			static ProjectPtr load(const QString& location);
 	
 			void refresh();

@@ -140,18 +140,6 @@ bool Kiss::Project::Project::save()
 	return m_settings.save(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
 }
 
-ProjectPtr Kiss::Project::Project::create(const QString& location)
-{
-	QFile linkFile(location + "/" + LINKS_FILE);
-    if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    	qWarning() << "Failed to create links file for project!";
-        return ProjectPtr();
-    }
-    linkFile.close();
-
-	return load(location);
-}
-
 ProjectPtr Kiss::Project::Project::load(const QString& location)
 {
 	if(!QFileInfo(location).isDir()) return ProjectPtr();

@@ -81,7 +81,7 @@ namespace Kiss
 			 */
 			bool openFile(const QString& filePath, const Project::ProjectPtr& project = Project::ProjectPtr());
 			bool memoryOpen(const QByteArray& ba, const QString& assocPath);
-			bool openProject(const QString& projectFilePath);
+			Project::ProjectPtr openProject(const QString& projectFilePath);
 			Project::ProjectPtr newProject(const QString& projectPath);
 
 			void initMenus(Tab *tab);
