@@ -1,5 +1,7 @@
 #include "project_model.hpp"
 
+#include "project_manager.hpp"
+
 #include <QFileInfo>
 #include <QDir>
 #include <QFileIconProvider>
@@ -95,7 +97,9 @@ public:
 		PathItem::refresh();
 		for(int i = 0; i < rowCount(); ++i) removeRow(i--);
 		QFileInfoList entries = dir().entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDot | QDir::NoDotDot);
+		const QStringList &hidden = Manager::hiddenExtensions();
 		foreach(const QFileInfo &entry, entries) {
+			if(hidden.contains(entry.suffix())) continue;
 			appendRow(entry.isDir() ? (PathItem *)new FolderItem(entry.absoluteFilePath())
 				: (PathItem *)new FileItem(entry.absoluteFilePath()));
 		}
@@ -261,7 +265,8 @@ void Model::pathChanged(const QString &path)
 		QStandardItem *child = root->child(i);
 		PathItem *pathItem = PathItem::pathitem_cast(child);
 		if(!pathItem) continue;
-		if(pathItem->path() == absolutePath || pathItem->path() == path) pathItem->refresh();
+		if(pathItem->path() == absolutePath || pathItem->path() == path ||
+			QFileInfo(absolutePath).suffix() == LINKS_EXT) pathItem->refresh();
 	}
 }
 

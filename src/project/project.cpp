@@ -180,6 +180,4 @@ Kiss::Project::Project::Project(const QString &location)
 	m_settings = Compiler::Options::load(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
 	m_settings.insert("", "");
 	save();
-
-	qDebug() << "LINKS FILE:" << linksFilePath();
 }

@@ -25,6 +25,8 @@ namespace Kiss
 			void closeProject(const ProjectPtr &project);
 			
 			const ProjectPtrList &projects() const;
+
+			static const QStringList hiddenExtensions();
 		signals:
 			void projectOpened(const Kiss::Project::ProjectPtr &project);
 			void projectClosed(const Kiss::Project::ProjectPtr &project);
