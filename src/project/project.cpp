@@ -61,7 +61,7 @@ bool Kiss::Project::Project::addAsLink(const QString &path)
 
 	if(list.contains(otherPath)) return false;
 
-	QFile linkFile(m_location + "/" + LINKS_FILE);
+	QFile linkFile(linksFilePath());
     if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
     	qWarning() << "Failed to open links file for project!";
         return false;
@@ -90,7 +90,7 @@ bool Kiss::Project::Project::removeLink(const QString &path)
 
 	if(!list.removeOne(path) && !list.removeOne(otherPath)) return false;
 
-	QFile linkFile(m_location + "/" + LINKS_FILE);
+	QFile linkFile(linksFilePath());
     if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
     	qWarning() << "Failed to open links file for project!";
         return false;
@@ -106,7 +106,7 @@ QStringList Kiss::Project::Project::links() const
 {
 	QStringList list;
 	
-	QFile linkFile(m_location + "/" + LINKS_FILE);
+	QFile linkFile(linksFilePath());
     if(linkFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
     	QTextStream in(&linkFile);
 	    while(!in.atEnd()) list << in.readLine();
@@ -115,6 +115,12 @@ QStringList Kiss::Project::Project::links() const
     else qWarning() << "Failed to open links file for project!";
 
     return list;
+}
+
+const QString Kiss::Project::Project::linksFilePath() const
+{
+	const QDir dir(m_location);
+	return dir.absoluteFilePath(dir.dirName() + "." + LINKS_EXT);
 }
 
 void Kiss::Project::Project::setSetting(const QString &key, const QString &value)
@@ -148,12 +154,11 @@ const QString &Kiss::Project::Project::location() const
 Kiss::KarPtr Kiss::Project::Project::archive() const
 {
 	Kiss::KarPtr archive = Kiss::Kar::create();
-	QString linkExt = QFileInfo(LINKS_FILE).suffix();
 	QStringList paths = files();
 	foreach(QString path, paths) {
 		QFile file(path);
 		QFileInfo fileInfo(file);
-		if(fileInfo.suffix() == linkExt) continue;
+		if(fileInfo.suffix() == LINKS_EXT) continue;
 		if(file.open(QIODevice::ReadOnly)) {
 			QString fileName = fileInfo.fileName();
 			if(fileInfo.suffix() == PROJECT_EXT) {
@@ -175,4 +180,6 @@ Kiss::Project::Project::Project(const QString &location)
 	m_settings = Compiler::Options::load(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
 	m_settings.insert("", "");
 	save();
+
+	qDebug() << "LINKS FILE:" << linksFilePath();
 }

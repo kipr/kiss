@@ -8,7 +8,7 @@
 #include <QSharedPointer>
 
 #define PROJECT_EXT "kissproj"
-#define LINKS_FILE "project.links"
+#define LINKS_EXT "links"
 
 namespace Kiss
 {
@@ -33,6 +33,7 @@ namespace Kiss
 			bool addAsRelativeLink(const QString &path);
 			bool removeLink(const QString &path);
 			QStringList links() const;
+			const QString linksFilePath() const;
 	
 			void setSetting(const QString &key, const QString &value);
 			void setSettings(const Compiler::Options &settings);

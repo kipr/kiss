@@ -22,7 +22,7 @@ namespace Kiss
 			void removeProject(ProjectPtr project);
 
 			void addRootPath(ProjectPtr project);
-			void removeRootPath(const QString &path);
+			void removeRootPath(ProjectPtr project);
 			const QStringList &rootPaths() const;
 
 			bool isIndexProject(const QModelIndex &index) const;

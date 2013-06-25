@@ -165,7 +165,7 @@ void Model::addProject(ProjectPtr project)
 
 void Model::removeProject(ProjectPtr project)
 {
-	removeRootPath(project->location());
+	removeRootPath(project);
 }
 
 void Model::addRootPath(ProjectPtr project)
@@ -176,14 +176,15 @@ void Model::addRootPath(ProjectPtr project)
 	m_paths.append(path);
 	insertRow(0, new RootItem(QFileInfo(path).absoluteFilePath(), project));
 	m_watcher.addPath(path);
-	m_watcher.addPath(path + "/" + LINKS_FILE);
+	m_watcher.addPath(project->linksFilePath());
 }
 
-void Model::removeRootPath(const QString &path)
+void Model::removeRootPath(ProjectPtr project)
 {
+	const QString &path = project->location();
 	m_paths.removeAll(path);
 	m_watcher.removePath(path);
-	m_watcher.removePath(path + "/" + LINKS_FILE);
+	m_watcher.removePath(project->linksFilePath());
 
 	QString absolutePath = QFileInfo(path).absoluteFilePath();
 
@@ -260,8 +261,7 @@ void Model::pathChanged(const QString &path)
 		QStandardItem *child = root->child(i);
 		PathItem *pathItem = PathItem::pathitem_cast(child);
 		if(!pathItem) continue;
-		if(pathItem->path() == absolutePath || pathItem->path() == path || pathItem->path() + "/" + LINKS_FILE == absolutePath)
-			pathItem->refresh();
+		if(pathItem->path() == absolutePath || pathItem->path() == path) pathItem->refresh();
 	}
 }
 
