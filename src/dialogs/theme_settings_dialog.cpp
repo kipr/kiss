@@ -100,9 +100,9 @@ void ThemeSettings::readSettings()
 	// Figure out the font and set it
 	const QString &fontString = settings.value(FONT, SyntaxStandards::fontName()).toString();
 	ui->fontBox->setCurrentFont(QFont(fontString));
-	const int fontSize = SyntaxStandards::fontSize();
 	
 	// Figure out the font size and set the widget
+	const int fontSize = settings.value(FONT_SIZE, SyntaxStandards::fontSize()).toInt();
 	ui->fontSizeBox->setValue(fontSize);
 	
 	// Read the lexer settings
