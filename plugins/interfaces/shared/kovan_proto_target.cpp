@@ -117,7 +117,7 @@ Kiss::Target::Target::ReturnCode KovanProtoTarget::compile(quint64 id, const QSt
 	qDebug() << "Waiting for results...";
 	
 	Packet p;
-	if(m_transport.recv(p, 15000) != TransportLayer::Success || p.type != Command::FileHeader) {
+	if(m_transport.recv(p, 15000) == TransportLayer::Error || p.type != Command::FileHeader) {
 		qWarning() << "Failed to recv results of compile" << p.type;
 		emit response(Response(id, KEY_COMPILE, true));
 		m_proto.hangup();

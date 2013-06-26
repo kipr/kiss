@@ -84,10 +84,10 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projectFrame->setVisible(false);
 	connect(ui_projects, SIGNAL(filesDropped(QStringList)), this, SLOT(addToProject(QStringList)));
 
-	m_projectRootActions << new QAction(tr("Add files"), this)
-						<< new QAction(tr("Project settings"), this)
-						<< new QAction(tr("Close project"), this)
-						<< new QAction(tr("Delete project"), this);
+	m_projectRootActions << new QAction(tr("Add Files..."), this)
+						<< new QAction(tr("Project Settings"), this)
+						<< new QAction(tr("Close Project"), this)
+						<< new QAction(tr("Delete Project"), this);
 	connect(m_projectRootActions[0], SIGNAL(triggered()), this, SLOT(addToProject()));
 	connect(m_projectRootActions[1], SIGNAL(triggered()), this, SLOT(openProjectSettings()));
 	connect(m_projectRootActions[2], SIGNAL(triggered()), this, SLOT(closeProject()));
