@@ -303,7 +303,7 @@ Kiss::Target::Target::ReturnCode KovanProtoTarget::verifyProtocolVersion()
 	// distinguish between the next case,
 	// which is whether a timeout means no
 	// communication or the message isn't implemented
-	if(!m_proto.knockKnock()) return Target::Error;
+	if(!m_proto.knockKnock(3000)) return Target::Error;
 	
 	std::string version;
 	if(!m_proto.protocolVersion(version)) {

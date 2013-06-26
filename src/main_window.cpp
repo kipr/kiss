@@ -27,7 +27,8 @@
 #include "project_settings.hpp"
 #include "project_manager.hpp"
 #include "log.hpp"
-#include "lexer_factory.hpp" // Used to query supported extensions
+// Used to query supported extensions
+#include "lexer_factory.hpp"
 #include "new_project_wizard.hpp"
 #include "template_manager.hpp"
 #include "template_tab.hpp"
