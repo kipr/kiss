@@ -98,22 +98,9 @@ void ThemeSettings::readSettings()
 	ui->backgroundColorBox->setColor(settings.value(BACKGROUND_COLOR, QColor(255, 255, 255)).value<QColor>());
 
 	// Figure out the font and set it
-#ifdef Q_OS_WIN32
-	QString fontString = settings.value(FONT, "Courier New").toString();
-#elif defined(Q_OS_MAC)
-	QString fontString = settings.value(FONT, "Monaco").toString();
-#else
-	QString fontString = settings.value(FONT, "Monospace").toString();
-#endif
-	
+	const QString &fontString = settings.value(FONT, SyntaxStandards::fontName()).toString();
 	ui->fontBox->setCurrentFont(QFont(fontString));
-	
-	int fontSize = 0;
-#ifdef Q_OS_MAC
-	fontSize = settings.value(FONT_SIZE, 12).toInt();
-#else
-	fontSize = settings.value(FONT_SIZE, 10).toInt();
-#endif
+	const int fontSize = SyntaxStandards::fontSize();
 	
 	// Figure out the font size and set the widget
 	ui->fontSizeBox->setValue(fontSize);
@@ -166,10 +153,19 @@ void ThemeSettings::setDefaults()
 
 void ThemeSettings::initializeDefaults()
 {
-	// This is sooo jank
-	ThemeSettings *settings = new ThemeSettings(0);
-	settings->writeSettings();
-	delete settings;
+	QSettings settings;
+	settings.beginGroup(EDITOR);
+	if(!settings.contains(FONT_FIX)) {
+		settings.setValue(FONT_FIX, true);
+		settings.remove(FONT);
+	}
+	settings.endGroup();
+	settings.sync();
+
+	// FIXME: This is sooo jank
+	ThemeSettings *theme = new ThemeSettings(0);
+	theme->writeSettings();
+	delete theme;
 }
 
 void ThemeSettings::settingChanged(QColor color)

@@ -54,10 +54,10 @@ int main(int argc, char **argv)
 	
 	Log::ref().info(QString("%1 is starting up... (Qt version: %2)").arg(kissIdeVersion).arg(qVersion()));
 	
-	Dialog::ThemeSettings::initializeDefaults();
-	
 	// Creates everything we need
 	StandardEnvironment::createStandardEnvironment();
+
+	Dialog::ThemeSettings::initializeDefaults();
 	
 	Widget::MainWindow mainWindow;
 	

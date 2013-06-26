@@ -37,6 +37,8 @@ public:
 	static QColor inactiveOperatorColor();
 	static QColor inactiveUnclosedStringColor();
 	static QColor inactiveVerbatimStringColor();
+	static QString fontName();
+	static int fontSize();
 };
 
 #endif

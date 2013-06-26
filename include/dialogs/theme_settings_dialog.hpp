@@ -30,6 +30,7 @@
 #define LEXER "Lexer"
 #define FONT "font"
 #define FONT_SIZE "fontsize"
+#define FONT_FIX "fontfix"
 #define BACKGROUND_COLOR "backgroundcolor"
 
 namespace Ui

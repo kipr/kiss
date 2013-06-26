@@ -95,3 +95,22 @@ QColor SyntaxStandards::inactiveVerbatimStringColor()
 	return QColor(0x00, 0x7f, 0x00);
 }
 
+QString SyntaxStandards::fontName()
+{
+	#ifdef Q_OS_WIN32
+		return "Courier New";
+	#elif defined(Q_OS_MAC)
+		return "Monaco";
+	#else
+		return "Monospace";
+	#endif
+}
+
+int SyntaxStandards::fontSize()
+{
+	#ifdef Q_OS_MAC
+		return 12;
+	#else
+		return 10;
+	#endif
+}
