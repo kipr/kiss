@@ -83,20 +83,6 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projects->setContextMenuPolicy(Qt::CustomContextMenu);
 	ui_projectFrame->setVisible(false);
 	connect(ui_projects, SIGNAL(filesDropped(QStringList)), this, SLOT(addToProject(QStringList)));
-
-	m_projectRootActions << new QAction(tr("Add Files..."), this)
-						<< new QAction(tr("Project Settings"), this)
-						<< new QAction(tr("Close Project"), this)
-						<< new QAction(tr("Delete Project"), this);
-	connect(m_projectRootActions[0], SIGNAL(triggered()), this, SLOT(addToProject()));
-	connect(m_projectRootActions[1], SIGNAL(triggered()), this, SLOT(openProjectSettings()));
-	connect(m_projectRootActions[2], SIGNAL(triggered()), this, SLOT(closeProject()));
-	connect(m_projectRootActions[3], SIGNAL(triggered()), this, SLOT(deleteProject()));
-
-	m_projectFileActions << new QAction(tr("Rename"), this)
-						<< new QAction(tr("Remove"), this);
-	connect(m_projectFileActions[0], SIGNAL(triggered()), this, SLOT(renameProjectFile()));
-	connect(m_projectFileActions[1], SIGNAL(triggered()), this, SLOT(removeProjectFile()));
 		
 	setUpdatesEnabled(false);
 
@@ -150,6 +136,8 @@ MainWindow::~MainWindow()
 	
 	delete m_templateManager;
 	delete m_mainResponder;
+	delete m_projectContextMenu;
+	delete m_fileContextMenu;
 }
 
 void MainWindow::importTemplatePack()
@@ -339,6 +327,16 @@ void MainWindow::initMenus()
 	
 	ui_tabWidget->setTabsClosable(true);
 	connect(ui_tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
+
+	m_projectContextMenu = new QMenu(this);
+	m_projectContextMenu->addAction(tr("Add Files..."), this, SLOT(addToProject()));
+	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(openProjectSettings()));
+	m_projectContextMenu->addAction(tr("Close Project"), this, SLOT(closeProject()));
+	m_projectContextMenu->addAction(tr("Delete Project"), this, SLOT(deleteProject()));
+
+	m_fileContextMenu = new QMenu(this);
+	m_fileContextMenu->addAction(tr("Rename"), this, SLOT(renameProjectFile()));
+	m_fileContextMenu->addAction(tr("Remove"), this, SLOT(removeProjectFile()));
 }
 
 void MainWindow::setTitle(const QString& title)
@@ -720,9 +718,9 @@ void MainWindow::projectContextMenu(const QPoint& pos)
 	if(!index.isValid()) return;
 
 	if(m_projectsModel.isProjectRoot(index))
-		QMenu::exec(m_projectRootActions, QCursor::pos());
+		m_projectContextMenu->exec(QCursor::pos());
 	else if(m_projectsModel.isFile(index))
-		QMenu::exec(m_projectFileActions, QCursor::pos());
+		m_fileContextMenu->exec(QCursor::pos());
 }
 
 void MainWindow::openRecent()

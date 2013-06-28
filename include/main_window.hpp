@@ -260,8 +260,8 @@ namespace Kiss
 			QProgressBar *m_commProgress;
 			
 			Project::Model m_projectsModel;
-			QList<QAction*> m_projectRootActions;
-			QList<QAction*> m_projectFileActions;
+			QMenu *m_projectContextMenu;
+			QMenu *m_fileContextMenu;
 
 			void addLookup(Tab *tab);
 			void removeLookup(QWidget* widget);
