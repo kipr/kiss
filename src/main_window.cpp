@@ -45,6 +45,7 @@
 #include <QCloseEvent>
 #include <QDir>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QMenu>
 #include <QAction>
 #include <QList>
@@ -82,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projects->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::EditKeyPressed);
 	ui_projects->setContextMenuPolicy(Qt::CustomContextMenu);
 	ui_projectFrame->setVisible(false);
-	connect(ui_projects, SIGNAL(filesDropped(QStringList)), this, SLOT(addToProject(QStringList)));
+	connect(ui_projects, SIGNAL(filesDropped(QStringList)), this, SLOT(projectAddExisting(QStringList)));
 		
 	setUpdatesEnabled(false);
 
@@ -329,7 +330,8 @@ void MainWindow::initMenus()
 	connect(ui_tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
 
 	m_projectContextMenu = new QMenu(this);
-	m_projectContextMenu->addAction(tr("Add Files..."), this, SLOT(addToProject()));
+	m_projectContextMenu->addAction(tr("Add New File..."), this, SLOT(projectAddNew()));
+	m_projectContextMenu->addAction(tr("Add Existing Files..."), this, SLOT(projectAddExisting()));
 	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(openProjectSettings()));
 	m_projectContextMenu->addAction(tr("Close Project"), this, SLOT(closeProject()));
 	m_projectContextMenu->addAction(tr("Delete Project"), this, SLOT(deleteProject()));
@@ -589,17 +591,32 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	setUpdatesEnabled(true);
 }
 
-void MainWindow::addToProject()
+void MainWindow::projectAddNew()
+{
+	Project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
+	if(!project) return;
+
+	bool ok = false;
+	const QString &fileName = QInputDialog::getText(this, tr("New File"), tr("New file name:"), QLineEdit::Normal, QString(), &ok);
+	if(!ok) return;
+
+	SourceFile *sourceFile = SourceFile::newProjectFile(this, project);
+	addTab(sourceFile);
+	sourceFile->setFile(QDir(project->location()).filePath(fileName));
+	sourceFile->save();
+}
+
+void MainWindow::projectAddExisting()
 {
 	QString openPath = QSettings().value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
 	QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Files to Add"),
 		openPath, filters.join(";;") + ";;All Files (*)");
-	addToProject(files);
+	projectAddExisting(files);
 }
 
-void MainWindow::addToProject(QStringList files)
+void MainWindow::projectAddExisting(QStringList files)
 {
 	if(files.isEmpty()) return;
 

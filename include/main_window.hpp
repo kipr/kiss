@@ -200,9 +200,6 @@ namespace Kiss
 			
 			void showCompilerOutput(const Compiler::OutputList& results);
 
-			/*void projectAddNew();
-			void projectAddExisting();
-			void projectRemoveExisting();*/
 			void projectExtractTo();
 
 			void showProjectDock(bool show = true);
@@ -220,8 +217,9 @@ namespace Kiss
 
 		private slots:
 			void on_ui_tabWidget_currentChanged(int i);
-			void addToProject();
-			void addToProject(QStringList files);
+			void projectAddNew();
+			void projectAddExisting();
+			void projectAddExisting(QStringList files);
 			void renameProjectFile();
 			void removeProjectFile();
 			void closeProject();
