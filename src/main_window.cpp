@@ -25,7 +25,6 @@
 #include "menus.hpp"
 #include "project.hpp"
 #include "project_settings.hpp"
-#include "project_manager.hpp"
 #include "log.hpp"
 // Used to query supported extensions
 #include "lexer_factory.hpp"
@@ -40,18 +39,12 @@
 #include "password_dialog.hpp"
  #include "add_to_project_dialog.hpp"
 
-#include <QToolButton>
 #include <QMessageBox>
-#include <QCloseEvent>
-#include <QDir>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QMenu>
 #include <QAction>
-#include <QList>
 #include <QDebug>
 #include <QNetworkProxyFactory>
-#include <QFileOpenEvent>
 #include <QSettings>
 
 #ifdef Q_OS_WIN32
@@ -710,10 +703,6 @@ void MainWindow::openProjectSettings(const Project::ProjectPtr &project)
 	addTab(new ProjectSettings(project, this));
 }
 
-void MainWindow::projectExtractTo()
-{
-}
-
 void MainWindow::showProjectDock(bool show)
 {
 	ui_projectFrame->setVisible(show);
@@ -850,11 +839,6 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event) {
 Target::Responder *MainWindow::mainResponder() const
 {
 	return m_mainResponder;
-}
-
-Project::Manager *MainWindow::projectManager()
-{
-	return &m_projectManager;
 }
 
 Menu::Manager* MainWindow::menuManager()

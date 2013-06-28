@@ -84,8 +84,6 @@ namespace Kiss
 			Project::ProjectPtr openProject(const QString& projectFilePath);
 			Project::ProjectPtr newProject(const QString& projectPath);
 
-			void initMenus(Tab *tab);
-
 			void initMenus();
 
 			/*! Sets Window Title
@@ -155,8 +153,6 @@ namespace Kiss
 
 			bool eventFilter(QObject *target, QEvent *event);
 
-			Project::Manager *projectManager();
-
 			void openProjectSettings(const Kiss::Project::ProjectPtr& project);
 
 			Menu::Manager *menuManager();
@@ -168,8 +164,6 @@ namespace Kiss
 			QStringList standardMenus() const;
 			
 			Template::Manager *templateManager() const;
-
-			void restart();
 
 			bool canClose();
 			bool canGoPrevious();
@@ -199,8 +193,6 @@ namespace Kiss
 			void theme();
 			
 			void showCompilerOutput(const Compiler::OutputList& results);
-
-			void projectExtractTo();
 
 			void showProjectDock(bool show = true);
 			void hideProjectDock();
@@ -261,11 +253,11 @@ namespace Kiss
 			QMenu *m_projectContextMenu;
 			QMenu *m_fileContextMenu;
 
+			Target::Responder *m_mainResponder;
+
 			void addLookup(Tab *tab);
 			void removeLookup(QWidget* widget);
 			Tab *lookup(QWidget* widget) const;
-			
-			Target::Responder *m_mainResponder;
 
 			void showErrorMessages(bool verbose = false);
 		};
