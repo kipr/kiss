@@ -153,7 +153,7 @@ namespace Kiss
 
 			bool eventFilter(QObject *target, QEvent *event);
 
-			void openProjectSettings(const Kiss::Project::ProjectPtr& project);
+			void projectOpenSettings(const Kiss::Project::ProjectPtr& project);
 
 			Menu::Manager *menuManager();
 			Menu::Menuable *menuable(const QString& name);
@@ -212,11 +212,11 @@ namespace Kiss
 			void projectAddNew();
 			void projectAddExisting();
 			void projectAddExisting(QStringList files);
-			void renameProjectFile();
-			void removeProjectFile();
+			void projectRenameFile();
+			void projectRemoveFile();
 			void closeProject();
 			void deleteProject();
-			void openProjectSettings();
+			void projectOpenSettings();
 			void openRecent();
 
 			void errorClicked(QListWidgetItem *item);

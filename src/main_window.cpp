@@ -325,13 +325,13 @@ void MainWindow::initMenus()
 	m_projectContextMenu = new QMenu(this);
 	m_projectContextMenu->addAction(tr("Add New File..."), this, SLOT(projectAddNew()));
 	m_projectContextMenu->addAction(tr("Add Existing Files..."), this, SLOT(projectAddExisting()));
-	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(openProjectSettings()));
+	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(projectOpenSettings()));
 	m_projectContextMenu->addAction(tr("Close Project"), this, SLOT(closeProject()));
 	m_projectContextMenu->addAction(tr("Delete Project"), this, SLOT(deleteProject()));
 
 	m_fileContextMenu = new QMenu(this);
-	m_fileContextMenu->addAction(tr("Rename"), this, SLOT(renameProjectFile()));
-	m_fileContextMenu->addAction(tr("Remove"), this, SLOT(removeProjectFile()));
+	m_fileContextMenu->addAction(tr("Rename"), this, SLOT(projectRenameFile()));
+	m_fileContextMenu->addAction(tr("Remove"), this, SLOT(projectRemoveFile()));
 }
 
 void MainWindow::setTitle(const QString& title)
@@ -649,12 +649,12 @@ void MainWindow::projectAddExisting(QStringList files)
 	}
 }
 
-void MainWindow::renameProjectFile()
+void MainWindow::projectRenameFile()
 {
 	ui_projects->edit(ui_projects->currentIndex());
 }
 
-void MainWindow::removeProjectFile()
+void MainWindow::projectRemoveFile()
 {
 	const QModelIndex& index = ui_projects->currentIndex();
 	const QString& path = m_projectsModel.filePath(index);
@@ -697,12 +697,12 @@ void MainWindow::deleteProject()
 	if(!FileUtils::remove(project->location())) qWarning() << "Failed to delete project at " << project->location();
 }
 
-void MainWindow::openProjectSettings()
+void MainWindow::projectOpenSettings()
 {
-	openProjectSettings(m_projectsModel.project(ui_projects->currentIndex()));
+	projectOpenSettings(m_projectsModel.project(ui_projects->currentIndex()));
 }
 
-void MainWindow::openProjectSettings(const Project::ProjectPtr &project)
+void MainWindow::projectOpenSettings(const Project::ProjectPtr &project)
 {
 	for(int i = 0; i < ui_tabWidget->count(); ++i) {
 		ProjectSettings* tab = dynamic_cast<ProjectSettings*>(ui_tabWidget->widget(i));
