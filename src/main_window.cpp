@@ -590,7 +590,8 @@ void MainWindow::projectAddNew()
 	if(!project) return;
 
 	bool ok = false;
-	const QString &fileName = QInputDialog::getText(this, tr("New File"), tr("New file name:"), QLineEdit::Normal, QString(), &ok);
+	const QString &fileName = QInputDialog::getText(this, tr("New File"), tr("New file name:"),
+		QLineEdit::Normal, QString(), &ok);
 	if(!ok) return;
 
 	SourceFile *sourceFile = SourceFile::newProjectFile(this, project);
@@ -612,6 +613,18 @@ void MainWindow::projectAddExisting()
 void MainWindow::projectAddExisting(QStringList files)
 {
 	if(files.isEmpty()) return;
+
+	for(int i = 0; i < ui_tabWidget->count(); ++i) {
+		SourceFile *sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
+		if(!sourceFile) continue;
+		const QFileInfo &file = sourceFile->file();
+		if(files.contains(file.absoluteFilePath())) {
+			QMessageBox::warning(this, tr("File Already Open"),
+				tr("The following file is open inside KISS: %1\n").arg(file.fileName()) +
+				tr("Close the file before adding it to a project."));
+			return;
+		}
+	}
 
 	Project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
 	if(!project) return;
