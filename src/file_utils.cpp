@@ -1,8 +1,19 @@
 #include "file_utils.hpp"
 
-#include <QDir>
 #include <QFile>
 #include <QFileInfo>
+
+QString Kiss::FileUtils::absolutePath(const QString &path, const QDir &originDir)
+{
+	if(QFileInfo(path).isAbsolute()) return path;
+	return QDir::cleanPath(originDir.absoluteFilePath(path));
+}
+
+QString Kiss::FileUtils::relativePath(const QString &path, const QDir &originDir)
+{
+	if(QFileInfo(path).isRelative()) return path;
+	return originDir.relativeFilePath(path);
+}
 
 bool Kiss::FileUtils::remove(const QString& path)
 {

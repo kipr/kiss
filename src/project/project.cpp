@@ -4,6 +4,8 @@
 #include <QDir>
 #include <QDebug>
 
+#include "file_utils.hpp"
+
 using namespace Kiss;
 using namespace Kiss::Project;
 
@@ -51,15 +53,12 @@ QStringList Kiss::Project::Project::files() const
 
 bool Kiss::Project::Project::addAsLink(const QString &path)
 {
-	QStringList list = links();
+	QStringList linksList = links();
 	QDir projectDir(m_location);
-	if(!projectDir.exists(path) || list.contains(path)) return false;
-
-	QString otherPath;
-	if(QFileInfo(path).isAbsolute()) otherPath = projectDir.relativeFilePath(path);
-	else otherPath = QDir::cleanPath(projectDir.absoluteFilePath(path));
-
-	if(list.contains(otherPath)) return false;
+	const QString &absPath = FileUtils::absolutePath(path, projectDir);
+	const QString &relPath = FileUtils::relativePath(path, projectDir);
+	if(!projectDir.exists(path) || linksList.contains(absPath) ||
+		linksList.contains(relPath)) return false;
 
 	QFile linkFile(linksFilePath());
     if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
@@ -75,20 +74,18 @@ bool Kiss::Project::Project::addAsLink(const QString &path)
 
 bool Kiss::Project::Project::addAsRelativeLink(const QString &path)
 {
-	return addAsLink(QDir(m_location).relativeFilePath(path));
+	return addAsLink(FileUtils::relativePath(path, QDir(m_location)));
 }
 
 bool Kiss::Project::Project::removeLink(const QString &path)
 {
+	QStringList linksList = links();
 	QDir projectDir(m_location);
 	if(!projectDir.exists(path)) return false;
 
-	QStringList list = links();
-	QString otherPath;
-	if(QFileInfo(path).isAbsolute()) otherPath = projectDir.relativeFilePath(path);
-	else otherPath = QDir::cleanPath(projectDir.absoluteFilePath(path));
-
-	if(!list.removeOne(path) && !list.removeOne(otherPath)) return false;
+	const QString &absPath = FileUtils::absolutePath(path, projectDir);
+	const QString &relPath = FileUtils::relativePath(path, projectDir);
+	if(!linksList.removeOne(absPath) && !linksList.removeOne(relPath)) return false;
 
 	QFile linkFile(linksFilePath());
     if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
@@ -96,7 +93,7 @@ bool Kiss::Project::Project::removeLink(const QString &path)
         return false;
     }
     QTextStream out(&linkFile);
-    foreach(const QString &entry, list) out << entry << "\n";
+    foreach(const QString &entry, linksList) out << entry << "\n";
     linkFile.close();
 
     return true;
