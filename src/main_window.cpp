@@ -524,7 +524,6 @@ void MainWindow::closeCurrentTab(bool force)
 
 void MainWindow::closeProjectTabs(const Project::ProjectPtr &project)
 {
-	QList<Tab *> all = tabs();
 	int i = 0;
 	while(i < ui_tabWidget->count()) {
 		Tab *current = lookup(ui_tabWidget->widget(i));
@@ -575,6 +574,14 @@ void MainWindow::theme()
 
 bool MainWindow::commPreconditions(const Kiss::Project::ProjectPtr &project)
 {
+	for(int i = 0; i < ui_tabWidget->count(); ++i) {
+		Tab *current = lookup(ui_tabWidget->widget(i));
+		if(current->project() != project) continue;
+		SourceFile *sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
+		if(!sourceFile) continue;
+		if(!sourceFile->save()) return false;
+	}
+
 	if(project->target() && project->target()->available()) return true;
 	
 	if(!changeTarget(project)) return false;
