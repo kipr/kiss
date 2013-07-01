@@ -330,6 +330,7 @@ void MainWindow::initMenus()
 	m_projectContextMenu->addAction(tr("Add New File..."), this, SLOT(projectAddNew()));
 	m_projectContextMenu->addAction(tr("Add Existing Files..."), this, SLOT(projectAddExisting()));
 	m_projectContextMenu->addSeparator();
+	m_projectContextMenu->addAction(tr("Set Active"), this, SLOT(projectSetActive()));
 	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(projectOpenSettings()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(tr("Close Project"), this, SLOT(closeProject()));
@@ -793,6 +794,11 @@ void MainWindow::projectOpenSettings(const Project::ProjectPtr &project)
 	}
 
 	addTab(new ProjectSettings(project, this));
+}
+
+void MainWindow::projectSetActive()
+{
+	m_projectManager.setActiveProject(m_projectsModel.project(ui_projects->currentIndex()));
 }
 
 void MainWindow::showProjectDock(bool show)

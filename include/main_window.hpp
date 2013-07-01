@@ -221,6 +221,7 @@ namespace Kiss
 			void projectRemoveFile();
 			void deleteProject();
 			void projectOpenSettings();
+			void projectSetActive();
 			void openRecent();
 
 			void errorClicked(QListWidgetItem *item);
