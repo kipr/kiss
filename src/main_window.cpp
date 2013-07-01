@@ -1009,16 +1009,3 @@ bool MainWindow::canGoNext()
 {
 	return m_currentTab && ui_tabWidget->count() > 0 && ui_tabWidget->currentIndex() != ui_tabWidget->count() - 1;
 }
-
-Project::ProjectPtr MainWindow::activeProject() const
-{
-	// Precedence is like so: Project Manager, Tab, Project Tree
-	const Project::ProjectPtrList &loadedProjects = m_projectManager.projects();
-	if(loadedProjects.size() == 0) return Project::ProjectPtr();
-	if(loadedProjects.size() == 1) return loadedProjects[0];
-	
-	if(m_currentTab && m_currentTab->hasProject()) return m_currentTab->project();
-	//const QModelIndexList &list = ui_projects->selectionModel()->selectedRows();
-	//return list.size() > 0 ? m_projectsModel.indexToProject(list[0]) : Project::ProjectPtr();
-	return Project::ProjectPtr();
-}

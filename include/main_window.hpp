@@ -170,8 +170,6 @@ namespace Kiss
 			
 			Target::Responder *mainResponder() const;
 			
-			Project::ProjectPtr activeProject() const;
-
 			friend class Menu::MainWindowMenu;
 
 		public slots:
