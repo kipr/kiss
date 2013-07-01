@@ -16,30 +16,37 @@ Manager::~Manager()
 	m_projects.clear();
 }
 
-void Manager::openProject(const ProjectPtr &project)
+bool Manager::openProject(const ProjectPtr &project)
 {
-	if(m_projects.contains(project)) return;
-	
+	if(m_projects.contains(project)) return false;
 	m_projects.append(project);
-	m_activeProject = project;
-	emit projectOpened(project);
+
+	return true;
 }
 
-void Manager::closeProject(const ProjectPtr &project)
+bool Manager::closeProject(const ProjectPtr &project)
 {
-	if(!m_projects.contains(project)) return;
+	if(!m_projects.contains(project)) return false;
 
-	ProjectPtr ref = project;
 	m_projects.removeAll(project);
 	if(project == m_activeProject) {
-		m_projects.isEmpty() ? m_activeProject = ProjectPtr() : m_activeProject = m_projects.last();
+		m_projects.isEmpty() ? setActiveProject(ProjectPtr()) : setActiveProject(m_projects.last());
 	}
-	emit projectClosed(ref);
+
+	return true;
 }
 
 void Manager::setActiveProject(const ProjectPtr &project)
 {
+	const ProjectPtr old = m_activeProject;
 	m_activeProject = project;
+	emit activeChanged(old, m_activeProject);
+}
+
+void Manager::unsetActiveProject(const ProjectPtr &project)
+{
+	if(project != m_activeProject) return;
+	m_projects.isEmpty() ? setActiveProject(ProjectPtr()) : setActiveProject(m_projects.last());	
 }
 
 const ProjectPtr &Manager::activeProject() const

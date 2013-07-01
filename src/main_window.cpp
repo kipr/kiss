@@ -92,10 +92,8 @@ MainWindow::MainWindow(QWidget *parent)
 		SLOT(projectDoubleClicked(QModelIndex)));
 	connect(ui_projects, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(projectContextMenu(const QPoint&)));
 	
-	connect(&m_projectManager, SIGNAL(projectOpened(Kiss::Project::ProjectPtr)),
-		SLOT(projectOpened(Kiss::Project::ProjectPtr)));
-	connect(&m_projectManager, SIGNAL(projectClosed(Kiss::Project::ProjectPtr)),
-		SLOT(projectClosed(Kiss::Project::ProjectPtr)));
+	connect(&m_projectManager, SIGNAL(activeChanged(Kiss::Project::ProjectPtr, Kiss::Project::ProjectPtr)),
+		&m_projectsModel, SLOT(activeChanged(Kiss::Project::ProjectPtr, Kiss::Project::ProjectPtr)));
 		
 	connect(&Target::CommunicationManager::ref(),
 		SIGNAL(targetNeedsAuthentication(Kiss::Target::TargetPtr, Kiss::Target::CommunicationManager *)),
@@ -259,9 +257,14 @@ Project::ProjectPtr MainWindow::openProject(const QString &projectPath)
 {
 	Project::ProjectPtr project = Project::Project::load(projectPath);
 	Log::ref().info(QString("Opening project at %1").arg(projectPath));
-	if(!project) return Project::ProjectPtr();
-
-	m_projectManager.openProject(project);
+	if(!project || !m_projectManager.openProject(project)) return Project::ProjectPtr();
+	
+	m_projectsModel.addProject(project);
+	m_projectManager.setActiveProject(project);
+	if(!m_projectManager.projects().isEmpty()) {
+		ui_projectFrame->setVisible(true);
+		activateMenuable(Menu::TargetMenu::menuName(), this);
+	}
 
 	return project;
 }
@@ -747,9 +750,15 @@ void MainWindow::projectRemoveFile()
 void MainWindow::closeProject()
 {
 	Project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
-	if(!project) return;
+	if(!project || !m_projectManager.closeProject(project)) return;
 
-	m_projectManager.closeProject(project);
+	closeProjectTabs(project);
+	m_projectManager.unsetActiveProject(project);
+	m_projectsModel.removeProject(project);
+	if(m_projectManager.projects().isEmpty()) {
+		ui_projectFrame->setVisible(false);
+		activateMenuable(Menu::TargetMenu::menuName(), 0);
+	}
 }
 
 void MainWindow::deleteProject()
@@ -858,28 +867,6 @@ void MainWindow::projectDoubleClicked(const QModelIndex &index)
 	Project::ProjectPtr project = m_projectsModel.project(index);
 	if(m_projectsModel.isFile(index))
 		openFile(m_projectsModel.filePath(index), project);
-}
-
-void MainWindow::projectOpened(const Project::ProjectPtr &project)
-{
-	m_projectsModel.addProject(project);
-	Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
-	if(!manager) return;
-	if(!manager->projects().isEmpty()) {
-		ui_projectFrame->setVisible(true);
-		activateMenuable(Menu::TargetMenu::menuName(), this);
-	}
-}
-
-void MainWindow::projectClosed(const Project::ProjectPtr &project)
-{
-	closeProjectTabs(project);
-	m_projectsModel.removeProject(project);
-	Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
-	if(manager->projects().isEmpty()) {
-		ui_projectFrame->setVisible(false);
-		activateMenuable(Menu::TargetMenu::menuName(), 0);
-	}
 }
 
 void MainWindow::authenticateTarget(const Kiss::Target::TargetPtr &target,

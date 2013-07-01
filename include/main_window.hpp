@@ -230,9 +230,6 @@ namespace Kiss
 
 			void projectClicked(const QModelIndex &index);
 			void projectDoubleClicked(const QModelIndex &index);
-
-			void projectOpened(const Kiss::Project::ProjectPtr &project);
-			void projectClosed(const Kiss::Project::ProjectPtr &project);
 			
 			// FIXME: This will cause issues if we ever support
 			// more than one main window

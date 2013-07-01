@@ -129,6 +129,13 @@ public:
 		return dynamic_cast<RootItem *>(item);
 	}
 
+	void setActive(bool active)
+	{
+		QFont textFont = font();
+		textFont.setBold(active);
+		setFont(textFont);
+	}
+
 	void refresh()
 	{
 		FolderItem::refresh();
@@ -254,6 +261,21 @@ ProjectPtr Model::project(const QModelIndex &index) const
 	}
 
 	return projectRoot ? projectRoot->project() : ProjectPtr();
+}
+
+void Model::activeChanged(const ProjectPtr &oldActive, const ProjectPtr &newActive)
+{
+	const QString &oldPath = oldActive ? QFileInfo(oldActive->location()).absoluteFilePath() : QString();
+	const QString &newPath = newActive ? QFileInfo(newActive->location()).absoluteFilePath() : QString();
+	QStandardItem *root = invisibleRootItem();
+	for(int i = 0; i < root->rowCount(); ++i) {
+		QStandardItem *child = root->child(i);
+		RootItem *rootItem = RootItem::rootitem_cast(child);
+		if(!rootItem) continue;
+		const QString &rootPath = rootItem->path();
+		if(rootPath == oldPath) rootItem->setActive(false);
+		if(rootPath == newPath) rootItem->setActive(true);
+	}
 }
 
 void Model::pathChanged(const QString &path)

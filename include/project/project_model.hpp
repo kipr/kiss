@@ -32,6 +32,10 @@ namespace Kiss
 			QString filePath(const QModelIndex &index) const;
 			ProjectPtr project(const QModelIndex &index) const;
 
+		public slots:
+			void activeChanged(const Kiss::Project::ProjectPtr &oldActive,
+				const Kiss::Project::ProjectPtr &newActive);
+
 		private slots:
 			void pathChanged(const QString &path);
 			void itemChanged(QStandardItem *item);

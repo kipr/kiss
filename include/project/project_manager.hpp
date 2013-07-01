@@ -21,18 +21,19 @@ namespace Kiss
 			Manager();
 			~Manager();
 			
-			void openProject(const ProjectPtr &project);
-			void closeProject(const ProjectPtr &project);
+			bool openProject(const ProjectPtr &project);
+			bool closeProject(const ProjectPtr &project);
 
 			void setActiveProject(const ProjectPtr &project);
+			void unsetActiveProject(const ProjectPtr &project);
 			const ProjectPtr &activeProject() const;
 			
 			const ProjectPtrList &projects() const;
 
 			static const QStringList hiddenExtensions();
 		signals:
-			void projectOpened(const Kiss::Project::ProjectPtr &project);
-			void projectClosed(const Kiss::Project::ProjectPtr &project);
+			void activeChanged(const Kiss::Project::ProjectPtr &oldActive,
+				const Kiss::Project::ProjectPtr &newActive);
 			
 		private:
 			ProjectPtrList m_projects;
