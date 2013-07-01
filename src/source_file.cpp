@@ -21,31 +21,17 @@
 #include "source_file.hpp"
 
 #include "main_window.hpp"
-#include "singleton.hpp"
-#include "message_dialog.hpp"
-#include "macro_string.hpp"
 #include "lexer_factory.hpp"
 #include "template_manager.hpp"
 #include "template_dialog.hpp"
 #include "password_dialog.hpp"
 #include "save_as_dialog.hpp"
 #include "source_file_menu.hpp"
-#include "main_window_menu.hpp"
-#include "project.hpp"
-#include "project_manager.hpp"
-#include "log.hpp"
-#include "interface_manager.hpp"
 #include "communication_manager.hpp"
-#include "resource_helper.hpp"
-#include "interface.hpp"
-#include "output_helper.hpp"
 #include "language_helper_manager.hpp"
-
-#include <pcompiler/pcompiler.hpp>
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
-#include <QBuffer>
 #include <QTextStream>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -57,13 +43,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QDebug>
-#include <QShortcut>
 #include <math.h>
-#include <QDate>
-#include <QDateTime>
-#include <QPixmap>
-#include <QDesktopServices>
-#include <QUrl>
 
 #include <memory>
 
@@ -166,7 +146,7 @@ bool SourceFile::save()
 	return hasFile() ? fileSaveAs(file().absoluteFilePath()) : saveAs();
 }
 
-bool SourceFile::fileSaveAs(const QString& filePath)
+bool SourceFile::fileSaveAs(const QString &filePath)
 {
 	if(filePath.isEmpty()) return false;
 	
@@ -190,7 +170,7 @@ bool SourceFile::fileSaveAs(const QString& filePath)
 	return true;
 }
 
-bool SourceFile::fileOpen(const QString& filePath)
+bool SourceFile::fileOpen(const QString &filePath)
 {
 	setFile(filePath);
 	
@@ -211,7 +191,7 @@ bool SourceFile::fileOpen(const QString& filePath)
 	return true;
 }
 
-bool SourceFile::memoryOpen(const QByteArray& ba, const QString& assocPath)
+bool SourceFile::memoryOpen(const QByteArray &ba, const QString &assocPath)
 {
 	setFile(assocPath);
 	
@@ -223,7 +203,7 @@ bool SourceFile::memoryOpen(const QByteArray& ba, const QString& assocPath)
 	return true;
 }
 
-bool SourceFile::openProjectFile(const Project::ProjectPtr& project)
+bool SourceFile::openProjectFile(const Project::ProjectPtr &project)
 {
 	return false;
 }
@@ -295,7 +275,7 @@ void SourceFile::keyPressEvent(QKeyEvent *event)
 	int ctrlMod = Qt::ControlModifier;
 #endif
 	
-	if(!(event->modifiers() & ctrlMod)) return;
+	if(!(event->modifiers() &ctrlMod)) return;
 	
 	int line, index;
 	ui_editor->getCursorPosition(&line, &index);
@@ -433,7 +413,7 @@ int SourceFile::getZoom()
 	return ui_editor->SendScintilla(QsciScintilla::SCI_GETZOOM);
 }
 
-void SourceFile::moveTo(const int& line, const int& pos)
+void SourceFile::moveTo(const int &line, const int &pos)
 {
 	if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos);
 }
@@ -451,13 +431,13 @@ int SourceFile::currentLine() const
 bool SourceFile::breakpointOnLine(int line) const
 {
 	bool markerOnLine = false;
-	foreach(const int& i, m_breakpoints) markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
+	foreach(const int &i, m_breakpoints) markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
 	return markerOnLine;
 }
 
-SourceFile *SourceFile::newProjectFile(MainWindow* mainWindow, const Project::ProjectPtr& project)
+SourceFile *SourceFile::newProjectFile(MainWindow *mainWindow, const Project::ProjectPtr &project)
 {
-	SourceFile* sourceFile = new SourceFile(mainWindow);
+	SourceFile *sourceFile = new SourceFile(mainWindow);
 	sourceFile->setProject(project);
 	return sourceFile;
 }
@@ -530,7 +510,7 @@ bool SourceFile::saveAsProject()
 	
 	QStringList exts = Lexer::Factory::ref().extensions();
 	QStringList nameFilters;
-	foreach(const QString& ext, exts) {
+	foreach(const QString &ext, exts) {
 		nameFilters << "*." + ext;
 	}
 	
@@ -617,7 +597,7 @@ void SourceFile::requestFile()
 {
 }
 
-void SourceFile::toggleBreakpoint(const bool& checked)
+void SourceFile::toggleBreakpoint(const bool &checked)
 {
 	if(checked) m_breakpoints.append(ui_editor->markerAdd(m_currentLine, m_breakIndicator));
  	else {
@@ -630,7 +610,7 @@ void SourceFile::toggleBreakpoint(const bool& checked)
 
 void SourceFile::clearBreakpoints()
 {	
-	foreach(const int& i, m_breakpoints) ui_editor->markerDeleteHandle(i);
+	foreach(const int &i, m_breakpoints) ui_editor->markerDeleteHandle(i);
 	m_breakpoints.clear();
 	
 	emit updateActivatable();
@@ -673,21 +653,21 @@ void SourceFile::clearProblems()
 	ui_editor->markerDeleteAll(m_warningIndicator);
 }
 
-void SourceFile::markProblems(const Lines& lines)
+void SourceFile::markProblems(const Lines &lines)
 {
-	foreach(const Lines::line_t& line, lines.warningLines()) {
+	foreach(const Lines::line_t &line, lines.warningLines()) {
 		ui_editor->markerAdd(line, m_warningIndicator);
 	}
-	foreach(const Lines::line_t& line, lines.errorLines()) {
+	foreach(const Lines::line_t &line, lines.errorLines()) {
 		ui_editor->markerAdd(line, m_errorIndicator);
 	}
 }
 
-void SourceFile::updateErrors(const Compiler::OutputList& compileResult) 
+void SourceFile::updateErrors(const Compiler::OutputList &compileResult) 
 {
 	clearProblems();
 	Lines lines;
-	foreach(const Compiler::Output& output, compileResult) {
+	foreach(const Compiler::Output &output, compileResult) {
 		lines = lines + OutputHelper::lines(output);
 	}
 	markProblems(lines);
@@ -717,13 +697,13 @@ const bool SourceFile::selectTemplate()
 	return true;
 }
 
-void SourceFile::fileChanged(const QFileInfo& file)
+void SourceFile::fileChanged(const QFileInfo &file)
 {
 	setName(file.fileName());
 	updateTitle();
 }
 
-void SourceFile::projectChanged(const Project::ProjectPtr& project)
+void SourceFile::projectChanged(const Project::ProjectPtr &project)
 {
 	updateTitle();
 }

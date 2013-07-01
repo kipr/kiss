@@ -21,37 +21,23 @@
 #ifndef _SOURCE_FILE_HPP_
 #define _SOURCE_FILE_HPP_
 
-#include "editor_settings_dialog.hpp"
 #include "tab.hpp"
 #include "output_helper.hpp"
-#include "source_find_widget.hpp"
 
 #include "ui_SourceFile.h"
 
-#include <QtGlobal>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexer.h>
 #include <Qsci/qsciapis.h>
 #include <QString>
-#include <QFile>
 #include <QFileInfo>
-#include <QVBoxLayout>
-#include <QTabWidget>
 #include <QKeyEvent>
-#include <QObject>
-#include <QMenuBar>
-#include <QToolBar>
 
 namespace Kiss
 {
 	namespace Project
 	{
 		class Project;
-	}
-	
-	namespace Dialog
-	{
-		class FindDialog;
 	}
 	
 	namespace Lexer
@@ -68,7 +54,7 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			SourceFile(MainWindow* parent = 0);
+			SourceFile(MainWindow *parent = 0);
 			~SourceFile();
 
 			void activate();
@@ -76,24 +62,24 @@ namespace Kiss
 			bool beginSetup();
 			void completeSetup();
 
-			bool fileSaveAs(const QString& filePath);
-			bool fileOpen(const QString& filePath);
-			bool memoryOpen(const QByteArray& ba, const QString& assocPath);
-			bool openProjectFile(const Project::ProjectPtr& project);
+			bool fileSaveAs(const QString &filePath);
+			bool fileOpen(const QString &filePath);
+			bool memoryOpen(const QByteArray &ba, const QString &assocPath);
+			bool openProjectFile(const Project::ProjectPtr &project);
 
 			bool close();
 
 			//! \return Current zoom level
 			int getZoom();
 
-			void moveTo(const int& line, const int& pos);
+			void moveTo(const int &line, const int &pos);
 
 			QsciScintilla *editor();
 
 			int currentLine() const;
 			bool breakpointOnLine(int line) const;
 
-			static SourceFile *newProjectFile(MainWindow* mainWindow, const Project::ProjectPtr& project);
+			static SourceFile *newProjectFile(MainWindow *mainWindow, const Project::ProjectPtr &project);
 
 		public slots:
 			bool saveAs();
@@ -111,7 +97,7 @@ namespace Kiss
 			void screenGrab();
 			void requestFile();
 
-			void toggleBreakpoint(const bool& checked);
+			void toggleBreakpoint(const bool &checked);
 			void clearBreakpoints();
 
 			void indentAll();
@@ -141,8 +127,8 @@ namespace Kiss
 			
 		protected:
 			void keyPressEvent(QKeyEvent *event);
-			virtual void fileChanged(const QFileInfo& file);
-			virtual void projectChanged(const Project::ProjectPtr& project);
+			virtual void fileChanged(const QFileInfo &file);
+			virtual void projectChanged(const Project::ProjectPtr &project);
 
 		private slots:
 			void on_ui_editor_cursorPositionChanged(int line, int index);
@@ -176,8 +162,8 @@ namespace Kiss
 			QWidget *m_runTab;
 
 			void clearProblems();
-			void markProblems(const Lines& lines);
-			void updateErrors(const Compiler::OutputList& compileResult);
+			void markProblems(const Lines &lines);
+			void updateErrors(const Compiler::OutputList &compileResult);
 			
 			void updateTitle();
 			void updateLexer();

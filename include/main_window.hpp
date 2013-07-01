@@ -29,11 +29,9 @@
 #include "menu_manager.hpp"
 #include "project_manager.hpp"
 #include "project_model.hpp"
-#include "output_widget.hpp"
 #include "main_window_menu.hpp"
 #include "target.hpp"
 
-#include <Qsci/qscilexercpp.h>
 #include <pcompiler/output.hpp>
 #include <QEvent>
 #include <QListWidget>
@@ -79,35 +77,35 @@ namespace Kiss
 			 * Opens a file with SourceFile tab
 			 * \param filePath Path to file
 			 */
-			bool openFile(const QString& filePath, const Project::ProjectPtr& project = Project::ProjectPtr());
-			bool memoryOpen(const QByteArray& ba, const QString& assocPath);
-			Project::ProjectPtr openProject(const QString& projectFilePath);
-			Project::ProjectPtr newProject(const QString& projectPath);
+			bool openFile(const QString &filePath, const Project::ProjectPtr &project = Project::ProjectPtr());
+			bool memoryOpen(const QByteArray &ba, const QString &assocPath);
+			Project::ProjectPtr openProject(const QString &projectFilePath);
+			Project::ProjectPtr newProject(const QString &projectPath);
 
 			void initMenus();
 
 			/*! Sets Window Title
 			 * \param title Title to append to primary window name
 			 */
-			void setTitle(const QString& title);
+			void setTitle(const QString &title);
 
 			/*! Sets Tab title
 			 * \param widget Tab to set
 			 * \param string String to set tab's text to.
 			 */
-			void setTabName(QWidget *widget, const QString& string);
+			void setTabName(QWidget *widget, const QString &string);
 
 			/*! Sets Tab icon
 			 * \param widget Tab to set
 			 * \param icon icon to set
 			 */
-			void setTabIcon(QWidget *widget, const QIcon& icon);
+			void setTabIcon(QWidget *widget, const QIcon &icon);
 
 			/*! Sets Window's status message
 			 * \param message Message to display
 			 * \param time Time to display in milliseconds
 			 */
-			void setStatusMessage(const QString& message, int time = 0);
+			void setStatusMessage(const QString &message, int time = 0);
 		
 			void setOutputList(const Compiler::OutputList &output);
 			
@@ -127,7 +125,7 @@ namespace Kiss
 
 			void moveToTab(Tab *tab);
 
-			QTabWidget* tabWidget();
+			QTabWidget *tabWidget();
 
 			QList<Tab *> tabs();
 
@@ -135,7 +133,7 @@ namespace Kiss
 			QList<T *> tabs() {
 				QList<T *> ret;
 				QList<Tab *> all = tabs();
-				foreach(Tab* tab, all) {
+				foreach(Tab *tab, all) {
 					T *t = dynamic_cast<T*>(tab);
 					if(t) ret.append(t);
 				}
@@ -153,14 +151,14 @@ namespace Kiss
 
 			bool eventFilter(QObject *target, QEvent *event);
 
-			void projectOpenSettings(const Kiss::Project::ProjectPtr& project);
+			void projectOpenSettings(const Kiss::Project::ProjectPtr &project);
 
 			Menu::Manager *menuManager();
-			Menu::Menuable *menuable(const QString& name);
-			QList<Menu::Menuable *> menuablesExcept(const QStringList& names);
-			void deactivateMenuablesExcept(const QStringList& names);
+			Menu::Menuable *menuable(const QString &name);
+			QList<Menu::Menuable *> menuablesExcept(const QStringList &names);
+			void deactivateMenuablesExcept(const QStringList &names);
 			QList<Menu::Menuable *> menuables();
-			void activateMenuable(const QString& name, QObject *on);
+			void activateMenuable(const QString &name, QObject *on);
 			QStringList standardMenus() const;
 			
 			Template::Manager *templateManager() const;
@@ -186,20 +184,11 @@ namespace Kiss
 			void previous();
 			void closeTab(int index, bool force = false);
 			void closeCurrentTab(bool force = false);
-			void closeProjectTabs(const Kiss::Project::ProjectPtr& project);
-			bool closeFile(const QString& file);
+			void closeProjectTabs(const Kiss::Project::ProjectPtr &project);
+			bool closeFile(const QString &file);
 			void about();
 			void settings();
 			void theme();
-			
-			void showCompilerOutput(const Compiler::OutputList& results);
-
-			void showProjectDock(bool show = true);
-			void hideProjectDock();
-			
-			void toggleCommunicationWidget();
-
-			void projectContextMenu(const QPoint& pos);
 
 			const bool download();
 			const bool compile();
@@ -208,7 +197,16 @@ namespace Kiss
 			const bool changeTarget();
 			const bool changeTarget(Kiss::Project::ProjectPtr project);
 
-			QList<QObject *> tabs(const QString& type);
+			void showCompilerOutput(const Compiler::OutputList &results);
+
+			void showProjectDock(bool show = true);
+			void hideProjectDock();
+			
+			void toggleCommunicationWidget();
+
+			void projectContextMenu(const QPoint &pos);
+
+			QList<QObject *> tabs(const QString &type);
 
 		signals:
 			void settingsUpdated();
@@ -230,11 +228,11 @@ namespace Kiss
 
 			void showContextMenuForError(const QPoint &pos);
 
-			void projectClicked(const QModelIndex& index);
-			void projectDoubleClicked(const QModelIndex& index);
+			void projectClicked(const QModelIndex &index);
+			void projectDoubleClicked(const QModelIndex &index);
 
-			void projectOpened(const Kiss::Project::ProjectPtr& project);
-			void projectClosed(const Kiss::Project::ProjectPtr& project);
+			void projectOpened(const Kiss::Project::ProjectPtr &project);
+			void projectClosed(const Kiss::Project::ProjectPtr &project);
 			
 			// FIXME: This will cause issues if we ever support
 			// more than one main window
@@ -263,8 +261,8 @@ namespace Kiss
 			Target::Responder *m_mainResponder;
 
 			void addLookup(Tab *tab);
-			void removeLookup(QWidget* widget);
-			Tab *lookup(QWidget* widget) const;
+			void removeLookup(QWidget *widget);
+			Tab *lookup(QWidget *widget) const;
 
 			void showErrorMessages(bool verbose = false);
 

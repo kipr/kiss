@@ -22,7 +22,7 @@
 #include "kiss.hpp"
 #include "source_file.hpp"
 #include "message_dialog.hpp"
- #include "target_dialog.hpp"
+#include "target_dialog.hpp"
 #include "menus.hpp"
 #include "project.hpp"
 #include "project_settings.hpp"
@@ -38,7 +38,7 @@
 #include "communication_manager.hpp"
 #include "file_utils.hpp"
 #include "password_dialog.hpp"
- #include "add_to_project_dialog.hpp"
+#include "add_to_project_dialog.hpp"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -168,7 +168,7 @@ Project::ProjectPtr MainWindow::newProject()
 	Wizard::NewProject wizard(this);
 	if(wizard.exec() == QDialog::Rejected) return Project::ProjectPtr();
 
-	const QString& saveLocation = wizard.saveLocation();
+	const QString &saveLocation = wizard.saveLocation();
 	if(QDir(saveLocation).exists()) {
 		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
 			tr("Overwrite %1?").arg(saveLocation),
@@ -184,14 +184,14 @@ void MainWindow::newFile()
 	addTab(new SourceFile(this));
 }
 
-bool MainWindow::openFile(const QString& file, const Project::ProjectPtr& project)
+bool MainWindow::openFile(const QString &file, const Project::ProjectPtr &project)
 {
 	QFileInfo fileInfo(file);
 
 	if(!fileInfo.isFile() || !fileInfo.isReadable()) return false;
 
 	for(int i = 0; i < ui_tabWidget->count(); ++i) {
-		SourceFile* sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
+		SourceFile *sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
 		if(sourceFile && sourceFile->file() == file) {
 			ui_tabWidget->setCurrentIndex(i);
 			on_ui_tabWidget_currentChanged(i);
@@ -223,14 +223,14 @@ bool MainWindow::openFile(const QString& file, const Project::ProjectPtr& projec
 	return true;
 }
 
-bool MainWindow::memoryOpen(const QByteArray& ba, const QString& assocPath)
+bool MainWindow::memoryOpen(const QByteArray &ba, const QString &assocPath)
 {
 	QFileInfo fileInfo(assocPath);
 
 	if(!fileInfo.isFile() || !fileInfo.isReadable()) return false;
 
 	for(int i = 0; i < ui_tabWidget->count(); ++i) {
-		SourceFile* sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
+		SourceFile *sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
 		if(sourceFile && sourceFile->file() == assocPath) {
 			ui_tabWidget->setCurrentIndex(i);
 			on_ui_tabWidget_currentChanged(i);
@@ -255,7 +255,7 @@ bool MainWindow::memoryOpen(const QByteArray& ba, const QString& assocPath)
 	return true;
 }
 
-Project::ProjectPtr MainWindow::openProject(const QString& projectPath)
+Project::ProjectPtr MainWindow::openProject(const QString &projectPath)
 {
 	Project::ProjectPtr project = Project::Project::load(projectPath);
 	Log::ref().info(QString("Opening project at %1").arg(projectPath));
@@ -266,7 +266,7 @@ Project::ProjectPtr MainWindow::openProject(const QString& projectPath)
 	return project;
 }
 
-Project::ProjectPtr MainWindow::newProject(const QString& projectPath)
+Project::ProjectPtr MainWindow::newProject(const QString &projectPath)
 {
 	if(!FileUtils::remove(projectPath)) return Project::ProjectPtr();
 	if(!QDir().mkpath(projectPath)) return Project::ProjectPtr();
@@ -280,39 +280,39 @@ void MainWindow::initMenus()
 	
 	menuBar()->clear();
 	
-	FileOperationsMenu* fileOpMenu = new FileOperationsMenu();
+	FileOperationsMenu *fileOpMenu = new FileOperationsMenu();
 	m_menuManager.registerMenus(fileOpMenu);
 	fileOpMenu->setActive(this);
 	m_menuManager.addActivation(fileOpMenu);
 	m_menuables.append(fileOpMenu);
 	
-	SourceFileMenu* sourceFileMenu = new SourceFileMenu(this);
+	SourceFileMenu *sourceFileMenu = new SourceFileMenu(this);
 	m_menuManager.registerMenus(sourceFileMenu);
 	m_menuables.append(sourceFileMenu);
 	
-	TemplatePackMenu* templatePackMenu = new TemplatePackMenu(this);
+	TemplatePackMenu *templatePackMenu = new TemplatePackMenu(this);
 	m_menuManager.registerMenus(templatePackMenu);
 	m_menuables.append(templatePackMenu);
 	
-	MainWindowMenu* mainWindowMenu = new MainWindowMenu(this);
+	MainWindowMenu *mainWindowMenu = new MainWindowMenu(this);
 	m_menuManager.registerMenus(mainWindowMenu);
 	mainWindowMenu->setActive(this);
 	m_menuManager.addActivation(mainWindowMenu);
 	m_menuables.append(mainWindowMenu);
 	
-	TargetMenu* targetMenu = new TargetMenu;
+	TargetMenu *targetMenu = new TargetMenu;
 	m_menuManager.registerMenus(targetMenu);
 	m_menuables.append(targetMenu);
 
 #ifdef BUILD_DEVELOPER_TOOLS
-	DeveloperMenu* developerMenu = new DeveloperMenu(this);
+	DeveloperMenu *developerMenu = new DeveloperMenu(this);
 	m_menuManager.registerMenus(developerMenu);
 	m_menuManager.addActivation(developerMenu);
 	m_menuables.append(developerMenu);
 #endif
 
 #ifdef BUILD_DOCUMENTATION_TAB
-	DocumentationMenu* documentationMenu = new DocumentationMenu(this);
+	DocumentationMenu *documentationMenu = new DocumentationMenu(this);
 	m_menuManager.registerMenus(documentationMenu);
 	m_menuManager.addActivation(documentationMenu);
 	m_menuables.append(documentationMenu);
@@ -335,22 +335,22 @@ void MainWindow::initMenus()
 	m_fileContextMenu->addAction(tr("Remove"), this, SLOT(projectRemoveFile()));
 }
 
-void MainWindow::setTitle(const QString& title)
+void MainWindow::setTitle(const QString &title)
 {
 	setWindowTitle(tr(TITLE) + (title.isEmpty() ? "" : (" - " + title)));
 }
 
-void MainWindow::setTabName(QWidget *widget, const QString& string)
+void MainWindow::setTabName(QWidget *widget, const QString &string)
 {
 	ui_tabWidget->setTabText(ui_tabWidget->indexOf(widget), string);
 }
 
-void MainWindow::setTabIcon(QWidget *widget, const QIcon& icon)
+void MainWindow::setTabIcon(QWidget *widget, const QIcon &icon)
 {
 	ui_tabWidget->setTabIcon(ui_tabWidget->indexOf(widget), icon);
 }
 
-void MainWindow::setStatusMessage(const QString& message, int time)
+void MainWindow::setStatusMessage(const QString &message, int time)
 {
 	ui_statusbar->showMessage(message, time);
 }
@@ -392,7 +392,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 
 void MainWindow::deleteTab(int index)
 {
-	QWidget* w = ui_tabWidget->widget(index);
+	QWidget *w = ui_tabWidget->widget(index);
 	// Tab *tab = lookup(w);
 	ui_tabWidget->removeTab(index);
 	removeLookup(w);
@@ -515,7 +515,7 @@ void MainWindow::closeCurrentTab(bool force)
 	closeTab(ui_tabWidget->currentIndex(), force);
 }
 
-void MainWindow::closeProjectTabs(const Project::ProjectPtr& project)
+void MainWindow::closeProjectTabs(const Project::ProjectPtr &project)
 {
 	QList<Tab *> all = tabs();
 	int i = 0;
@@ -527,7 +527,7 @@ void MainWindow::closeProjectTabs(const Project::ProjectPtr& project)
 	ui_errors->hide();
 }
 
-bool MainWindow::closeFile(const QString& file)
+bool MainWindow::closeFile(const QString &file)
 {
 	if(file.isEmpty()) return false;
 	
@@ -566,7 +566,71 @@ void MainWindow::theme()
 	emit settingsUpdated();
 }
 
-void MainWindow::showCompilerOutput(const Compiler::OutputList& results)
+bool MainWindow::commPreconditions(const Kiss::Project::ProjectPtr &project)
+{
+	if(project->target() && project->target()->available()) return true;
+	
+	if(!changeTarget(project)) return false;
+	if(!project->target()->available()) {
+		setStatusMessage(tr("Target \"%1\" is not available for communication.").arg(project->target()->displayName()));
+		return false;
+	}
+
+	return true;
+}
+
+const bool MainWindow::download()
+{
+	const Project::ProjectPtr &project = activeProject();
+	if(!commPreconditions(project)) return false;
+
+	return project->download();
+}
+
+const bool MainWindow::compile()
+{
+	const Project::ProjectPtr &project = activeProject();
+	if(!commPreconditions(project)) return false;
+
+	bool success = true;
+	success &= project->download();
+	success &= project->compile();
+
+	return success;
+}
+
+const bool MainWindow::run()
+{
+	const Project::ProjectPtr &project = activeProject();
+	if(!commPreconditions(project)) return false;
+
+	bool success = true;
+	success &= project->download();
+	success &= project->compile();
+	success &= project->run();
+
+	return success;
+}
+
+const bool MainWindow::changeTarget()
+{
+	return changeTarget(activeProject());
+}
+
+const bool MainWindow::changeTarget(Kiss::Project::ProjectPtr project)
+{
+	Dialog::Target targetDialog(&Target::InterfaceManager::ref(), this);
+	if(targetDialog.exec() == QDialog::Rejected) return false;
+	if(targetDialog.target().isNull()) return false;
+	project->setTarget(targetDialog.target());
+	
+	// This hooks up all important callbacks
+	project->target()->setResponder(m_mainResponder);
+		
+	return true;
+}
+
+void MainWindow::showCompilerOutput(const Compiler::OutputList &results)
 {
 	ui_errors->setOutputList(results);
 }
@@ -657,8 +721,8 @@ void MainWindow::projectRenameFile()
 
 void MainWindow::projectRemoveFile()
 {
-	const QModelIndex& index = ui_projects->currentIndex();
-	const QString& path = m_projectsModel.filePath(index);
+	const QModelIndex &index = ui_projects->currentIndex();
+	const QString &path = m_projectsModel.filePath(index);
 	Project::ProjectPtr project = m_projectsModel.project(index);
 
 	if(m_projectsModel.isLink(index)) {
@@ -706,7 +770,7 @@ void MainWindow::projectOpenSettings()
 void MainWindow::projectOpenSettings(const Project::ProjectPtr &project)
 {
 	for(int i = 0; i < ui_tabWidget->count(); ++i) {
-		ProjectSettings* tab = dynamic_cast<ProjectSettings*>(ui_tabWidget->widget(i));
+		ProjectSettings *tab = dynamic_cast<ProjectSettings*>(ui_tabWidget->widget(i));
 		if(tab && tab->project() == project) {
 			ui_tabWidget->setCurrentIndex(i);
 			on_ui_tabWidget_currentChanged(i);
@@ -732,9 +796,9 @@ void MainWindow::toggleCommunicationWidget()
 	ui_comm->setVisible(!ui_comm->isVisible());
 }
 
-void MainWindow::projectContextMenu(const QPoint& pos)
+void MainWindow::projectContextMenu(const QPoint &pos)
 {
-	const QModelIndex& index = ui_projects->indexAt(pos);
+	const QModelIndex &index = ui_projects->indexAt(pos);
 	if(!index.isValid()) return;
 
 	if(m_projectsModel.isProjectRoot(index))
@@ -756,7 +820,7 @@ void MainWindow::openRecent()
 	openFile(file);
 }
 
-void MainWindow::errorClicked(QListWidgetItem* item)
+void MainWindow::errorClicked(QListWidgetItem *item)
 {
 }
 
@@ -766,12 +830,12 @@ void MainWindow::addLookup(Tab *tab)
 	m_lookup.insert(tab->widget(), tab);
 }
 
-void MainWindow::removeLookup(QWidget* widget)
+void MainWindow::removeLookup(QWidget *widget)
 {
 	m_lookup.remove(widget);
 }
 
-Tab *MainWindow::lookup(QWidget* widget) const
+Tab *MainWindow::lookup(QWidget *widget) const
 {
 	QMap<QWidget*, Tab *>::const_iterator it = m_lookup.find(widget);
 	return it == m_lookup.end() ? 0 : *it;
@@ -782,18 +846,18 @@ void MainWindow::showContextMenuForError(const QPoint&)
 {	
 }
 
-void MainWindow::projectClicked(const QModelIndex& index)
+void MainWindow::projectClicked(const QModelIndex &index)
 {
 }
 
-void MainWindow::projectDoubleClicked(const QModelIndex& index)
+void MainWindow::projectDoubleClicked(const QModelIndex &index)
 {
 	Project::ProjectPtr project = m_projectsModel.project(index);
 	if(m_projectsModel.isFile(index))
 		openFile(m_projectsModel.filePath(index), project);
 }
 
-void MainWindow::projectOpened(const Project::ProjectPtr& project)
+void MainWindow::projectOpened(const Project::ProjectPtr &project)
 {
 	m_projectsModel.addProject(project);
 	Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
@@ -804,7 +868,7 @@ void MainWindow::projectOpened(const Project::ProjectPtr& project)
 	}
 }
 
-void MainWindow::projectClosed(const Project::ProjectPtr& project)
+void MainWindow::projectClosed(const Project::ProjectPtr &project)
 {
 	closeProjectTabs(project);
 	m_projectsModel.removeProject(project);
@@ -862,12 +926,12 @@ Target::Responder *MainWindow::mainResponder() const
 	return m_mainResponder;
 }
 
-Menu::Manager* MainWindow::menuManager()
+Menu::Manager *MainWindow::menuManager()
 {
 	return &m_menuManager;
 }
 
-Menu::Menuable* MainWindow::menuable(const QString& name)
+Menu::Menuable *MainWindow::menuable(const QString &name)
 {
 	foreach(Menu::Menuable *menuable, m_menuables) {
 		if(menuable->name() == name) return menuable;
@@ -875,7 +939,7 @@ Menu::Menuable* MainWindow::menuable(const QString& name)
 	return 0;
 }
 
-QList<Menu::Menuable *> MainWindow::menuablesExcept(const QStringList& names)
+QList<Menu::Menuable *> MainWindow::menuablesExcept(const QStringList &names)
 {
 	QList<Menu::Menuable *> ret;
 	foreach(Menu::Menuable *menuable, m_menuables) {
@@ -884,7 +948,7 @@ QList<Menu::Menuable *> MainWindow::menuablesExcept(const QStringList& names)
 	return ret;
 }
 
-void MainWindow::deactivateMenuablesExcept(const QStringList& names)
+void MainWindow::deactivateMenuablesExcept(const QStringList &names)
 {
 	foreach(Menu::Menuable *menu, menuablesExcept(names)) {
 		ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menu);
@@ -897,7 +961,7 @@ QList<Menu::Menuable *> MainWindow::menuables()
 	return m_menuables;
 }
 
-void MainWindow::activateMenuable(const QString& name, QObject *on)
+void MainWindow::activateMenuable(const QString &name, QObject *on)
 {
 	ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menuable(name));
 	activatable->setActive(on);
@@ -920,7 +984,7 @@ Template::Manager *MainWindow::templateManager() const
 	return m_templateManager;
 }
 
-QList<QObject*> MainWindow::tabs(const QString& name)
+QList<QObject*> MainWindow::tabs(const QString &name)
 {
 	QList<QObject *> ret;
 	QList<Tab *> all = tabs();
@@ -957,78 +1021,12 @@ bool MainWindow::canGoNext()
 Project::ProjectPtr MainWindow::activeProject() const
 {
 	// Precedence is like so: Project Manager, Tab, Project Tree
-	const Project::ProjectPtrList& loadedProjects = m_projectManager.projects();
+	const Project::ProjectPtrList &loadedProjects = m_projectManager.projects();
 	if(loadedProjects.size() == 0) return Project::ProjectPtr();
 	if(loadedProjects.size() == 1) return loadedProjects[0];
 	
 	if(m_currentTab && m_currentTab->hasProject()) return m_currentTab->project();
-	//const QModelIndexList& list = ui_projects->selectionModel()->selectedRows();
+	//const QModelIndexList &list = ui_projects->selectionModel()->selectedRows();
 	//return list.size() > 0 ? m_projectsModel.indexToProject(list[0]) : Project::ProjectPtr();
 	return Project::ProjectPtr();
-}
-
-bool MainWindow::commPreconditions(const Kiss::Project::ProjectPtr &project)
-{
-	if(project->target() && project->target()->available()) return true;
-	
-	if(!changeTarget(project)) return false;
-	if(!project->target()->available()) {
-		setStatusMessage(tr("Target \"%1\" is not available for communication.").arg(project->target()->displayName()));
-		return false;
-	}
-
-	return true;
-}
-
-const bool MainWindow::download()
-{
-	const Project::ProjectPtr &project = activeProject();
-	if(!commPreconditions(project)) return false;
-
-	return project->download();
-}
-
-const bool MainWindow::compile()
-{
-	const Project::ProjectPtr &project = activeProject();
-	if(!commPreconditions(project)) return false;
-
-	bool success = true;
-	success &= project->download();
-	success &= project->compile();
-
-	return success;
-}
-
-const bool MainWindow::run()
-{
-	const Project::ProjectPtr &project = activeProject();
-	if(!commPreconditions(project)) return false;
-
-	bool success = true;
-	success &= project->download();
-	success &= project->compile();
-	success &= project->run();
-
-	return success;
-}
-
-const bool MainWindow::changeTarget()
-{
-	return changeTarget(activeProject());
-}
-
-const bool MainWindow::changeTarget(Kiss::Project::ProjectPtr project)
-{
-	Dialog::Target targetDialog(&Target::InterfaceManager::ref(), this);
-	if(targetDialog.exec() == QDialog::Rejected) return false;
-	if(targetDialog.target().isNull()) return false;
-	project->setTarget(targetDialog.target());
-	
-	// This hooks up all important callbacks
-	project->target()->setResponder(m_mainResponder);
-	
-	//updateTitle();
-	
-	return true;
 }

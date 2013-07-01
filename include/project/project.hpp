@@ -24,6 +24,10 @@ namespace Kiss
 			static ProjectPtr load(const QString &location);
 			bool save();
 
+			const bool download() const;
+			const bool compile() const;
+			const bool run() const;
+
 			bool addAsCopy(const QString &path);
 			bool addAsMovedCopy(const QString &path);
 			bool removeFile(const QString &path);
@@ -39,19 +43,15 @@ namespace Kiss
 			void setSettings(const Compiler::Options &settings);
 			void removeSetting(const QString &key);
 			const Compiler::Options &settings() const;
-	
-			const QString &location() const;			
-			virtual KarPtr archive() const;
 
-			void setName(const QString &name);
-			const QString &name() const;
-			
 			void setTarget(const Target::TargetPtr &target);
 			Target::TargetPtr target() const;
 
-			const bool download() const;
-			const bool compile() const;
-			const bool run() const;
+			void setName(const QString &name);
+			const QString &name() const;
+	
+			const QString &location() const;			
+			virtual KarPtr archive() const;
 			
 		private:
 			Project(const QString &location);

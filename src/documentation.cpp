@@ -21,7 +21,7 @@ using namespace Kiss::Widget;
 Documentation::Documentation(MainWindow *parent)
 	: Tab(new QListWidget(parent), parent)
 {
-	QListWidget *list = qobject_cast<QListWidget *>(widget());
+	//QListWidget *list = qobject_cast<QListWidget *>(widget());
 	//list->setAlternatingRowColors(true);
 }
 
