@@ -201,6 +201,13 @@ namespace Kiss
 
 			void projectContextMenu(const QPoint& pos);
 
+			const bool download();
+			const bool compile();
+			const bool run();
+
+			const bool changeTarget();
+			const bool changeTarget(Kiss::Project::ProjectPtr project);
+
 			QList<QObject *> tabs(const QString& type);
 
 		signals:
@@ -260,6 +267,8 @@ namespace Kiss
 			Tab *lookup(QWidget* widget) const;
 
 			void showErrorMessages(bool verbose = false);
+
+			bool commPreconditions(const Kiss::Project::ProjectPtr &project);
 		};
 	}
 }

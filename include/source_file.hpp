@@ -23,7 +23,6 @@
 
 #include "editor_settings_dialog.hpp"
 #include "tab.hpp"
-#include "unit.hpp"
 #include "output_helper.hpp"
 #include "source_find_widget.hpp"
 
@@ -65,7 +64,7 @@ namespace Kiss
 	{
 		class MainWindow;
 
-		class SourceFile : public QWidget, public Tab, public Unit, private Ui::SourceFile
+		class SourceFile : public QWidget, public Tab, private Ui::SourceFile
 		{
 		Q_OBJECT
 		public:
@@ -109,13 +108,6 @@ namespace Kiss
 
 			void convertToProject();
 
-			const bool changeTarget();
-
-			const bool download();
-			const bool compile();
-			const bool run();
-			void stop();
-			void debug();
 			void screenGrab();
 			void requestFile();
 
@@ -137,6 +129,10 @@ namespace Kiss
 			bool save();
 
 			void sourceModified(bool m);
+
+			void setName(const QString &name);
+			const QString &name() const;
+			QString fullName() const;
 
 			virtual Kiss::KarPtr archive() const;
 
@@ -165,7 +161,6 @@ namespace Kiss
 		        void dropEvent(QDropEvent *event);
 
 			QString m_lexAPI;
-			QString m_targetName;
 			QString m_templateExt;
 
 			bool m_debuggerEnabled;
@@ -187,9 +182,9 @@ namespace Kiss
 			void updateTitle();
 			void updateLexer();
 			
-			bool actionPreconditions();
-
 			Kiss::Lexer::Base *m_currentLexer;
+
+			QString m_name;
 		};
 	}
 }

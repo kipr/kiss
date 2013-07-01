@@ -1,7 +1,7 @@
 #ifndef _PROJECT_HPP_
 #define _PROJECT_HPP_
 
-#include "unit.hpp"
+#include "target.hpp"
 #include <kar.hpp>
 #include <pcompiler/options.hpp>
 
@@ -18,7 +18,7 @@ namespace Kiss
 		
 		typedef QSharedPointer<Project> ProjectPtr;
 		
-		class Project : public Unit
+		class Project
 		{
 		public:
 			static ProjectPtr load(const QString &location);
@@ -42,11 +42,23 @@ namespace Kiss
 	
 			const QString &location() const;			
 			virtual KarPtr archive() const;
+
+			void setName(const QString &name);
+			const QString &name() const;
+			
+			void setTarget(const Target::TargetPtr &target);
+			Target::TargetPtr target() const;
+
+			const bool download() const;
+			const bool compile() const;
+			const bool run() const;
 			
 		private:
 			Project(const QString &location);
 	
+			QString m_name;
 			QString m_location;
+			Target::TargetPtr m_target;
 			Compiler::Options m_settings;
 		};
 	}

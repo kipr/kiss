@@ -22,6 +22,7 @@
 #include "kiss.hpp"
 #include "source_file.hpp"
 #include "message_dialog.hpp"
+ #include "target_dialog.hpp"
 #include "menus.hpp"
 #include "project.hpp"
 #include "project_settings.hpp"
@@ -796,7 +797,11 @@ void MainWindow::projectOpened(const Project::ProjectPtr& project)
 {
 	m_projectsModel.addProject(project);
 	Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
-	if(manager) ui_projectFrame->setVisible(manager->projects().size());
+	if(!manager) return;
+	if(!manager->projects().isEmpty()) {
+		ui_projectFrame->setVisible(true);
+		activateMenuable(Menu::TargetMenu::menuName(), this);
+	}
 }
 
 void MainWindow::projectClosed(const Project::ProjectPtr& project)
@@ -804,7 +809,10 @@ void MainWindow::projectClosed(const Project::ProjectPtr& project)
 	closeProjectTabs(project);
 	m_projectsModel.removeProject(project);
 	Project::Manager *manager = qobject_cast<Project::Manager *>(sender());
-	if(manager) ui_projectFrame->setVisible(manager->projects().size());
+	if(manager->projects().isEmpty()) {
+		ui_projectFrame->setVisible(false);
+		activateMenuable(Menu::TargetMenu::menuName(), 0);
+	}
 }
 
 void MainWindow::authenticateTarget(const Kiss::Target::TargetPtr &target,
@@ -897,7 +905,7 @@ void MainWindow::activateMenuable(const QString& name, QObject *on)
 
 QStringList MainWindow::standardMenus() const
 {
-	return QStringList() << Menu::FileOperationsMenu::menuName() << Menu::MainWindowMenu::menuName()
+	return QStringList() << Menu::FileOperationsMenu::menuName() << Menu::MainWindowMenu::menuName() << Menu::TargetMenu::menuName()
 #ifdef BUILD_DOCUMENTATION_TAB
 	<< Menu::DocumentationMenu::menuName()
 #endif
@@ -957,4 +965,70 @@ Project::ProjectPtr MainWindow::activeProject() const
 	//const QModelIndexList& list = ui_projects->selectionModel()->selectedRows();
 	//return list.size() > 0 ? m_projectsModel.indexToProject(list[0]) : Project::ProjectPtr();
 	return Project::ProjectPtr();
+}
+
+bool MainWindow::commPreconditions(const Kiss::Project::ProjectPtr &project)
+{
+	if(project->target() && project->target()->available()) return true;
+	
+	if(!changeTarget(project)) return false;
+	if(!project->target()->available()) {
+		setStatusMessage(tr("Target \"%1\" is not available for communication.").arg(project->target()->displayName()));
+		return false;
+	}
+
+	return true;
+}
+
+const bool MainWindow::download()
+{
+	const Project::ProjectPtr &project = activeProject();
+	if(!commPreconditions(project)) return false;
+
+	return project->download();
+}
+
+const bool MainWindow::compile()
+{
+	const Project::ProjectPtr &project = activeProject();
+	if(!commPreconditions(project)) return false;
+
+	bool success = true;
+	success &= project->download();
+	success &= project->compile();
+
+	return success;
+}
+
+const bool MainWindow::run()
+{
+	const Project::ProjectPtr &project = activeProject();
+	if(!commPreconditions(project)) return false;
+
+	bool success = true;
+	success &= project->download();
+	success &= project->compile();
+	success &= project->run();
+
+	return success;
+}
+
+const bool MainWindow::changeTarget()
+{
+	return changeTarget(activeProject());
+}
+
+const bool MainWindow::changeTarget(Kiss::Project::ProjectPtr project)
+{
+	Dialog::Target targetDialog(&Target::InterfaceManager::ref(), this);
+	if(targetDialog.exec() == QDialog::Rejected) return false;
+	if(targetDialog.target().isNull()) return false;
+	project->setTarget(targetDialog.target());
+	
+	// This hooks up all important callbacks
+	project->target()->setResponder(m_mainResponder);
+	
+	//updateTitle();
+	
+	return true;
 }

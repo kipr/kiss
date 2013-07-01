@@ -5,6 +5,7 @@
 #include <QDebug>
 
 #include "file_utils.hpp"
+#include "communication_manager.hpp"
 
 using namespace Kiss;
 using namespace Kiss::Project;
@@ -169,10 +170,62 @@ Kiss::KarPtr Kiss::Project::Project::archive() const
 	return archive;
 }
 
+void Kiss::Project::Project::setName(const QString &name)
+{
+	m_name = name;
+}
+
+const QString &Kiss::Project::Project::name() const
+{
+	return m_name;
+}
+
+void Kiss::Project::Project::setTarget(const Target::TargetPtr &target)
+{
+	m_target = target;
+}
+
+Target::TargetPtr Kiss::Project::Project::target() const
+{
+	return m_target;
+}
+
+const bool Kiss::Project::Project::download() const
+{
+	using namespace Kiss::Target;
+
+	Kiss::KarPtr package = archive();
+	if(package.isNull()) return false;
+
+	CommunicationManager::ref().admit(CommunicationEntryPtr(
+		new CommunicationEntry(m_target, CommunicationEntry::Download,
+		m_name, package)));
+
+	return true;
+}
+
+const bool Kiss::Project::Project::compile() const
+{
+	using namespace Kiss::Target;
+
+	CommunicationManager::ref().admit(CommunicationEntryPtr(
+			new CommunicationEntry(m_target, CommunicationEntry::Compile, m_name)));
+		return true;
+}
+
+const bool Kiss::Project::Project::run() const
+{
+	using namespace Kiss::Target;
+	
+	CommunicationManager::ref().admit(CommunicationEntryPtr(
+			new CommunicationEntry(m_target, CommunicationEntry::Run, m_name)));
+		return true;
+}
+
 Kiss::Project::Project::Project(const QString &location)
 	: m_location(location)
 {
-	setName(QFileInfo(m_location).fileName());
+	m_name = QFileInfo(m_location).fileName();
 	QDir dir(m_location);
 	m_settings = Compiler::Options::load(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
 	m_settings.insert("", "");

@@ -30,12 +30,10 @@
 #include "password_dialog.hpp"
 #include "save_as_dialog.hpp"
 #include "source_file_menu.hpp"
-#include "target_menu.hpp"
 #include "main_window_menu.hpp"
 #include "project.hpp"
 #include "project_manager.hpp"
 #include "log.hpp"
-#include "target_dialog.hpp"
 #include "interface_manager.hpp"
 #include "communication_manager.hpp"
 #include "resource_helper.hpp"
@@ -78,7 +76,6 @@ using namespace Kiss::Widget;
 SourceFile::SourceFile(MainWindow *parent)
 	: QWidget(parent),
 	Tab(this, parent),
-	Unit(),
 	m_debuggerEnabled(false),
 	m_runTab(0),
 	m_currentLexer(0)
@@ -117,16 +114,12 @@ SourceFile::~SourceFile()
 
 void SourceFile::activate()
 {
-	mainWindow()->setTitle(target()->displayName().isEmpty()
-		? target()->commPort() : target()->displayName());
-	
 	mainWindow()->setStatusMessage("");
 	
 	mainWindow()->deactivateMenuablesExcept(mainWindow()->standardMenus()
-		<< Menu::SourceFileMenu::menuName() << Menu::TargetMenu::menuName());
+		<< Menu::SourceFileMenu::menuName());
 	
 	mainWindow()->activateMenuable(Menu::SourceFileMenu::menuName(), this);
-	mainWindow()->activateMenuable(Menu::TargetMenu::menuName(), this);
 	
 	emit updateActivatable();
 }
@@ -136,8 +129,8 @@ bool SourceFile::beginSetup()
 	if(!hasFile()) {
 		if(!selectTemplate()) return false;
 	} else updateLexer();
-	if(!target().data()) changeTarget();
-	return target().data();
+
+	return true;
 }
 
 void SourceFile::completeSetup()
@@ -162,7 +155,8 @@ bool SourceFile::close()
 	}
 	
 	mainWindow()->activateMenuable(Menu::SourceFileMenu::menuName(), 0);
-	mainWindow()->activateMenuable(Menu::TargetMenu::menuName(), 0);
+
+	emit updateActivatable();
 	
 	return true;
 }
@@ -415,8 +409,6 @@ void SourceFile::refreshSettings()
 	updateMargins();
 	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
 	ui_editor->setMarginsForegroundColor(QColor(185, 185, 185));
-	
-	Menu::TargetMenu::ref().refresh();
 }
 
 void SourceFile::updateMargins()
@@ -570,39 +562,6 @@ void SourceFile::sourceModified(bool)
 	updateTitle();
 }
 
-const bool SourceFile::download()
-{
-	if(!actionPreconditions()) return false;
-	return execute(Unit::Download);
-}
-
-const bool SourceFile::compile()
-{
-	if(!actionPreconditions()) return false;
-	bool success = true;
-	success &= execute(Unit::Download);
-	success &= execute(Unit::Compile);
-	return success;
-}
-
-const bool SourceFile::run()
-{
-	if(!actionPreconditions()) return false;
-	bool success = true;
-	success &= execute(Unit::Download);
-	success &= execute(Unit::Compile);
-	success &= execute(Unit::Run);
-	return success;
-}
-
-void SourceFile::stop()
-{
-}
-
-void SourceFile::debug()
-{
-}
-
 void SourceFile::copy()
 {
 	ui_editor->copy();
@@ -646,23 +605,8 @@ void SourceFile::convertToProject()
 	if(!save()) return;
 	Project::ProjectPtr project = mainWindow()->newProject();
 	fileSaveAs(project->location() + "/" + file().fileName());
-	project->setTarget(target());
+	//project->setTarget(target());
 	setProject(project);
-}
-
-const bool SourceFile::changeTarget()
-{
-	Dialog::Target targetDialog(&Target::InterfaceManager::ref(), this);
-	if(targetDialog.exec() == QDialog::Rejected) return false;
-	if(targetDialog.target().isNull()) return false;
-	setTarget(targetDialog.target());
-	
-	// This hooks up all important callbacks
-	target()->setResponder(mainWindow()->mainResponder());
-	
-	updateTitle();
-	
-	return true;
 }
 
 void SourceFile::screenGrab()
@@ -781,7 +725,6 @@ void SourceFile::fileChanged(const QFileInfo& file)
 
 void SourceFile::projectChanged(const Project::ProjectPtr& project)
 {
-	Unit::setParent(project.data());
 	updateTitle();
 }
 
@@ -799,17 +742,20 @@ void SourceFile::updateLexer()
 	if(!Lexer::Factory::isLexerFromConstructor(m_currentLexer, constructor)) setLexer(constructor);
 }
 
-bool SourceFile::actionPreconditions()
+void SourceFile::setName(const QString &name)
 {
-	if(!save()) return false;
-	if(!target()->available()) {
-		changeTarget();
-		if(!target()->available()) {
-			mainWindow()->setStatusMessage(tr("Target \"%1\" is not available for communication.").arg(target()->displayName()));
-			return false;
-		}
-	}
-	return true;
+	m_name = name;
+}
+
+const QString &SourceFile::name() const
+{
+	return m_name;
+}
+
+QString SourceFile::fullName() const
+{
+	if(!hasProject()) return m_name;
+	return m_name + " (" + project()->name() + ")";
 }
 
 Kiss::KarPtr SourceFile::archive() const
