@@ -326,12 +326,15 @@ void MainWindow::initMenus()
 	m_projectContextMenu = new QMenu(this);
 	m_projectContextMenu->addAction(tr("Add New File..."), this, SLOT(projectAddNew()));
 	m_projectContextMenu->addAction(tr("Add Existing Files..."), this, SLOT(projectAddExisting()));
+	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(projectOpenSettings()));
+	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(tr("Close Project"), this, SLOT(closeProject()));
 	m_projectContextMenu->addAction(tr("Delete Project"), this, SLOT(deleteProject()));
 
 	m_fileContextMenu = new QMenu(this);
 	m_fileContextMenu->addAction(tr("Rename"), this, SLOT(projectRenameFile()));
+	m_fileContextMenu->addSeparator();
 	m_fileContextMenu->addAction(tr("Remove"), this, SLOT(projectRemoveFile()));
 }
 
