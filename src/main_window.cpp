@@ -584,7 +584,7 @@ bool MainWindow::commPreconditions(const Kiss::Project::ProjectPtr &project)
 
 const bool MainWindow::download()
 {
-	const Project::ProjectPtr &project = activeProject();
+	const Project::ProjectPtr &project = m_projectManager.activeProject();
 	if(!commPreconditions(project)) return false;
 
 	return project->download();
@@ -592,7 +592,7 @@ const bool MainWindow::download()
 
 const bool MainWindow::compile()
 {
-	const Project::ProjectPtr &project = activeProject();
+	const Project::ProjectPtr &project = m_projectManager.activeProject();
 	if(!commPreconditions(project)) return false;
 
 	bool success = true;
@@ -604,7 +604,7 @@ const bool MainWindow::compile()
 
 const bool MainWindow::run()
 {
-	const Project::ProjectPtr &project = activeProject();
+	const Project::ProjectPtr &project = m_projectManager.activeProject();
 	if(!commPreconditions(project)) return false;
 
 	bool success = true;
@@ -617,7 +617,7 @@ const bool MainWindow::run()
 
 const bool MainWindow::changeTarget()
 {
-	return changeTarget(activeProject());
+	return changeTarget(m_projectManager.activeProject());
 }
 
 const bool MainWindow::changeTarget(Kiss::Project::ProjectPtr project)
