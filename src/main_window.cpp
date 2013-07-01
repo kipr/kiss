@@ -749,7 +749,11 @@ void MainWindow::projectRemoveFile()
 
 void MainWindow::closeProject()
 {
-	Project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
+	closeProject(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+void MainWindow::closeProject(const Project::ProjectPtr &project)
+{
 	if(!project || !m_projectManager.closeProject(project)) return;
 
 	closeProjectTabs(project);
@@ -763,14 +767,12 @@ void MainWindow::closeProject()
 
 void MainWindow::deleteProject()
 {
-	Project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
-	if(!project) return;
-
 	if(QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
 			QT_TR_NOOP("Deleting this project will delete all contents of the project folder. Are you sure you want to delete it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
-	m_projectManager.closeProject(project);
+	const Project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
+	closeProject(project);
 	if(!FileUtils::remove(project->location())) qWarning() << "Failed to delete project at " << project->location();
 }
 

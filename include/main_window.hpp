@@ -79,8 +79,9 @@ namespace Kiss
 			 */
 			bool openFile(const QString &filePath, const Project::ProjectPtr &project = Project::ProjectPtr());
 			bool memoryOpen(const QByteArray &ba, const QString &assocPath);
-			Project::ProjectPtr openProject(const QString &projectFilePath);
 			Project::ProjectPtr newProject(const QString &projectPath);
+			Project::ProjectPtr openProject(const QString &projectFilePath);
+			void closeProject(const Project::ProjectPtr &project);
 
 			void initMenus();
 
@@ -180,6 +181,7 @@ namespace Kiss
 			void newFile();
 			void open();
 			void openProject();
+			void closeProject();
 			void next();
 			void previous();
 			void closeTab(int index, bool force = false);
@@ -219,7 +221,6 @@ namespace Kiss
 			void projectAddExisting(QStringList files);
 			void projectRenameFile();
 			void projectRemoveFile();
-			void closeProject();
 			void deleteProject();
 			void projectOpenSettings();
 			void openRecent();
