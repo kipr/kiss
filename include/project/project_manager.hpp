@@ -23,6 +23,9 @@ namespace Kiss
 			
 			void openProject(const ProjectPtr &project);
 			void closeProject(const ProjectPtr &project);
+
+			void setActiveProject(const ProjectPtr &project);
+			const ProjectPtr &activeProject() const;
 			
 			const ProjectPtrList &projects() const;
 
@@ -33,6 +36,7 @@ namespace Kiss
 			
 		private:
 			ProjectPtrList m_projects;
+			ProjectPtr m_activeProject;
 		};
 	}
 }
