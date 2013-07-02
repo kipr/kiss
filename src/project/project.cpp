@@ -26,6 +26,17 @@ const bool Kiss::Project::Project::download() const
 {
 	using namespace Kiss::Target;
 
+	const QStringList &depsList = deps();
+	foreach(const QString &dep, depsList) {
+		const ProjectPtr &depProject = Project::Project::load(dep);
+		if(!depProject) {
+			qDebug() << "ERROR: failed to open dependency" << dep << "for download";
+			return false;
+		}
+		depProject->setTarget(m_target);
+		depProject->download();
+	}
+
 	Kiss::KarPtr package = archive();
 	if(package.isNull()) return false;
 
@@ -39,6 +50,17 @@ const bool Kiss::Project::Project::download() const
 const bool Kiss::Project::Project::compile() const
 {
 	using namespace Kiss::Target;
+
+	const QStringList &depsList = deps();
+	foreach(const QString &dep, depsList) {
+		const ProjectPtr &depProject = Project::Project::load(dep);
+		if(!depProject) {
+			qDebug() << "ERROR: failed to open dependency" << dep << "for compilation";
+			return false;
+		}
+		depProject->setTarget(m_target);
+		depProject->compile();
+	}
 
 	CommunicationManager::ref().admit(CommunicationEntryPtr(
 			new CommunicationEntry(m_target, CommunicationEntry::Compile, m_name)));

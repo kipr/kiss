@@ -588,7 +588,11 @@ bool MainWindow::commPreconditions(const Kiss::Project::ProjectPtr &project)
 
 const bool MainWindow::download()
 {
-	const Project::ProjectPtr &project = m_projectManager.activeProject();
+	return download(m_projectManager.activeProject());
+}
+
+const bool MainWindow::download(const Project::ProjectPtr &project)
+{
 	if(!commPreconditions(project)) return false;
 
 	return project->download();
@@ -596,7 +600,11 @@ const bool MainWindow::download()
 
 const bool MainWindow::compile()
 {
-	const Project::ProjectPtr &project = m_projectManager.activeProject();
+	return compile(m_projectManager.activeProject());
+}
+
+const bool MainWindow::compile(const Project::ProjectPtr &project)
+{
 	if(!commPreconditions(project)) return false;
 
 	bool success = true;
@@ -608,7 +616,11 @@ const bool MainWindow::compile()
 
 const bool MainWindow::run()
 {
-	const Project::ProjectPtr &project = m_projectManager.activeProject();
+	return run(m_projectManager.activeProject());
+}
+
+const bool MainWindow::run(const Project::ProjectPtr &project)
+{
 	if(!commPreconditions(project)) return false;
 
 	bool success = true;
@@ -780,7 +792,7 @@ void MainWindow::deleteProject()
 void MainWindow::projectOpenDependencies()
 {
 	const Project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
-	
+
 	Dialog::ProjectDepDialog dialog(project->deps(), this);
 	dialog.setWindowTitle(tr(QString("Dependencies for " + project->name()).toStdString().c_str()));
 	dialog.exec();

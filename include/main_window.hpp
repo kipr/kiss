@@ -183,8 +183,11 @@ namespace Kiss
 			void theme();
 
 			const bool download();
+			const bool download(const Kiss::Project::ProjectPtr &project);
 			const bool compile();
+			const bool compile(const Kiss::Project::ProjectPtr &project);
 			const bool run();
+			const bool run(const Kiss::Project::ProjectPtr &project);
 
 			const bool changeTarget();
 			const bool changeTarget(Kiss::Project::ProjectPtr project);
