@@ -785,7 +785,9 @@ void MainWindow::projectOpenDependencies()
 	dialog.setWindowTitle(tr(QString("Dependencies for " + project->name()).toStdString().c_str()));
 	dialog.exec();
 
-	project->setSetting("PROJECT_DEPS", dialog.names().join(" "));
+	const QStringList &names = dialog.names();
+	if(names.isEmpty()) project->removeSetting("PROJECT_DEPS");
+	else project->setSetting("PROJECT_DEPS", names.join(" "));
 	project->setDeps(dialog.paths());
 }
 
