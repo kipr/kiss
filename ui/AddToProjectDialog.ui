@@ -22,9 +22,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="ui_moveButton">
+    <widget class="QRadioButton" name="ui_copyButton">
      <property name="text">
-      <string>Move to the project folder</string>
+      <string>Make a copy and move the copy to the project folder</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -32,9 +32,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="ui_copyButton">
+    <widget class="QRadioButton" name="ui_moveButton">
      <property name="text">
-      <string>Make a copy and move the copy to the project folder</string>
+      <string>Move to the project folder</string>
      </property>
     </widget>
    </item>
