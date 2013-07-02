@@ -126,8 +126,6 @@ namespace Kiss
 
 			void moveToTab(Tab *tab);
 
-			QTabWidget *tabWidget();
-
 			QList<Tab *> tabs();
 
 			template<typename T>
@@ -147,14 +145,10 @@ namespace Kiss
 			 */
 			void closeAllOthers(Tab *tab);
 
-			/*! Reinits menus for current tab */
-			void refreshMenus();
-
 			bool eventFilter(QObject *target, QEvent *event);
 
 			void projectOpenSettings(const Kiss::Project::ProjectPtr &project);
 
-			Menu::Manager *menuManager();
 			Menu::Menuable *menuable(const QString &name);
 			QList<Menu::Menuable *> menuablesExcept(const QStringList &names);
 			void deactivateMenuablesExcept(const QStringList &names);
@@ -167,9 +161,7 @@ namespace Kiss
 			bool canClose();
 			bool canGoPrevious();
 			bool canGoNext();
-			
-			Target::Responder *mainResponder() const;
-			
+						
 			friend class Menu::MainWindowMenu;
 
 		public slots:

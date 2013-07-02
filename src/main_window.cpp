@@ -430,11 +430,6 @@ void MainWindow::moveToTab(Tab *tab)
 	ui_tabWidget->setCurrentWidget(tab->widget());
 }
 
-QTabWidget *MainWindow::tabWidget()
-{
-	return ui_tabWidget;
-}
-
 QList<Tab *> MainWindow::tabs()
 {
 	return m_lookup.values();
@@ -447,10 +442,6 @@ void MainWindow::closeAllOthers(Tab *tab)
 		if(lookup(ui_tabWidget->widget(i)) == tab) ++i;
 		closeTab(i);
 	}
-}
-
-void MainWindow::refreshMenus()
-{
 }
 
 void MainWindow::open()
@@ -924,16 +915,6 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event) {
                 event->accept();
                 return true;
         } else return QMainWindow::eventFilter(target, event);
-}
-
-Target::Responder *MainWindow::mainResponder() const
-{
-	return m_mainResponder;
-}
-
-Menu::Manager *MainWindow::menuManager()
-{
-	return &m_menuManager;
 }
 
 Menu::Menuable *MainWindow::menuable(const QString &name)
