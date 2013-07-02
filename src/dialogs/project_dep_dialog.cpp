@@ -63,9 +63,7 @@ void ProjectDepDialog::add()
 
 void ProjectDepDialog::remove()
 {
-	foreach(QTableWidgetItem *item, ui_depsTable->selectedItems()) {
-		ui_depsTable->removeRow(item->row());
-	}
+	ui_depsTable->removeRow(ui_depsTable->currentRow());
 }
 
 void ProjectDepDialog::add(const QString &dirPath)
