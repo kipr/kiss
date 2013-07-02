@@ -54,7 +54,7 @@ QStringList ProjectDepDialog::paths()
 void ProjectDepDialog::add()
 {
 	QSettings settings;
-	QString openPath = settings.value("openpath", QDir::homePath()).toString();
+	const QString &openPath = settings.value("openpath", QDir::homePath()).toString();
 	const QString &fullPath = QFileDialog::getOpenFileName(this, tr("Add Dependency"), openPath, tr("KISS Projects (*.kissproj)"));
 	if(fullPath.isNull()) return;
 	const QString &dirPath = QFileInfo(fullPath).absolutePath();
@@ -63,6 +63,9 @@ void ProjectDepDialog::add()
 
 void ProjectDepDialog::remove()
 {
+	foreach(QTableWidgetItem *item, ui_depsTable->selectedItems()) {
+		ui_depsTable->removeRow(item->row());
+	}
 }
 
 void ProjectDepDialog::add(const QString &dirPath)
