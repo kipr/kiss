@@ -176,6 +176,39 @@ const Compiler::Options &Kiss::Project::Project::settings() const
 	return m_settings;
 }
 
+void Kiss::Project::Project::setDeps(QStringList deps)
+{
+	QFile depsFile(depsFilePath());
+	if (!depsFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		qWarning() << "Failed to open deps file for project!";
+		return;
+	}
+	QTextStream out(&depsFile);
+	foreach(const QString &dep, deps) out << dep << endl;
+	depsFile.close();
+}
+
+QStringList Kiss::Project::Project::deps() const
+{
+	QStringList list;
+	QFile depsFile(depsFilePath());
+	if (!depsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		qWarning() << "Failed to open deps file for project!";
+		return QStringList();
+	}
+	QTextStream in(&depsFile);
+	while(!in.atEnd()) list << in.readLine();
+	depsFile.close();
+
+	return list;
+}
+
+const QString Kiss::Project::Project::depsFilePath() const
+{
+	const QDir dir(m_location);
+	return dir.absoluteFilePath(dir.dirName() + "." + DEPS_EXT);
+}
+
 void Kiss::Project::Project::setTarget(const Target::TargetPtr &target)
 {
 	m_target = target;

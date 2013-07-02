@@ -39,6 +39,7 @@
 #include "file_utils.hpp"
 #include "password_dialog.hpp"
 #include "add_to_project_dialog.hpp"
+#include "project_dep_dialog.hpp"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -331,6 +332,7 @@ void MainWindow::initMenus()
 	m_projectContextMenu->addAction(tr("Add Existing Files..."), this, SLOT(projectAddExisting()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(tr("Set Active"), this, SLOT(projectSetActive()));
+	m_projectContextMenu->addAction(tr("Project Dependencies"), this, SLOT(projectOpenDependencies()));
 	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(projectOpenSettings()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(tr("Close Project"), this, SLOT(closeProject()));
@@ -773,6 +775,18 @@ void MainWindow::deleteProject()
 	const Project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
 	closeProject(project);
 	if(!FileUtils::remove(project->location())) qWarning() << "Failed to delete project at " << project->location();
+}
+
+void MainWindow::projectOpenDependencies()
+{
+	const Project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
+	
+	Dialog::ProjectDepDialog dialog(project->deps(), this);
+	dialog.setWindowTitle(tr(QString("Dependencies for " + project->name()).toStdString().c_str()));
+	dialog.exec();
+
+	project->setSetting("PROJECT_DEPS", dialog.names().join(" "));
+	project->setDeps(dialog.paths());
 }
 
 void MainWindow::projectOpenSettings()

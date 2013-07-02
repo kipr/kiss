@@ -9,6 +9,7 @@
 
 #define PROJECT_EXT "kissproj"
 #define LINKS_EXT "links"
+#define DEPS_EXT "deps"
 
 namespace Kiss
 {
@@ -43,6 +44,10 @@ namespace Kiss
 			void setSettings(const Compiler::Options &settings);
 			void removeSetting(const QString &key);
 			const Compiler::Options &settings() const;
+
+			void setDeps(QStringList deps);
+			QStringList deps() const;
+			const QString depsFilePath() const;
 
 			void setTarget(const Target::TargetPtr &target);
 			Target::TargetPtr target() const;
