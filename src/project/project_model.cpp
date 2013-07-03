@@ -59,12 +59,12 @@ public:
 	FileItem(const QString &path)
 			: PathItem(path)
 	{
+		setIcon(ResourceHelper::ref().icon("page_white.png"));
 		refresh();
 	}
 
 	virtual void refresh()
 	{
-		setIcon(ResourceHelper::ref().icon("page_white.png"));
 	}
 
 	template<typename T>
@@ -81,6 +81,7 @@ public:
 			: PathItem(path)
 
 	{
+		setIcon(ResourceHelper::ref().icon("folder.png"));
 		refresh();
 	}
 
@@ -91,8 +92,6 @@ public:
 
 	virtual void refresh()
 	{
-		setIcon(ResourceHelper::ref().icon("folder.png"));
-
 		for(int i = 0; i < rowCount(); ++i) removeRow(i--);
 		QFileInfoList entries = dir().entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDot | QDir::NoDotDot);
 		const QStringList &hidden = Manager::hiddenExtensions();
