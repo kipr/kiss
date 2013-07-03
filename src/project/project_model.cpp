@@ -18,6 +18,7 @@ public:
 			: QStandardItem(QFileInfo(path).fileName()),
 			m_path(path)
 	{
+		setEditable(false);
 	}
 
 	bool rename(const QString &name)
@@ -60,6 +61,7 @@ public:
 			: PathItem(path)
 	{
 		setIcon(ResourceHelper::ref().icon("page_white.png"));
+		setEditable(true);
 		refresh();
 	}
 
@@ -137,7 +139,6 @@ public:
 			: FolderItem(path),
 			m_project(project)
 	{
-		setEditable(false);
 		refresh();
 	}
 
