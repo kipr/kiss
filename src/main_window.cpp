@@ -793,14 +793,14 @@ void MainWindow::projectOpenDependencies()
 {
 	const Project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
 
-	Dialog::ProjectDepDialog dialog(project->deps(), this);
+	Dialog::ProjectDepDialog dialog(project->dependencies(), this);
 	dialog.setWindowTitle(tr(QString("Dependencies for " + project->name()).toStdString().c_str()));
 	dialog.exec();
 
 	const QStringList &names = dialog.names();
 	if(names.isEmpty()) project->removeSetting("PROJECT_DEPS");
 	else project->setSetting("PROJECT_DEPS", names.join(" "));
-	project->setDeps(dialog.paths());
+	project->setDependencies(dialog.paths());
 }
 
 void MainWindow::projectOpenSettings()

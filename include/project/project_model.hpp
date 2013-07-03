@@ -22,6 +22,9 @@ namespace Kiss
 			void removeProject(ProjectPtr project);
 			const QStringList &projects() const;
 
+			void setDependencies(ProjectPtr project, const QStringList &deps);
+
+			bool isDependency(const QModelIndex &index) const;
 			bool isProject(const QModelIndex &index) const;
 			bool isLink(const QModelIndex &index) const;
 			bool isFile(const QModelIndex &index) const;
@@ -33,7 +36,8 @@ namespace Kiss
 				const Kiss::Project::ProjectPtr &newActive);
 
 		private slots:
-			void pathChanged(const QString &path);
+			void directoryChanged(const QString &path);
+			void fileChanged(const QString &path);
 			void itemChanged(QStandardItem *item);
 
 		private:

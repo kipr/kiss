@@ -45,9 +45,9 @@ namespace Kiss
 			void removeSetting(const QString &key);
 			const Compiler::Options &settings() const;
 
-			void setDeps(QStringList deps);
-			QStringList deps() const;
-			const QString depsFilePath() const;
+			void setDependencies(const QStringList &deps);
+			QStringList dependencies() const;
+			const QString dependenciesFilePath() const;
 
 			void setTarget(const Target::TargetPtr &target);
 			Target::TargetPtr target() const;

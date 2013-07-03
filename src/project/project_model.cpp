@@ -110,6 +110,27 @@ public:
 	}
 };
 
+class DependencyItem : public PathItem
+{
+public:
+	DependencyItem(const QString &path)
+			: PathItem(path)
+	{
+		setIcon(ResourceHelper::ref().icon("brick.png"));
+		refresh();
+	}
+
+	virtual void refresh()
+	{
+	}
+
+	template<typename T>
+	static DependencyItem *dependencyitem_cast(T *item)
+	{
+		return dynamic_cast<DependencyItem *>(item);
+	}
+};
+
 class ProjectItem : public FolderItem
 {
 public:
@@ -133,15 +154,20 @@ public:
 		else setIcon(ResourceHelper::ref().icon("folder.png"));
 	}
 
-	void refresh()
+	virtual void refresh()
 	{
 		FolderItem::refresh();
 
-		QStringList list = m_project->links();
+		const QStringList &list = m_project->links();
 		foreach(const QString &entry, list) {
 			PathItem* item = (PathItem*)new FileItem(QDir::cleanPath(QDir(m_path).absoluteFilePath(entry)));
 			item->setForeground(Qt::gray);
 			appendRow(item);
+		}
+
+		const QStringList &deps = m_project->dependencies();
+		foreach(const QString &dep, deps) {
+			appendRow(new DependencyItem(dep));
 		}
 	}
 
@@ -157,8 +183,8 @@ private:
 Model::Model(QObject *parent)
 			: QStandardItemModel(parent)
 {
-	connect(&m_watcher, SIGNAL(directoryChanged(QString)), this, SLOT(pathChanged(QString)));
-	connect(&m_watcher, SIGNAL(fileChanged(QString)), this, SLOT(pathChanged(QString)));
+	connect(&m_watcher, SIGNAL(directoryChanged(QString)), this, SLOT(directoryChanged(QString)));
+	connect(&m_watcher, SIGNAL(fileChanged(QString)), this, SLOT(fileChanged(QString)));
 	connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemChanged(QStandardItem *)));
 }
 
@@ -175,6 +201,7 @@ void Model::addProject(ProjectPtr project)
 	insertRow(0, new ProjectItem(QFileInfo(path).absoluteFilePath(), project));
 	m_watcher.addPath(path);
 	m_watcher.addPath(project->linksFilePath());
+	m_watcher.addPath(project->dependenciesFilePath());
 }
 
 void Model::removeProject(ProjectPtr project)
@@ -183,9 +210,9 @@ void Model::removeProject(ProjectPtr project)
 	m_paths.removeAll(path);
 	m_watcher.removePath(path);
 	m_watcher.removePath(project->linksFilePath());
+	m_watcher.removePath(project->dependenciesFilePath());
 
 	QString absolutePath = QFileInfo(path).absoluteFilePath();
-
 	QStandardItem *root = invisibleRootItem();
 	for(int i = 0; i < root->rowCount(); ++i) {
 		QStandardItem *child = root->child(i);
@@ -198,6 +225,11 @@ void Model::removeProject(ProjectPtr project)
 const QStringList &Model::projects() const
 {
 	return m_paths;
+}
+
+bool Model::isDependency(const QModelIndex &index) const
+{
+	return DependencyItem::dependencyitem_cast(itemFromIndex(index));
 }
 
 bool Model::isProject(const QModelIndex &index) const
@@ -260,18 +292,26 @@ void Model::activeChanged(const ProjectPtr &oldActive, const ProjectPtr &newActi
 	}
 }
 
-void Model::pathChanged(const QString &path)
+void Model::directoryChanged(const QString &path)
 {
-	QString absolutePath = QFileInfo(path).absoluteFilePath();
-
+	const QString &absolutePath = QFileInfo(path).absoluteFilePath();
 	QStandardItem *root = invisibleRootItem();
 	for(int i = 0; i < root->rowCount(); ++i) {
 		QStandardItem *child = root->child(i);
-		PathItem *pathItem = PathItem::pathitem_cast(child);
-		if(!pathItem) continue;
-		if(pathItem->path() == absolutePath || pathItem->path() == path ||
-			QFileInfo(absolutePath).suffix() == LINKS_EXT) pathItem->refresh();
+		ProjectItem *projectItem = ProjectItem::projectitem_cast(child);
+		if(!projectItem) continue;
+
+		const QString &itemPath = projectItem->path();
+		if(itemPath != absolutePath && itemPath != path) continue;
+		projectItem->refresh();
 	}
+}
+
+void Model::fileChanged(const QString &path)
+{
+	const QFileInfo pathInfo(path);
+	const QString &suffix = pathInfo.suffix();
+	if(suffix == LINKS_EXT || suffix == DEPS_EXT) directoryChanged(pathInfo.absolutePath());
 }
 
 void Model::itemChanged(QStandardItem *item)
