@@ -48,7 +48,7 @@ namespace Kiss
 			DeclarativeTools(MainWindow *mainWindow);
 
 		public slots:
-			void newFile();
+			void newProject();
 			void open();
 			void openWeb(const QString& url);
 			void settings();

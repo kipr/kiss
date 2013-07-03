@@ -28,9 +28,9 @@ Rectangle {
 		ImageButton
 		{
 			imageSource: 'new.png'
-			title: 'New File'
+			title: 'New Project'
 			onClicked: {
-				kiss.newFile()
+				kiss.newProject()
 			}
 		}
 		ImageButton

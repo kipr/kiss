@@ -40,9 +40,9 @@ DeclarativeTools::DeclarativeTools(MainWindow* mainWindow)
 	
 }
 
-void DeclarativeTools::newFile()
+void DeclarativeTools::newProject()
 {
-	m_mainWindow->newFile();
+	m_mainWindow->newProject();
 }
 
 void DeclarativeTools::open()
