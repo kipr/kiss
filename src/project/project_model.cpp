@@ -168,16 +168,6 @@ Model::~Model()
 
 void Model::addProject(ProjectPtr project)
 {
-	addRootPath(project);
-}
-
-void Model::removeProject(ProjectPtr project)
-{
-	removeRootPath(project);
-}
-
-void Model::addRootPath(ProjectPtr project)
-{
 	const QString &path = project->location();
 	if(m_paths.contains(path)) return;
 
@@ -187,7 +177,7 @@ void Model::addRootPath(ProjectPtr project)
 	m_watcher.addPath(project->linksFilePath());
 }
 
-void Model::removeRootPath(ProjectPtr project)
+void Model::removeProject(ProjectPtr project)
 {
 	const QString &path = project->location();
 	m_paths.removeAll(path);
@@ -205,12 +195,12 @@ void Model::removeRootPath(ProjectPtr project)
 	}
 }
 
-const QStringList &Model::rootPaths() const
+const QStringList &Model::projects() const
 {
 	return m_paths;
 }
 
-bool Model::isIndexProject(const QModelIndex &index) const
+bool Model::isProject(const QModelIndex &index) const
 {
 	return RootItem::rootitem_cast(itemFromIndex(index));
 }
@@ -234,18 +224,6 @@ bool Model::isFile(const QModelIndex &index) const
 	return FileItem::fileitem_cast(itemFromIndex(index));
 }
 
-bool Model::isProjectRoot(const QModelIndex &index) const
-{
-	return RootItem::rootitem_cast(itemFromIndex(index));
-}
-
-QString Model::filePath(const QModelIndex &index) const
-{
-	FileItem *projectFile = FileItem::fileitem_cast(itemFromIndex(index));
-	if(!projectFile) return QString();
-	return projectFile->path();
-}
-
 ProjectPtr Model::project(const QModelIndex &index) const
 {
 	QStandardItem *item = itemFromIndex(index);
@@ -258,6 +236,13 @@ ProjectPtr Model::project(const QModelIndex &index) const
 	}
 
 	return projectRoot ? projectRoot->project() : ProjectPtr();
+}
+
+QString Model::filePath(const QModelIndex &index) const
+{
+	FileItem *projectFile = FileItem::fileitem_cast(itemFromIndex(index));
+	if(!projectFile) return QString();
+	return projectFile->path();
 }
 
 void Model::activeChanged(const ProjectPtr &oldActive, const ProjectPtr &newActive)

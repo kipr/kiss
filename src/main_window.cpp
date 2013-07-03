@@ -847,7 +847,7 @@ void MainWindow::projectContextMenu(const QPoint &pos)
 	const QModelIndex &index = ui_projects->indexAt(pos);
 	if(!index.isValid()) return;
 
-	if(m_projectsModel.isProjectRoot(index))
+	if(m_projectsModel.isProject(index))
 		m_projectContextMenu->exec(QCursor::pos());
 	else if(m_projectsModel.isFile(index))
 		m_fileContextMenu->exec(QCursor::pos());

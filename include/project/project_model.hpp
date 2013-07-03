@@ -20,17 +20,13 @@ namespace Kiss
 
 			void addProject(ProjectPtr project);
 			void removeProject(ProjectPtr project);
+			const QStringList &projects() const;
 
-			void addRootPath(ProjectPtr project);
-			void removeRootPath(ProjectPtr project);
-			const QStringList &rootPaths() const;
-
-			bool isIndexProject(const QModelIndex &index) const;
+			bool isProject(const QModelIndex &index) const;
 			bool isLink(const QModelIndex &index) const;
 			bool isFile(const QModelIndex &index) const;
-			bool isProjectRoot(const QModelIndex &index) const;
-			QString filePath(const QModelIndex &index) const;
 			ProjectPtr project(const QModelIndex &index) const;
+			QString filePath(const QModelIndex &index) const;
 
 		public slots:
 			void activeChanged(const Kiss::Project::ProjectPtr &oldActive,
