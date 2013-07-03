@@ -32,6 +32,7 @@
         <file>icon_set/icons/folder.png</file>
         <file>icon_set/icons/page_white.png</file>
         <file>icon_set/icons/color_swatch.png</file>
+        <file>icon_set/icons/folder_heart.png</file>
     </qresource>
     <qresource prefix="/shortcuts/target">
         <file>icon_set/icons/report.png</file>

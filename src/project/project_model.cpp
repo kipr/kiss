@@ -1,6 +1,7 @@
 #include "project_model.hpp"
 
 #include "project_manager.hpp"
+#include "resource_helper.hpp"
 
 #include <QFileInfo>
 #include <QDir>
@@ -17,7 +18,6 @@ public:
 			: QStandardItem(QFileInfo(path).fileName()),
 			m_path(path)
 	{
-		refresh();
 	}
 
 	bool rename(const QString &name)
@@ -32,7 +32,6 @@ public:
 	void setPath(const QString &path)
 	{
 		m_path = path;
-		refresh();
 	}
 
 	const QString &path()
@@ -42,8 +41,6 @@ public:
 
 	virtual void refresh()
 	{
-		QFileIconProvider ip;
-		setIcon(ip.icon(QFileInfo(m_path)));
 	}
 
 	template<typename T>
@@ -67,7 +64,7 @@ public:
 
 	virtual void refresh()
 	{
-		PathItem::refresh();
+		setIcon(ResourceHelper::ref().icon("page_white.png"));
 	}
 
 	template<typename T>
@@ -94,7 +91,8 @@ public:
 
 	virtual void refresh()
 	{
-		PathItem::refresh();
+		setIcon(ResourceHelper::ref().icon("folder.png"));
+
 		for(int i = 0; i < rowCount(); ++i) removeRow(i--);
 		QFileInfoList entries = dir().entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDot | QDir::NoDotDot);
 		const QStringList &hidden = Manager::hiddenExtensions();
@@ -131,9 +129,8 @@ public:
 
 	void setActive(bool active)
 	{
-		QFont textFont = font();
-		textFont.setBold(active);
-		setFont(textFont);
+		if(active) setIcon(ResourceHelper::ref().icon("folder_heart.png"));
+		else setIcon(ResourceHelper::ref().icon("folder.png"));
 	}
 
 	void refresh()
