@@ -13,6 +13,7 @@ NewProject::NewProject(QWidget *parent)
 	: QDialog(parent)
 {
 	setupUi(this);
+	ui_projectName->selectAll();
 		
 	QSettings settings;
 	settings.beginGroup(SETTINGS_GROUP);
