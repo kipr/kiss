@@ -110,10 +110,10 @@ public:
 	}
 };
 
-class RootItem : public FolderItem
+class ProjectItem : public FolderItem
 {
 public:
-	RootItem(const QString &path, ProjectPtr project)
+	ProjectItem(const QString &path, ProjectPtr project)
 			: FolderItem(path),
 			m_project(project)
 	{
@@ -122,9 +122,9 @@ public:
 	}
 
 	template<typename T>
-	static RootItem *rootitem_cast(T *item)
+	static ProjectItem *projectitem_cast(T *item)
 	{
-		return dynamic_cast<RootItem *>(item);
+		return dynamic_cast<ProjectItem *>(item);
 	}
 
 	void setActive(bool active)
@@ -172,7 +172,7 @@ void Model::addProject(ProjectPtr project)
 	if(m_paths.contains(path)) return;
 
 	m_paths.append(path);
-	insertRow(0, new RootItem(QFileInfo(path).absoluteFilePath(), project));
+	insertRow(0, new ProjectItem(QFileInfo(path).absoluteFilePath(), project));
 	m_watcher.addPath(path);
 	m_watcher.addPath(project->linksFilePath());
 }
@@ -202,7 +202,7 @@ const QStringList &Model::projects() const
 
 bool Model::isProject(const QModelIndex &index) const
 {
-	return RootItem::rootitem_cast(itemFromIndex(index));
+	return ProjectItem::projectitem_cast(itemFromIndex(index));
 }
 
 bool Model::isLink(const QModelIndex &index) const
@@ -227,15 +227,15 @@ bool Model::isFile(const QModelIndex &index) const
 ProjectPtr Model::project(const QModelIndex &index) const
 {
 	QStandardItem *item = itemFromIndex(index);
-	RootItem *projectRoot = RootItem::rootitem_cast(item);
-	if(!projectRoot) {
+	ProjectItem *projectItem = ProjectItem::projectitem_cast(item);
+	if(!projectItem) {
 		FileItem *projectFile = FileItem::fileitem_cast(item);
 		if(!projectFile) return ProjectPtr();
 		// TODO: This assumes a strictly two-level project model
-		projectRoot = RootItem::rootitem_cast(projectFile->parent());
+		projectItem = ProjectItem::projectitem_cast(projectFile->parent());
 	}
 
-	return projectRoot ? projectRoot->project() : ProjectPtr();
+	return projectItem ? projectItem->project() : ProjectPtr();
 }
 
 QString Model::filePath(const QModelIndex &index) const
@@ -252,11 +252,11 @@ void Model::activeChanged(const ProjectPtr &oldActive, const ProjectPtr &newActi
 	QStandardItem *root = invisibleRootItem();
 	for(int i = 0; i < root->rowCount(); ++i) {
 		QStandardItem *child = root->child(i);
-		RootItem *rootItem = RootItem::rootitem_cast(child);
-		if(!rootItem) continue;
-		const QString &rootPath = rootItem->path();
-		if(rootPath == oldPath) rootItem->setActive(false);
-		if(rootPath == newPath) rootItem->setActive(true);
+		ProjectItem *projectItem = ProjectItem::projectitem_cast(child);
+		if(!projectItem) continue;
+		const QString &projectPath = projectItem->path();
+		if(projectPath == oldPath) projectItem->setActive(false);
+		if(projectPath == newPath) projectItem->setActive(true);
 	}
 }
 
