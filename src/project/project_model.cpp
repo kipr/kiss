@@ -1,6 +1,7 @@
 #include "project_model.hpp"
 
 #include "project_manager.hpp"
+#include "file_utils.hpp"
 #include "resource_helper.hpp"
 
 #include <QFileInfo>
@@ -160,7 +161,7 @@ public:
 
 		const QStringList &list = m_project->links();
 		foreach(const QString &entry, list) {
-			PathItem* item = (PathItem*)new FileItem(QDir::cleanPath(QDir(m_path).absoluteFilePath(entry)));
+			PathItem* item = (PathItem*)new FileItem(FileUtils::absolutePath(entry, QDir(m_path)));
 			item->setForeground(Qt::gray);
 			appendRow(item);
 		}
@@ -242,13 +243,10 @@ bool Model::isLink(const QModelIndex &index) const
 	ProjectPtr proj = project(index);
 	QStringList list = proj->links();
 	const QString &path = FileItem::fileitem_cast(itemFromIndex(index))->path();
-	if(list.contains(path)) return true;
-
-	QString otherPath;
-	if(QFileInfo(path).isAbsolute()) otherPath = QDir(proj->location()).relativeFilePath(path);
-	else otherPath = QDir::cleanPath(QDir(proj->location()).absoluteFilePath(path));
-
-	return list.contains(otherPath);
+	const QString &absPath = FileUtils::absolutePath(path, QDir(proj->location()));
+	const QString &relPath = FileUtils::relativePath(path, QDir(proj->location()));
+	
+	return list.contains(absPath) || list.contains(relPath);
 }
 
 bool Model::isFile(const QModelIndex &index) const
