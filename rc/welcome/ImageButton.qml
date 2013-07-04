@@ -12,6 +12,9 @@ Image {
 	id: imageButton
 	source: imageSource
 	state: 'normal'
+	width: 128; height: 128
+	fillMode: Image.PreserveAspectFit
+	smooth: true
 	
 	MouseArea {
 		id: mouseArea
