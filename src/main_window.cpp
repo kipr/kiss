@@ -674,11 +674,11 @@ void MainWindow::projectAddNew()
 	if(!project) return;
 
 	bool ok = false;
-	const QString &fileName = QInputDialog::getText(this, tr("New File"), tr("New file name:"),
+	const QString fileName = QInputDialog::getText(this, tr("New File"), tr("New File Name:"),
 		QLineEdit::Normal, QString(), &ok);
 	if(!ok) return;
 
-	SourceFile *sourceFile = SourceFile::newProjectFile(this, project);
+	SourceFile *const sourceFile = SourceFile::newProjectFile(this, project);
 	addTab(sourceFile);
 	sourceFile->setFile(QDir(project->location()).filePath(fileName));
 	sourceFile->save();
