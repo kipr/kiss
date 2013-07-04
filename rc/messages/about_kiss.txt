@@ -16,7 +16,7 @@ Nafis Zaman <br />
 Jorge Villatoro <br />
 <br />
 <b>Icons:</b> <br />
-Silk by Mark James <br />
-Dropline Neu! by Silvestre Herrera <br />
+Silk by Mark James (<a href="http://www.famfamfam.com/lab/icons/silk/">http://www.famfamfam.com/lab/icons/silk/</a>) <br />
+Oxygen Icons by Oxygen Team (<a href="http://www.oxygen-icons.org/">http://www.oxygen-icons.org/</a>) <br />
 <br />
 Thank you for using KISS IDE!
