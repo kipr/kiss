@@ -58,6 +58,7 @@ const bool Kiss::Project::Project::compile() const
 			qDebug() << "ERROR: failed to open dependency" << dep << "for compilation";
 			return false;
 		}
+		depProject->setSetting("TERMINAL_TYPE", "LIBRARY");
 		depProject->setTarget(m_target);
 		depProject->compile();
 	}
