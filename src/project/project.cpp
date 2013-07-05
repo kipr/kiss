@@ -59,6 +59,7 @@ const bool Kiss::Project::Project::compile() const
 			return false;
 		}
 		depProject->setSetting("TERMINAL_TYPE", "LIBRARY");
+		depProject->setSetting("LIBRARY_NAME", depProject->name());
 		depProject->setTarget(m_target);
 		depProject->compile();
 	}
