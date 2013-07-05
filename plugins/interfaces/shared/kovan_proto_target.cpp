@@ -159,7 +159,9 @@ Kiss::Target::Target::ReturnCode KovanProtoTarget::compile(quint64 id, const QSt
 	
 	m_transmitter->endSession();
 	
-	return Target::Success;
+	// FIXME: Find a better solution than this
+	if(Compiler::Output::isSuccess(results)) return Target::Success;
+	return Target::Error;
 }
 
 #define KEY_DOWNLOAD "download"
