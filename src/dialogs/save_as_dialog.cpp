@@ -36,7 +36,7 @@ SaveAs::~SaveAs()
 	delete ui;
 }
 
-void SaveAs::setNameFilters(const QStringList& filters)
+void SaveAs::setNameFilters(const QStringList &filters)
 {
 	m_model->setNameFilters(filters);
 }
@@ -46,7 +46,7 @@ QStringList SaveAs::nameFilters() const
 	return m_model->nameFilters();
 }
 
-void SaveAs::setFileName(const QString& name)
+void SaveAs::setFileName(const QString &name)
 {
 	ui->file->setText(name);
 }
@@ -56,7 +56,7 @@ QString SaveAs::fileName() const
 	return ui->file->text();
 }
 
-void SaveAs::setRootPath(const QString& path)
+void SaveAs::setRootPath(const QString &path)
 {
 	ui->tree->setRootIndex(m_model->setRootPath(path));
 }
@@ -78,11 +78,11 @@ QString SaveAs::filePath() const
 	return QDir(path).filePath(fileName());
 }
 
-void SaveAs::fileNameChanged(const QString& name)
+void SaveAs::fileNameChanged(const QString &name)
 {
 	QStringList nf = nameFilters();
 	bool match = nf.isEmpty();
-	foreach(const QString& nameFilter, nf) {
+	foreach(const QString &nameFilter, nf) {
 		QRegExp expr(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
 		if(expr.exactMatch(name)) {
 			match = true;
@@ -93,7 +93,7 @@ void SaveAs::fileNameChanged(const QString& name)
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(match && !name.isEmpty());
 }
 
-void SaveAs::selectionChanged(const QModelIndex& index)
+void SaveAs::selectionChanged(const QModelIndex &index)
 {
 	if(m_model->isDir(index)) return;
 	

@@ -29,7 +29,7 @@
 using namespace Kiss;
 using namespace Kiss::Menu;
 
-DocumentationMenu::DocumentationMenu(Widget::MainWindow* mainWindow)
+DocumentationMenu::DocumentationMenu(Widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName()),
 	m_mainWindow(mainWindow)
 {

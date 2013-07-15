@@ -38,7 +38,7 @@ namespace Kiss
 
 			void setSourceFile(SourceFile *sourceFile);
 
-			void setModified(const bool& m);
+			void setModified(const bool &m);
 			bool isModified() const;
 
 		public slots:
@@ -46,13 +46,13 @@ namespace Kiss
 
 		private slots:
 			void on_ui_next_clicked();
-			void on_ui_find_textChanged(const QString& text);
+			void on_ui_find_textChanged(const QString &text);
 			void on_ui_matchCase_stateChanged(int state);
 			void on_ui_replaceNext_clicked();
 			void on_ui_replaceAll_clicked();
 
 		private:
-			SourceFile* m_sourceFile;
+			SourceFile *m_sourceFile;
 
 			bool m_findModified;
 		};

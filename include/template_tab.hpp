@@ -26,8 +26,8 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			TemplateTab(const Template::PackPtr& pack, MainWindow *mainWindow);
-			TemplateTab(const QString& path, MainWindow *mainWindow);
+			TemplateTab(const Template::PackPtr &pack, MainWindow *mainWindow);
+			TemplateTab(const QString &path, MainWindow *mainWindow);
 			~TemplateTab();
 			
 			virtual void activate();
@@ -36,9 +36,9 @@ namespace Kiss
 			virtual bool close();
 			virtual void refreshSettings();
 			
-			bool saveAs(const QString& file);
+			bool saveAs(const QString &file);
 			
-			bool addFile(const QString& path);
+			bool addFile(const QString &path);
 			
 		public slots:
 			bool save();
@@ -50,7 +50,7 @@ namespace Kiss
 			void deleteSelection();
 			
 		private slots:
-			void selectionChanged(const QItemSelection& selection, const QItemSelection& prev);
+			void selectionChanged(const QItemSelection &selection, const QItemSelection &prev);
 			
 			void dirtyDesc();
 			void dirty();

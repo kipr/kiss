@@ -9,13 +9,13 @@
 using namespace Kiss::Dialog;
 
 ProjectDepDialog::ProjectDepDialog(const QStringList &deps, QWidget *parent) :
-    QDialog(parent)
+	QDialog(parent)
 {
-    setupUi(this);
+	setupUi(this);
 
-    ui_buttonAdd = new QPushButton(tr("&Add"), this);
-    ui_buttonRemove = new QPushButton(tr("&Remove"), this);
-    ui_buttonBox->addButton(ui_buttonAdd, QDialogButtonBox::ActionRole);
+	ui_buttonAdd = new QPushButton(tr("&Add"), this);
+	ui_buttonRemove = new QPushButton(tr("&Remove"), this);
+	ui_buttonBox->addButton(ui_buttonAdd, QDialogButtonBox::ActionRole);
 	ui_buttonBox->addButton(ui_buttonRemove, QDialogButtonBox::ActionRole);
 
 	connect(ui_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));

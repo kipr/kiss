@@ -118,15 +118,15 @@ bool Kiss::Project::Project::addAsLink(const QString &path)
 		linksList.contains(relPath)) return false;
 
 	QFile linkFile(linksFilePath());
-    if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
-    	qWarning() << "Failed to open links file for project!";
-        return false;
-    }
-    QTextStream out(&linkFile);
-    out << path << "\n";
-    linkFile.close();
+	if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
+		qWarning() << "Failed to open links file for project!";
+		return false;
+	}
+	QTextStream out(&linkFile);
+	out << path << "\n";
+	linkFile.close();
 
-    return true;
+	return true;
 }
 
 bool Kiss::Project::Project::addAsRelativeLink(const QString &path)
@@ -145,15 +145,15 @@ bool Kiss::Project::Project::removeLink(const QString &path)
 	if(!linksList.removeOne(absPath) && !linksList.removeOne(relPath)) return false;
 
 	QFile linkFile(linksFilePath());
-    if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
-    	qWarning() << "Failed to open links file for project!";
-        return false;
-    }
-    QTextStream out(&linkFile);
-    foreach(const QString &entry, linksList) out << entry << "\n";
-    linkFile.close();
+	if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+		qWarning() << "Failed to open links file for project!";
+		return false;
+	}
+	QTextStream out(&linkFile);
+	foreach(const QString &entry, linksList) out << entry << "\n";
+	linkFile.close();
 
-    return true;
+	return true;
 }
 
 QStringList Kiss::Project::Project::links() const
@@ -161,13 +161,13 @@ QStringList Kiss::Project::Project::links() const
 	QStringList list;
 	
 	QFile linkFile(linksFilePath());
-    if(linkFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    	QTextStream in(&linkFile);
-	    while(!in.atEnd()) list << in.readLine();
-	    linkFile.close();
-    }
+	if(linkFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QTextStream in(&linkFile);
+		while(!in.atEnd()) list << in.readLine();
+		linkFile.close();
+	}
 
-    return list;
+	return list;
 }
 
 const QString Kiss::Project::Project::linksFilePath() const

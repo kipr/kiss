@@ -8,19 +8,19 @@
 class AddToProjectDialog : public QDialog, private Ui::AddToProjectDialog
 {
    Q_OBJECT
-    
+	
 public:
 	enum AddType {
-    	Move,
-    	Copy,
-    	AbsoluteReference,
-    	RelativeReference
-    };
+		Move,
+		Copy,
+		AbsoluteReference,
+		RelativeReference
+	};
 
-    AddToProjectDialog(QWidget *parent = 0);
-    ~AddToProjectDialog();
+	AddToProjectDialog(QWidget *parent = 0);
+	~AddToProjectDialog();
 
-    AddToProjectDialog::AddType type() const;
+	AddToProjectDialog::AddType type() const;
 };
 
 #endif // ADD_TO_PROJECT_DIALOG_HPP

@@ -53,8 +53,8 @@ namespace Kiss
 		struct Node
 		{
 			Node();
-			Node(const QString& name);
-			Node(const QString& name, Menuable *menuable, QAction *action);
+			Node(const QString &name);
+			Node(const QString &name, Menuable *menuable, QAction *action);
 			Node(Menuable *menuable, QAction *action);
 			~Node();
 
@@ -80,7 +80,7 @@ namespace Kiss
 		class Menuable
 		{
 		public:
-			Menuable(const QString& name)
+			Menuable(const QString &name)
 				: m_name(name), m_menuManager(0)
 			{
 			}
@@ -91,7 +91,7 @@ namespace Kiss
 			virtual NodeList actions() = 0;
 			virtual NodeList toolbarActions() = 0;
 
-			const QString& name() const
+			const QString &name() const
 			{
 				return m_name;
 			}
@@ -101,7 +101,7 @@ namespace Kiss
 				return m_menuManager;
 			}
 			
-			void setManager(Manager* menuManager)
+			void setManager(Manager *menuManager)
 			{
 				m_menuManager = menuManager;
 			}
@@ -135,13 +135,13 @@ namespace Kiss
 			void triggered();
 
 		private:
-			void addChildren(Node *parent, const NodeList& nodes);
-			QList<MenuableActionPair> actionsToPair(Menuable *menuable, const QActionList& actions);
-			void unregisterMenus(Menuable *menuable, Node* node);
+			void addChildren(Node *parent, const NodeList &nodes);
+			QList<MenuableActionPair> actionsToPair(Menuable *menuable, const QActionList &actions);
+			void unregisterMenus(Menuable *menuable, Node *node);
 			void construct(QMenu *menu, NodeList nodes);
 			void construct(QToolBar *tool, NodeList nodes);
-			void construct(QMenu *menu, Node* node);
-			void construct(QToolBar *toolbar, Node* node);
+			void construct(QMenu *menu, Node *node);
+			void construct(QToolBar *toolbar, Node *node);
 
 			void refresh();
 			void refresh(Node *node);
@@ -150,7 +150,7 @@ namespace Kiss
 
 			Node *lookup(QAction *action);
 
-			Node* m_root;
+			Node *m_root;
 
 			Node *m_file;
 			Node *m_edit;

@@ -72,18 +72,18 @@ namespace Kiss
 			MainWindow *mainWindow() const;
 			void setMainWindow(MainWindow *mainWindow);
 
-			void setFile(const QString& file);
-			void setFile(const QFileInfo& file);
-			const QFileInfo& file() const;
+			void setFile(const QString &file);
+			void setFile(const QFileInfo &file);
+			const QFileInfo &file() const;
 			bool hasFile() const;
 
-			void setProject(const Kiss::Project::ProjectPtr& project);
-			const Kiss::Project::ProjectPtr& project() const;
+			void setProject(const Kiss::Project::ProjectPtr &project);
+			const Kiss::Project::ProjectPtr &project() const;
 			bool hasProject() const;
 			
 		protected:
-			virtual void fileChanged(const QFileInfo& file);
-			virtual void projectChanged(const Kiss::Project::ProjectPtr& project);
+			virtual void fileChanged(const QFileInfo &file);
+			virtual void projectChanged(const Kiss::Project::ProjectPtr &project);
 			
 		private:
 			QWidget *m_widget;

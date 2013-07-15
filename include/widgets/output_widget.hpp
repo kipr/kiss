@@ -11,11 +11,11 @@ Q_OBJECT
 public:
 	OutputWidget(QWidget *parent = 0);
 	
-	void setOutputList(const Compiler::OutputList& outputList);
-	const Compiler::OutputList& outputList() const;
+	void setOutputList(const Compiler::OutputList &outputList);
+	const Compiler::OutputList &outputList() const;
 	
 private:
-	QString processString(const QString& string);
+	QString processString(const QString &string);
 	
 	Compiler::OutputList m_outputList;
 };

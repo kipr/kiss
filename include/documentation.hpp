@@ -38,7 +38,7 @@ namespace Kiss
 			bool close();
 			void refreshSettings();
 		private slots:
-			void itemDoubleClicked(QListWidgetItem* item);
+			void itemDoubleClicked(QListWidgetItem *item);
 		};
 	}
 }

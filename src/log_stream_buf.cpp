@@ -5,10 +5,10 @@
 
 using namespace Kiss;
 
-LogStreamBuf::LogStreamBuf(const std::size_t& bufferSize)
+LogStreamBuf::LogStreamBuf(const std::size_t &bufferSize)
 	: m_buffer(bufferSize + 1)
 {
-	char* base = &m_buffer.front();
+	char *base = &m_buffer.front();
 	setp(base, base + m_buffer.size() - 1);
 }
 
@@ -16,7 +16,7 @@ bool LogStreamBuf::flush()
 {
 	std::ptrdiff_t n = pptr() - pbase();
 	pbump(-n);
-	char* str = new char[n + 1];
+	char *str = new char[n + 1];
 	memcpy(str, pbase(), n);
 	str[n] = 0;
 	Widget::LogWindow::ref().append(str);

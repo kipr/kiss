@@ -8,7 +8,7 @@ using namespace Kiss::Target;
 class InterfaceItem : public QStandardItem
 {
 public:
-	InterfaceItem(Interface *interface, const bool& all = false)
+	InterfaceItem(Interface *interface, const bool &all = false)
 		: QStandardItem(all ? "All Interfaces" : interface->name()),
 		m_interface(interface),
 		m_all(all)
@@ -19,15 +19,15 @@ public:
 		return m_interface;
 	}
 	
-	const bool& all()
+	const bool &all()
 	{
 		return m_all;
 	}
 	
 	template<typename T>
-	static Interface* interface_cast(T *t)
+	static Interface *interface_cast(T *t)
 	{
-		InterfaceItem* item = dynamic_cast<InterfaceItem*>(t);
+		InterfaceItem *item = dynamic_cast<InterfaceItem*>(t);
 		return item ? item->interface() : 0;
 	}
 private:
@@ -44,17 +44,17 @@ InterfaceModel::InterfaceModel(InterfaceManager *manager, QObject *parent)
 	reload();
 }
 
-Interface* InterfaceModel::rowToInterface(const int& row) const
+Interface *InterfaceModel::rowToInterface(const int &row) const
 {
 	return InterfaceItem::interface_cast(item(row));
 }
 
-Interface* InterfaceModel::indexToInterface(const QModelIndex& index) const
+Interface *InterfaceModel::indexToInterface(const QModelIndex &index) const
 {
 	return InterfaceItem::interface_cast(itemFromIndex(index));
 }
 
-void InterfaceModel::setAllInterface(const bool& on)
+void InterfaceModel::setAllInterface(const bool &on)
 {
 	if(on) {
 		setAllInterface(false);
@@ -80,5 +80,5 @@ void InterfaceModel::interfaceRemoved(Interface *interface)
 void InterfaceModel::reload()
 {
 	clear();
-	foreach(Interface* interface, m_manager->interfaces()) interfaceAdded(interface);
+	foreach(Interface *interface, m_manager->interfaces()) interfaceAdded(interface);
 }

@@ -11,7 +11,7 @@ namespace Kiss
 	public:
 		static QString absolutePath(const QString &path, const QDir &originDir);
 		static QString relativePath(const QString &path, const QDir &originDir);
-		static bool remove(const QString& path);
+		static bool remove(const QString &path);
 	};
 }
 

@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 #endif
 
 	Log::ref().info(QString("Starting with the following arguments: [%1]").arg(QApplication::arguments().join(", ")));
-	foreach(const QString& arg, QApplication::arguments().mid(1)) mainWindow.openFile(arg);
+	foreach(const QString &arg, QApplication::arguments().mid(1)) mainWindow.openFile(arg);
 	
 #ifdef ENABLE_LOG_WINDOW
 #ifdef BUILD_DEVELOPER_TOOLS

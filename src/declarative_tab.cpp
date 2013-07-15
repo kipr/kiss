@@ -34,7 +34,7 @@
 using namespace Kiss;
 using namespace Kiss::Widget;
 
-DeclarativeTools::DeclarativeTools(MainWindow* mainWindow)
+DeclarativeTools::DeclarativeTools(MainWindow *mainWindow)
 	: m_mainWindow(mainWindow)
 {
 	
@@ -75,14 +75,14 @@ void DeclarativeTools::tellCompletedSetup()
 	emit completedSetup();
 }
 
-DeclarativeTab::DeclarativeTab(const QUrl& file, MainWindow* parent)
+DeclarativeTab::DeclarativeTab(const QUrl &file, MainWindow *parent)
 	: Tab(new QDeclarativeView(file), parent),
 #ifdef BUILD_DEVELOPER_TOOLS
 	m_watcher(this), 
 #endif
 	m_kiss(parent)
 {
-	QDeclarativeView* view = dynamic_cast<QDeclarativeView*>(widget());
+	QDeclarativeView *view = dynamic_cast<QDeclarativeView*>(widget());
 	if(!view) return;
 	QString color = "#ffffff";
 	#ifndef Q_OS_WIN
@@ -94,7 +94,7 @@ DeclarativeTab::DeclarativeTab(const QUrl& file, MainWindow* parent)
 	view->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
 	view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
 #ifdef BUILD_DEVELOPER_TOOLS
-	const QString& localFile = file.toLocalFile();
+	const QString &localFile = file.toLocalFile();
 	if(!localFile.isEmpty()) {
 		m_watcher.addPath(localFile);
 		connect(&m_watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reload()));
@@ -110,8 +110,8 @@ DeclarativeTab::~DeclarativeTab()
 void DeclarativeTab::activate()
 {
 	QList<Menu::Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
-	foreach(Menu::Menuable* menu, menus) {
-		ActivatableObject* activatable = dynamic_cast<ActivatableObject*>(menu);
+	foreach(Menu::Menuable *menu, menus) {
+		ActivatableObject *activatable = dynamic_cast<ActivatableObject*>(menu);
 		if(activatable) activatable->setActive(0);
 	}
 	m_kiss.tellActivated();
@@ -119,7 +119,7 @@ void DeclarativeTab::activate()
 
 bool DeclarativeTab::beginSetup()
 {
-	QDeclarativeView* view = dynamic_cast<QDeclarativeView*>(widget());
+	QDeclarativeView *view = dynamic_cast<QDeclarativeView*>(widget());
 	return view && !view->errors().size();
 }
 
@@ -131,7 +131,7 @@ void DeclarativeTab::completeSetup()
 bool DeclarativeTab::close()
 {
 #ifdef BUILD_DEVELOPER_TOOLS
-	QDeclarativeView* view = dynamic_cast<QDeclarativeView*>(widget());
+	QDeclarativeView *view = dynamic_cast<QDeclarativeView*>(widget());
 	if(view) m_watcher.addPath(view->source().toLocalFile());
 	disconnect(&m_watcher, SIGNAL(fileChanged(const QString&)));
 #endif
@@ -140,7 +140,7 @@ bool DeclarativeTab::close()
 
 void DeclarativeTab::reload()
 {
-	QDeclarativeView* view = dynamic_cast<QDeclarativeView*>(widget());
+	QDeclarativeView *view = dynamic_cast<QDeclarativeView*>(widget());
 	if(!view) return;
 	
 	QUrl source = view->source();
@@ -151,7 +151,7 @@ void DeclarativeTab::reload()
 	completeSetup();
 }
 
-void DeclarativeTab::setTitle(const QString& title)
+void DeclarativeTab::setTitle(const QString &title)
 {
 	mainWindow()->setTabName(widget(), title);
 }

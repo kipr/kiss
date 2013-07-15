@@ -59,7 +59,7 @@ namespace Kiss
 			virtual void triggered();
 	
 		private:
-			Widget::MainWindow* m_mainWindow;
+			Widget::MainWindow *m_mainWindow;
 	
 			QAction *declTab;
 		};

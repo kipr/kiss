@@ -43,7 +43,7 @@ ResourceHelper::ResourceHelper()
 	addSearchLocation("resources"); // For user resources
 }
 
-QString ResourceHelper::lookup(const QString& name)
+QString ResourceHelper::lookup(const QString &name)
 {
 	if(name.isEmpty()) return "";
 	
@@ -51,11 +51,11 @@ QString ResourceHelper::lookup(const QString& name)
 	if(it != m_cache.end()) return *it;
 	
 	QDir dir;
-	foreach(const QString& location, m_locations) {
+	foreach(const QString &location, m_locations) {
 		dir.setPath(location);
 		QFileInfoList entries = dir.entryInfoList(QStringList() << QString("*") + name + "*");
 		if(entries.size() == 0) continue;
-		const QString& path = entries[0].canonicalFilePath();
+		const QString &path = entries[0].canonicalFilePath();
 		if(entries.size() > 1) {
 			Log::ref().warning(QString("More than one resource in %1 matches pattern %2. Using %3")
 				.arg(dir.path()).arg(name).arg(path));
@@ -70,22 +70,22 @@ QString ResourceHelper::lookup(const QString& name)
 	return "";
 }
 
-QIcon ResourceHelper::icon(const QString& name)
+QIcon ResourceHelper::icon(const QString &name)
 {
 	return QIcon(lookup(name));
 }
 
-QPixmap ResourceHelper::pixmap(const QString& name)
+QPixmap ResourceHelper::pixmap(const QString &name)
 {
 	return QPixmap(lookup(name));
 }
 
-const QStringList& ResourceHelper::searchLocations()
+const QStringList &ResourceHelper::searchLocations()
 {
 	return m_locations;
 }
 
-void ResourceHelper::addSearchLocation(const QString& location)
+void ResourceHelper::addSearchLocation(const QString &location)
 {
 	m_locations.append(location);
 }

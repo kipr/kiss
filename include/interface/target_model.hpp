@@ -20,8 +20,8 @@ namespace Kiss
 		Q_OBJECT
 		public:
 			TargetModel(InterfaceManager *manager);
-			TargetPtr indexToTarget(const QModelIndex& index) const;
-			Interface* indexToInterface(const QModelIndex& index) const;
+			TargetPtr indexToTarget(const QModelIndex &index) const;
+			Interface *indexToInterface(const QModelIndex &index) const;
 
 			void refresh();
 
@@ -33,13 +33,13 @@ namespace Kiss
 			void addTarget(TargetPtr target);
 
 		private slots:
-			void interfaceRemoved(Interface* interface);
+			void interfaceRemoved(Interface *interface);
 
 		private:
 			void targetScanStarted(Interface *interface);
 			void targetFound(Interface *interface, TargetPtr target);
 
-			InterfaceManager* m_manager;
+			InterfaceManager *m_manager;
 		};
 	}
 }

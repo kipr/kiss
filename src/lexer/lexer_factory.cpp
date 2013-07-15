@@ -24,13 +24,13 @@
 
 using namespace Kiss::Lexer;
 
-Constructor::Constructor(const QString& name)
+Constructor::Constructor(const QString &name)
 	: m_name(name)
 {
 	
 }
 
-const QString& Constructor::name() const
+const QString &Constructor::name() const
 {
 	return m_name;
 }
@@ -48,7 +48,7 @@ Factory::Factory() {}
 Factory::~Factory()
 {
 	QList<Constructor *> removed;
-	const QList<Constructor *>& l = m_constructors.values();
+	const QList<Constructor *> &l = m_constructors.values();
 	foreach(Constructor *c, l) {
 		if(removed.contains(c)) continue;
 		
@@ -57,7 +57,7 @@ Factory::~Factory()
 	}
 }
 
-Base *Factory::newLexer(const QString& name) const
+Base *Factory::newLexer(const QString &name) const
 {
 	return constructor(name)->construct();
 }
@@ -69,7 +69,7 @@ Base *Factory::newLexerFromConstructor(const Constructor *constructor) const
 	return ret;
 }
 
-Constructor *Factory::constructor(const QString& ext) const
+Constructor *Factory::constructor(const QString &ext) const
 {
 	QMap<QString, Constructor*>::const_iterator i = m_constructors.find(ext);
 	if(i == m_constructors.end()) return 0;
@@ -82,22 +82,22 @@ void Factory::registerLexerConstructor(Constructor *c)
 	registerLexerConstructor(c, c->extensions());
 }
 
-void Factory::registerLexerConstructor(Constructor *c, const QStringList& exts)
+void Factory::registerLexerConstructor(Constructor *c, const QStringList &exts)
 {
-	foreach(const QString& ext, exts) {
+	foreach(const QString &ext, exts) {
 		m_constructors[ext] = c;
 	}
 }
 
 void Factory::unregisterLexerConstructor(Constructor *c)
 {
-	const QList<QString>& keys = m_constructors.keys();
-	foreach(const QString& key, keys) {
+	const QList<QString> &keys = m_constructors.keys();
+	foreach(const QString &key, keys) {
 		if(m_constructors.value(key) == c) m_constructors.remove(key);
 	}
 }
 
-void Factory::setAPIsForLexer(Base *lexer, const QString& apis)
+void Factory::setAPIsForLexer(Base *lexer, const QString &apis)
 {
 	if(!lexer) return;
 	lexer->setAPIFile(apis);
@@ -109,7 +109,7 @@ bool Factory::isLexerFromConstructor(Base *lexer, Constructor *constructor)
 	return lexer->constructor() == constructor;
 }
 
-void Factory::setFont(const QFont& font)
+void Factory::setFont(const QFont &font)
 {
 	m_font = font;
 }
@@ -129,9 +129,9 @@ const QStringList Factory::extensions() const
 const QStringList Factory::formattedExtensions() const
 {
 	QStringList ret;
-	const QStringList& exts = extensions();
+	const QStringList &exts = extensions();
 	QMap<QString, QStringList> types;
-	foreach(const QString& ext, exts) types[constructor(ext)->name()] << "*." + ext;
-	foreach(const QString& type, types.keys()) ret << type + " (" + types[type].join(" ") + ")";
+	foreach(const QString &ext, exts) types[constructor(ext)->name()] << "*." + ext;
+	foreach(const QString &type, types.keys()) ret << type + " (" + types[type].join(" ") + ")";
 	return ret;
 }

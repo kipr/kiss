@@ -14,7 +14,7 @@ namespace Kiss
 	class LogStreamBuf : public std::streambuf
 	{
 	public:
-		explicit LogStreamBuf(const std::size_t& bufferSize = 256);
+		explicit LogStreamBuf(const std::size_t &bufferSize = 256);
 	protected:
 		bool flush();
 	private:
@@ -22,7 +22,7 @@ namespace Kiss
 		int sync();
 
 		LogStreamBuf(const LogStreamBuf&);
-		LogStreamBuf& operator= (const LogStreamBuf&);
+		LogStreamBuf &operator= (const LogStreamBuf&);
 	private:
 		std::vector<char> m_buffer;
 	};

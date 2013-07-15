@@ -12,8 +12,8 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			TitleDescription(QWidget* parent);
-			TitleDescription(const QString& title, const QString& description, QWidget* parent);
+			TitleDescription(QWidget *parent);
+			TitleDescription(const QString &title, const QString &description, QWidget *parent);
 		};
 	}
 }

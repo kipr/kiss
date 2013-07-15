@@ -50,10 +50,10 @@ namespace Kiss
 		public slots:
 			void newProject();
 			void open();
-			void openWeb(const QString& url);
+			void openWeb(const QString &url);
 			void settings();
 
-			const QStringList templates(const QString& target);
+			const QStringList templates(const QString &target);
 
 			void tellActivated();
 			void tellCompletedSetup();
@@ -70,7 +70,7 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			DeclarativeTab(const QUrl& file, MainWindow *parent);
+			DeclarativeTab(const QUrl &file, MainWindow *parent);
 			~DeclarativeTab();
 
 			void activate();
@@ -80,7 +80,7 @@ namespace Kiss
 
 		public slots:
 			void reload();
-			void setTitle(const QString& title);
+			void setTitle(const QString &title);
 			void refreshSettings();
 
 		private:

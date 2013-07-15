@@ -24,7 +24,7 @@
 
 using namespace Kiss::Menu;
 
-ConcreteMenuable::ConcreteMenuable(const QString& name)
+ConcreteMenuable::ConcreteMenuable(const QString &name)
 	: Menuable(name)
 {
 }
@@ -86,12 +86,12 @@ void ConcreteMenuable::activeToggled(bool state)
 
 }
 
-Node* ConcreteMenuable::node(QAction *action)
+Node *ConcreteMenuable::node(QAction *action)
 {
 	return new Node(this, action);
 }
 
-QAction* ConcreteMenuable::activeAction(const QIcon& icon, const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot)
+QAction *ConcreteMenuable::activeAction(const QIcon &icon, const QString &text, const QKeySequence &shortcut, ActivatableObject *activatable, const char *slot)
 {
 	QAction *ret = new QAction(icon, text, 0);
 	ret->setShortcut(shortcut);
@@ -100,19 +100,19 @@ QAction* ConcreteMenuable::activeAction(const QIcon& icon, const QString& text, 
 	return ret;
 }
 
-QAction *ConcreteMenuable::activeAction(const QString& iconRes, const QString& text, const QKeySequence& shortcut, ActivatableObject *activatable, const char *slot)
+QAction *ConcreteMenuable::activeAction(const QString &iconRes, const QString &text, const QKeySequence &shortcut, ActivatableObject *activatable, const char *slot)
 {
 	return activeAction(ResourceHelper::ref().icon(iconRes), text, shortcut, activatable, slot);
 }
 
-QAction *ConcreteMenuable::activeAction(const QString& text, const QKeySequence& shortcut, ActivatableObject *activatable, const char *slot)
+QAction *ConcreteMenuable::activeAction(const QString &text, const QKeySequence &shortcut, ActivatableObject *activatable, const char *slot)
 {
 	return activeAction("", text, shortcut, activatable, slot);
 }
 
-QAction *ConcreteMenuable::activeCheckedAction(const QIcon& icon, const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char *slot)
+QAction *ConcreteMenuable::activeCheckedAction(const QIcon &icon, const QString &text, const QKeySequence &shortcut, ActivatableObject *activatable, const char *slot)
 {
-	QAction* ret = new QAction(icon, text, 0);
+	QAction *ret = new QAction(icon, text, 0);
 	ret->setCheckable(true);
 	ret->setShortcut(shortcut);
 	QObject::connect(ret, SIGNAL(triggered(bool)), this, SLOT(activeToggled(bool)));
@@ -121,31 +121,31 @@ QAction *ConcreteMenuable::activeCheckedAction(const QIcon& icon, const QString&
 	return ret;
 }
 
-QAction *ConcreteMenuable::activeCheckedAction(const QString& iconRes, const QString& text, const QKeySequence& shortcut, ActivatableObject *activatable, const char *slot)
+QAction *ConcreteMenuable::activeCheckedAction(const QString &iconRes, const QString &text, const QKeySequence &shortcut, ActivatableObject *activatable, const char *slot)
 {
 	return activeCheckedAction(ResourceHelper::ref().icon(iconRes), text, shortcut, activatable, slot);
 }
 
-QAction *ConcreteMenuable::activeCheckedAction(const QString& text, const QKeySequence& shortcut, ActivatableObject *activatable, const char *slot)
+QAction *ConcreteMenuable::activeCheckedAction(const QString &text, const QKeySequence &shortcut, ActivatableObject *activatable, const char *slot)
 {
 	return activeCheckedAction("", text, shortcut, activatable, slot);
 }
 
-QAction *ConcreteMenuable::action(const QIcon& icon, const QString& text, const QKeySequence& shortcut)
+QAction *ConcreteMenuable::action(const QIcon &icon, const QString &text, const QKeySequence &shortcut)
 {
-	QAction* ret = new QAction(icon, text, 0);
+	QAction *ret = new QAction(icon, text, 0);
 	ret->setShortcut(shortcut);
 	QObject::connect(ret, SIGNAL(triggered()), this, SLOT(triggered()));
 	m_rawActions += ret;
 	return ret;
 }
 
-QAction *ConcreteMenuable::action(const QString& iconRes, const QString& text, const QKeySequence& shortcut)
+QAction *ConcreteMenuable::action(const QString &iconRes, const QString &text, const QKeySequence &shortcut)
 {
 	return action(ResourceHelper::ref().icon(iconRes), text, shortcut);
 }
 
-QAction *ConcreteMenuable::action(const QString& text, const QKeySequence& shortcut)
+QAction *ConcreteMenuable::action(const QString &text, const QKeySequence &shortcut)
 {
 	return action("", text, shortcut);
 }

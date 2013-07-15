@@ -70,7 +70,7 @@ int ThemeSettings::exec()
 	return QDialog::Accepted;
 }
 
-const QMap<QString, QColor>& ThemeSettings::settings() const
+const QMap<QString, QColor> &ThemeSettings::settings() const
 {
 	return m_lexerSettings;
 }
@@ -109,7 +109,7 @@ void ThemeSettings::readSettings()
 	m_lexerSettings.clear();
 	settings.beginGroup(LEXER);
 	QStringList keys = settings.childKeys();
-	foreach(const QString& key, keys) m_lexerSettings.insert(key, settings.value(key).value<QColor>());
+	foreach(const QString &key, keys) m_lexerSettings.insert(key, settings.value(key).value<QColor>());
 
 	settings.endGroup();
 	settings.endGroup();

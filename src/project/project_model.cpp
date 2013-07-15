@@ -146,7 +146,7 @@ public:
 
 		const QStringList &list = m_project->links();
 		foreach(const QString &entry, list) {
-			PathItem* item = (PathItem*)new FileItem(FileUtils::absolutePath(entry, QDir(m_path)));
+			PathItem *item = (PathItem*)new FileItem(FileUtils::absolutePath(entry, QDir(m_path)));
 			item->setForeground(Qt::gray);
 			appendRow(item);
 		}

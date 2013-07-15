@@ -5,7 +5,7 @@
 using namespace Kiss;
 using namespace Kiss::Target;
 
-CommunicationEntry::CommunicationEntry(const TargetPtr &target, const CommunicationEntry::Type& type)
+CommunicationEntry::CommunicationEntry(const TargetPtr &target, const CommunicationEntry::Type &type)
 	: m_target(target),
 	m_type(type),
 	m_id(0)
@@ -13,7 +13,7 @@ CommunicationEntry::CommunicationEntry(const TargetPtr &target, const Communicat
 	
 }
 
-CommunicationEntry::CommunicationEntry(const TargetPtr &target, const CommunicationEntry::Type& type, const QString& name, const KarPtr& archive)
+CommunicationEntry::CommunicationEntry(const TargetPtr &target, const CommunicationEntry::Type &type, const QString &name, const KarPtr &archive)
 	: m_target(target),
 	m_type(type),
 	m_name(name),
@@ -22,7 +22,7 @@ CommunicationEntry::CommunicationEntry(const TargetPtr &target, const Communicat
 {
 }
 
-CommunicationEntry::CommunicationEntry(const TargetPtr &target, const QString& custom, const QByteArray& payload)
+CommunicationEntry::CommunicationEntry(const TargetPtr &target, const QString &custom, const QByteArray &payload)
 	: m_target(target),
 	m_type(Custom),
 	m_name(""),
@@ -37,7 +37,7 @@ const TargetPtr &CommunicationEntry::target() const
 	return m_target;
 }
 
-const CommunicationEntry::Type& CommunicationEntry::type() const
+const CommunicationEntry::Type &CommunicationEntry::type() const
 {
 	return m_type;
 }
@@ -59,22 +59,22 @@ QString CommunicationEntry::typeString() const
 	return QObject::tr("Unknown");
 }
 
-const QString& CommunicationEntry::custom() const
+const QString &CommunicationEntry::custom() const
 {
 	return m_custom;
 }
 
-const QByteArray& CommunicationEntry::payload() const
+const QByteArray &CommunicationEntry::payload() const
 {
 	return m_payload;
 }
 
-const QString& CommunicationEntry::name() const
+const QString &CommunicationEntry::name() const
 {
 	return m_name;
 }
 
-const KarPtr& CommunicationEntry::archive() const
+const KarPtr &CommunicationEntry::archive() const
 {
 	return m_archive;
 }

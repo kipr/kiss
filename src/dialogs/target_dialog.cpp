@@ -65,7 +65,7 @@ Kiss::Target::TargetPtr Target::target() const
 	return m_model.indexToTarget(ui_targets->selectionModel()->currentIndex());
 }
 
-void Target::currentTargetChanged(const QModelIndex& index)
+void Target::currentTargetChanged(const QModelIndex &index)
 {
 	Kiss::Target::TargetPtr target = m_model.indexToTarget(index);
 	const QString unknown = "Unknown";
@@ -78,7 +78,7 @@ void Target::currentTargetChanged(const QModelIndex& index)
 	ui_buttons->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 
-void Target::targetChosen(const QModelIndex& index)
+void Target::targetChosen(const QModelIndex &index)
 {
 	accept();
 }

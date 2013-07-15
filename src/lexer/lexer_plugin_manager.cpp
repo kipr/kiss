@@ -2,7 +2,7 @@
 
 using namespace Kiss::Lexer;
 
-QString PluginManager::getExpectedLocation(const QString& name) const
+QString PluginManager::getExpectedLocation(const QString &name) const
 {
 	return "lexers";
 }

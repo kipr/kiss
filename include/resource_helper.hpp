@@ -34,12 +34,12 @@ namespace Kiss
 	{
 		ResourceHelper();
 
-		QString lookup(const QString& name);
-		QIcon icon(const QString& name);
-		QPixmap pixmap(const QString& name);
+		QString lookup(const QString &name);
+		QIcon icon(const QString &name);
+		QPixmap pixmap(const QString &name);
 
-		const QStringList& searchLocations();
-		void addSearchLocation(const QString& location);
+		const QStringList &searchLocations();
+		void addSearchLocation(const QString &location);
 
 	private:
 		QMap<QString, QString> m_cache;

@@ -30,7 +30,7 @@ using namespace Kiss::Menu;
 struct NodeSingleton : Kiss::Singleton<NodeSingleton>
 {
 	~NodeSingleton() {
-		foreach(Node* child, nodes) delete child;
+		foreach(Node *child, nodes) delete child;
 	}
 	
 	QSet<Node*> nodes;
@@ -44,7 +44,7 @@ Node::Node()
 {
 	NodeSingleton::ref().nodes += this;
 }
-Node::Node(const QString& name)
+Node::Node(const QString &name)
 	: name(name),
 	rawAction(0),
 	activeControl(false),
@@ -53,7 +53,7 @@ Node::Node(const QString& name)
 	NodeSingleton::ref().nodes += this;
 }
 
-Node::Node(const QString& name, Menuable* menuable, QAction* action)
+Node::Node(const QString &name, Menuable *menuable, QAction *action)
 	: name(name),
 	rawAction(0),
 	activeControl(false),
@@ -63,7 +63,7 @@ Node::Node(const QString& name, Menuable* menuable, QAction* action)
 	NodeSingleton::ref().nodes += this;
 }
 
-Node::Node(Menuable* menuable, QAction* action)
+Node::Node(Menuable *menuable, QAction *action)
 	: name(action->text()),
 	rawAction(0),
 	activeControl(false),
@@ -78,7 +78,7 @@ Node::~Node() {}
 QList<Node*> Node::unify(QList<Node*> nodes)
 {
 	QMap<QString, Node*> unity;
-	foreach(Node* node, nodes) {
+	foreach(Node *node, nodes) {
 		QMap<QString, Node*>::iterator it = unity.find(node->name);
 		if(it == unity.end()) unity[node->name] = node;
 		else {
@@ -90,9 +90,9 @@ QList<Node*> Node::unify(QList<Node*> nodes)
 	return unity.values();
 }
 
-Node* Node::separator()
+Node *Node::separator()
 {
-	static Node* separator = new Node;
+	static Node *separator = new Node;
 	return separator;
 }
 
@@ -100,7 +100,7 @@ QActionList Node::allActions()
 {
 	QActionList ret;
 	foreach(MenuableActionPair pair, registers) ret.append(pair.action);
-	foreach(Node* child, children) ret.append(child->allActions());
+	foreach(Node *child, children) ret.append(child->allActions());
 	return ret;
 }
 
@@ -120,7 +120,7 @@ Manager::~Manager()
 {
 }
 
-void Manager::registerMenus(Menuable* menuable)
+void Manager::registerMenus(Menuable *menuable)
 {
 	menuable->setManager(this);
 	addChildren(m_file, menuable->actionsFile());
@@ -130,7 +130,7 @@ void Manager::registerMenus(Menuable* menuable)
 	addChildren(m_tool, menuable->toolbarActions());
 }
 
-void Manager::unregisterMenus(Menuable* menuable)
+void Manager::unregisterMenus(Menuable *menuable)
 {
 	menuable->setManager(0);
 	unregisterMenus(menuable, m_root);
@@ -148,26 +148,26 @@ void Manager::activate(QList<Menuable*> menus)
 	refresh();
 }
 
-void Manager::addActivation(Menuable* menuable)
+void Manager::addActivation(Menuable *menuable)
 {
 	if(m_active.contains(menuable)) return;
 	m_active.append(menuable);
 	refresh();
 }
 
-void Manager::removeActivation(Menuable* menuable)
+void Manager::removeActivation(Menuable *menuable)
 {
 	m_active.removeAll(menuable);
 	refresh();
 }
 
-void Manager::construct(QMenuBar* menuBar, QToolBar* toolBar)
+void Manager::construct(QMenuBar *menuBar, QToolBar *toolBar)
 {
 	construct(menuBar->addMenu("File"), m_file->children);
 
 	construct(menuBar->addMenu("Edit"), m_edit->children);
 
-	foreach(Node* rootChild, m_root->children)
+	foreach(Node *rootChild, m_root->children)
 		construct(menuBar->addMenu(rootChild->name), rootChild->children);
 	
 	construct(menuBar->addMenu("Help"), m_help->children);
@@ -189,9 +189,9 @@ void Manager::refreshToolbar()
 	m_toolBar->hide();
 	m_toolBar->clear();
 	NodeList::iterator it = m_tool->children.begin();
-	QAction* lastSep = 0;
+	QAction *lastSep = 0;
 	for(; it != m_tool->children.end(); ++it) {
-		Node* child = *it;
+		Node *child = *it;
 		if(child == Node::separator() && !lastSep) {
 			lastSep = m_toolBar->addSeparator();
 		} else if(isActivatable(child)
@@ -207,8 +207,8 @@ void Manager::refreshToolbar()
 
 void Manager::triggered()
 {
-	QAction* action = (QAction*)sender();
-	Node* node = (Node*)action->data().value<void*>();
+	QAction *action = (QAction*)sender();
+	Node *node = (Node*)action->data().value<void*>();
 	// qWarning() << node->name << "triggered (" << node->registers.size() << "registers )";
 	
 	bool called = false;
@@ -222,13 +222,13 @@ void Manager::triggered()
 	if(!called) Log::ref().warning(QString("Did not trigger %1 on any menuables.").arg(node->name));
 }
 
-void Manager::addChildren(Node* parent, const NodeList& nodes)
+void Manager::addChildren(Node *parent, const NodeList &nodes)
 {
 	// Hopefully makes this a O(2n) instead of O(n^2)
 	QMap<QString, Node*> lookup;
-	foreach(Node* child, parent->children) lookup[child->name] = child;
+	foreach(Node *child, parent->children) lookup[child->name] = child;
 	
-	foreach(Node* node, nodes) {
+	foreach(Node *node, nodes) {
 		QMap<QString, Node*>::iterator it = lookup.find(node->name);
 		if(it == lookup.end() || *it == Node::separator()) {
 			parent->children.append(node);
@@ -241,16 +241,16 @@ void Manager::addChildren(Node* parent, const NodeList& nodes)
 	}
 }
 
-QList<MenuableActionPair> Manager::actionsToPair(Menuable* menuable, const QActionList& actions)
+QList<MenuableActionPair> Manager::actionsToPair(Menuable *menuable, const QActionList &actions)
 {
 	QList<MenuableActionPair> ret;
-	foreach(QAction* action, actions)
+	foreach(QAction *action, actions)
 		ret.append(MenuableActionPair(menuable, action));
 	
 	return ret;
 }
 
-void Manager::unregisterMenus(Menuable* menuable, Node* node)
+void Manager::unregisterMenus(Menuable *menuable, Node *node)
 {
 	QList<MenuableActionPair>::iterator it = node->registers.begin();
 	for(; it != node->registers.end(); it++) {
@@ -265,17 +265,17 @@ void Manager::unregisterMenus(Menuable* menuable, Node* node)
 	}
 }
 
-void Manager::construct(QMenu* menu, QList<Node*> nodes)
+void Manager::construct(QMenu *menu, QList<Node*> nodes)
 {
-	foreach(Node* node, nodes) construct(menu, node);
+	foreach(Node *node, nodes) construct(menu, node);
 }
 
-void Manager::construct(QToolBar* tool, QList<Node*> nodes)
+void Manager::construct(QToolBar *tool, QList<Node*> nodes)
 {
-	foreach(Node* node, nodes) construct(tool, node);
+	foreach(Node *node, nodes) construct(tool, node);
 }
 
-void Manager::construct(QMenu* menu, Node* node)
+void Manager::construct(QMenu *menu, Node *node)
 {
 	if(node == Node::separator()) {
 		menu->addSeparator();
@@ -287,8 +287,8 @@ void Manager::construct(QMenu* menu, Node* node)
 			return;
 		}
 		if(node->rawAction) return;
-		QAction* first = node->registers[0].action;
-		QAction* action = menu->addAction(first->icon(), node->name);
+		QAction *first = node->registers[0].action;
+		QAction *action = menu->addAction(first->icon(), node->name);
 		action->setShortcut(first->shortcut());
 		action->setCheckable(first->isCheckable());
 		action->setMenuRole(first->menuRole());
@@ -296,12 +296,12 @@ void Manager::construct(QMenu* menu, Node* node)
 		node->rawAction = action;
 		connect(action, SIGNAL(triggered()), this, SLOT(triggered()));
 	} else { // Non-terminal node
-		QMenu* subMenu = menu->addMenu(node->name);
+		QMenu *subMenu = menu->addMenu(node->name);
 		construct(subMenu, node->children);
 	}
 }
 
-void Manager::construct(QToolBar* toolbar, Node* node)
+void Manager::construct(QToolBar *toolbar, Node *node)
 {
 	if(node->children.size() == 0) { // Terminal node
 		if(node->registers.size() == 0) {
@@ -309,7 +309,7 @@ void Manager::construct(QToolBar* toolbar, Node* node)
 			return;
 		}
 		if(node->rawAction) return;
-		QAction* action = new QAction(node->registers[0].action->icon(), node->name, toolbar);
+		QAction *action = new QAction(node->registers[0].action->icon(), node->name, toolbar);
 		action->setShortcut(node->registers[0].action->shortcut());
 		// qWarning() << "Checkable?" << node->registers[0].action->isCheckable();
 		action->setCheckable(node->registers[0].action->isCheckable());
@@ -332,13 +332,13 @@ void Manager::refresh()
 	refreshToolbar();
 }
 
-void Manager::refresh(Node* node)
+void Manager::refresh(Node *node)
 {
 	if(node->rawAction && !node->activeControl) node->rawAction->setEnabled(isActivatable(node));
-	foreach(Node* child, node->children) refresh(child);
+	foreach(Node *child, node->children) refresh(child);
 }
 
-bool Manager::isActivatable(Node* node) const
+bool Manager::isActivatable(Node *node) const
 {
 	foreach(MenuableActionPair pair, node->registers)
 		if(m_active.contains(pair.menuable)) return true;

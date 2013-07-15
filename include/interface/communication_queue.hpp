@@ -31,23 +31,23 @@ namespace Kiss
 				Custom
 			};
 
-			CommunicationEntry(const TargetPtr &target, const Type& type);
-			CommunicationEntry(const TargetPtr &target, const Type& type, const QString& name, const KarPtr& archive = KarPtr());
-			CommunicationEntry(const TargetPtr &target, const QString& custom, const QByteArray& payload = QByteArray());
+			CommunicationEntry(const TargetPtr &target, const Type &type);
+			CommunicationEntry(const TargetPtr &target, const Type &type, const QString &name, const KarPtr &archive = KarPtr());
+			CommunicationEntry(const TargetPtr &target, const QString &custom, const QByteArray &payload = QByteArray());
 
 			const TargetPtr &target() const;
-			const CommunicationEntry::Type& type() const;
+			const CommunicationEntry::Type &type() const;
 			QString typeString() const;
-			const QString& custom() const;
-			const QByteArray& payload() const;
-			const QString& name() const;
+			const QString &custom() const;
+			const QByteArray &payload() const;
+			const QString &name() const;
 			
 			void setId(const quint64 &id);
 			const quint64 &id() const;
 			
 			Target::Target::ReturnCode execute() const;
 			
-			const KarPtr& archive() const;
+			const KarPtr &archive() const;
 			
 		private:
 			Q_DISABLE_COPY(CommunicationEntry)

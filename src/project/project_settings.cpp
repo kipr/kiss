@@ -24,7 +24,7 @@ public:
 		this->keys = keys;
 	}
 
-	virtual QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+	virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 	{
 		if(index.column() != 0) return QStyledItemDelegate::createEditor(parent, option, index);
 
@@ -147,7 +147,7 @@ void ProjectSettings::on_ui_add_clicked()
 void ProjectSettings::on_ui_remove_clicked()
 {
 	int row = ui_settingsTable->currentRow();
-	QTableWidgetItem* key = ui_settingsTable->item(row, 0);
+	QTableWidgetItem *key = ui_settingsTable->item(row, 0);
 	QString keyString = key ? key->text() : "";
 	ui_settingsTable->removeRow(row);
 

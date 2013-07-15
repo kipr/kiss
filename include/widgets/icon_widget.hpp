@@ -14,7 +14,7 @@ namespace Kiss
 		public:
 			Icon(QWidget *parent = 0);
 			
-			void setIcon(const QIcon& icon);
+			void setIcon(const QIcon &icon);
 			QIcon icon() const;
 			
 		signals:

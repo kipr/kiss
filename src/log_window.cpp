@@ -8,7 +8,7 @@ LogWindow::LogWindow()
 	setupUi(this);
 }
 
-void LogWindow::append(const QString& str)
+void LogWindow::append(const QString &str)
 {
 	QTextCursor cursor(ui_log->textCursor());
 	cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);

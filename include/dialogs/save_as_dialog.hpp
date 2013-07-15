@@ -23,20 +23,20 @@ namespace Kiss
 			SaveAs(QWidget *parent = 0);
 			~SaveAs();
 			
-			void setNameFilters(const QStringList& filters);
+			void setNameFilters(const QStringList &filters);
 			QStringList nameFilters() const;
 			
-			void setFileName(const QString& name);
+			void setFileName(const QString &name);
 			QString fileName() const;
 			
-			void setRootPath(const QString& path);
+			void setRootPath(const QString &path);
 			QString rootPath() const;
 			
 			QString filePath() const;
 			
 		private slots:
-			void fileNameChanged(const QString& name);
-			void selectionChanged(const QModelIndex& index);
+			void fileNameChanged(const QString &name);
+			void selectionChanged(const QModelIndex &index);
 			
 		private:
 			QFileSystemModel *m_model;

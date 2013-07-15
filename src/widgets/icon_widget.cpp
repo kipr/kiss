@@ -11,7 +11,7 @@ Icon::Icon(QWidget *parent)
 	
 }
 
-void Icon::setIcon(const QIcon& icon)
+void Icon::setIcon(const QIcon &icon)
 {
 	setPixmap(icon.pixmap(icon.availableSizes()[0]));
 }

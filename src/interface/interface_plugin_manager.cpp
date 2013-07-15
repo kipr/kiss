@@ -3,7 +3,7 @@
 
 using namespace Kiss::Target;
 
-QString InterfacePluginManager::getExpectedLocation(const QString& name) const
+QString InterfacePluginManager::getExpectedLocation(const QString &name) const
 {
 	return "interfaces";
 }

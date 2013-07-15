@@ -8,7 +8,7 @@ namespace Kiss
 {
 	class LanguageHelperPluginManager : public Plugin::Manager<LanguageHelperPluginManager, LanguageHelper>
 	{
-		virtual QString getExpectedLocation(const QString& name) const;
+		virtual QString getExpectedLocation(const QString &name) const;
 		virtual void pluginLoaded(LanguageHelper *plugin);
 		virtual void pluginUnloaded(LanguageHelper *plugin);
 	};

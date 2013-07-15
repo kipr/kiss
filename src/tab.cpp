@@ -20,7 +20,7 @@ void Tab::activate()
 {
 }
 
-QWidget* Tab::widget() const
+QWidget *Tab::widget() const
 {
 	return m_widget;
 }
@@ -35,19 +35,19 @@ void Tab::setMainWindow(MainWindow *mainWindow)
 	m_mainWindow = mainWindow;
 }
 
-void Tab::setFile(const QString& file)
+void Tab::setFile(const QString &file)
 {
 	m_file.setFile(file);
 	fileChanged(file);
 }
 
-void Tab::setFile(const QFileInfo& file)
+void Tab::setFile(const QFileInfo &file)
 {
 	m_file = file;
 	fileChanged(file);
 }
 
-const QFileInfo& Tab::file() const
+const QFileInfo &Tab::file() const
 {
 	return m_file;
 }
@@ -57,13 +57,13 @@ bool Tab::hasFile() const
 	return !m_file.fileName().isEmpty();
 }
 
-void Tab::setProject(const Kiss::Project::ProjectPtr& project)
+void Tab::setProject(const Kiss::Project::ProjectPtr &project)
 {
 	m_project = project;
 	projectChanged(project);
 }
 
-const Kiss::Project::ProjectPtr& Tab::project() const
+const Kiss::Project::ProjectPtr &Tab::project() const
 {
 	return m_project;
 }

@@ -10,7 +10,7 @@ namespace Kiss
 	class Log : public Singleton<Log>
 	{
 	public:
-		void setLoggingLevel(const int& level);
+		void setLoggingLevel(const int &level);
 		const int loggingLevel() const;
 
 		enum Level {
@@ -20,12 +20,12 @@ namespace Kiss
 			Debug
 		};
 
-		void error(const QString& message) const;
-		void warning(const QString& message) const;
-		void info(const QString& message) const;
-		void debug(const QString& message) const;
+		void error(const QString &message) const;
+		void warning(const QString &message) const;
+		void info(const QString &message) const;
+		void debug(const QString &message) const;
 
-		void message(const QString& message) const;
+		void message(const QString &message) const;
 	private:
 
 		int m_level;

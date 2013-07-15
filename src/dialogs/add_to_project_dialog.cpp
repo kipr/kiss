@@ -2,7 +2,7 @@
 #include "ui_AddToProjectDialog.h"
 
 AddToProjectDialog::AddToProjectDialog(QWidget *parent) :
-    QDialog(parent)
+	QDialog(parent)
 {
 	setupUi(this);
 }

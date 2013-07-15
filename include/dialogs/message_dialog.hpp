@@ -33,15 +33,15 @@ namespace Kiss
 		public:
 			Message(QWidget *parent = 0);
 
-			void setMessage(const QString& message, const QStringList& args = QStringList());
-			void setLabel(const QString& label);
+			void setMessage(const QString &message, const QStringList &args = QStringList());
+			void setLabel(const QString &label);
 
-			static void showMessage(QWidget *parent, const QString& label,
-				const QString& message, const QStringList& args = QStringList());
+			static void showMessage(QWidget *parent, const QString &label,
+				const QString &message, const QStringList &args = QStringList());
 
-			static void showError(QWidget *parent, const QString& error, const QStringList& args = QStringList());
+			static void showError(QWidget *parent, const QString &error, const QStringList &args = QStringList());
 		private slots:
-			void on_ui_message_anchorClicked(const QUrl& link);
+			void on_ui_message_anchorClicked(const QUrl &link);
 			void on_ui_copy_clicked();
 		};
 	}

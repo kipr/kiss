@@ -52,12 +52,12 @@ TargetModel::TargetModel(InterfaceManager *manager)
 	connect(this, SIGNAL(foundTarget(TargetPtr)), SLOT(addTarget(TargetPtr)), Qt::QueuedConnection);
 }
 
-TargetPtr TargetModel::indexToTarget(const QModelIndex& index) const
+TargetPtr TargetModel::indexToTarget(const QModelIndex &index) const
 {
 	return TargetItem::target_cast(itemFromIndex(index));
 }
 
-Interface* TargetModel::indexToInterface(const QModelIndex& index) const
+Interface *TargetModel::indexToInterface(const QModelIndex &index) const
 {
 	return TargetItem::interface_cast(itemFromIndex(index));
 }
@@ -73,7 +73,7 @@ void TargetModel::addTarget(TargetPtr target)
 	appendRow(new TargetItem(target));
 }
 
-void TargetModel::interfaceRemoved(Interface* interface)
+void TargetModel::interfaceRemoved(Interface *interface)
 {
 	for(int i = 0; i < rowCount(); ++i) {
 		if(TargetItem::interface_cast(item(i)) == interface) delete takeItem(i--);

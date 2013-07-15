@@ -20,12 +20,12 @@ namespace Kiss
 		typedef QList<line_t> LineList;
 		
 		Lines();
-		Lines(const LineList& warningLines, const LineList& errorLines);
+		Lines(const LineList &warningLines, const LineList &errorLines);
 		
-		const LineList& warningLines() const;
-		const LineList& errorLines() const;
+		const LineList &warningLines() const;
+		const LineList &errorLines() const;
 		
-		Lines operator+(const Lines& rhs) const;
+		Lines operator+(const Lines &rhs) const;
 		
 	private:
 		QList<line_t> m_warningLines;
@@ -35,9 +35,9 @@ namespace Kiss
 	class OutputHelper
 	{
 	public:
-		static Lines lines(const Compiler::Output& output);
+		static Lines lines(const Compiler::Output &output);
 	private:
-		static Lines::Type classifyLine(const QString& line);
+		static Lines::Type classifyLine(const QString &line);
 	};
 }
 

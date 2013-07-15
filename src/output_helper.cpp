@@ -9,36 +9,36 @@ Lines::Lines()
 {
 }
 
-Lines::Lines(const LineList& warningLines, const LineList& errorLines)
+Lines::Lines(const LineList &warningLines, const LineList &errorLines)
 	: m_warningLines(warningLines),
 	m_errorLines(errorLines)
 {
 }
 
-const Lines::LineList& Lines::warningLines() const
+const Lines::LineList &Lines::warningLines() const
 {
 	return m_warningLines;
 }
 
-const Lines::LineList& Lines::errorLines() const
+const Lines::LineList &Lines::errorLines() const
 {
 	return m_errorLines;
 }
 
-Lines Lines::operator+(const Lines& rhs) const
+Lines Lines::operator+(const Lines &rhs) const
 {
 	return Lines(m_warningLines + rhs.warningLines(),
 		m_errorLines + rhs.errorLines());
 }
 
-Lines OutputHelper::lines(const Compiler::Output& output)
+Lines OutputHelper::lines(const Compiler::Output &output)
 {
 	Lines::LineList errorLines;
 	Lines::LineList warningLines;
 	QString str = QString(output.error()) + "\n" + QString(output.output());
 	QStringList lines = str.split("\n");
 	
-	foreach(const QString& line, lines) {
+	foreach(const QString &line, lines) {
 		const Lines::Type classification = classifyLine(line);
 		if(classification == Lines::Unknown) continue;
 		
@@ -52,7 +52,7 @@ Lines OutputHelper::lines(const Compiler::Output& output)
 	return Lines(warningLines, errorLines);
 }
 
-Lines::Type OutputHelper::classifyLine(const QString& line)
+Lines::Type OutputHelper::classifyLine(const QString &line)
 {
 	// Clang and GCC
 	const QString gcc = line.section(":", 3, 3);

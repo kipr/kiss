@@ -64,19 +64,19 @@ namespace Kiss
 			NodeList m_actions;
 			NodeList m_toolbar;
 
-			Node *node(QAction* action);
+			Node *node(QAction *action);
 
-			QAction* activeAction(const QIcon& icon, const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot);
-			QAction* activeAction(const QString& iconRes, const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot);
-			QAction* activeAction(const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot);
+			QAction *activeAction(const QIcon& icon, const QString& text, const QKeySequence& shortcut, ActivatableObject *activatable, const char *slot);
+			QAction *activeAction(const QString& iconRes, const QString& text, const QKeySequence& shortcut, ActivatableObject *activatable, const char *slot);
+			QAction *activeAction(const QString& text, const QKeySequence& shortcut, ActivatableObject *activatable, const char *slot);
 
-			QAction* activeCheckedAction(const QIcon& icon, const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot);
-			QAction* activeCheckedAction(const QString& iconRes, const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot);
-			QAction* activeCheckedAction(const QString& text, const QKeySequence& shortcut, ActivatableObject* activatable, const char* slot);
+			QAction *activeCheckedAction(const QIcon& icon, const QString& text, const QKeySequence& shortcut, ActivatableObject *activatable, const char *slot);
+			QAction *activeCheckedAction(const QString& iconRes, const QString& text, const QKeySequence& shortcut, ActivatableObject *activatable, const char *slot);
+			QAction *activeCheckedAction(const QString& text, const QKeySequence& shortcut, ActivatableObject *activatable, const char *slot);
 
-			QAction* action(const QIcon& icon, const QString& text, const QKeySequence& shortcut = QKeySequence::UnknownKey);
-			QAction* action(const QString& iconRes, const QString& text, const QKeySequence& shortcut = QKeySequence::UnknownKey);
-			QAction* action(const QString& text, const QKeySequence& shortcut = QKeySequence::UnknownKey);
+			QAction *action(const QIcon& icon, const QString& text, const QKeySequence& shortcut = QKeySequence::UnknownKey);
+			QAction *action(const QString& iconRes, const QString& text, const QKeySequence& shortcut = QKeySequence::UnknownKey);
+			QAction *action(const QString& text, const QKeySequence& shortcut = QKeySequence::UnknownKey);
 
 		private:
 

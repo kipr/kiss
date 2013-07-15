@@ -32,17 +32,17 @@ public:
 		return false;
 	}
 	
-	virtual Target::ReturnCode compile(quint64 id, const QString& name)
+	virtual Target::ReturnCode compile(quint64 id, const QString &name)
 	{
 		return Target::NotImplemented;
 	}
 	
-	virtual Target::ReturnCode download(quint64 id, const QString& name, const KarPtr& archive)
+	virtual Target::ReturnCode download(quint64 id, const QString &name, const KarPtr &archive)
 	{
 		return Target::NotImplemented;
 	}
 	
-	virtual Target::ReturnCode run(quint64 id, const QString& name)
+	virtual Target::ReturnCode run(quint64 id, const QString &name)
 	{
 		return Target::NotImplemented;
 	}
@@ -52,17 +52,17 @@ public:
 		return Target::NotImplemented;
 	}
 	
-	virtual Target::ReturnCode deleteProgram(quint64 id, const QString& name)
+	virtual Target::ReturnCode deleteProgram(quint64 id, const QString &name)
 	{
 		return Target::NotImplemented;
 	}
 	
-	virtual Target::ReturnCode interaction(quint64 id, const QString& command)
+	virtual Target::ReturnCode interaction(quint64 id, const QString &command)
 	{
 		return Target::NotImplemented;
 	}
 	
-	virtual Target::ReturnCode sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray())
+	virtual Target::ReturnCode sendCustom(quint64 id, const QString &custom, const QByteArray &payload = QByteArray())
 	{
 		return Target::NotImplemented;
 	}

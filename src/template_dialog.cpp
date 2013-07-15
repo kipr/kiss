@@ -57,7 +57,7 @@ Kiss::Template::File Dialog::Template::file() const
 	return m_model->indexToFile(selection.indexes()[0]);
 }
 
-void Dialog::Template::selectionChanged(const QItemSelection& selection)
+void Dialog::Template::selectionChanged(const QItemSelection &selection)
 {
 	const bool singular = selection.indexes().size() == 1;
 	

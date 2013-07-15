@@ -11,8 +11,8 @@
 
 using namespace Kiss;
 
-DocumentationLocation::DocumentationLocation(const QString& name, const QString& location,
-	const QString& description, const QString& decoration)
+DocumentationLocation::DocumentationLocation(const QString &name, const QString &location,
+	const QString &description, const QString &decoration)
 	: m_name(name),
 	m_location(location),
 	m_description(description),
@@ -21,22 +21,22 @@ DocumentationLocation::DocumentationLocation(const QString& name, const QString&
 	
 }
 
-const QString& DocumentationLocation::name() const
+const QString &DocumentationLocation::name() const
 {
 	return m_name;
 }
 
-const QString& DocumentationLocation::location() const
+const QString &DocumentationLocation::location() const
 {
 	return m_location;
 }
 
-const QString& DocumentationLocation::description() const
+const QString &DocumentationLocation::description() const
 {
 	return m_description;
 }
 
-const QString& DocumentationLocation::decoration() const
+const QString &DocumentationLocation::decoration() const
 {
 	return m_decoration;
 }
@@ -46,7 +46,7 @@ DocumentationManager::DocumentationManager()
 	loadDefaultDocumentation();
 }
 
-void DocumentationManager::addLocation(const QString& location)
+void DocumentationManager::addLocation(const QString &location)
 {
 	const QString name = QFileInfo(location).fileName();
 	QString realLocation = location;
@@ -62,7 +62,7 @@ void DocumentationManager::addLocation(const QString& location)
 		description(location), decoration(location)));
 }
 
-const QList<DocumentationLocation>& DocumentationManager::locations() const
+const QList<DocumentationLocation> &DocumentationManager::locations() const
 {
 	return m_locations;
 }
@@ -77,10 +77,10 @@ void DocumentationManager::loadDefaultDocumentation()
 	qDebug() << "Loading default documentation from" << documentationPath();
 	
 	QFileInfoList folders = QDir(documentationPath()).entryInfoList(QDir::Dirs | QDir::NoDot | QDir::NoDotDot);
-	foreach(const QFileInfo& folder, folders) addLocation(folder.absoluteFilePath());
+	foreach(const QFileInfo &folder, folders) addLocation(folder.absoluteFilePath());
 }
 
-const QString DocumentationManager::description(const QString& location)
+const QString DocumentationManager::description(const QString &location)
 {
 	QFile file(location + "/" + DESCRIPTION_FILE);
 	file.open(QIODevice::ReadOnly);
@@ -89,7 +89,7 @@ const QString DocumentationManager::description(const QString& location)
 	return ret;
 }
 
-const QString DocumentationManager::decoration(const QString& location)
+const QString DocumentationManager::decoration(const QString &location)
 {
 	QFile file(location + "/" + DECORATION_FILE);
 	file.open(QIODevice::ReadOnly);

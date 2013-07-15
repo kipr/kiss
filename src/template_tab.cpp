@@ -14,7 +14,7 @@
 using namespace Kiss;
 using namespace Kiss::Widget;
 
-TemplateTab::TemplateTab(const Template::PackPtr& pack, MainWindow *mainWindow)
+TemplateTab::TemplateTab(const Template::PackPtr &pack, MainWindow *mainWindow)
 	: QWidget(mainWindow),
 	Tab(this, mainWindow),
 	m_dirty(true),
@@ -26,7 +26,7 @@ TemplateTab::TemplateTab(const Template::PackPtr& pack, MainWindow *mainWindow)
 	init();
 }
 
-TemplateTab::TemplateTab(const QString& path, MainWindow *mainWindow)
+TemplateTab::TemplateTab(const QString &path, MainWindow *mainWindow)
 	: QWidget(mainWindow),
 	Tab(this, mainWindow),
 	m_dirty(false),
@@ -86,7 +86,7 @@ void TemplateTab::refreshSettings()
 }
 
 
-bool TemplateTab::saveAs(const QString& file)
+bool TemplateTab::saveAs(const QString &file)
 {
 	setFile(file);
 	m_pack->save(Tab::file().absoluteFilePath());
@@ -95,7 +95,7 @@ bool TemplateTab::saveAs(const QString& file)
 	return true;
 }
 
-bool TemplateTab::addFile(const QString& path)
+bool TemplateTab::addFile(const QString &path)
 {
 	QFile file(path);
 	if(!file.open(QIODevice::ReadOnly)) return false;
@@ -131,7 +131,7 @@ void TemplateTab::addFile()
 	QStringList files = QFileDialog::getOpenFileNames(this,
 		tr("Which files would you like to add to the template pack?"));
 	
-	foreach(const QString& file, files) {
+	foreach(const QString &file, files) {
 		addFile(file);
 	}
 	
@@ -141,14 +141,14 @@ void TemplateTab::addFile()
 void TemplateTab::deleteSelection()
 {
 	QModelIndexList selection = ui->packTree->selectionModel()->selectedRows();
-	foreach(const QModelIndex& index, selection) {
+	foreach(const QModelIndex &index, selection) {
 		m_pack->removeFile(m_model->itemFromIndex(index)->text());
 	}
 	
 	dirty();
 }
 
-void TemplateTab::selectionChanged(const QItemSelection& selection, const QItemSelection& prev)
+void TemplateTab::selectionChanged(const QItemSelection &selection, const QItemSelection &prev)
 {
 	if(prev.indexes().size() == 1) {
 		const QModelIndex index = prev.indexes()[0];
@@ -158,7 +158,7 @@ void TemplateTab::selectionChanged(const QItemSelection& selection, const QItemS
 	}
 	
 	bool allFiles = true;
-	foreach(const QModelIndex& index, selection.indexes()) {
+	foreach(const QModelIndex &index, selection.indexes()) {
 		allFiles &= m_model->isIndexFile(index);
 	}
 	

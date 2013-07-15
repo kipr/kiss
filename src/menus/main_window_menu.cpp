@@ -32,11 +32,11 @@
 using namespace Kiss;
 using namespace Kiss::Menu;
 
-MainWindowMenu::MainWindowMenu(Widget::MainWindow* mainWindow)
+MainWindowMenu::MainWindowMenu(Widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName()),
 	m_mainWindow(mainWindow)
 {	
-	Node* packages = new Node("Packages");
+	Node *packages = new Node("Packages");
 	m_file.append(packages);
 	m_file.append(node(m_hideErrors = action("Hide Errors", QKeySequence::UnknownKey)));
 	m_file.append(Node::separator());
@@ -44,7 +44,7 @@ MainWindowMenu::MainWindowMenu(Widget::MainWindow* mainWindow)
 	m_file.append(m_prevNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_left")), "Previous", QKeySequence::PreviousChild, this, "previous")));
 	m_file.append(m_closeNode = node(activeAction("cross", "Close", QKeySequence::Close, this, "closeCurrentTab")));
 	m_file.append(Node::separator());
-	QAction* quit = activeAction("cross", "Quit", QKeySequence::Quit, this, "close");
+	QAction *quit = activeAction("cross", "Quit", QKeySequence::Quit, this, "close");
 	quit->setMenuRole(QAction::QuitRole);
 	m_file.append(node(quit));
 	
@@ -52,21 +52,21 @@ MainWindowMenu::MainWindowMenu(Widget::MainWindow* mainWindow)
 	m_edit.append(node(activeAction("cog.png", "Settings", QKeySequence::Preferences, this, "settings")));
 	m_edit.append(node(activeAction("palette.png", "Theme Settings", QKeySequence::Preferences, this, "theme")));
 	
-	QAction* about = activeAction("information", "About KISS IDE", QKeySequence::UnknownKey, this, "about");
+	QAction *about = activeAction("information", "About KISS IDE", QKeySequence::UnknownKey, this, "about");
 	m_help.append(node(about));
 #ifdef ENABLE_LOG_WINDOW
 	m_help.append(node(m_errorLog = action("Error Log", QKeySequence::UnknownKey)));
 #endif
 }
 
-Node* MainWindowMenu::closeNode() const
+Node *MainWindowMenu::closeNode() const
 {
 	return m_closeNode;
 }
 
 void MainWindowMenu::triggered()
 {
-	QAction* _ = (QAction*)sender();
+	QAction *_ = (QAction*)sender();
 	if(!_) return;
 	if(_ == m_errorLog) Widget::LogWindow::ref().setVisible(true);
 	else if(_ == m_hideErrors) m_mainWindow->hideErrors();
@@ -75,7 +75,7 @@ void MainWindowMenu::triggered()
 
 void MainWindowMenu::update()
 {
-	Widget::MainWindow* mainWindow = dynamic_cast<Widget::MainWindow*>(active());
+	Widget::MainWindow *mainWindow = dynamic_cast<Widget::MainWindow*>(active());
 	if(!mainWindow || !menuManager()->isConstructed()) return;
 	
 	m_closeNode->rawAction->setEnabled(mainWindow->canClose());

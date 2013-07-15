@@ -5,7 +5,7 @@
 
 using namespace Kiss::Target;
 
-Target::Target(Interface* interface, const QString& name)
+Target::Target(Interface *interface, const QString &name)
 	: m_interface(interface)
 {
 	qRegisterMetaType<Response>("Response");

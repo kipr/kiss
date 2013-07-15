@@ -59,14 +59,14 @@ namespace Kiss
 				pluginPath.cd(getExpectedLocation(""));
 				QFileInfoList files = pluginPath.entryInfoList(QDir::Files | QDir::NoDot | QDir::NoDotDot);
 				qDebug() << "Found" << files.size() << "plugins for loading";
-				foreach(const QFileInfo& file, files) {
+				foreach(const QFileInfo &file, files) {
 					QString name = file.baseName().mid(3);
 					loadPlugin(name);
 				}
 			}
 
 			//! Get plugin instance, loads if not found
-			T *get(const QString& name)
+			T *get(const QString &name)
 			{
 				if(!m_plugins.contains(name)) {
 					if(!loadPlugin(name)) return 0;
@@ -83,7 +83,7 @@ namespace Kiss
 			}
 
 			//! Loads plugin by given name
-			bool loadPlugin(const QString& name)
+			bool loadPlugin(const QString &name)
 			{
 				if(m_plugins.contains(name)) return false;
 
@@ -91,7 +91,7 @@ namespace Kiss
 				QDir pluginPath(QDir::currentPath());
 				pluginPath.cd(getExpectedLocation(name));
 
-				const QString& pluginPathString = pluginPath.absoluteFilePath("lib" + name + "." + OS_LIB_EXT);
+				const QString &pluginPathString = pluginPath.absoluteFilePath("lib" + name + "." + OS_LIB_EXT);
 
 				plugin->setFileName(pluginPathString);
 				if(!plugin->load()) {
@@ -115,7 +115,7 @@ namespace Kiss
 			}
 
 			//! Unloads plugin by given name
-			void unloadPlugin(const QString& name)
+			void unloadPlugin(const QString &name)
 			{
 				if(!m_plugins.contains(name)) return;
 				pluginUnloaded(qobject_cast<T*>(m_plugins[name]->instance()));
@@ -128,7 +128,7 @@ namespace Kiss
 			}
 
 		protected:
-			virtual QString getExpectedLocation(const QString& name) const = 0;
+			virtual QString getExpectedLocation(const QString &name) const = 0;
 			virtual void pluginLoaded(T *plugin) = 0;
 			virtual void pluginUnloaded(T *plugin) = 0;
 

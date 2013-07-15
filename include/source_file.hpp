@@ -144,7 +144,7 @@ namespace Kiss
 			void setLexer(Lexer::Constructor *constructor);
 
 			int m_zoomLevel;
-		        void dropEvent(QDropEvent *event);
+			void dropEvent(QDropEvent *event);
 
 			QString m_lexAPI;
 			QString m_templateExt;

@@ -10,7 +10,7 @@ namespace Kiss
 	{
 		class InterfacePluginManager : public Plugin::Manager<InterfacePluginManager, Interface>
 		{
-			virtual QString getExpectedLocation(const QString& name) const;
+			virtual QString getExpectedLocation(const QString &name) const;
 			virtual void pluginLoaded(Interface *plugin);
 			virtual void pluginUnloaded(Interface *plugin);
 		};

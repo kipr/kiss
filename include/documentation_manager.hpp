@@ -11,13 +11,13 @@ namespace Kiss
 	class DocumentationLocation
 	{
 	public:
-		DocumentationLocation(const QString& name, const QString& location,
-			const QString& description, const QString& decoration);
+		DocumentationLocation(const QString &name, const QString &location,
+			const QString &description, const QString &decoration);
 	
-		const QString& name() const;
-		const QString& location() const;
-		const QString& description() const;
-		const QString& decoration() const;
+		const QString &name() const;
+		const QString &location() const;
+		const QString &description() const;
+		const QString &decoration() const;
 	
 	private:
 		QString m_name;
@@ -31,16 +31,16 @@ namespace Kiss
 	public:
 		DocumentationManager();
 		
-		void addLocation(const QString& location);
-		const QList<DocumentationLocation>& locations() const;
+		void addLocation(const QString &location);
+		const QList<DocumentationLocation> &locations() const;
 	
 		static QString documentationPath();
 	
 	private:
 		void loadDefaultDocumentation();
 		
-		static const QString description(const QString& location);
-		static const QString decoration(const QString& location);
+		static const QString description(const QString &location);
+		static const QString decoration(const QString &location);
 		QList<DocumentationLocation> m_locations;
 	};
 }

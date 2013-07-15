@@ -35,7 +35,7 @@ Message::Message(QWidget *widget)
 	setupUi(this);
 }
 
-void Message::setMessage(const QString& message, const QStringList& args)
+void Message::setMessage(const QString &message, const QStringList &args)
 {
 	ui_message->clear();
 	
@@ -51,7 +51,7 @@ void Message::setMessage(const QString& message, const QStringList& args)
 	ui_message->setHtml(text);
 }
 
-void Message::setLabel(const QString& label)
+void Message::setLabel(const QString &label)
 {
 	if(label.isEmpty()) ui_label->hide();
 	else ui_label->setText(label);
@@ -62,9 +62,9 @@ void Message::on_ui_copy_clicked()
 	QApplication::clipboard()->setText(ui_message->toPlainText());
 }
 
-void Message::on_ui_message_anchorClicked(const QUrl& link) { QDesktopServices::openUrl(link); }
+void Message::on_ui_message_anchorClicked(const QUrl &link) { QDesktopServices::openUrl(link); }
 
-void Message::showMessage(QWidget* parent, const QString& label, const QString& message, const QStringList& args)
+void Message::showMessage(QWidget *parent, const QString &label, const QString &message, const QStringList &args)
 {
 	Log::ref().info(QString("Displaying message dialog with template %1").arg(message));
 	Message dialog(parent);
@@ -74,7 +74,7 @@ void Message::showMessage(QWidget* parent, const QString& label, const QString& 
 	dialog.exec();
 }
 
-void Message::showError(QWidget* parent, const QString& error, const QStringList& args)
+void Message::showError(QWidget *parent, const QString &error, const QStringList &args)
 {
 	Log::ref().info(QString("Displaying error dialog with template %1").arg(error));
 	Message dialog(parent);

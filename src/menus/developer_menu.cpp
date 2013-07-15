@@ -31,7 +31,7 @@
 using namespace Kiss;
 using namespace Kiss::Menu;
 
-DeveloperMenu::DeveloperMenu(Widget::MainWindow* mainWindow)
+DeveloperMenu::DeveloperMenu(Widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName()),
 	m_mainWindow(mainWindow)
 {
@@ -49,7 +49,7 @@ void DeveloperMenu::triggered()
 	if(_ == declTab) {
 		QStringList filePaths = QFileDialog::getOpenFileNames(0, tr("Load QML"), QDir::homePath(), "QML (*.qml)");
 		
-		foreach(const QString& path, filePaths) {
+		foreach(const QString &path, filePaths) {
 			qWarning() << path;
 			m_mainWindow->addTab(new Widget::DeclarativeTab(QUrl::fromLocalFile(path), m_mainWindow));
 		}

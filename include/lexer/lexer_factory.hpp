@@ -40,13 +40,13 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			Constructor(const QString& name);
+			Constructor(const QString &name);
 			virtual ~Constructor();
 
-			const QString& name() const;
+			const QString &name() const;
 
 			virtual Base *construct() const = 0;
-			virtual Base *construct(const QString& apis) const = 0;
+			virtual Base *construct(const QString &apis) const = 0;
 
 			virtual Base *_new() const = 0;
 			virtual void _delete(Base *base) const = 0;
@@ -74,7 +74,7 @@ namespace Kiss
 				return m_constructor;
 			}
 
-			void setAPIFile(const QString& apis)
+			void setAPIFile(const QString &apis)
 			{
 				if(m_apis.load(apis)) m_apis.prepare();
 			}
@@ -86,8 +86,8 @@ namespace Kiss
 
 			virtual const bool cStyleBlocks() const = 0;
 		private:
-			QsciLexer* m_lexer;
-			const Constructor* m_constructor;
+			QsciLexer *m_lexer;
+			const Constructor *m_constructor;
 			QsciAPIs m_apis;
 		};
 
@@ -97,10 +97,10 @@ namespace Kiss
 			Settings();
 			~Settings();
 
-			QColor getSetting(const QString& type, const QColor& defaultValue) { return settings.value(type, defaultValue); }
+			QColor getSetting(const QString &type, const QColor &defaultValue) { return settings.value(type, defaultValue); }
 			QMap<QString, QColor> getSettings() { return settings; }
 
-			void setSetting(const QString& type, const QColor& color) { settings.insert(type, color); }
+			void setSetting(const QString &type, const QColor &color) { settings.insert(type, color); }
 			void setSettings(QMap<QString, QColor> newSettings) { settings = newSettings; }
 
 		private:
@@ -113,18 +113,18 @@ namespace Kiss
 			Factory();
 			~Factory();
 
-			Base *newLexer(const QString& ext) const;
-			Base *newLexerFromConstructor(const Constructor* constructor) const;
-			Constructor *constructor(const QString& ext) const;
+			Base *newLexer(const QString &ext) const;
+			Base *newLexerFromConstructor(const Constructor *constructor) const;
+			Constructor *constructor(const QString &ext) const;
 
 			void registerLexerConstructor(Constructor *c);
-			void registerLexerConstructor(Constructor *c, const QStringList& exts);
+			void registerLexerConstructor(Constructor *c, const QStringList &exts);
 			void unregisterLexerConstructor(Constructor *c);
 
-			static void setAPIsForLexer(Base *lexer, const QString& apis);
-			static bool isLexerFromConstructor(Base *lexer, Constructor* constructor);
+			static void setAPIsForLexer(Base *lexer, const QString &apis);
+			static bool isLexerFromConstructor(Base *lexer, Constructor *constructor);
 
-			void setFont(const QFont& font);
+			void setFont(const QFont &font);
 			QFont font() const;
 
 			const QStringList extensions() const;

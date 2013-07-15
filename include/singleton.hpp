@@ -31,7 +31,7 @@ namespace Kiss
 	{
 	public:
 		/*! \return Reference to singleton object */
-		static T& ref() {
+		static T &ref() {
 			static T instance;
 			return instance;
 		}

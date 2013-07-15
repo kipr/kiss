@@ -46,10 +46,10 @@ namespace Kiss
 				OldHostSoftware
 			};
 			
-			Target(Interface* interface, const QString& name);
+			Target(Interface *interface, const QString &name);
 			virtual ~Target();
 
-			Interface* interface() const;
+			Interface *interface() const;
 
 			virtual QString displayName() const;
 			QString type() const;
@@ -63,14 +63,14 @@ namespace Kiss
 
 			virtual bool available() = 0;
 			virtual ReturnCode compile(quint64 id, const QString &name) = 0;
-			virtual ReturnCode download(quint64 id, const QString &name, const KarPtr& archive) = 0;
+			virtual ReturnCode download(quint64 id, const QString &name, const KarPtr &archive) = 0;
 			virtual ReturnCode run(quint64 id, const QString &name) = 0;
 
 			virtual ReturnCode list(quint64 id) = 0;
-			virtual ReturnCode deleteProgram(quint64 id, const QString& name) = 0;
-			virtual ReturnCode interaction(quint64 id, const QString& command) = 0;
+			virtual ReturnCode deleteProgram(quint64 id, const QString &name) = 0;
+			virtual ReturnCode interaction(quint64 id, const QString &command) = 0;
 
-			virtual ReturnCode sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray()) = 0;
+			virtual ReturnCode sendCustom(quint64 id, const QString &custom, const QByteArray &payload = QByteArray()) = 0;
 			
 			void setResponder(Responder *responder);
 			Responder *responder() const;
@@ -84,7 +84,7 @@ namespace Kiss
 			void response(const Response &response);
 			
 		private slots:
-			void responseRedirect(const Response& response);
+			void responseRedirect(const Response &response);
 			
 		protected:
 			void notifyQueue(const bool success);

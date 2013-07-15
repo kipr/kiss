@@ -937,12 +937,12 @@ void MainWindow::oldHostSoftware(const Kiss::Target::TargetPtr &target)
 }
 
 bool MainWindow::eventFilter(QObject *target, QEvent *event) {
-        if(event->type() == QEvent::FileOpen) {
-                QString fileName = dynamic_cast<QFileOpenEvent *>(event)->file();
-                openFile(fileName);
-                event->accept();
-                return true;
-        } else return QMainWindow::eventFilter(target, event);
+	if(event->type() == QEvent::FileOpen) {
+		QString fileName = dynamic_cast<QFileOpenEvent *>(event)->file();
+		openFile(fileName);
+		event->accept();
+		return true;
+	} else return QMainWindow::eventFilter(target, event);
 }
 
 Menu::Menuable *MainWindow::menuable(const QString &name)

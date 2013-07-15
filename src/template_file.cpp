@@ -13,7 +13,7 @@ File::File()
 {
 }
 
-File::File(const QByteArray& data, const QString& lexer)
+File::File(const QByteArray &data, const QString &lexer)
 	: m_lexer(lexer), m_data(data)
 {
 }
@@ -28,12 +28,12 @@ bool File::hasLexer() const
 	return !m_lexer.isEmpty();
 }
 
-const QString& File::lexer() const
+const QString &File::lexer() const
 {
 	return m_lexer;
 }
 
-const QByteArray& File::data() const
+const QByteArray &File::data() const
 {
 	return m_data;
 }
@@ -45,12 +45,12 @@ QString File::resolvedData() const
 	return dataString;
 }
 
-void File::setLexer(const QString& lexer)
+void File::setLexer(const QString &lexer)
 {
 	m_lexer = lexer;
 }
 
-void File::setData(const QByteArray& data)
+void File::setData(const QByteArray &data)
 {
 	m_data = data;
 }

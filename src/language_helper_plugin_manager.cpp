@@ -3,7 +3,7 @@
 
 using namespace Kiss;
 
-QString LanguageHelperPluginManager::getExpectedLocation(const QString& name) const
+QString LanguageHelperPluginManager::getExpectedLocation(const QString &name) const
 {
 	return "language_helpers";
 }

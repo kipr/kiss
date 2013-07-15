@@ -15,7 +15,7 @@ QString Kiss::FileUtils::relativePath(const QString &path, const QDir &originDir
 	return originDir.relativeFilePath(path);
 }
 
-bool Kiss::FileUtils::remove(const QString& path)
+bool Kiss::FileUtils::remove(const QString &path)
 {
 	QDir dir(path);
 
@@ -25,7 +25,7 @@ bool Kiss::FileUtils::remove(const QString& path)
 		| QDir::System | QDir::Hidden | QDir::AllDirs | QDir::Files,
 		QDir::DirsFirst);
 
-	foreach(const QFileInfo& entry, entries) {
+	foreach(const QFileInfo &entry, entries) {
 		const QString entryPath = entry.absoluteFilePath();
 		if(!(entry.isDir() ? remove(entryPath) : QFile::remove(entryPath))) return false;
 	}

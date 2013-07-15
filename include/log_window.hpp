@@ -16,7 +16,7 @@ namespace Kiss
 		{
 		public:
 			LogWindow();
-			void append(const QString& str);
+			void append(const QString &str);
 		};
 	}
 }

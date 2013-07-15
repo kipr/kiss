@@ -15,15 +15,15 @@ Manager::~Manager()
 {
 }
 
-void Manager::addPacks(const QString& path)
+void Manager::addPacks(const QString &path)
 {
 	QFileInfoList entries = QDir(path).entryInfoList(QStringList() << "*.pack", QDir::Files);
-	foreach(const QFileInfo& entry, entries) {
+	foreach(const QFileInfo &entry, entries) {
 		addPack(entry.filePath());
 	}
 }
 
-bool Manager::addPack(const QString& path)
+bool Manager::addPack(const QString &path)
 {
 	PackPtr pack = Pack::load(path);
 	if(!pack) return false;
@@ -31,7 +31,7 @@ bool Manager::addPack(const QString& path)
 	return true;
 }
 
-void Manager::addPack(const PackPtr& pack)
+void Manager::addPack(const PackPtr &pack)
 {
 	m_packs.removeAll(pack);
 	m_packs.append(pack);
@@ -39,7 +39,7 @@ void Manager::addPack(const PackPtr& pack)
 	emit packAdded(pack);
 }
 
-bool Manager::removePack(const PackPtr& pack, bool removeAsDefault)
+bool Manager::removePack(const PackPtr &pack, bool removeAsDefault)
 {
 	m_packs.removeAll(pack);
 	
@@ -75,7 +75,7 @@ bool Manager::removePack(Pack *pack, bool removeAsDefault)
 	return QFile::remove(loadedFrom);
 }
 
-void Manager::addDefaultPack(const PackPtr& pack)
+void Manager::addDefaultPack(const PackPtr &pack)
 {
 	QString saveName = pack->loadedFrom().isEmpty()
 		? pack->name() + ".pack"

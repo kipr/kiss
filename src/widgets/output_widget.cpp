@@ -35,7 +35,7 @@ public:
 			<< "void" << "volatile" << "while" << "private"
 			<< "public" << "protected";
 
-		foreach(const QString& pattern, keywordPatterns) {
+		foreach(const QString &pattern, keywordPatterns) {
 			rule.pattern = QRegExp(QString("\\b") + pattern + "\\b");
 			rule.format = keywordFormat;
 			addRule(rule);
@@ -74,9 +74,9 @@ public:
 		addRule(rule);
 	}
 	
-	void highlightBlock(const QString& text)
+	void highlightBlock(const QString &text)
 	{
-		foreach(const Rule& rule, m_highlightingRules) {
+		foreach(const Rule &rule, m_highlightingRules) {
 			QRegExp expression(rule.pattern);
 			int index = expression.indexIn(text);
 			while(index >= 0) {
@@ -89,7 +89,7 @@ public:
 		setCurrentBlockState(0);
 	}
 private:
-	void addRule(const OutputHighlighter::Rule& rule)
+	void addRule(const OutputHighlighter::Rule &rule)
 	{
 		m_highlightingRules.append(rule);
 	}
@@ -108,11 +108,11 @@ OutputWidget::OutputWidget(QWidget *parent)
 	setReadOnly(true);
 }
 
-void OutputWidget::setOutputList(const Compiler::OutputList& outputList)
+void OutputWidget::setOutputList(const Compiler::OutputList &outputList)
 {
 	m_outputList = outputList;
 	QString out;
-	foreach(const Compiler::Output& output, outputList) {
+	foreach(const Compiler::Output &output, outputList) {
 		QString errorString = processString(QString::fromLocal8Bit(output.error().trimmed()));
 		QString outputString = processString(QString::fromLocal8Bit(output.output().trimmed()));
 		
@@ -120,7 +120,7 @@ void OutputWidget::setOutputList(const Compiler::OutputList& outputList)
 		
 		out += "<p>";
 		QStringList transformedFiles;
-		foreach(const QString& file, output.files()) {
+		foreach(const QString &file, output.files()) {
 			transformedFiles << QFileInfo(file).fileName();
 		}
 		if(outputList.size() > 1 && !transformedFiles.isEmpty()) {
@@ -135,12 +135,12 @@ void OutputWidget::setOutputList(const Compiler::OutputList& outputList)
 	setHtml(out);
 }
 
-const Compiler::OutputList& OutputWidget::outputList() const
+const Compiler::OutputList &OutputWidget::outputList() const
 {
 	return m_outputList;
 }
 
-QString OutputWidget::processString(const QString& string)
+QString OutputWidget::processString(const QString &string)
 {
 	QString ret = string;
 	ret.replace("<", "&lt;");

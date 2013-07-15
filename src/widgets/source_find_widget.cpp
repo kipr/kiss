@@ -25,19 +25,19 @@
 using namespace Kiss;
 using namespace Kiss::Widget;
 
-SourceFind::SourceFind(QWidget* parent)
+SourceFind::SourceFind(QWidget *parent)
 	: QWidget(parent),
 	m_sourceFile(0)
 {
 	setupUi(this);
 }
 
-void SourceFind::setSourceFile(SourceFile* sourceFile)
+void SourceFind::setSourceFile(SourceFile *sourceFile)
 {
 	m_sourceFile = sourceFile;
 }
 
-void SourceFind::setModified(const bool& m)
+void SourceFind::setModified(const bool &m)
 {
 	m_findModified = m;
 }

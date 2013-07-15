@@ -18,7 +18,7 @@ void ActivatableObject::activated()
 	if(!us) return;
 	
 	QObject *connect = active();
-	const QMetaObject* meta = connect->metaObject();
+	const QMetaObject *meta = connect->metaObject();
 	if(meta->indexOfSignal("updateActivatable()") < 0) {
 		qWarning() << "?";
 		return;
@@ -37,7 +37,7 @@ void ActivatableObject::deactivated()
 	if(!us) return;
 	if(!m_connected) return;
 
-	const QMetaObject* meta = m_connected->metaObject();
+	const QMetaObject *meta = m_connected->metaObject();
 	
 	if(meta->indexOfSignal(SIGNAL(updateActivatable())) < 0) {
 		qWarning() << "?";

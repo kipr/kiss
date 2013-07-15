@@ -14,9 +14,9 @@ namespace Kiss
 		class Interface
 		{
 		public:
-			Interface(const QString& name);
+			Interface(const QString &name);
 
-			const QString& name() const;
+			const QString &name() const;
 			
 			virtual Kiss::Target::TargetPtr createTarget(const QString &address) = 0;
 			virtual const bool scan(InterfaceResponder *responder) = 0;

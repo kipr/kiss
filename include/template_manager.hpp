@@ -18,19 +18,19 @@ namespace Kiss
 		public:
 			~Manager();
 			
-			void addPacks(const QString& path);
-			bool addPack(const QString& path);
-			void addPack(const PackPtr& pack);
-			bool removePack(const PackPtr& pack, bool removeAsDefault = false);
+			void addPacks(const QString &path);
+			bool addPack(const QString &path);
+			void addPack(const PackPtr &pack);
+			bool removePack(const PackPtr &pack, bool removeAsDefault = false);
 			bool removePack(Pack *pack, bool removeAsDefault = false);
 			
-			void addDefaultPack(const PackPtr& pack);
+			void addDefaultPack(const PackPtr &pack);
 			void loadDefaultPacks();
 			
 			QList<PackPtr> packs() const;
 			
 		signals:
-			void packAdded(const Kiss::Template::PackPtr& pack);
+			void packAdded(const Kiss::Template::PackPtr &pack);
 			void packRemoved(Kiss::Template::Pack *pack);
 			
 		private:

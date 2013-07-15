@@ -14,7 +14,7 @@ using namespace Kiss::Template;
 class TemplateItem : public QStandardItem
 {
 public:
-	TemplateItem(const QString& path, Pack *pack, bool readOnly)
+	TemplateItem(const QString &path, Pack *pack, bool readOnly)
 		: QStandardItem(QFileInfo(path).fileName()),
 		m_path(path),
 		m_pack(pack)
@@ -23,7 +23,7 @@ public:
 		setIcon(QIcon(":/icon_set/icons/page_white_" + pack->lexer(path) + ".png"));
 	}
 	
-	const QString& path()
+	const QString &path()
 	{
 		return m_path;
 	}
@@ -53,7 +53,7 @@ public:
 	{
 		setEditable(!readOnly);
 		setIcon(ResourceHelper::ref().icon("folder.png"));
-		foreach(const QString& _template, pack->templates()) {
+		foreach(const QString &_template, pack->templates()) {
 			appendRow(new TemplateItem(_template, pack, readOnly));
 		}
 	}
@@ -63,7 +63,7 @@ public:
 		return m_pack;
 	}
 	
-	void removeChild(const QString& path)
+	void removeChild(const QString &path)
 	{
 		for(int i = 0; i < rowCount(); ++i) {
 			TemplateItem *templateItem = TemplateItem::cast(child(i));
@@ -75,7 +75,7 @@ public:
 		}
 	}
 	
-	void setChildIcon(const QString& path, const QIcon& icon)
+	void setChildIcon(const QString &path, const QIcon &icon)
 	{
 		for(int i = 0; i < rowCount(); ++i) {
 			TemplateItem *templateItem = TemplateItem::cast(child(i));
@@ -107,10 +107,10 @@ Model::Model(const Manager *manager, QObject *parent)
 		this, SLOT(packRemoved(Kiss::Template::Pack *)));
 	connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemRenamed(QStandardItem *)));
 	
-	foreach(const PackPtr& pack, manager->packs()) packAdded(pack);
+	foreach(const PackPtr &pack, manager->packs()) packAdded(pack);
 }
 	
-Pack *Model::indexToPack(const QModelIndex& index) const
+Pack *Model::indexToPack(const QModelIndex &index) const
 {
 	QStandardItem *item = itemFromIndex(index);
 	
@@ -123,7 +123,7 @@ Pack *Model::indexToPack(const QModelIndex& index) const
 	return 0;
 }
 
-Template::File Model::indexToFile(const QModelIndex& index) const
+Template::File Model::indexToFile(const QModelIndex &index) const
 {
 	TemplateItem *templateItem = TemplateItem::cast(itemFromIndex(index));
 	if(!templateItem) return Template::File();
@@ -131,29 +131,29 @@ Template::File Model::indexToFile(const QModelIndex& index) const
 	return templateItem->pack()->file(templateItem->path());
 }
 
-bool Model::isIndexPack(const QModelIndex& index) const
+bool Model::isIndexPack(const QModelIndex &index) const
 {
 	return PackItem::cast(itemFromIndex(index));
 }
 
-bool Model::isIndexFile(const QModelIndex& index) const
+bool Model::isIndexFile(const QModelIndex &index) const
 {
 	return TemplateItem::cast(itemFromIndex(index));
 }
 
-void Model::setReadOnly(const bool& readOnly)
+void Model::setReadOnly(const bool &readOnly)
 {
 	if(readOnly == m_readOnly) return;
 	m_readOnly = readOnly;
 	setReadOnly(invisibleRootItem());
 }
 
-const bool& Model::isReadOnly() const
+const bool &Model::isReadOnly() const
 {
 	return m_readOnly;
 }
 
-void Model::packAdded(const Kiss::Template::PackPtr& pack)
+void Model::packAdded(const Kiss::Template::PackPtr &pack)
 {
 	appendRow(new PackItem(pack.data(), m_readOnly));
 	
@@ -183,7 +183,7 @@ void Model::packRemoved(Kiss::Template::Pack *pack)
 	}
 }
 
-void Model::packNameChanged(const QString& name)
+void Model::packNameChanged(const QString &name)
 {
 	Pack *pack = qobject_cast<Pack *>(sender());
 	
@@ -197,7 +197,7 @@ void Model::packNameChanged(const QString& name)
 	}
 }
 
-void Model::packFileAdded(const QString& path, const Kiss::Template::File& file)
+void Model::packFileAdded(const QString &path, const Kiss::Template::File &file)
 {
 	Pack *pack = qobject_cast<Pack *>(sender());
 	if(!pack) return;
@@ -212,7 +212,7 @@ void Model::packFileAdded(const QString& path, const Kiss::Template::File& file)
 	}
 }
 
-void Model::packFileRemoved(const QString& path)
+void Model::packFileRemoved(const QString &path)
 {
 	Pack *pack = qobject_cast<Pack *>(sender());
 	if(!pack) return;

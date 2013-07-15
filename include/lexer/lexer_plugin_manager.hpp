@@ -10,7 +10,7 @@ namespace Kiss
 	{
 		class PluginManager : public Plugin::Manager<Lexer::PluginManager, Constructor>
 		{
-			virtual QString getExpectedLocation(const QString& name) const;
+			virtual QString getExpectedLocation(const QString &name) const;
 			virtual void pluginLoaded(Constructor *plugin);
 			virtual void pluginUnloaded(Constructor *plugin);
 		};

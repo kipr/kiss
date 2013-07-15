@@ -2,13 +2,13 @@
 
 using namespace Kiss::Widget;
 
-TitleDescription::TitleDescription(QWidget* parent)
+TitleDescription::TitleDescription(QWidget *parent)
 	: QWidget(parent)
 {
 	setupUi(this);
 }
 
-TitleDescription::TitleDescription(const QString& title, const QString& description, QWidget *parent)
+TitleDescription::TitleDescription(const QString &title, const QString &description, QWidget *parent)
 	: QWidget(parent)
 {
 	setupUi(this);

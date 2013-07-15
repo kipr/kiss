@@ -32,7 +32,7 @@ namespace Kiss
 			Kiss::Template::File file() const;
 			
 		private slots:
-			void selectionChanged(const QItemSelection& selection);
+			void selectionChanged(const QItemSelection &selection);
 			void removeSelectedPack();
 			
 		private:
