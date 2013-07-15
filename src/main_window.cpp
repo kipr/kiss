@@ -899,7 +899,7 @@ void MainWindow::projectClicked(const QModelIndex &index)
 void MainWindow::projectDoubleClicked(const QModelIndex &index)
 {
 	Project::ProjectPtr project = m_projectsModel.project(index);
-	if(m_projectsModel.isFile(index))
+	if(m_projectsModel.isFileEditable(index))
 		openFile(m_projectsModel.filePath(index), project);
 }
 

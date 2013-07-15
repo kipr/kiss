@@ -3,6 +3,7 @@
 #include "project_manager.hpp"
 #include "file_utils.hpp"
 #include "resource_helper.hpp"
+#include "extension_helper.hpp"
 
 #include <QFileInfo>
 #include <QDir>
@@ -61,13 +62,18 @@ public:
 	FileItem(const QString &path)
 			: PathItem(path)
 	{
-		setIcon(ResourceHelper::ref().icon("page_white.png"));
+		setIcon(ResourceHelper::ref().icon(ExtensionHelper::icon(path)));
 		setEditable(true);
 		refresh();
 	}
 
 	virtual void refresh()
 	{
+	}
+
+	bool isFileEditable()
+	{
+		return ExtensionHelper::isFileEditable(m_path);
 	}
 
 	template<typename T>
@@ -112,27 +118,6 @@ public:
 	}
 };
 
-class DependencyItem : public PathItem
-{
-public:
-	DependencyItem(const QString &path)
-			: PathItem(path)
-	{
-		setIcon(ResourceHelper::ref().icon("brick.png"));
-		refresh();
-	}
-
-	virtual void refresh()
-	{
-	}
-
-	template<typename T>
-	static DependencyItem *dependencyitem_cast(T *item)
-	{
-		return dynamic_cast<DependencyItem *>(item);
-	}
-};
-
 class ProjectItem : public FolderItem
 {
 public:
@@ -168,7 +153,7 @@ public:
 
 		const QStringList &deps = m_project->dependencies();
 		foreach(const QString &dep, deps) {
-			appendRow(new DependencyItem(dep));
+			appendRow(new FileItem(dep));
 		}
 	}
 
@@ -228,11 +213,6 @@ const QStringList &Model::projects() const
 	return m_paths;
 }
 
-bool Model::isDependency(const QModelIndex &index) const
-{
-	return DependencyItem::dependencyitem_cast(itemFromIndex(index));
-}
-
 bool Model::isProject(const QModelIndex &index) const
 {
 	return ProjectItem::projectitem_cast(itemFromIndex(index));
@@ -252,6 +232,12 @@ bool Model::isLink(const QModelIndex &index) const
 bool Model::isFile(const QModelIndex &index) const
 {
 	return FileItem::fileitem_cast(itemFromIndex(index));
+}
+
+bool Model::isFileEditable(const QModelIndex &index) const
+{
+	FileItem *fileItem = FileItem::fileitem_cast(itemFromIndex(index));
+	return fileItem && fileItem->isFileEditable();
 }
 
 ProjectPtr Model::project(const QModelIndex &index) const

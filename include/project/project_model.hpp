@@ -28,6 +28,7 @@ namespace Kiss
 			bool isProject(const QModelIndex &index) const;
 			bool isLink(const QModelIndex &index) const;
 			bool isFile(const QModelIndex &index) const;
+			bool isFileEditable(const QModelIndex &index) const;
 			ProjectPtr project(const QModelIndex &index) const;
 			QString filePath(const QModelIndex &index) const;
 
