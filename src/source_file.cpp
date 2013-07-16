@@ -435,13 +435,6 @@ bool SourceFile::breakpointOnLine(int line) const
 	return markerOnLine;
 }
 
-SourceFile *SourceFile::newProjectFile(MainWindow *mainWindow, const Project::ProjectPtr &project)
-{
-	SourceFile *sourceFile = new SourceFile(mainWindow);
-	sourceFile->setProject(project);
-	return sourceFile;
-}
-
 void SourceFile::zoomIn()
 {
 	ui_editor->zoomIn();

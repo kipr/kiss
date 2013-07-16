@@ -79,8 +79,6 @@ namespace Kiss
 			int currentLine() const;
 			bool breakpointOnLine(int line) const;
 
-			static SourceFile *newProjectFile(MainWindow *mainWindow, const Project::ProjectPtr &project);
-
 		public slots:
 			bool saveAs();
 

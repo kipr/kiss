@@ -678,7 +678,8 @@ void MainWindow::projectAddNew()
 		QLineEdit::Normal, QString(), &ok);
 	if(!ok) return;
 
-	SourceFile *const sourceFile = SourceFile::newProjectFile(this, project);
+	SourceFile *const sourceFile = new SourceFile(this);
+	sourceFile->setProject(project);
 	addTab(sourceFile);
 	sourceFile->setFile(QDir(project->location()).filePath(fileName));
 	sourceFile->save();
