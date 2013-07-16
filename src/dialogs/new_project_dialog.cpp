@@ -1,4 +1,4 @@
-#include "new_project_wizard.hpp"
+#include "new_project_dialog.hpp"
 
 #include <QFileDialog>
 #include <QSettings>
@@ -7,9 +7,9 @@
 #define SETTINGS_GROUP "New Project Wizard"
 #define SETTINGS_KEY "Save Location"
 
-using namespace Kiss::Wizard;
+using namespace Kiss::Dialog;
 
-NewProject::NewProject(QWidget *parent)
+NewProjectDialog::NewProjectDialog(QWidget *parent)
 	: QDialog(parent)
 {
 	setupUi(this);
@@ -22,17 +22,17 @@ NewProject::NewProject(QWidget *parent)
 	updateSaveLocation();
 }
 
-QString NewProject::projectName() const
+QString NewProjectDialog::projectName() const
 {
 	return ui_projectName->text();
 }
 
-QString NewProject::saveLocation() const
+QString NewProjectDialog::saveLocation() const
 {
 	return ui_saveLocation->text();
 }
 
-void NewProject::on_ui_browse_clicked()
+void NewProjectDialog::on_ui_browse_clicked()
 {
 	m_savePath = QFileDialog::getExistingDirectory(this, tr("Choose a Save Location"));
 	QSettings settings;
@@ -42,12 +42,12 @@ void NewProject::on_ui_browse_clicked()
 	updateSaveLocation();
 }
 
-void NewProject::on_ui_projectName_textChanged(const QString&)
+void NewProjectDialog::on_ui_projectName_textChanged(const QString&)
 {
 	updateSaveLocation();
 }
 
-void NewProject::updateSaveLocation()
+void NewProjectDialog::updateSaveLocation()
 {
 	ui_saveLocation->setText(m_savePath + "/" + ui_projectName->text());
 }

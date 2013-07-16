@@ -29,7 +29,7 @@
 #include "log.hpp"
 // Used to query supported extensions
 #include "lexer_factory.hpp"
-#include "new_project_wizard.hpp"
+#include "new_project_dialog.hpp"
 #include "template_manager.hpp"
 #include "template_tab.hpp"
 #include "template_pack.hpp"
@@ -164,10 +164,10 @@ void MainWindow::newTemplatePack()
 
 Project::ProjectPtr MainWindow::newProject()
 {
-	Wizard::NewProject wizard(this);
-	if(wizard.exec() == QDialog::Rejected) return Project::ProjectPtr();
+	Dialog::NewProjectDialog dialog(this);
+	if(dialog.exec() == QDialog::Rejected) return Project::ProjectPtr();
 
-	const QString &saveLocation = wizard.saveLocation();
+	const QString &saveLocation = dialog.saveLocation();
 	if(QDir(saveLocation).exists()) {
 		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
 			tr("Overwrite %1?").arg(saveLocation),

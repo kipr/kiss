@@ -1,19 +1,19 @@
-#ifndef _NEW_PROJECT_WIZARD_HPP_
-#define _NEW_PROJECT_WIZARD_HPP_
+#ifndef _NEW_PROJECT_DIALOG_HPP_
+#define _NEW_PROJECT_DIALOG_HPP_
 
 #include <QDialog>
 
-#include "ui_NewProjectWizard.h"
+#include "ui_NewProjectDialog.h"
 
 namespace Kiss
 {
-	namespace Wizard
+	namespace Dialog
 	{
-		class NewProject : public QDialog, private Ui::NewProjectWizard
+		class NewProjectDialog : public QDialog, private Ui::NewProjectDialog
 		{
 		Q_OBJECT
 		public:
-			NewProject(QWidget *parent = 0);
+			NewProjectDialog(QWidget *parent = 0);
 
 			QString projectName() const;
 			QString saveLocation() const;
