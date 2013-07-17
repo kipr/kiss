@@ -10,6 +10,7 @@
 #define PROJECT_EXT "kissproj"
 #define LINKS_EXT "links"
 #define DEPS_EXT "deps"
+#define DEPS_SETTING "PROJECT_DEPS"
 
 namespace Kiss
 {

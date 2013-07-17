@@ -799,8 +799,8 @@ void MainWindow::projectOpenDependencies()
 	dialog.exec();
 
 	const QStringList &names = dialog.names();
-	if(names.isEmpty()) project->removeSetting("PROJECT_DEPS");
-	else project->setSetting("PROJECT_DEPS", names.join(" "));
+	if(names.isEmpty()) project->removeSetting(DEPS_SETTING);
+	else project->setSetting(DEPS_SETTING, names.join(" "));
 	project->setDependencies(dialog.paths());
 }
 
