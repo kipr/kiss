@@ -1,10 +1,6 @@
 #include "project_dep_dialog.hpp"
 #include "ui_ProjectDepDialog.h"
-
-#include <QDebug>
-#include <QSettings>
-#include <QDir>
-#include <QFileDialog>
+#include "file_utils.hpp"
 
 using namespace Kiss::Dialog;
 
@@ -53,12 +49,9 @@ QStringList ProjectDepDialog::paths()
 
 void ProjectDepDialog::add()
 {
-	QSettings settings;
-	const QString &openPath = settings.value("openpath", QDir::homePath()).toString();
-	const QString &fullPath = QFileDialog::getOpenFileName(this, tr("Add Dependency"), openPath, tr("KISS Projects (*.kissproj)"));
+	const QString &fullPath = FileUtils::getOpenFileName(this, tr("Add Dependency"), tr("KISS Projects (*.kissproj)"));
 	if(fullPath.isNull()) return;
-	const QString &dirPath = QFileInfo(fullPath).absolutePath();
-	add(dirPath);
+	add(QFileInfo(fullPath).absolutePath());
 }
 
 void ProjectDepDialog::remove()

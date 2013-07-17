@@ -29,25 +29,23 @@
 #include "source_file_menu.hpp"
 #include "communication_manager.hpp"
 #include "language_helper_manager.hpp"
+ #include "file_utils.hpp"
 
 #include <Qsci/qscilexercpp.h>
 #include <QFile>
 #include <QTextStream>
-#include <QFileDialog>
 #include <QMessageBox>
 #include <QRegExp>
 #include <QDir>
 #include <QSettings>
 #include <QFont>
 #include <Qsci/qsciprinter.h>
-#include <QPrinter>
 #include <QPrintDialog>
 #include <QDebug>
 #include <math.h>
 
 #include <memory>
 
-#define SAVE_PATH "savepath"
 #define DEFAULT_EXTENSION "default_extension"
 
 using namespace Kiss;
@@ -461,7 +459,6 @@ bool SourceFile::saveAs()
 bool SourceFile::saveAsFile()
 {
 	QSettings settings;
-	QString savePath = settings.value(SAVE_PATH, QDir::homePath()).toString();
 	QStringList exts = Lexer::Factory::ref().formattedExtensions();
 	
 	QRegExp reg("*." + m_templateExt + "*");
@@ -469,18 +466,15 @@ bool SourceFile::saveAsFile()
 	int i = exts.indexOf(reg);
 	if(i != -1) exts.swap(0, i);
 	
-	QString filePath = QFileDialog::getSaveFileName(mainWindow(), tr("Save File"), savePath, 
+	QString filePath = FileUtils::getSaveFileName(mainWindow(), tr("Save File"),
 		exts.join(";;") + (exts.size() < 1 ? "" : ";;") + "All Files (*)");
 	if(filePath.isEmpty()) return false;
 
 	QFileInfo fileInfo(filePath);
-	
 	QString ext = m_templateExt;
 	if(!ext.isEmpty() && fileInfo.suffix().isEmpty()) {
 		fileInfo.setFile(fileInfo.fileName() + "." + ext);
 	}
-	
-	settings.setValue(SAVE_PATH, fileInfo.absolutePath());
 	setFile(fileInfo.absoluteFilePath());
 	
 	const QString fileName = fileInfo.fileName();

@@ -42,7 +42,6 @@
 #include "project_dep_dialog.hpp"
 
 #include <QMessageBox>
-#include <QFileDialog>
 #include <QInputDialog>
 #include <QAction>
 #include <QDebug>
@@ -55,8 +54,6 @@
 #endif
 
 #define TITLE "KIPR's Instructional Software System"
-
-#define OPEN_PATH "openpath"
 
 using namespace Kiss;
 using namespace Kiss::Widget;
@@ -136,13 +133,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::importTemplatePack()
 {
-	QSettings settings;
-	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters;
 	filters << "Template Pack (*.pack)";
 	filters.removeDuplicates();
-	QString filePath = QFileDialog::getOpenFileName(this, tr("Open"), openPath, filters.join(";;") + ";;All Files (*)");
-	
+	QString filePath = FileUtils::getOpenFileName(this, tr("Open"), filters.join(";;") + ";;All Files (*)");
 	if(filePath.isEmpty()) return;
 	
 	Template::PackPtr pack = Template::Pack::load(filePath);
@@ -448,25 +442,20 @@ void MainWindow::closeAllOthers(Tab *tab)
 
 void MainWindow::open()
 {
-	QSettings settings;
-	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
 	filters << "Template Pack (*.pack)";
 	filters << "KISS Project (*.kissproj)";
 	filters.removeDuplicates();
-	QString filePath = QFileDialog::getOpenFileName(this, tr("Open"), openPath, filters.join(";;") + ";;All Files (*)");
-	
+	QString filePath = FileUtils::getOpenFileName(this, tr("Open"), filters.join(";;") + ";;All Files (*)");
 	if(filePath.isEmpty()) return;
 
-	QFileInfo fileInfo(filePath);
-	settings.setValue(OPEN_PATH, fileInfo.absolutePath());
-
-	if(fileInfo.completeSuffix() == "pack") {
+	const QString &suffix = QFileInfo(filePath).completeSuffix();
+	if(suffix == "pack") {
 		addTab(new TemplateTab(filePath, this));
 		return;
 	}
 
-	if(fileInfo.completeSuffix() == "kissproj") {
+	if(suffix == "kissproj") {
 		openProject(QFileInfo(filePath).absolutePath());
 		return;
 	}
@@ -476,14 +465,10 @@ void MainWindow::open()
 
 void MainWindow::openProject()
 {
-	QSettings settings;
-	QString openPath = settings.value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
-
-	QString filePath = QFileDialog::getOpenFileName(this, tr("Open Project"), openPath);
+	QString filePath = FileUtils::getOpenFileName(this, tr("Open Project"));
 	if(filePath.isEmpty()) return;
-	settings.setValue(OPEN_PATH, QFileInfo(filePath).absolutePath());
 
 	openProject(filePath);
 }
@@ -687,11 +672,11 @@ void MainWindow::projectAddNew()
 
 void MainWindow::projectAddExisting()
 {
-	QString openPath = QSettings().value(OPEN_PATH, QDir::homePath()).toString();
 	QStringList filters = Lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
-	QStringList files = QFileDialog::getOpenFileNames(this, tr("Select Files to Add"),
-		openPath, filters.join(";;") + ";;All Files (*)");
+	QStringList files = FileUtils::getOpenFileNames(this,
+		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
+
 	projectAddExisting(files);
 }
 

@@ -7,8 +7,8 @@
 #include "template_model.hpp"
 #include "template_manager.hpp"
 #include "main_window.hpp"
+#include "file_utils.hpp"
 
-#include <QFileDialog>
 #include <QMessageBox>
 
 using namespace Kiss;
@@ -114,8 +114,8 @@ bool TemplateTab::save()
 
 bool TemplateTab::saveAs()
 {
-	QString path = QFileDialog::getSaveFileName(this,
-		tr("Save Template Pack"), QString(), "Template Pack (*.pack)");
+	QString path = FileUtils::getSaveFileName(this,
+		tr("Save Template Pack"), "Template Pack (*.pack)");
 	if(path.isEmpty()) return false;
 	saveAs(path);
 	return true;
@@ -128,7 +128,7 @@ void TemplateTab::test()
 
 void TemplateTab::addFile()
 {
-	QStringList files = QFileDialog::getOpenFileNames(this,
+	QStringList files = FileUtils::getOpenFileNames(this,
 		tr("Which files would you like to add to the template pack?"));
 	
 	foreach(const QString &file, files) {

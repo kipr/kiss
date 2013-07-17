@@ -1,6 +1,6 @@
 #include "new_project_dialog.hpp"
+#include "file_utils.hpp"
 
-#include <QFileDialog>
 #include <QSettings>
 #include <QDebug>
 
@@ -34,7 +34,7 @@ QString NewProjectDialog::saveLocation() const
 
 void NewProjectDialog::on_ui_browse_clicked()
 {
-	m_savePath = QFileDialog::getExistingDirectory(this, tr("Choose a Save Location"));
+	m_savePath = FileUtils::getExistingDirectory(this, tr("Choose a Save Location"));
 	QSettings settings;
 	settings.beginGroup(SETTINGS_GROUP);
 	settings.setValue(SETTINGS_KEY, m_savePath);
