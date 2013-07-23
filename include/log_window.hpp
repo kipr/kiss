@@ -8,9 +8,9 @@
 
 #include "log_stream_buf.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class LogWindow : public QWidget, private Ui::LogWindow, public Singleton<LogWindow>
 		{

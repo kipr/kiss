@@ -6,9 +6,9 @@
 
 #include "ui_ProjectDepDialog.h"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Dialog
+	namespace dialog
 	{
 		class ProjectDepDialog : public QDialog, private Ui::ProjectDepDialog
 		{

@@ -26,9 +26,9 @@
 #include <Qsci/qscilexercpp.h>
 #include <Qsci/qsciapis.h>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Lexer
+	namespace lexer
 	{
 		class CLexer : public QsciLexerCPP
 		{
@@ -51,7 +51,7 @@ namespace Kiss
 		class ConstructorC : public Constructor
 		{
 		Q_OBJECT
-		Q_INTERFACES(Kiss::Lexer::Constructor)
+		Q_INTERFACES(kiss::lexer::Constructor)
 		public:
 			ConstructorC();
 		

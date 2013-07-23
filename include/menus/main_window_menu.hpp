@@ -27,15 +27,15 @@
 #include "source_file.hpp"
 #include "concrete_menuable.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Menu
+	namespace menu
 	{
 		class MainWindowMenu : public ConcreteMenuable, public ActivatableObject
 		{
 		Q_OBJECT
 		public:
-			MainWindowMenu(Widget::MainWindow *mainWindow);
+			MainWindowMenu(widget::MainWindow *mainWindow);
 
 			static QString menuName();
 
@@ -46,7 +46,7 @@ namespace Kiss
 			void update();
 
 		private:
-			Widget::MainWindow *m_mainWindow;
+			widget::MainWindow *m_mainWindow;
 
 			Node *m_nextNode;
 			Node *m_prevNode;

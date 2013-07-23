@@ -24,9 +24,9 @@
 #include <QWidget>
 #include "ui_SourceFindWidget.h"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class SourceFile;
 

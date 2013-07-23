@@ -6,7 +6,7 @@
 
 #include <QList>
 
-namespace Kiss
+namespace kiss
 {
 	class LanguageHelperManager : public Singleton<LanguageHelperManager>
 	{
@@ -18,7 +18,7 @@ namespace Kiss
 		void removeLanguageHelper(LanguageHelper *languageHelper);
 		QList<LanguageHelper *> languageHelpers() const;
 		
-		Compiler::OutputList preprocess(const Kiss::KarPtr &archive, const QStringList &searchPaths) const;
+		Compiler::OutputList preprocess(const kiss::KarPtr &archive, const QStringList &searchPaths) const;
 		
 	private:
 		QList<LanguageHelper *> m_languageHelpers;

@@ -1,7 +1,7 @@
 #ifndef _KISS_STANDARD_ENVIRONMENT_HPP_
 #define _KISS_STANDARD_ENVIRONMENT_HPP_
 
-namespace Kiss
+namespace kiss
 {
 	class StandardEnvironment
 	{

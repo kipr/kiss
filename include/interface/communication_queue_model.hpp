@@ -5,9 +5,9 @@
 
 #include <QStandardItemModel>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class CommunicationManager;
 		
@@ -21,10 +21,10 @@ namespace Kiss
 			CommunicationManager *manager() const;
 			
 		private slots:
-			void admitted(const Kiss::Target::CommunicationEntryPtr &entry);
-			void began(const Kiss::Target::CommunicationEntryPtr &entry);
-			void progress(const Kiss::Target::CommunicationEntryPtr &entry, double success);
-			void finished(const Kiss::Target::CommunicationEntryPtr &entry, Kiss::Target::Target::ReturnCode ret);
+			void admitted(const kiss::target::CommunicationEntryPtr &entry);
+			void began(const kiss::target::CommunicationEntryPtr &entry);
+			void progress(const kiss::target::CommunicationEntryPtr &entry, double success);
+			void finished(const kiss::target::CommunicationEntryPtr &entry, kiss::target::Target::ReturnCode ret);
 			void queueFinished();
 			
 		private:

@@ -55,15 +55,15 @@
 
 #define TITLE "KIPR's Instructional Software System"
 
-using namespace Kiss;
-using namespace Kiss::Widget;
+using namespace kiss;
+using namespace kiss::widget;
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent),
 	m_currentTab(0),
-	m_templateManager(new Template::Manager),
-	m_commProgress(new CommunicationProgressBar(&Target::CommunicationManager::ref(), this)),
-	m_mainResponder(new Target::MainResponder(this))
+	m_templateManager(new templates::Manager),
+	m_commProgress(new CommunicationProgressBar(&target::CommunicationManager::ref(), this)),
+	m_mainResponder(new target::MainResponder(this))
 {
 	QNetworkProxyFactory::setUseSystemConfiguration(true);
 	
@@ -90,20 +90,20 @@ MainWindow::MainWindow(QWidget *parent)
 		SLOT(projectDoubleClicked(QModelIndex)));
 	connect(ui_projects, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(projectContextMenu(const QPoint&)));
 	
-	connect(&m_projectManager, SIGNAL(activeChanged(Kiss::Project::ProjectPtr, Kiss::Project::ProjectPtr)),
-		&m_projectsModel, SLOT(activeChanged(Kiss::Project::ProjectPtr, Kiss::Project::ProjectPtr)));
+	connect(&m_projectManager, SIGNAL(activeChanged(kiss::project::ProjectPtr, kiss::project::ProjectPtr)),
+		&m_projectsModel, SLOT(activeChanged(kiss::project::ProjectPtr, kiss::project::ProjectPtr)));
 		
-	connect(&Target::CommunicationManager::ref(),
-		SIGNAL(targetNeedsAuthentication(Kiss::Target::TargetPtr, Kiss::Target::CommunicationManager *)),
-		SLOT(authenticateTarget(Kiss::Target::TargetPtr, Kiss::Target::CommunicationManager *)));
+	connect(&target::CommunicationManager::ref(),
+		SIGNAL(targetNeedsAuthentication(kiss::target::TargetPtr, kiss::target::CommunicationManager *)),
+		SLOT(authenticateTarget(kiss::target::TargetPtr, kiss::target::CommunicationManager *)));
 		
-	connect(&Target::CommunicationManager::ref(),
-		SIGNAL(oldDeviceSoftware(Kiss::Target::TargetPtr)),
-		SLOT(oldDeviceSoftware(Kiss::Target::TargetPtr)));
+	connect(&target::CommunicationManager::ref(),
+		SIGNAL(oldDeviceSoftware(kiss::target::TargetPtr)),
+		SLOT(oldDeviceSoftware(kiss::target::TargetPtr)));
 		
-	connect(&Target::CommunicationManager::ref(),
-		SIGNAL(oldHostSoftware(Kiss::Target::TargetPtr)),
-		SLOT(oldHostSoftware(Kiss::Target::TargetPtr)));
+	connect(&target::CommunicationManager::ref(),
+		SIGNAL(oldHostSoftware(kiss::target::TargetPtr)),
+		SLOT(oldHostSoftware(kiss::target::TargetPtr)));
 		
 	ui_statusbar->addPermanentWidget(m_commProgress);
 	
@@ -139,9 +139,9 @@ void MainWindow::importTemplatePack()
 	QString filePath = FileUtils::getOpenFileName(this, tr("Open"), filters.join(";;") + ";;All Files (*)");
 	if(filePath.isEmpty()) return;
 	
-	Template::PackPtr pack = Template::Pack::load(filePath);
+	templates::PackPtr pack = templates::Pack::load(filePath);
 	if(!pack) {
-		Dialog::Message::showError(this, "simple_error_with_action", QStringList()
+		dialog::Message::showError(this, "simple_error_with_action", QStringList()
 			<< tr("Failed to open %1 for reading.").arg(filePath)
 			<< tr("This probably means that the file is malformed.").arg(filePath)
 			<< tr("Aborting import."));
@@ -153,20 +153,20 @@ void MainWindow::importTemplatePack()
 
 void MainWindow::newTemplatePack()
 {
-	addTab(new TemplateTab(Template::Pack::create(), this));
+	addTab(new TemplateTab(templates::Pack::create(), this));
 }
 
-Project::ProjectPtr MainWindow::newProject()
+project::ProjectPtr MainWindow::newProject()
 {
-	Dialog::NewProjectDialog dialog(this);
-	if(dialog.exec() == QDialog::Rejected) return Project::ProjectPtr();
+	dialog::NewProjectDialog dialog(this);
+	if(dialog.exec() == QDialog::Rejected) return project::ProjectPtr();
 
 	const QString &saveLocation = dialog.saveLocation();
 	if(QDir(saveLocation).exists()) {
 		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
 			tr("Overwrite %1?").arg(saveLocation),
 			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-		if(ret == QMessageBox::No) return Project::ProjectPtr();
+		if(ret == QMessageBox::No) return project::ProjectPtr();
 	}
 	
 	return newProject(saveLocation);
@@ -177,7 +177,7 @@ void MainWindow::newFile()
 	addTab(new SourceFile(this));
 }
 
-bool MainWindow::openFile(const QString &file, const Project::ProjectPtr &project)
+bool MainWindow::openFile(const QString &file, const project::ProjectPtr &project)
 {
 	QFileInfo fileInfo(file);
 
@@ -196,7 +196,7 @@ bool MainWindow::openFile(const QString &file, const Project::ProjectPtr &projec
 	SourceFile *sourceFile = new SourceFile(this);
 	
 	if(!sourceFile->fileOpen(file)) {
-		Dialog::Message::showError(this, "simple_error", QStringList() <<
+		dialog::Message::showError(this, "simple_error", QStringList() <<
 			tr("Could not open ") + QFileInfo(sourceFile->file()).fileName() <<
 			tr("Unable to open file for reading."));
 		delete sourceFile;
@@ -234,7 +234,7 @@ bool MainWindow::memoryOpen(const QByteArray &ba, const QString &assocPath)
 	/* Attempt to open the selected file */
 	SourceFile *sourceFile = new SourceFile(this);
 	if(!sourceFile->memoryOpen(ba, assocPath)) {
-		Dialog::Message::showError(this, "simple_error", QStringList() <<
+		dialog::Message::showError(this, "simple_error", QStringList() <<
 			tr("Could not open ") + QFileInfo(sourceFile->file()).fileName() <<
 			tr("Unable to open file from memory."));
 		delete sourceFile;
@@ -248,33 +248,33 @@ bool MainWindow::memoryOpen(const QByteArray &ba, const QString &assocPath)
 	return true;
 }
 
-Project::ProjectPtr MainWindow::openProject(const QString &projectPath)
+project::ProjectPtr MainWindow::openProject(const QString &projectPath)
 {
-	Project::ProjectPtr project = Project::Project::load(projectPath);
+	project::ProjectPtr project = project::Project::load(projectPath);
 	Log::ref().info(QString("Opening project at %1").arg(projectPath));
-	if(!project || !m_projectManager.openProject(project)) return Project::ProjectPtr();
+	if(!project || !m_projectManager.openProject(project)) return project::ProjectPtr();
 	
 	m_projectsModel.addProject(project);
 	m_projectManager.setActiveProject(project);
 	if(!m_projectManager.projects().isEmpty()) {
 		ui_projectFrame->setVisible(true);
-		activateMenuable(Menu::TargetMenu::menuName(), this);
+		activateMenuable(menu::TargetMenu::menuName(), this);
 	}
 
 	return project;
 }
 
-Project::ProjectPtr MainWindow::newProject(const QString &projectPath)
+project::ProjectPtr MainWindow::newProject(const QString &projectPath)
 {
-	if(!FileUtils::remove(projectPath)) return Project::ProjectPtr();
-	if(!QDir().mkpath(projectPath)) return Project::ProjectPtr();
+	if(!FileUtils::remove(projectPath)) return project::ProjectPtr();
+	if(!QDir().mkpath(projectPath)) return project::ProjectPtr();
 
 	return openProject(projectPath);
 }
 
 void MainWindow::initMenus()
 {
-	using namespace Kiss::Menu;
+	using namespace kiss::menu;
 	
 	menuBar()->clear();
 	
@@ -442,7 +442,7 @@ void MainWindow::closeAllOthers(Tab *tab)
 
 void MainWindow::open()
 {
-	QStringList filters = Lexer::Factory::ref().formattedExtensions();
+	QStringList filters = lexer::Factory::ref().formattedExtensions();
 	filters << "Template Pack (*.pack)";
 	filters << "KISS Project (*.kissproj)";
 	filters.removeDuplicates();
@@ -465,7 +465,7 @@ void MainWindow::open()
 
 void MainWindow::openProject()
 {
-	QStringList filters = Lexer::Factory::ref().formattedExtensions();
+	QStringList filters = lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
 	QString filePath = FileUtils::getOpenFileName(this, tr("Open Project"));
 	if(filePath.isEmpty()) return;
@@ -500,7 +500,7 @@ void MainWindow::closeCurrentTab(bool force)
 	closeTab(ui_tabWidget->currentIndex(), force);
 }
 
-void MainWindow::closeProjectTabs(const Project::ProjectPtr &project)
+void MainWindow::closeProjectTabs(const project::ProjectPtr &project)
 {
 	int i = 0;
 	while(i < ui_tabWidget->count()) {
@@ -531,7 +531,7 @@ bool MainWindow::closeFile(const QString &file)
 
 void MainWindow::about()
 {
-	Dialog::Message::showMessage(this, "About KISS IDE", "about_kiss", QStringList()
+	dialog::Message::showMessage(this, "About KISS IDE", "about_kiss", QStringList()
 		<< QString::number(KISS_IDE_VERSION_MAJOR)
 		<< QString::number(KISS_IDE_VERSION_MINOR)
 		<< QString::number(KISS_IDE_VERSION_BUILD)
@@ -550,7 +550,7 @@ void MainWindow::theme()
 	emit settingsUpdated();
 }
 
-bool MainWindow::commPreconditions(const Kiss::Project::ProjectPtr &project)
+bool MainWindow::commPreconditions(const kiss::project::ProjectPtr &project)
 {
 	for(int i = 0; i < ui_tabWidget->count(); ++i) {
 		Tab *current = lookup(ui_tabWidget->widget(i));
@@ -576,7 +576,7 @@ const bool MainWindow::download()
 	return download(m_projectManager.activeProject());
 }
 
-const bool MainWindow::download(const Project::ProjectPtr &project)
+const bool MainWindow::download(const project::ProjectPtr &project)
 {
 	if(!commPreconditions(project)) return false;
 
@@ -588,7 +588,7 @@ const bool MainWindow::compile()
 	return compile(m_projectManager.activeProject());
 }
 
-const bool MainWindow::compile(const Project::ProjectPtr &project)
+const bool MainWindow::compile(const project::ProjectPtr &project)
 {
 	if(!commPreconditions(project)) return false;
 
@@ -604,7 +604,7 @@ const bool MainWindow::run()
 	return run(m_projectManager.activeProject());
 }
 
-const bool MainWindow::run(const Project::ProjectPtr &project)
+const bool MainWindow::run(const project::ProjectPtr &project)
 {
 	if(!commPreconditions(project)) return false;
 
@@ -621,9 +621,9 @@ const bool MainWindow::changeTarget()
 	return changeTarget(m_projectManager.activeProject());
 }
 
-const bool MainWindow::changeTarget(Kiss::Project::ProjectPtr project)
+const bool MainWindow::changeTarget(kiss::project::ProjectPtr project)
 {
-	Dialog::Target targetDialog(&Target::InterfaceManager::ref(), this);
+	dialog::Target targetDialog(&target::InterfaceManager::ref(), this);
 	if(targetDialog.exec() == QDialog::Rejected) return false;
 	if(targetDialog.target().isNull()) return false;
 	project->setTarget(targetDialog.target());
@@ -655,7 +655,7 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 
 void MainWindow::projectAddNew()
 {
-	Project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
+	project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
 	if(!project) return;
 
 	bool ok = false;
@@ -672,7 +672,7 @@ void MainWindow::projectAddNew()
 
 void MainWindow::projectAddExisting()
 {
-	QStringList filters = Lexer::Factory::ref().formattedExtensions();
+	QStringList filters = lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
 	QStringList files = FileUtils::getOpenFileNames(this,
 		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
@@ -696,7 +696,7 @@ void MainWindow::projectAddExisting(QStringList files)
 		}
 	}
 
-	Project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
+	project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
 	if(!project) return;
 
 	AddToProjectDialog dialog(this);
@@ -728,7 +728,7 @@ void MainWindow::projectRemoveFile()
 {
 	const QModelIndex &index = ui_projects->currentIndex();
 	const QString &path = m_projectsModel.filePath(index);
-	Project::ProjectPtr project = m_projectsModel.project(index);
+	project::ProjectPtr project = m_projectsModel.project(index);
 
 	if(m_projectsModel.isLink(index)) {
 		if(QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
@@ -751,7 +751,7 @@ void MainWindow::closeProject()
 	closeProject(m_projectsModel.project(ui_projects->currentIndex()));
 }
 
-void MainWindow::closeProject(const Project::ProjectPtr &project)
+void MainWindow::closeProject(const project::ProjectPtr &project)
 {
 	if(!project || !m_projectManager.closeProject(project)) return;
 
@@ -760,7 +760,7 @@ void MainWindow::closeProject(const Project::ProjectPtr &project)
 	m_projectsModel.removeProject(project);
 	if(m_projectManager.projects().isEmpty()) {
 		ui_projectFrame->setVisible(false);
-		activateMenuable(Menu::TargetMenu::menuName(), 0);
+		activateMenuable(menu::TargetMenu::menuName(), 0);
 	}
 }
 
@@ -770,16 +770,16 @@ void MainWindow::deleteProject()
 			QT_TR_NOOP("Deleting this project will delete all contents of the project folder. Are you sure you want to delete it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
-	const Project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
+	const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
 	closeProject(project);
 	if(!FileUtils::remove(project->location())) qWarning() << "Failed to delete project at " << project->location();
 }
 
 void MainWindow::projectOpenDependencies()
 {
-	const Project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
+	const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
 
-	Dialog::ProjectDepDialog dialog(project->dependencies(), this);
+	dialog::ProjectDepDialog dialog(project->dependencies(), this);
 	dialog.setWindowTitle(tr(QString("Dependencies for " + project->name()).toStdString().c_str()));
 	dialog.exec();
 
@@ -794,7 +794,7 @@ void MainWindow::projectOpenSettings()
 	projectOpenSettings(m_projectsModel.project(ui_projects->currentIndex()));
 }
 
-void MainWindow::projectOpenSettings(const Project::ProjectPtr &project)
+void MainWindow::projectOpenSettings(const project::ProjectPtr &project)
 {
 	for(int i = 0; i < ui_tabWidget->count(); ++i) {
 		ProjectSettings *tab = dynamic_cast<ProjectSettings*>(ui_tabWidget->widget(i));
@@ -884,15 +884,15 @@ void MainWindow::projectClicked(const QModelIndex &index)
 
 void MainWindow::projectDoubleClicked(const QModelIndex &index)
 {
-	Project::ProjectPtr project = m_projectsModel.project(index);
+	project::ProjectPtr project = m_projectsModel.project(index);
 	if(m_projectsModel.isFileEditable(index))
 		openFile(m_projectsModel.filePath(index), project);
 }
 
-void MainWindow::authenticateTarget(const Kiss::Target::TargetPtr &target,
-	Kiss::Target::CommunicationManager *manager)
+void MainWindow::authenticateTarget(const kiss::target::TargetPtr &target,
+	kiss::target::CommunicationManager *manager)
 {
-	Dialog::Password dialog(this);
+	dialog::Password dialog(this);
 	if(dialog.exec() != QDialog::Accepted) {
 		manager->clearQueue();
 	} else {
@@ -902,9 +902,9 @@ void MainWindow::authenticateTarget(const Kiss::Target::TargetPtr &target,
 	manager->setPaused(false);
 }
 
-void MainWindow::oldDeviceSoftware(const Kiss::Target::TargetPtr &target)
+void MainWindow::oldDeviceSoftware(const kiss::target::TargetPtr &target)
 {
-	Dialog::Message::showError(this, "simple_error_with_action", QStringList() <<
+	dialog::Message::showError(this, "simple_error_with_action", QStringList() <<
 		tr("Communication failed with %1.").arg(target->displayName().isEmpty()
 			? tr("the active target") : target->displayName()) <<
 		tr("The target has outdated software installed. It isn't compatible with this version "
@@ -912,9 +912,9 @@ void MainWindow::oldDeviceSoftware(const Kiss::Target::TargetPtr &target)
 		tr("Please update the target's software or use an older version of KISS IDE."));
 }
 
-void MainWindow::oldHostSoftware(const Kiss::Target::TargetPtr &target)
+void MainWindow::oldHostSoftware(const kiss::target::TargetPtr &target)
 {
-	Dialog::Message::showError(this, "simple_error_with_action", QStringList() <<
+	dialog::Message::showError(this, "simple_error_with_action", QStringList() <<
 		tr("Communication failed with %1.").arg(target->displayName().isEmpty()
 			? tr("the active target") : target->displayName()) <<
 		tr("The target's installed software is too new. It isn't compatible with this version "
@@ -931,18 +931,18 @@ bool MainWindow::eventFilter(QObject *target, QEvent *event) {
 	} else return QMainWindow::eventFilter(target, event);
 }
 
-Menu::Menuable *MainWindow::menuable(const QString &name)
+menu::Menuable *MainWindow::menuable(const QString &name)
 {
-	foreach(Menu::Menuable *menuable, m_menuables) {
+	foreach(menu::Menuable *menuable, m_menuables) {
 		if(menuable->name() == name) return menuable;
 	}
 	return 0;
 }
 
-QList<Menu::Menuable *> MainWindow::menuablesExcept(const QStringList &names)
+QList<menu::Menuable *> MainWindow::menuablesExcept(const QStringList &names)
 {
-	QList<Menu::Menuable *> ret;
-	foreach(Menu::Menuable *menuable, m_menuables) {
+	QList<menu::Menuable *> ret;
+	foreach(menu::Menuable *menuable, m_menuables) {
 		if(!names.contains(menuable->name())) ret.append(menuable);
 	}
 	return ret;
@@ -950,13 +950,13 @@ QList<Menu::Menuable *> MainWindow::menuablesExcept(const QStringList &names)
 
 void MainWindow::deactivateMenuablesExcept(const QStringList &names)
 {
-	foreach(Menu::Menuable *menu, menuablesExcept(names)) {
+	foreach(menu::Menuable *menu, menuablesExcept(names)) {
 		ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menu);
 		if(activatable) activatable->setActive(0);
 	}
 }
 
-QList<Menu::Menuable *> MainWindow::menuables()
+QList<menu::Menuable *> MainWindow::menuables()
 {
 	return m_menuables;
 }
@@ -969,17 +969,17 @@ void MainWindow::activateMenuable(const QString &name, QObject *on)
 
 QStringList MainWindow::standardMenus() const
 {
-	return QStringList() << Menu::FileOperationsMenu::menuName() << Menu::MainWindowMenu::menuName() << Menu::TargetMenu::menuName()
+	return QStringList() << menu::FileOperationsMenu::menuName() << menu::MainWindowMenu::menuName() << menu::TargetMenu::menuName()
 #ifdef BUILD_DOCUMENTATION_TAB
-	<< Menu::DocumentationMenu::menuName()
+	<< menu::DocumentationMenu::menuName()
 #endif
 #ifdef BUILD_DEVELOPER_TOOLS
-	<< Menu::DeveloperMenu::menuName()
+	<< menu::DeveloperMenu::menuName()
 #endif
 	;
 }
 
-Template::Manager *MainWindow::templateManager() const
+templates::Manager *MainWindow::templateManager() const
 {
 	return m_templateManager;
 }

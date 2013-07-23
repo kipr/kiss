@@ -28,10 +28,10 @@
 
 #include <QFileDialog>
 
-using namespace Kiss;
-using namespace Kiss::Menu;
+using namespace kiss;
+using namespace kiss::menu;
 
-DeveloperMenu::DeveloperMenu(Widget::MainWindow *mainWindow)
+DeveloperMenu::DeveloperMenu(widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName()),
 	m_mainWindow(mainWindow)
 {
@@ -51,7 +51,7 @@ void DeveloperMenu::triggered()
 		
 		foreach(const QString &path, filePaths) {
 			qWarning() << path;
-			m_mainWindow->addTab(new Widget::DeclarativeTab(QUrl::fromLocalFile(path), m_mainWindow));
+			m_mainWindow->addTab(new widget::DeclarativeTab(QUrl::fromLocalFile(path), m_mainWindow));
 		}
 	}
 #endif

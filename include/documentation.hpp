@@ -5,9 +5,9 @@
 
 #include <QObject>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class Documentation;
 	}
@@ -20,9 +20,9 @@ namespace Kiss
 
 #define UI_EVENT_OPEN_MANUAL "openManual"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class MainWindow;
 

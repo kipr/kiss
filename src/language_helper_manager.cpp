@@ -1,6 +1,6 @@
 #include "language_helper_manager.hpp"
 
-using namespace Kiss;
+using namespace kiss;
 
 LanguageHelperManager::LanguageHelperManager()
 {
@@ -27,7 +27,7 @@ QList<LanguageHelper *> LanguageHelperManager::languageHelpers() const
 	return m_languageHelpers;
 }
 
-Compiler::OutputList LanguageHelperManager::preprocess(const Kiss::KarPtr &archive, const QStringList &searchPaths) const
+Compiler::OutputList LanguageHelperManager::preprocess(const kiss::KarPtr &archive, const QStringList &searchPaths) const
 {
 	Compiler::OutputList ret;
 	foreach(const LanguageHelper *const languageHelper, m_languageHelpers) {

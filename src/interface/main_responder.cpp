@@ -4,10 +4,10 @@
 
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Target;
+using namespace kiss;
+using namespace kiss::target;
 
-MainResponder::MainResponder(Widget::MainWindow *mainWindow)
+MainResponder::MainResponder(widget::MainWindow *mainWindow)
 	: m_mainWindow(mainWindow)
 {
 }

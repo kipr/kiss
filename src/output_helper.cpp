@@ -3,7 +3,7 @@
 #include <QString>
 #include <QStringList>
 
-using namespace Kiss;
+using namespace kiss;
 
 Lines::Lines()
 {

@@ -26,7 +26,7 @@
 #include <QDebug>
 #include <QtPlugin>
 
-using namespace Kiss::Lexer;
+using namespace kiss::lexer;
 
 ConstructorCPP::ConstructorCPP()
 	: Constructor("C++ Files")
@@ -72,32 +72,32 @@ QColor CPPLexer::defaultColor(int style) const
 {
     switch (style)
     {
-	case Default: return Lexer::Settings::ref().getSetting(DEFAULT, SyntaxStandards::defaultColor());
+	case Default: return lexer::Settings::ref().getSetting(DEFAULT, SyntaxStandards::defaultColor());
 
 	case Comment:
 	case CommentLine:
 	case InactiveComment:
 	case InactiveCommentLine:
-		return Lexer::Settings::ref().getSetting(COMMENT, SyntaxStandards::commentColor());
+		return lexer::Settings::ref().getSetting(COMMENT, SyntaxStandards::commentColor());
 
 	case CommentDoc:
 	case CommentLineDoc:
 	case InactiveCommentDoc:
-		return Lexer::Settings::ref().getSetting(DOC_COMMENT, SyntaxStandards::docColor());
+		return lexer::Settings::ref().getSetting(DOC_COMMENT, SyntaxStandards::docColor());
 
-	case Number: return Lexer::Settings::ref().getSetting(NUMBER, SyntaxStandards::numberColor());
-	case Keyword: return Lexer::Settings::ref().getSetting(KEYWORD, SyntaxStandards::keywordColor());
+	case Number: return lexer::Settings::ref().getSetting(NUMBER, SyntaxStandards::numberColor());
+	case Keyword: return lexer::Settings::ref().getSetting(KEYWORD, SyntaxStandards::keywordColor());
 
 	case DoubleQuotedString:
 	case SingleQuotedString:
 	case RawString:
-		return Lexer::Settings::ref().getSetting(STRING, SyntaxStandards::stringColor());
+		return lexer::Settings::ref().getSetting(STRING, SyntaxStandards::stringColor());
 
-	case PreProcessor: return Lexer::Settings::ref().getSetting(PREPROCESSOR, SyntaxStandards::preprocessorColor());
-	case Operator: return Lexer::Settings::ref().getSetting(OPERATOR, SyntaxStandards::operatorColor());
-	case UnclosedString: return Lexer::Settings::ref().getSetting(UNCLOSED_STRING, SyntaxStandards::unclosedStringColor());
-	case CommentDocKeyword: return Lexer::Settings::ref().getSetting(DOC_KEYWORD, SyntaxStandards::docKeywordColor());
-	case CommentDocKeywordError: return Lexer::Settings::ref().getSetting(DOC_KEYWORD_ERROR, SyntaxStandards::docKeywordErrorColor());
+	case PreProcessor: return lexer::Settings::ref().getSetting(PREPROCESSOR, SyntaxStandards::preprocessorColor());
+	case Operator: return lexer::Settings::ref().getSetting(OPERATOR, SyntaxStandards::operatorColor());
+	case UnclosedString: return lexer::Settings::ref().getSetting(UNCLOSED_STRING, SyntaxStandards::unclosedStringColor());
+	case CommentDocKeyword: return lexer::Settings::ref().getSetting(DOC_KEYWORD, SyntaxStandards::docKeywordColor());
+	case CommentDocKeywordError: return lexer::Settings::ref().getSetting(DOC_KEYWORD_ERROR, SyntaxStandards::docKeywordErrorColor());
 
 	case InactiveDefault:
 	case InactiveUUID:
@@ -170,4 +170,4 @@ const bool CPP::cStyleBlocks() const
 	return true;
 }
 
-Q_EXPORT_PLUGIN2(cpp_lexer, Kiss::Lexer::ConstructorCPP); 
+Q_EXPORT_PLUGIN2(cpp_lexer, kiss::lexer::ConstructorCPP); 

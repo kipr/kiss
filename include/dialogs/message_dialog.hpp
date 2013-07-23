@@ -23,9 +23,9 @@
 
 #include "ui_MessageDialog.h"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Dialog
+	namespace dialog
 	{
 		class Message : public QDialog, public Ui::MessageDialog
 		{

@@ -8,8 +8,8 @@
 #include <QDebug>
 #include <sstream>
 
-using namespace Kiss;
-using namespace Kiss::Target;
+using namespace kiss;
+using namespace kiss::target;
 
 KovanProtoTarget::KovanProtoTarget(Transmitter *transmitter, Interface *interface)
 	: Target(interface, "kovan_proto_target"),
@@ -60,7 +60,7 @@ bool KovanProtoTarget::available()
 
 #define KEY_COMPILE "compile"
 
-Kiss::Target::Target::ReturnCode KovanProtoTarget::compile(quint64 id, const QString& name)
+kiss::target::Target::ReturnCode KovanProtoTarget::compile(quint64 id, const QString& name)
 {
 	emit response(Response(id, "began_" KEY_COMPILE));
 	qDebug() << "Compiling...";
@@ -166,7 +166,7 @@ Kiss::Target::Target::ReturnCode KovanProtoTarget::compile(quint64 id, const QSt
 
 #define KEY_DOWNLOAD "download"
 
-Kiss::Target::Target::ReturnCode KovanProtoTarget::download(quint64 id, const QString& name, const KarPtr& archive)
+kiss::target::Target::ReturnCode KovanProtoTarget::download(quint64 id, const QString& name, const KarPtr& archive)
 {
 	emit response(Response(id, "began_" KEY_DOWNLOAD));
 	qDebug() << "Downloading" << name << "...";
@@ -216,7 +216,7 @@ Kiss::Target::Target::ReturnCode KovanProtoTarget::download(quint64 id, const QS
 
 #define KEY_RUN "run"
 
-Kiss::Target::Target::ReturnCode KovanProtoTarget::run(quint64 id, const QString& name)
+kiss::target::Target::ReturnCode KovanProtoTarget::run(quint64 id, const QString& name)
 {
 	emit response(Response(id, "began_" KEY_RUN));
 	qDebug() << "Running...";
@@ -268,22 +268,22 @@ Kiss::Target::Target::ReturnCode KovanProtoTarget::run(quint64 id, const QString
 	return Target::Success;
 }
 
-Kiss::Target::Target::ReturnCode KovanProtoTarget::list(quint64 id)
+kiss::target::Target::ReturnCode KovanProtoTarget::list(quint64 id)
 {
 	return Target::NotImplemented;
 }
 
-Kiss::Target::Target::ReturnCode KovanProtoTarget::deleteProgram(quint64 id, const QString& name)
+kiss::target::Target::ReturnCode KovanProtoTarget::deleteProgram(quint64 id, const QString& name)
 {
 	return Target::NotImplemented;
 }
 
-Kiss::Target::Target::ReturnCode KovanProtoTarget::interaction(quint64 id, const QString& command)
+kiss::target::Target::ReturnCode KovanProtoTarget::interaction(quint64 id, const QString& command)
 {
 	return Target::NotImplemented;
 }
 
-Kiss::Target::Target::ReturnCode KovanProtoTarget::sendCustom(quint64 id, const QString& custom, const QByteArray& payload)
+kiss::target::Target::ReturnCode KovanProtoTarget::sendCustom(quint64 id, const QString& custom, const QByteArray& payload)
 {
 	return Target::NotImplemented;
 }
@@ -298,7 +298,7 @@ void KovanProtoTarget::clearPassword()
 	m_proto.setNoPassword();
 }
 
-Kiss::Target::Target::ReturnCode KovanProtoTarget::verifyProtocolVersion()
+kiss::target::Target::ReturnCode KovanProtoTarget::verifyProtocolVersion()
 {
 	// All firmwares will reply to
 	// knock knock. This helps us
@@ -318,7 +318,7 @@ Kiss::Target::Target::ReturnCode KovanProtoTarget::verifyProtocolVersion()
 	return cmp > 0 ? Target::OldDeviceSoftware : Target::OldHostSoftware;
 }
 
-Kiss::Target::Target::ReturnCode KovanProtoTarget::authenticate(const quint64 id)
+kiss::target::Target::ReturnCode KovanProtoTarget::authenticate(const quint64 id)
 {
 	bool authNecessary = false;
 	if(!m_proto.authenticationInfo(authNecessary)) {

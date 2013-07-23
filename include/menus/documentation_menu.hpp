@@ -25,9 +25,9 @@
 
 #include <QObject>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Menu
+	namespace menu
 	{
 		class DocumentationMenu;
 	}
@@ -39,26 +39,26 @@ namespace Kiss
 #include "menu_manager.hpp"
 #include "concrete_menuable.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class MainWindow;
 	}
 	
-	namespace Menu
+	namespace menu
 	{
 		class DocumentationMenu : public ConcreteMenuable
 		{
 		Q_OBJECT
 		public:
-			DocumentationMenu(Widget::MainWindow *mainWindow);
+			DocumentationMenu(widget::MainWindow *mainWindow);
 	
 			static QString menuName();
 		protected slots:
 			virtual void triggered();
 		private:
-			Widget::MainWindow *m_mainWindow;
+			widget::MainWindow *m_mainWindow;
 		};
 	}
 }

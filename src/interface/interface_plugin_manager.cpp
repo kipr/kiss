@@ -1,7 +1,7 @@
 #include "interface_plugin_manager.hpp"
 #include "interface_manager.hpp"
 
-using namespace Kiss::Target;
+using namespace kiss::target;
 
 QString InterfacePluginManager::getExpectedLocation(const QString &name) const
 {

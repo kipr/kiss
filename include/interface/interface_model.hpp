@@ -3,9 +3,9 @@
 
 #include <QStandardItemModel>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class Interface;
 		class InterfaceManager;

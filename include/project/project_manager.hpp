@@ -6,9 +6,9 @@
 #include <QObject>
 #include <QList>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Project
+	namespace project
 	{
 		class Project;
 		
@@ -32,8 +32,8 @@ namespace Kiss
 
 			static const QStringList hiddenExtensions();
 		signals:
-			void activeChanged(const Kiss::Project::ProjectPtr &oldActive,
-				const Kiss::Project::ProjectPtr &newActive);
+			void activeChanged(const kiss::project::ProjectPtr &oldActive,
+				const kiss::project::ProjectPtr &newActive);
 			
 		private:
 			ProjectPtrList m_projects;

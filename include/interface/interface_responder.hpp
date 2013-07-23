@@ -3,9 +3,9 @@
 
 #include "target.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class Interface;
 

@@ -5,19 +5,19 @@
 
 #include <QObject>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class DummyInterface : public QObject, public Interface
 		{
 		Q_OBJECT
-		Q_INTERFACES(Kiss::Target::Interface)
+		Q_INTERFACES(kiss::target::Interface)
 		public:
 			DummyInterface();
 			
-			virtual Kiss::Target::TargetPtr createTarget(const QString &address);
-			virtual const bool scan(Kiss::Target::InterfaceResponder *responder);
+			virtual kiss::target::TargetPtr createTarget(const QString &address);
+			virtual const bool scan(kiss::target::InterfaceResponder *responder);
 			virtual void invalidateResponder();
 		};
 	}

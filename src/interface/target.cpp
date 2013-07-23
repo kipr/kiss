@@ -3,7 +3,7 @@
 
 #include <QDebug>
 
-using namespace Kiss::Target;
+using namespace kiss::target;
 
 Target::Target(Interface *interface, const QString &name)
 	: m_interface(interface)
@@ -11,7 +11,7 @@ Target::Target(Interface *interface, const QString &name)
 	qRegisterMetaType<Response>("Response");
 	connect(this, SIGNAL(response(Response)),
 		SLOT(responseRedirect(Response)));
-	qRegisterMetaType<Kiss::Target::Target::ReturnCode>("Kiss::Target::Target::ReturnCode");
+	qRegisterMetaType<kiss::target::Target::ReturnCode>("kiss::target::Target::ReturnCode");
 }
 
 Target::~Target()

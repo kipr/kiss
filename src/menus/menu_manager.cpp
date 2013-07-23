@@ -25,9 +25,9 @@
 #include <QSet>
 #include <QDebug>
 
-using namespace Kiss::Menu;
+using namespace kiss::menu;
 
-struct NodeSingleton : Kiss::Singleton<NodeSingleton>
+struct NodeSingleton : kiss::Singleton<NodeSingleton>
 {
 	~NodeSingleton() {
 		foreach(Node *child, nodes) delete child;

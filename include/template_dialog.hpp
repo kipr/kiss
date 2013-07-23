@@ -12,32 +12,32 @@ namespace Ui
 	class TemplateDialog;
 }
 
-namespace Kiss
+namespace kiss
 {
-	namespace Template
+	namespace templates
 	{
 		class Manager;
 		class Model;
 	}
 	
-	namespace Dialog
+	namespace dialog
 	{
 		class Template : public QDialog
 		{
 		Q_OBJECT
 		public:
-			Template(Kiss::Template::Manager *manager, QWidget *parent = 0);
+			Template(kiss::templates::Manager *manager, QWidget *parent = 0);
 			~Template();
 			
-			Kiss::Template::File file() const;
+			kiss::templates::File file() const;
 			
 		private slots:
 			void selectionChanged(const QItemSelection &selection);
 			void removeSelectedPack();
 			
 		private:
-			Kiss::Template::Manager *m_manager;
-			Kiss::Template::Model *m_model;
+			kiss::templates::Manager *m_manager;
+			kiss::templates::Model *m_model;
 			Ui::TemplateDialog *ui;
 			
 			QString m_helpText;

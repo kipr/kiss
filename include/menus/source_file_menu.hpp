@@ -26,20 +26,20 @@
 #include "source_file.hpp"
 #include "concrete_menuable.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class MainWindow;
 	}
 	
-	namespace Menu
+	namespace menu
 	{
 		class SourceFileMenu : public ConcreteMenuable, public ActivatableObject
 		{
 		Q_OBJECT
 		public:
-			SourceFileMenu(Widget::MainWindow *mainWindow);
+			SourceFileMenu(widget::MainWindow *mainWindow);
 
 			static QString menuName();
 

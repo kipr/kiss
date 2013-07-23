@@ -3,22 +3,22 @@
 
 #include <QProgressBar>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class CommunicationManager;
 	}
 	
-	namespace Widget
+	namespace widget
 	{
 		class CommunicationProgressBar : public QProgressBar
 		{
 		Q_OBJECT
 		public:
-			CommunicationProgressBar(Target::CommunicationManager *manager, QWidget *parent = 0);
+			CommunicationProgressBar(target::CommunicationManager *manager, QWidget *parent = 0);
 			
-			Target::CommunicationManager *manager() const;
+			target::CommunicationManager *manager() const;
 			
 		signals:
 			void clicked();
@@ -33,7 +33,7 @@ namespace Kiss
 			void queueFinished();
 			
 		private:
-			Target::CommunicationManager *m_manager;
+			target::CommunicationManager *m_manager;
 			quint32 m_done;
 			quint32 m_total;
 		};

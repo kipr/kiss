@@ -8,7 +8,7 @@
 #define INFO_PREFIX QString("Info")
 #define DEBUG_PREFIX QString("Debug")
 
-using namespace Kiss;
+using namespace kiss;
 
 void Log::setLoggingLevel(const int &level)
 {

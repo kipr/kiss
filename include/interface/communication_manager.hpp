@@ -8,9 +8,9 @@
 #include "singleton.hpp"
 #include "communication_queue.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class CommunicationWorker : public QObject, public QRunnable
 		{
@@ -20,8 +20,8 @@ namespace Kiss
 			virtual void run();
 			
 		signals:
-			void progress(const Kiss::Target::CommunicationEntryPtr &entry);
-			void finished(const Kiss::Target::CommunicationEntryPtr &entry, const Kiss::Target::Target::ReturnCode success);
+			void progress(const kiss::target::CommunicationEntryPtr &entry);
+			void finished(const kiss::target::CommunicationEntryPtr &entry, const kiss::target::Target::ReturnCode success);
 			
 		private:
 			CommunicationEntryPtr m_entry;
@@ -46,20 +46,20 @@ namespace Kiss
 			quint64 admit(const CommunicationEntryPtr &entry);
 			
 		signals:
-			void admitted(const Kiss::Target::CommunicationEntryPtr &entry);
-			void began(const Kiss::Target::CommunicationEntryPtr &entry);
-			void progress(const Kiss::Target::CommunicationEntryPtr &entry, double fraction);
-			void finished(const Kiss::Target::CommunicationEntryPtr &entry, Kiss::Target::Target::ReturnCode success);
+			void admitted(const kiss::target::CommunicationEntryPtr &entry);
+			void began(const kiss::target::CommunicationEntryPtr &entry);
+			void progress(const kiss::target::CommunicationEntryPtr &entry, double fraction);
+			void finished(const kiss::target::CommunicationEntryPtr &entry, kiss::target::Target::ReturnCode success);
 			void queueFinished();
 			
-			void targetNeedsAuthentication(const Kiss::Target::TargetPtr &target,
-				Kiss::Target::CommunicationManager *manager);
-			void oldDeviceSoftware(const Kiss::Target::TargetPtr &target);
-			void oldHostSoftware(const Kiss::Target::TargetPtr &target);
+			void targetNeedsAuthentication(const kiss::target::TargetPtr &target,
+				kiss::target::CommunicationManager *manager);
+			void oldDeviceSoftware(const kiss::target::TargetPtr &target);
+			void oldHostSoftware(const kiss::target::TargetPtr &target);
 			
 		private slots:
 			void saturate();
-			void workerFinished(Kiss::Target::CommunicationEntryPtr entry, const Kiss::Target::Target::ReturnCode success);
+			void workerFinished(kiss::target::CommunicationEntryPtr entry, const kiss::target::Target::ReturnCode success);
 			
 		private:
 			bool m_paused;

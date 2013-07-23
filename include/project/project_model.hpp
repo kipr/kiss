@@ -7,9 +7,9 @@
 
 #include "project.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Project
+	namespace project
 	{	
 		class Model : public QStandardItemModel
 		{
@@ -33,8 +33,8 @@ namespace Kiss
 			QString filePath(const QModelIndex &index) const;
 
 		public slots:
-			void activeChanged(const Kiss::Project::ProjectPtr &oldActive,
-				const Kiss::Project::ProjectPtr &newActive);
+			void activeChanged(const kiss::project::ProjectPtr &oldActive,
+				const kiss::project::ProjectPtr &newActive);
 
 		private slots:
 			void directoryChanged(const QString &path);

@@ -3,7 +3,7 @@
 
 #include <QDebug>
 
-using namespace Kiss::Project;
+using namespace kiss::project;
 
 Manager::Manager()
 	: m_activeProject(ProjectPtr())

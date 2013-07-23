@@ -24,9 +24,9 @@
 #include "activatable.hpp"
 #include "menu_manager.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Menu
+	namespace menu
 	{
 		struct Invokable
 		{

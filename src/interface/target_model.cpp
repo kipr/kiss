@@ -7,8 +7,8 @@
 
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Target;
+using namespace kiss;
+using namespace kiss::target;
 
 class TargetItem : public QStandardItem
 {

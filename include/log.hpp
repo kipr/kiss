@@ -5,7 +5,7 @@
 
 #include <QString>
 
-namespace Kiss
+namespace kiss
 {
 	class Log : public Singleton<Log>
 	{

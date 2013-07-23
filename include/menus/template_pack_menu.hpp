@@ -26,20 +26,20 @@
 #include "main_window.hpp"
 #include "concrete_menuable.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class MainWindow;
 	}
 	
-	namespace Menu
+	namespace menu
 	{
 		class TemplatePackMenu : public ConcreteMenuable, public ActivatableObject
 		{
 		Q_OBJECT
 		public:
-			TemplatePackMenu(Widget::MainWindow *mainWindow);
+			TemplatePackMenu(widget::MainWindow *mainWindow);
 
 			static QString menuName();
 

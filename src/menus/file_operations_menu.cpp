@@ -1,6 +1,6 @@
 #include "file_operations_menu.hpp"
 
-using namespace Kiss::Menu;
+using namespace kiss::menu;
 
 FileOperationsMenu::FileOperationsMenu()
 	: ConcreteMenuable(menuName())

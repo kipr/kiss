@@ -3,10 +3,10 @@
 #define LINK_FILE (KAR_SPECIAL_PREFIX "links")
 #define SEP "\n"
 
-using namespace Kiss;
-using namespace Kiss::Project;
+using namespace kiss;
+using namespace kiss::project;
 
-bool LinkedKar::addLink(const Kiss::KarPtr &archive, const QString &path)
+bool LinkedKar::addLink(const kiss::KarPtr &archive, const QString &path)
 {
 	if(archive.isNull()) return false;
 	QByteArray data = archive->data(LINK_FILE);
@@ -15,7 +15,7 @@ bool LinkedKar::addLink(const Kiss::KarPtr &archive, const QString &path)
 	return true;
 }
 
-bool LinkedKar::removeLink(const Kiss::KarPtr &archive, const QString &path)
+bool LinkedKar::removeLink(const kiss::KarPtr &archive, const QString &path)
 {
 	if(archive.isNull()) return false;
 	
@@ -36,7 +36,7 @@ bool LinkedKar::removeLink(const Kiss::KarPtr &archive, const QString &path)
 	return hit;
 }
 
-QStringList LinkedKar::links(const Kiss::KarPtr &archive)
+QStringList LinkedKar::links(const kiss::KarPtr &archive)
 {
 	if(archive.isNull()) return QStringList();
 	return QString(archive->data(LINK_FILE)).split(SEP);

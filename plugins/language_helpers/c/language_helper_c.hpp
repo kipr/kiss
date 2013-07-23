@@ -3,14 +3,14 @@
 
 #include "language_helper.hpp"
 
-namespace Kiss
+namespace kiss
 {
 	class LanguageHelperC : public LanguageHelper
 	{
 	Q_OBJECT
-	Q_INTERFACES(Kiss::LanguageHelper);
+	Q_INTERFACES(kiss::LanguageHelper);
 	public:
-		virtual Compiler::OutputList preprocess(const Kiss::KarPtr &archive, const QStringList &searchPaths) const;
+		virtual Compiler::OutputList preprocess(const kiss::KarPtr &archive, const QStringList &searchPaths) const;
 	};
 }
 

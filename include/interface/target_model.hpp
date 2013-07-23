@@ -9,9 +9,9 @@
 #include <QRunnable>
 #include <QThreadPool>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class InterfaceManager;
 

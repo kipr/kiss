@@ -11,9 +11,9 @@
 #include <QSharedPointer>
 #include <QMetaType>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class CommunicationEntry
 		{
@@ -45,7 +45,7 @@ namespace Kiss
 			void setId(const quint64 &id);
 			const quint64 &id() const;
 			
-			Target::Target::ReturnCode execute() const;
+			target::Target::ReturnCode execute() const;
 			
 			const KarPtr &archive() const;
 			
@@ -66,6 +66,6 @@ namespace Kiss
 	}
 }
 
-Q_DECLARE_METATYPE(Kiss::Target::CommunicationEntryPtr);
+Q_DECLARE_METATYPE(kiss::target::CommunicationEntryPtr);
 
 #endif

@@ -1,10 +1,10 @@
 #include "communication_progress_bar.hpp"
 #include "communication_manager.hpp"
 
-using namespace Kiss;
-using namespace Kiss::Widget;
+using namespace kiss;
+using namespace kiss::widget;
 
-CommunicationProgressBar::CommunicationProgressBar(Target::CommunicationManager *manager, QWidget *parent)
+CommunicationProgressBar::CommunicationProgressBar(target::CommunicationManager *manager, QWidget *parent)
 	: QProgressBar(parent),
 	m_manager(manager),
 	m_done(0),
@@ -16,12 +16,12 @@ CommunicationProgressBar::CommunicationProgressBar(Target::CommunicationManager 
 	
 	setMaximumSize(QSize(100, 100));
 	
-	connect(m_manager, SIGNAL(admitted(Kiss::Target::CommunicationEntryPtr)), SLOT(admitted()));
-	connect(m_manager, SIGNAL(finished(Kiss::Target::CommunicationEntryPtr, Kiss::Target::Target::ReturnCode)), SLOT(finished()));
+	connect(m_manager, SIGNAL(admitted(kiss::target::CommunicationEntryPtr)), SLOT(admitted()));
+	connect(m_manager, SIGNAL(finished(kiss::target::CommunicationEntryPtr, kiss::target::Target::ReturnCode)), SLOT(finished()));
 	connect(m_manager, SIGNAL(queueFinished()), SLOT(queueFinished()));
 }
 
-Target::CommunicationManager *CommunicationProgressBar::manager() const
+target::CommunicationManager *CommunicationProgressBar::manager() const
 {
 	return m_manager;
 }

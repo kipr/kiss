@@ -6,8 +6,8 @@
 
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Template;
+using namespace kiss;
+using namespace kiss::templates;
 
 #define TEMPLATE_PACKS "template_packs"
 

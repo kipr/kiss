@@ -29,10 +29,10 @@
 #include <QIcon>
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Menu;
+using namespace kiss;
+using namespace kiss::menu;
 
-MainWindowMenu::MainWindowMenu(Widget::MainWindow *mainWindow)
+MainWindowMenu::MainWindowMenu(widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName()),
 	m_mainWindow(mainWindow)
 {	
@@ -68,14 +68,14 @@ void MainWindowMenu::triggered()
 {
 	QAction *_ = (QAction*)sender();
 	if(!_) return;
-	if(_ == m_errorLog) Widget::LogWindow::ref().setVisible(true);
+	if(_ == m_errorLog) widget::LogWindow::ref().setVisible(true);
 	else if(_ == m_hideErrors) m_mainWindow->hideErrors();
 	else qWarning() << "MainWindowMenu received unknown trigger" << _->text();
 }
 
 void MainWindowMenu::update()
 {
-	Widget::MainWindow *mainWindow = dynamic_cast<Widget::MainWindow*>(active());
+	widget::MainWindow *mainWindow = dynamic_cast<widget::MainWindow*>(active());
 	if(!mainWindow || !menuManager()->isConstructed()) return;
 	
 	m_closeNode->rawAction->setEnabled(mainWindow->canClose());

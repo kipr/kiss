@@ -30,9 +30,9 @@
 
 #define TABBED_WIDGET_PROPERTY "_kiss_tabbed_"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class MainWindow;
 		
@@ -77,20 +77,20 @@ namespace Kiss
 			const QFileInfo &file() const;
 			bool hasFile() const;
 
-			void setProject(const Kiss::Project::ProjectPtr &project);
-			const Kiss::Project::ProjectPtr &project() const;
+			void setProject(const kiss::project::ProjectPtr &project);
+			const kiss::project::ProjectPtr &project() const;
 			bool hasProject() const;
 			
 		protected:
 			virtual void fileChanged(const QFileInfo &file);
-			virtual void projectChanged(const Kiss::Project::ProjectPtr &project);
+			virtual void projectChanged(const kiss::project::ProjectPtr &project);
 			
 		private:
 			QWidget *m_widget;
 			MainWindow *m_mainWindow;
 			QFileInfo m_file;
 
-			Kiss::Project::ProjectPtr m_project;
+			kiss::project::ProjectPtr m_project;
 		};
 	}
 }

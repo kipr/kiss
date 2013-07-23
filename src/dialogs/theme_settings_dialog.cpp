@@ -30,8 +30,8 @@
 #include <QMap>
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Dialog;
+using namespace kiss;
+using namespace kiss::dialog;
 
 ThemeSettings::ThemeSettings(QWidget *parent)
 	: QDialog(parent),
@@ -52,7 +52,7 @@ ThemeSettings::ThemeSettings(QWidget *parent)
 	}
 	
 	readSettings();
-	Lexer::Settings::ref().setSettings(m_lexerSettings);
+	lexer::Settings::ref().setSettings(m_lexerSettings);
 }
 
 ThemeSettings::~ThemeSettings()
@@ -130,7 +130,7 @@ void ThemeSettings::writeSettings()
 	settings.beginGroup(LEXER);
 	QMap<QString, QColor>::const_iterator i = m_lexerSettings.constBegin();
 	for(; i != m_lexerSettings.constEnd(); ++i) settings.setValue(i.key(), i.value());
-	Lexer::Settings::ref().setSettings(m_lexerSettings);
+	lexer::Settings::ref().setSettings(m_lexerSettings);
 	settings.endGroup();
 	settings.endGroup();
 }

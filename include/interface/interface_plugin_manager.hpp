@@ -4,11 +4,11 @@
 #include "plugin_manager.hpp"
 #include "interface.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
-		class InterfacePluginManager : public Plugin::Manager<InterfacePluginManager, Interface>
+		class InterfacePluginManager : public plugin::Manager<InterfacePluginManager, Interface>
 		{
 			virtual QString getExpectedLocation(const QString &name) const;
 			virtual void pluginLoaded(Interface *plugin);

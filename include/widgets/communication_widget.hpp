@@ -8,9 +8,9 @@ namespace Ui
 	class CommunicationWidget;
 }
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class CommunicationWidget : public QWidget
 		{

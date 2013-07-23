@@ -3,8 +3,8 @@
 
 #include "save_as_dialog.hpp"
 
-using namespace Kiss;
-using namespace Kiss::Dialog;
+using namespace kiss;
+using namespace kiss::dialog;
 
 int main(int argc, char *argv[])
 {

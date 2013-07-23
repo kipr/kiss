@@ -9,8 +9,8 @@
 #include <QImageReader>
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Template;
+using namespace kiss;
+using namespace kiss::templates;
 
 #define DESC_SUFFIX ":desc"
 #define DISPLAY_NAME ":display_name"
@@ -37,7 +37,7 @@ const QString &Pack::loadedFrom() const
 	return m_loadedFrom;
 }
 
-bool Pack::addFile(const QString &path, const Template::File &file)
+bool Pack::addFile(const QString &path, const templates::File &file)
 {
 	if(isSpecialFile(path)) return false;
 	
@@ -49,7 +49,7 @@ bool Pack::addFile(const QString &path, const Template::File &file)
 	return true;
 }
 
-void Pack::setFile(const QString &path, const Template::File &file)
+void Pack::setFile(const QString &path, const templates::File &file)
 {
 	if(isSpecialFile(path)) return;
 	
@@ -98,9 +98,9 @@ QStringList Pack::allFiles() const
 	return ret;
 }
 
-Template::File Pack::file(const QString &path) const
+templates::File Pack::file(const QString &path) const
 {
-	return Template::File(m_archive->data(path), lexer(path));
+	return templates::File(m_archive->data(path), lexer(path));
 }
 
 bool Pack::setDescription(const QString &path, const QString &description)

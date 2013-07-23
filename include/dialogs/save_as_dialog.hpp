@@ -12,9 +12,9 @@ namespace Ui
 	class SaveAsDialog;
 }
 
-namespace Kiss
+namespace kiss
 {
-	namespace Dialog
+	namespace dialog
 	{
 		class SaveAs : public QDialog
 		{

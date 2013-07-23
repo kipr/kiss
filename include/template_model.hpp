@@ -6,9 +6,9 @@
 
 #include <QStandardItemModel>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Template
+	namespace templates
 	{
 		class Pack;
 		class Manager;
@@ -21,7 +21,7 @@ namespace Kiss
 			Model(const Manager *manager, QObject *parent = 0);
 			
 			Pack *indexToPack(const QModelIndex &index) const;
-			Template::File indexToFile(const QModelIndex &index) const;
+			templates::File indexToFile(const QModelIndex &index) const;
 			bool isIndexPack(const QModelIndex &index) const;
 			bool isIndexFile(const QModelIndex &index) const;
 			
@@ -29,10 +29,10 @@ namespace Kiss
 			const bool &isReadOnly() const;
 			
 		private slots:
-			void packAdded(const Kiss::Template::PackPtr &pack);
-			void packRemoved(Kiss::Template::Pack *pack);
+			void packAdded(const kiss::templates::PackPtr &pack);
+			void packRemoved(kiss::templates::Pack *pack);
 			void packNameChanged(const QString &name);
-			void packFileAdded(const QString &path, const Kiss::Template::File &file);
+			void packFileAdded(const QString &path, const kiss::templates::File &file);
 			void packFileRemoved(const QString &path);
 			void itemRenamed(QStandardItem *item);
 			

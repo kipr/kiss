@@ -7,9 +7,9 @@
 #include <QList>
 #include <QString>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class Interface
 		{
@@ -18,7 +18,7 @@ namespace Kiss
 
 			const QString &name() const;
 			
-			virtual Kiss::Target::TargetPtr createTarget(const QString &address) = 0;
+			virtual kiss::target::TargetPtr createTarget(const QString &address) = 0;
 			virtual const bool scan(InterfaceResponder *responder) = 0;
 			virtual void invalidateResponder() = 0;
 		private:
@@ -27,6 +27,6 @@ namespace Kiss
 	}
 }
 
-Q_DECLARE_INTERFACE(Kiss::Target::Interface, "com.kipr.kiss.Interface/1.1");
+Q_DECLARE_INTERFACE(kiss::target::Interface, "com.kipr.kiss.Interface/1.1");
 
 #endif

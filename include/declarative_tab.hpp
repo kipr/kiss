@@ -35,9 +35,9 @@
 #include <QFileSystemWatcher>
 #endif
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class MainWindow;
 		

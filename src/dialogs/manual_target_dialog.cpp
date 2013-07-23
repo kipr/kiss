@@ -6,12 +6,12 @@
 #include "interface.hpp"
 
 
-using namespace Kiss::Dialog;
+using namespace kiss::dialog;
 
 ManualTarget::ManualTarget(QWidget *parent)
 	: QDialog(parent),
 	ui(new Ui::ManualTargetDialog),
-	m_model(new Kiss::Target::InterfaceModel(&Target::InterfaceManager::ref(), this))
+	m_model(new kiss::target::InterfaceModel(&target::InterfaceManager::ref(), this))
 {
 	ui->setupUi(this);
 	ui->targetInterface->setModel(m_model);
@@ -22,9 +22,9 @@ ManualTarget::~ManualTarget()
 	delete ui;
 }
 
-Kiss::Target::TargetPtr ManualTarget::target() const
+kiss::target::TargetPtr ManualTarget::target() const
 {
-	Target::Interface *interface = m_model->rowToInterface(ui->targetInterface->currentIndex());
-	if(!interface) return Kiss::Target::TargetPtr();
+	target::Interface *interface = m_model->rowToInterface(ui->targetInterface->currentIndex());
+	if(!interface) return kiss::target::TargetPtr();
 	return interface->createTarget(ui->address->text());
 }

@@ -15,7 +15,7 @@
 
 #include <cstdio>
 
-using namespace Kiss;
+using namespace kiss;
 
 void debugLogHandler(QtMsgType type, const char *msg)
 {
@@ -49,7 +49,7 @@ void StandardEnvironment::createStandardEnvironment()
 	QDir::setCurrent(QApplication::applicationDirPath());
 #endif
 	
-	qRegisterMetaType<Target::TargetPtr>("TargetPtr");
+	qRegisterMetaType<target::TargetPtr>("TargetPtr");
 	
 	QApplication::setOrganizationName("KIPR");
 	QApplication::setOrganizationDomain("kipr.org");
@@ -57,6 +57,6 @@ void StandardEnvironment::createStandardEnvironment()
 	QApplication::setWindowIcon(QIcon(":/icon.png"));
 	
 	LanguageHelperPluginManager::ref().loadAll();
-	Target::InterfacePluginManager::ref().loadAll();
-	Lexer::PluginManager::ref().loadAll();
+	target::InterfacePluginManager::ref().loadAll();
+	lexer::PluginManager::ref().loadAll();
 }

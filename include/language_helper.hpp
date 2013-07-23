@@ -7,17 +7,17 @@
 #include <kar.hpp>
 #include <pcompiler/output.hpp>
 
-namespace Kiss
+namespace kiss
 {
 	class LanguageHelper : public QObject
 	{
 	Q_OBJECT
 	public:
 		virtual ~LanguageHelper();
-		virtual Compiler::OutputList preprocess(const Kiss::KarPtr &archive, const QStringList &searchPaths) const = 0;
+		virtual Compiler::OutputList preprocess(const kiss::KarPtr &archive, const QStringList &searchPaths) const = 0;
 	};
 }
 
-Q_DECLARE_INTERFACE(Kiss::LanguageHelper, "com.kipr.kiss.LanguageHelper/1.0");
+Q_DECLARE_INTERFACE(kiss::LanguageHelper, "com.kipr.kiss.LanguageHelper/1.0");
 
 #endif

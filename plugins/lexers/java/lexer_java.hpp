@@ -26,9 +26,9 @@
 #include <Qsci/qscilexerjava.h>
 #include <Qsci/qsciapis.h>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Lexer
+	namespace lexer
 	{
 		class JavaLexer : public QsciLexerCPP
 		{
@@ -50,7 +50,7 @@ namespace Kiss
 		class ConstructorJava : public Constructor
 		{
 		Q_OBJECT
-		Q_INTERFACES(Kiss::Lexer::Constructor)
+		Q_INTERFACES(kiss::lexer::Constructor)
 		public:
 			ConstructorJava();
 		

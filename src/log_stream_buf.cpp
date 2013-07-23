@@ -3,7 +3,7 @@
 
 #include <cassert>
 
-using namespace Kiss;
+using namespace kiss;
 
 LogStreamBuf::LogStreamBuf(const std::size_t &bufferSize)
 	: m_buffer(bufferSize + 1)
@@ -19,7 +19,7 @@ bool LogStreamBuf::flush()
 	char *str = new char[n + 1];
 	memcpy(str, pbase(), n);
 	str[n] = 0;
-	Widget::LogWindow::ref().append(str);
+	widget::LogWindow::ref().append(str);
 	delete str;
 	return true;
 }

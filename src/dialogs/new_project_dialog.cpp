@@ -7,7 +7,7 @@
 #define SETTINGS_GROUP "New Project Wizard"
 #define SETTINGS_KEY "Save Location"
 
-using namespace Kiss::Dialog;
+using namespace kiss::dialog;
 
 NewProjectDialog::NewProjectDialog(QWidget *parent)
 	: QDialog(parent)

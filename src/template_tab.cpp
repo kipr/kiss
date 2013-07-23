@@ -11,14 +11,14 @@
 
 #include <QMessageBox>
 
-using namespace Kiss;
-using namespace Kiss::Widget;
+using namespace kiss;
+using namespace kiss::widget;
 
-TemplateTab::TemplateTab(const Template::PackPtr &pack, MainWindow *mainWindow)
+TemplateTab::TemplateTab(const templates::PackPtr &pack, MainWindow *mainWindow)
 	: QWidget(mainWindow),
 	Tab(this, mainWindow),
 	m_dirty(true),
-	m_manager(new Template::Manager()),
+	m_manager(new templates::Manager()),
 	m_pack(pack),
 	m_model(0),
 	ui(new Ui::TemplateTab())
@@ -30,8 +30,8 @@ TemplateTab::TemplateTab(const QString &path, MainWindow *mainWindow)
 	: QWidget(mainWindow),
 	Tab(this, mainWindow),
 	m_dirty(false),
-	m_manager(new Template::Manager()),
-	m_pack(Template::Pack::load(path)),
+	m_manager(new templates::Manager()),
+	m_pack(templates::Pack::load(path)),
 	m_model(0),
 	ui(new Ui::TemplateTab())
 {
@@ -50,7 +50,7 @@ TemplateTab::~TemplateTab()
 void TemplateTab::activate()
 {
 	mainWindow()->deactivateMenuablesExcept(mainWindow()->standardMenus());
-	mainWindow()->activateMenuable(Menu::TemplatePackMenu::menuName(), this);
+	mainWindow()->activateMenuable(menu::TemplatePackMenu::menuName(), this);
 }
 
 bool TemplateTab::beginSetup()
@@ -100,7 +100,7 @@ bool TemplateTab::addFile(const QString &path)
 	QFile file(path);
 	if(!file.open(QIODevice::ReadOnly)) return false;
 	QFileInfo info(path);
-	Template::File tFile(file.readAll(), info.completeSuffix());
+	templates::File tFile(file.readAll(), info.completeSuffix());
 	bool ret = m_pack->addFile(info.baseName(), tFile);
 	file.close();
 	dirty();
@@ -202,7 +202,7 @@ void TemplateTab::init()
 {
 	ui->setupUi(this);
 	m_manager->addPack(m_pack);
-	m_model = new Kiss::Template::Model(m_manager, ui->packTree);
+	m_model = new kiss::templates::Model(m_manager, ui->packTree);
 	
 	m_model->setReadOnly(false);
 	ui->packTree->setModel(m_model);

@@ -5,8 +5,8 @@
 #include "communication_queue_model.hpp"
 #include "communication_manager.hpp"
 
-using namespace Kiss;
-using namespace Kiss::Widget;
+using namespace kiss;
+using namespace kiss::widget;
 
 CommunicationWidget::CommunicationWidget(QWidget *parent)
 	: QWidget(parent),
@@ -14,7 +14,7 @@ CommunicationWidget::CommunicationWidget(QWidget *parent)
 {
 	ui->setupUi(this);
 	
-	ui->queue->setModel(new Target::CommunicationQueueModel(&Target::CommunicationManager::ref(), this));
+	ui->queue->setModel(new target::CommunicationQueueModel(&target::CommunicationManager::ref(), this));
 	
 	connect(ui->hide, SIGNAL(clicked()), SLOT(hide()));
 }

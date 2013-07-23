@@ -3,25 +3,25 @@
 
 #include "target_responder.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class MainWindow;
 	}
 	
-	namespace Target
+	namespace target
 	{
 		class MainResponder : public Responder
 		{
 		public:
-			MainResponder(Widget::MainWindow *mainWindow);
+			MainResponder(widget::MainWindow *mainWindow);
 			virtual ~MainResponder();
 			
 			virtual void response(Target *target, const Response &response);
 			
 		private:
-			Widget::MainWindow *m_mainWindow;
+			widget::MainWindow *m_mainWindow;
 		};
 	}
 }

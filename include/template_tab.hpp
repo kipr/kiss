@@ -11,22 +11,22 @@ namespace Ui
 	class TemplateTab;
 }
 
-namespace Kiss
+namespace kiss
 {
-	namespace Template
+	namespace templates
 	{
 		class Manager;
 		class Pack;
 		class Model;
 	}
 	
-	namespace Widget
+	namespace widget
 	{
 		class TemplateTab : public QWidget, public Tab
 		{
 		Q_OBJECT
 		public:
-			TemplateTab(const Template::PackPtr &pack, MainWindow *mainWindow);
+			TemplateTab(const templates::PackPtr &pack, MainWindow *mainWindow);
 			TemplateTab(const QString &path, MainWindow *mainWindow);
 			~TemplateTab();
 			
@@ -61,9 +61,9 @@ namespace Kiss
 			
 			bool m_dirty;
 			
-			Template::Manager *m_manager;
-			Template::PackPtr m_pack;
-			Template::Model *m_model;
+			templates::Manager *m_manager;
+			templates::PackPtr m_pack;
+			templates::Model *m_model;
 			
 			Ui::TemplateTab *ui;
 		};

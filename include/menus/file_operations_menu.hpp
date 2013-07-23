@@ -4,9 +4,9 @@
 #include "activatable.hpp"
 #include "concrete_menuable.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Menu
+	namespace menu
 	{
 		class FileOperationsMenu : public ConcreteMenuable, public ActivatableObject
 		{

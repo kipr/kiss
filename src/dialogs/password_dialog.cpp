@@ -3,7 +3,7 @@
 
 #include <QCryptographicHash>
 
-using namespace Kiss::Dialog;
+using namespace kiss::dialog;
 
 Password::Password(QWidget *parent)
 	: QDialog(parent)

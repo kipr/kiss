@@ -1,6 +1,6 @@
 #include "title_description_widget.hpp"
 
-using namespace Kiss::Widget;
+using namespace kiss::widget;
 
 TitleDescription::TitleDescription(QWidget *parent)
 	: QWidget(parent)

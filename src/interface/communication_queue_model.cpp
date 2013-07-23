@@ -4,9 +4,9 @@
 
 #include <QStandardItem>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class CommunicationItem : public QStandardItem
 		{
@@ -78,21 +78,21 @@ namespace Kiss
 	}
 }
 
-using namespace Kiss;
-using namespace Kiss::Target;
+using namespace kiss;
+using namespace kiss::target;
 
 CommunicationQueueModel::CommunicationQueueModel(CommunicationManager *manager, QObject *parent)
 	: QStandardItemModel(parent),
 	m_manager(manager)
 {
-	connect(m_manager, SIGNAL(admitted(Kiss::Target::CommunicationEntryPtr)),
-		SLOT(admitted(Kiss::Target::CommunicationEntryPtr)));
-	connect(m_manager, SIGNAL(began(Kiss::Target::CommunicationEntryPtr)),
-		SLOT(began(Kiss::Target::CommunicationEntryPtr)));
-	connect(m_manager, SIGNAL(progress(Kiss::Target::CommunicationEntryPtr, double)),
-		SLOT(progress(Kiss::Target::CommunicationEntryPtr, double)));
-	connect(m_manager, SIGNAL(finished(Kiss::Target::CommunicationEntryPtr, Kiss::Target::Target::ReturnCode)),
-		SLOT(finished(Kiss::Target::CommunicationEntryPtr, Kiss::Target::Target::ReturnCode)));
+	connect(m_manager, SIGNAL(admitted(kiss::target::CommunicationEntryPtr)),
+		SLOT(admitted(kiss::target::CommunicationEntryPtr)));
+	connect(m_manager, SIGNAL(began(kiss::target::CommunicationEntryPtr)),
+		SLOT(began(kiss::target::CommunicationEntryPtr)));
+	connect(m_manager, SIGNAL(progress(kiss::target::CommunicationEntryPtr, double)),
+		SLOT(progress(kiss::target::CommunicationEntryPtr, double)));
+	connect(m_manager, SIGNAL(finished(kiss::target::CommunicationEntryPtr, kiss::target::Target::ReturnCode)),
+		SLOT(finished(kiss::target::CommunicationEntryPtr, kiss::target::Target::ReturnCode)));
 	connect(m_manager, SIGNAL(queueFinished()), SLOT(queueFinished()));
 }
 
@@ -128,7 +128,7 @@ void CommunicationQueueModel::progress(const CommunicationEntryPtr &entry, doubl
 
 }
 
-void CommunicationQueueModel::finished(const CommunicationEntryPtr &entry, Kiss::Target::Target::ReturnCode ret)
+void CommunicationQueueModel::finished(const CommunicationEntryPtr &entry, kiss::target::Target::ReturnCode ret)
 {
 	for(int i = 0; i < rowCount(); ++i) {
 		CommunicationItem *commItem = CommunicationItem::cast(item(i));

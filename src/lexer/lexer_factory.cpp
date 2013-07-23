@@ -22,7 +22,7 @@
 
 #include <QDebug>
 
-using namespace Kiss::Lexer;
+using namespace kiss::lexer;
 
 Constructor::Constructor(const QString &name)
 	: m_name(name)

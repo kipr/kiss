@@ -30,9 +30,9 @@
 
 #include <QDebug>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Lexer
+	namespace lexer
 	{
 		class Base;
 
@@ -136,6 +136,6 @@ namespace Kiss
 	}
 }
 
-Q_DECLARE_INTERFACE(Kiss::Lexer::Constructor, "com.kipr.kiss.LexerConstructor/1.0");
+Q_DECLARE_INTERFACE(kiss::lexer::Constructor, "com.kipr.kiss.LexerConstructor/1.0");
 
 #endif

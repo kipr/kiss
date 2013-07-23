@@ -6,8 +6,8 @@
 #define KISS_DATE "KISS_DATE"
 #define END_KISS "END_KISS_META"
 
-using namespace Kiss;
-using namespace Kiss::Template;
+using namespace kiss;
+using namespace kiss::templates;
 
 File::File()
 {

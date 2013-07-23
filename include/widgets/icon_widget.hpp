@@ -4,9 +4,9 @@
 #include <QLabel>
 #include <QIcon>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class Icon : public QLabel
 		{

@@ -9,8 +9,8 @@
 #include <QItemDelegate>
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Dialog;
+using namespace kiss;
+using namespace kiss::dialog;
 
 class ItemDelegate : public QItemDelegate
 {
@@ -26,14 +26,14 @@ public:
 	}
 };
 
-Dialog::Template::Template(Kiss::Template::Manager *manager, QWidget *parent)
+Template::Template(kiss::templates::Manager *manager, QWidget *parent)
 	: QDialog(parent),
 	m_manager(manager),
 	m_model(0),
 	ui(new Ui::TemplateDialog())
 {
 	ui->setupUi(this);
-	m_model = new Kiss::Template::Model(m_manager, ui->templates);
+	m_model = new kiss::templates::Model(m_manager, ui->templates);
 	m_model->setReadOnly(true);
 	ui->templates->setModel(m_model);
 	ui->templates->setItemDelegate(new ItemDelegate(this));
@@ -45,19 +45,19 @@ Dialog::Template::Template(Kiss::Template::Manager *manager, QWidget *parent)
 	ui->templates->expandAll();
 }
 
-Dialog::Template::~Template()
+Template::~Template()
 {
 	delete ui;
 }
 
-Kiss::Template::File Dialog::Template::file() const
+kiss::templates::File Template::file() const
 {
 	QItemSelection selection = ui->templates->selectionModel()->selection();
-	if(selection.indexes().isEmpty()) return Kiss::Template::File();
+	if(selection.indexes().isEmpty()) return kiss::templates::File();
 	return m_model->indexToFile(selection.indexes()[0]);
 }
 
-void Dialog::Template::selectionChanged(const QItemSelection &selection)
+void Template::selectionChanged(const QItemSelection &selection)
 {
 	const bool singular = selection.indexes().size() == 1;
 	
@@ -68,7 +68,7 @@ void Dialog::Template::selectionChanged(const QItemSelection &selection)
 	}
 	
 	QModelIndex index = selection.indexes()[0];
-	Kiss::Template::Pack *pack = m_model->indexToPack(index);
+	kiss::templates::Pack *pack = m_model->indexToPack(index);
 	
 	ui->removePack->setEnabled(m_model->isIndexPack(index));
 	ui->buttons->button(QDialogButtonBox::Ok)->setEnabled(!m_model->isIndexPack(index));
@@ -84,12 +84,12 @@ void Dialog::Template::selectionChanged(const QItemSelection &selection)
 	ui->description->setVisible(true);
 }
 
-void Dialog::Template::removeSelectedPack()
+void Template::removeSelectedPack()
 {
 	QItemSelection selection = ui->templates->selectionModel()->selection();
 	if(selection.indexes().size() != 1) return;
 	QModelIndex index = selection.indexes()[0];
-	Kiss::Template::Pack *pack = m_model->indexToPack(index);
+	kiss::templates::Pack *pack = m_model->indexToPack(index);
 	if(!pack) return;
 	m_manager->removePack(pack, true);
 }

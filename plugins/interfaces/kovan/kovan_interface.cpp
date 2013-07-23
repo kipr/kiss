@@ -8,7 +8,7 @@
 #include <QHostAddress>
 #include <QThreadPool>
 
-using namespace Kiss::Target;
+using namespace kiss::target;
 
 AdvertSampler::AdvertSampler(UdpAdvertiser *advertiser, const quint64 &sampleTime, const quint16 &samples)
 	: m_advertiser(advertiser),
@@ -47,12 +47,12 @@ KovanInterface::~KovanInterface()
 	delete m_advertiser;
 }
 
-Kiss::Target::TargetPtr KovanInterface::createTarget(const QString &address)
+kiss::target::TargetPtr KovanInterface::createTarget(const QString &address)
 {
 	fprintf(stderr, "createTarget\n");
 	// TODO: Add input verification
 	TcpSerial *serial = new TcpSerial(address.toAscii(), KOVAN_SERIAL_PORT);
-	KovanProtoTarget *device = new Kiss::Target::KovanProtoTarget(serial, this);
+	KovanProtoTarget *device = new kiss::target::KovanProtoTarget(serial, this);
 	return TargetPtr(device);
 }
 
@@ -90,7 +90,7 @@ void KovanInterface::found(const Advert &ad, const sockaddr_in& addr)
 	QHostAddress ha((sockaddr *)&addr);
 	
 	TcpSerial *serial = new TcpSerial(ha.toString().toAscii(), KOVAN_SERIAL_PORT);
-	KovanProtoTarget *device = new Kiss::Target::KovanProtoTarget(serial, this);
+	KovanProtoTarget *device = new kiss::target::KovanProtoTarget(serial, this);
 	device->fillInformation(ad);
 	device->fillCommPort(ha.toString());
 	m_responder->targetFound(this, TargetPtr(device));

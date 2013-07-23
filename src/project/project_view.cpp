@@ -3,7 +3,7 @@
 #include <QUrl>
 #include <QDebug>
 
-using namespace Kiss::Project;
+using namespace kiss::project;
 
 ProjectView::ProjectView(QWidget *parent)
 : QTreeView(parent)

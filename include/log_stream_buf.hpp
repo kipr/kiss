@@ -4,9 +4,9 @@
 #include <streambuf>
 #include <vector>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class LogWindow;
 	}

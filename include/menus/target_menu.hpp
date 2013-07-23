@@ -29,9 +29,9 @@
 
 #include <QMultiMap>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Menu
+	namespace menu
 	{
 		class TargetMenu : public ConcreteMenuable, public Singleton<TargetMenu>, public ActivatableObject
 		{

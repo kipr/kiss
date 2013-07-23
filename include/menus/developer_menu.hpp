@@ -23,9 +23,9 @@
 
 #include "build_options.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Menu
+	namespace menu
 	{
 		class DeveloperMenu;
 	}
@@ -38,20 +38,20 @@ namespace Kiss
 #include "source_file.hpp"
 #include "concrete_menuable.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class MainWindow;
 	}
 	
-	namespace Menu
+	namespace menu
 	{
 		class DeveloperMenu : public ConcreteMenuable, public ActivatableObject
 		{
 		Q_OBJECT
 		public:
-			DeveloperMenu(Widget::MainWindow *mainWindow);
+			DeveloperMenu(widget::MainWindow *mainWindow);
 	
 			static QString menuName();
 	
@@ -59,7 +59,7 @@ namespace Kiss
 			virtual void triggered();
 	
 		private:
-			Widget::MainWindow *m_mainWindow;
+			widget::MainWindow *m_mainWindow;
 	
 			QAction *declTab;
 		};

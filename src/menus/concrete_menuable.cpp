@@ -22,7 +22,7 @@
 
 #include <QDebug>
 
-using namespace Kiss::Menu;
+using namespace kiss::menu;
 
 ConcreteMenuable::ConcreteMenuable(const QString &name)
 	: Menuable(name)

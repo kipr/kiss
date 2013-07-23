@@ -3,12 +3,12 @@
 #include "interface_manager.hpp"
 #include "target.hpp"
 
-using namespace Kiss;
+using namespace kiss;
 
-class DummyTarget : public Kiss::Target::Target
+class DummyTarget : public kiss::target::Target
 {
 public:
-	DummyTarget(Kiss::Target::Interface *parent)
+	DummyTarget(kiss::target::Interface *parent)
 		: Target(parent, "Dummy Target")
 	{
 		
@@ -78,7 +78,7 @@ public:
 	}
 };
 
-using namespace Kiss::Target;
+using namespace kiss::target;
 
 __attribute__((constructor))
 static void __registerDummy()
@@ -97,7 +97,7 @@ TargetPtr DummyInterface::createTarget(const QString &address)
 	return TargetPtr();
 }
 
-const bool DummyInterface::scan(Kiss::Target::InterfaceResponder *responder)
+const bool DummyInterface::scan(kiss::target::InterfaceResponder *responder)
 {
 	responder->targetScanStarted(this);
 	responder->targetFound(this, TargetPtr(new DummyTarget(this)));

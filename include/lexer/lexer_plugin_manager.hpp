@@ -4,11 +4,11 @@
 #include "plugin_manager.hpp"
 #include "lexer_factory.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Lexer
+	namespace lexer
 	{
-		class PluginManager : public Plugin::Manager<Lexer::PluginManager, Constructor>
+		class PluginManager : public plugin::Manager<lexer::PluginManager, Constructor>
 		{
 			virtual QString getExpectedLocation(const QString &name) const;
 			virtual void pluginLoaded(Constructor *plugin);

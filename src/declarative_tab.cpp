@@ -31,8 +31,8 @@
 #include "developer_menu.hpp"
 #include "main_window.hpp"
 
-using namespace Kiss;
-using namespace Kiss::Widget;
+using namespace kiss;
+using namespace kiss::widget;
 
 DeclarativeTools::DeclarativeTools(MainWindow *mainWindow)
 	: m_mainWindow(mainWindow)
@@ -109,8 +109,8 @@ DeclarativeTab::~DeclarativeTab()
 
 void DeclarativeTab::activate()
 {
-	QList<Menu::Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
-	foreach(Menu::Menuable *menu, menus) {
+	QList<menu::Menuable*> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
+	foreach(menu::Menuable *menu, menus) {
 		ActivatableObject *activatable = dynamic_cast<ActivatableObject*>(menu);
 		if(activatable) activatable->setActive(0);
 	}

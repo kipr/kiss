@@ -4,7 +4,7 @@
 
 #include <QDebug>
 
-using namespace Kiss::Lexer;
+using namespace kiss::lexer;
 
 Base *ConstructorJavaScript::construct() const
 {

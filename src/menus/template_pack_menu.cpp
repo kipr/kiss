@@ -27,10 +27,10 @@
 #include <QIcon>
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Menu;
+using namespace kiss;
+using namespace kiss::menu;
 
-TemplatePackMenu::TemplatePackMenu(Widget::MainWindow *mainWindow)
+TemplatePackMenu::TemplatePackMenu(widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName())
 {
 	const QIcon disk(ResourceHelper::ref().lookup("disk"));

@@ -9,8 +9,8 @@
 #include <QPushButton>
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Dialog;
+using namespace kiss;
+using namespace kiss::dialog;
 
 SaveAs::SaveAs(QWidget *parent)
 	: QDialog(parent),

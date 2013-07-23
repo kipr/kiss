@@ -9,13 +9,13 @@
 #include <QStringList>
 #include <QSharedPointer>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Template
+	namespace templates
 	{
 		class Pack;
 		
-		typedef QSharedPointer<Kiss::Template::Pack> PackPtr;
+		typedef QSharedPointer<kiss::templates::Pack> PackPtr;
 		
 		class Pack : public QObject
 		{
@@ -29,15 +29,15 @@ namespace Kiss
 			
 			const QString &loadedFrom() const;
 			
-			bool addFile(const QString &path, const Template::File &file);
-			void setFile(const QString &path, const Template::File &file);
+			bool addFile(const QString &path, const templates::File &file);
+			void setFile(const QString &path, const templates::File &file);
 			bool removeFile(const QString &path);
 			bool hasFile(const QString &path);
 			bool rename(const QString &path, const QString &newPath);
 			
 			QStringList templates() const;
 			QStringList allFiles() const;
- 			Template::File file(const QString &path) const;
+ 			templates::File file(const QString &path) const;
 			
 			bool setDescription(const QString &path, const QString &description);
 			bool setDescription(const QString &description);
@@ -54,7 +54,7 @@ namespace Kiss
 			bool save(const QString &path) const;
 			
 		signals:
-			void fileAdded(const QString &path, const Kiss::Template::File &file);
+			void fileAdded(const QString &path, const kiss::templates::File &file);
 			void fileRemoved(const QString &path);
 			void nameChanged(const QString &newName);
 			

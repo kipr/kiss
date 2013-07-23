@@ -29,7 +29,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Kiss::Widget::SourceFind" name="ui_find" native="true"/>
+    <widget class="kiss::widget::SourceFind" name="ui_find" native="true"/>
    </item>
   </layout>
  </widget>
@@ -41,7 +41,7 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>Kiss::Widget::SourceFind</class>
+   <class>kiss::widget::SourceFind</class>
    <extends>QWidget</extends>
    <header>source_find_widget.hpp</header>
    <container>1</container>

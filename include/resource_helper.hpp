@@ -28,7 +28,7 @@
 #include <QIcon>
 #include <QPixmap>
 
-namespace Kiss
+namespace kiss
 {
 	struct ResourceHelper : Singleton<ResourceHelper>
 	{

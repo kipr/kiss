@@ -8,9 +8,9 @@
 #include <QString>
 #include <QDir>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Template
+	namespace templates
 	{
 		class Manager : public QObject
 		{
@@ -30,8 +30,8 @@ namespace Kiss
 			QList<PackPtr> packs() const;
 			
 		signals:
-			void packAdded(const Kiss::Template::PackPtr &pack);
-			void packRemoved(Kiss::Template::Pack *pack);
+			void packAdded(const kiss::templates::PackPtr &pack);
+			void packRemoved(kiss::templates::Pack *pack);
 			
 		private:
 			QDir templatePacksDir() const;

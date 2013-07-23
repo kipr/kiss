@@ -1,7 +1,7 @@
 #include "language_helper_plugin_manager.hpp"
 #include "language_helper_manager.hpp"
 
-using namespace Kiss;
+using namespace kiss;
 
 QString LanguageHelperPluginManager::getExpectedLocation(const QString &name) const
 {

@@ -2,7 +2,7 @@
 
 #include "interface.hpp"
 
-using namespace Kiss::Target;
+using namespace kiss::target;
 
 InterfaceManager::InterfaceManager()
 {

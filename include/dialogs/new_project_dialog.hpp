@@ -5,9 +5,9 @@
 
 #include "ui_NewProjectDialog.h"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Dialog
+	namespace dialog
 	{
 		class NewProjectDialog : public QDialog, private Ui::NewProjectDialog
 		{

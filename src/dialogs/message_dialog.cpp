@@ -26,8 +26,8 @@
 #include <QDesktopServices>
 #include <QFile>
 
-using namespace Kiss;
-using namespace Kiss::Dialog;
+using namespace kiss;
+using namespace kiss::dialog;
 
 Message::Message(QWidget *widget)
 	: QDialog(widget)

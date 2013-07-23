@@ -1,5 +1,5 @@
 #include "target_responder.hpp"
 
-Kiss::Target::Responder::~Responder()
+kiss::target::Responder::~Responder()
 {
 }

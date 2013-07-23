@@ -22,8 +22,8 @@
 
 #include "source_file.hpp"
 
-using namespace Kiss;
-using namespace Kiss::Widget;
+using namespace kiss;
+using namespace kiss::widget;
 
 SourceFind::SourceFind(QWidget *parent)
 	: QWidget(parent),

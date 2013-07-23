@@ -38,9 +38,9 @@ namespace Ui
 	class ThemeSettingsDialog;
 }
 
-namespace Kiss
+namespace kiss
 {
-	namespace Dialog
+	namespace dialog
 	{
 		class ThemeSettings : public QDialog
 		{

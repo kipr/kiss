@@ -32,7 +32,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace Kiss;
+using namespace kiss;
 
 int main(int argc, char **argv)
 {
@@ -57,12 +57,12 @@ int main(int argc, char **argv)
 	// Creates everything we need
 	StandardEnvironment::createStandardEnvironment();
 
-	Dialog::ThemeSettings::initializeDefaults();
+	dialog::ThemeSettings::initializeDefaults();
 	
-	Widget::MainWindow mainWindow;
+	widget::MainWindow mainWindow;
 	
 #ifdef BUILD_DECLARATIVE_TAB
-	mainWindow.addTab(new Widget::DeclarativeTab(QUrl("qrc:/welcome/welcome.qml"), &mainWindow));
+	mainWindow.addTab(new widget::DeclarativeTab(QUrl("qrc:/welcome/welcome.qml"), &mainWindow));
 #endif
 
 	Log::ref().info(QString("Starting with the following arguments: [%1]").arg(QApplication::arguments().join(", ")));
@@ -71,9 +71,9 @@ int main(int argc, char **argv)
 #ifdef ENABLE_LOG_WINDOW
 #ifdef BUILD_DEVELOPER_TOOLS
 	Log::ref().info("Built with developer tools. Automatically showing error log.");
-	Widget::LogWindow::ref().move(0, 0);
-	Widget::LogWindow::ref().show();
-	Widget::LogWindow::ref().raise();
+	widget::LogWindow::ref().move(0, 0);
+	widget::LogWindow::ref().show();
+	widget::LogWindow::ref().raise();
 #endif
 #endif
 

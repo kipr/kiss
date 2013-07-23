@@ -10,13 +10,14 @@
 #include <kovanserial/kovan_serial.hpp>
 #include <kovanserial/udp_advertiser.hpp>
 
+
 #undef interface
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target 
 	{
-		class KovanProtoTarget : public Kiss::Target::Target
+		class KovanProtoTarget : public kiss::target::Target
 		{
 		Q_OBJECT
 		public:
@@ -34,7 +35,7 @@ namespace Kiss
 			virtual bool available();
 			
 			virtual Target::Target::ReturnCode compile(quint64 id, const QString& name);
-			virtual Target::Target::ReturnCode download(quint64 id, const QString& name, const Kiss::KarPtr& archive);
+			virtual Target::Target::ReturnCode download(quint64 id, const QString& name, const kiss::KarPtr& archive);
 			virtual Target::Target::ReturnCode run(quint64 id, const QString& name);
 
 			virtual Target::Target::ReturnCode list(quint64 id);

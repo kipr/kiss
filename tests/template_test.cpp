@@ -9,7 +9,7 @@
 
 #define LOCATION "/Users/beta/Desktop/test.pack"
 
-using namespace Kiss;
+using namespace kiss;
 
 int main(int argc, char *argv[])
 {
@@ -20,23 +20,23 @@ int main(int argc, char *argv[])
 	"\treturn 0;\n"
 	"}";
 	
-	Template::File basicTemplate(testTemplate.toLatin1(), "c");
+	templates::File basicTemplate(testTemplate.toLatin1(), "c");
 	
-	Template::PackPtr pack = Template::Pack::create();
+	templates::PackPtr pack = templates::Pack::create();
 	pack->addFile("Basic", basicTemplate);
 	pack->setName("C/C++");
 	pack->save(LOCATION);
 	
-	pack = Template::Pack::load(LOCATION);
+	pack = templates::Pack::load(LOCATION);
 	if(!pack) return 1;
 	
 	qDebug() << "Templates:" << pack->templates();
 	qDebug() << "Data for Basic:" << pack->file("Basic.c").lexer();
 	
-	Template::Manager manager;
+	templates::Manager manager;
 	manager.addPack(pack);
 	
-	Dialog::Template dialog(&manager);
+	dialog::Template dialog(&manager);
 	dialog.exec();
 	
 	return app.exec();

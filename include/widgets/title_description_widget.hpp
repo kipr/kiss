@@ -4,9 +4,9 @@
 #include "ui_TitleDescriptionWidget.h"
 #include <QString>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class TitleDescription : public QWidget, public Ui::TitleDescriptionWidget
 		{

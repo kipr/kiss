@@ -2,7 +2,7 @@
 #include "ui_ProjectDepDialog.h"
 #include "file_utils.hpp"
 
-using namespace Kiss::Dialog;
+using namespace kiss::dialog;
 
 ProjectDepDialog::ProjectDepDialog(const QStringList &deps, QWidget *parent) :
 	QDialog(parent)

@@ -33,20 +33,20 @@
 #include <QFileInfo>
 #include <QKeyEvent>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Project
+	namespace project
 	{
 		class Project;
 	}
 	
-	namespace Lexer
+	namespace lexer
 	{
 		class Constructor;
 		class Base;
 	}
 	
-	namespace Widget
+	namespace widget
 	{
 		class MainWindow;
 
@@ -65,7 +65,7 @@ namespace Kiss
 			bool fileSaveAs(const QString &filePath);
 			bool fileOpen(const QString &filePath);
 			bool memoryOpen(const QByteArray &ba, const QString &assocPath);
-			bool openProjectFile(const Project::ProjectPtr &project);
+			bool openProjectFile(const project::ProjectPtr &project);
 
 			bool close();
 
@@ -118,7 +118,7 @@ namespace Kiss
 			const QString &name() const;
 			QString fullName() const;
 
-			virtual Kiss::KarPtr archive() const;
+			virtual kiss::KarPtr archive() const;
 
 		signals:
 			void updateActivatable();
@@ -126,7 +126,7 @@ namespace Kiss
 		protected:
 			void keyPressEvent(QKeyEvent *event);
 			virtual void fileChanged(const QFileInfo &file);
-			virtual void projectChanged(const Project::ProjectPtr &project);
+			virtual void projectChanged(const project::ProjectPtr &project);
 
 		private slots:
 			void on_ui_editor_cursorPositionChanged(int line, int index);
@@ -139,7 +139,7 @@ namespace Kiss
 
 			void showFind();
 
-			void setLexer(Lexer::Constructor *constructor);
+			void setLexer(lexer::Constructor *constructor);
 
 			int m_zoomLevel;
 			void dropEvent(QDropEvent *event);
@@ -166,7 +166,7 @@ namespace Kiss
 			void updateTitle();
 			void updateLexer();
 			
-			Kiss::Lexer::Base *m_currentLexer;
+			kiss::lexer::Base *m_currentLexer;
 
 			QString m_name;
 		};

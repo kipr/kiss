@@ -4,9 +4,9 @@
 #include "plugin_manager.hpp"
 #include "language_helper.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	class LanguageHelperPluginManager : public Plugin::Manager<LanguageHelperPluginManager, LanguageHelper>
+	class LanguageHelperPluginManager : public plugin::Manager<LanguageHelperPluginManager, LanguageHelper>
 	{
 		virtual QString getExpectedLocation(const QString &name) const;
 		virtual void pluginLoaded(LanguageHelper *plugin);

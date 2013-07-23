@@ -16,7 +16,7 @@
 #include <QThreadPool>
 #include <QBuffer>
 
-using namespace Kiss::Target;
+using namespace kiss::target;
 
 PortSampler::PortSampler()
 {
@@ -64,11 +64,11 @@ KovanSerialInterface::~KovanSerialInterface()
 {
 }
 
-Kiss::Target::TargetPtr KovanSerialInterface::createTarget(const QString &address)
+kiss::target::TargetPtr KovanSerialInterface::createTarget(const QString &address)
 {
 	// TODO: Add input verification
 	UsbSerial *serial = new UsbSerial(address.toAscii());
-	KovanProtoTarget *device = new Kiss::Target::KovanProtoTarget(serial, this);
+	KovanProtoTarget *device = new kiss::target::KovanProtoTarget(serial, this);
 	device->fillDisplayName(address);
 	return TargetPtr(device);
 }
@@ -99,7 +99,7 @@ void KovanSerialInterface::found(const QString &port)
 	if(!m_responder) return;
 	
 	UsbSerial *serial = new UsbSerial(port.toAscii());
-	KovanProtoTarget *device = new Kiss::Target::KovanProtoTarget(serial, this);
+	KovanProtoTarget *device = new kiss::target::KovanProtoTarget(serial, this);
 	device->fillCommPort(port);
 	m_responder->targetFound(this, TargetPtr(device));
 }

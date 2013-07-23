@@ -21,7 +21,7 @@
 #ifndef _SINGLETON_HPP_
 #define _SINGLETON_HPP_
 
-namespace Kiss
+namespace kiss
 {
 	/*! \class Singleton
 	 * \brief Implements a simple Singleton Pattern

@@ -48,8 +48,8 @@
 
 #define DEFAULT_EXTENSION "default_extension"
 
-using namespace Kiss;
-using namespace Kiss::Widget;
+using namespace kiss;
+using namespace kiss::widget;
 
 SourceFile::SourceFile(MainWindow *parent)
 	: QWidget(parent),
@@ -75,8 +75,8 @@ SourceFile::SourceFile(MainWindow *parent)
 	connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
 	connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
 	
-	connect(&Target::CommunicationManager::ref(), SIGNAL(admitted(CommunicationEntryPtr)), SIGNAL(updateActivatable()));
-	connect(&Target::CommunicationManager::ref(), SIGNAL(queueFinished()), SIGNAL(updateActivatable()));
+	connect(&target::CommunicationManager::ref(), SIGNAL(admitted(CommunicationEntryPtr)), SIGNAL(updateActivatable()));
+	connect(&target::CommunicationManager::ref(), SIGNAL(queueFinished()), SIGNAL(updateActivatable()));
 	
 	ui_find->hide();
 	
@@ -95,9 +95,9 @@ void SourceFile::activate()
 	mainWindow()->setStatusMessage("");
 	
 	mainWindow()->deactivateMenuablesExcept(mainWindow()->standardMenus()
-		<< Menu::SourceFileMenu::menuName());
+		<< menu::SourceFileMenu::menuName());
 	
-	mainWindow()->activateMenuable(Menu::SourceFileMenu::menuName(), this);
+	mainWindow()->activateMenuable(menu::SourceFileMenu::menuName(), this);
 	
 	emit updateActivatable();
 }
@@ -132,7 +132,7 @@ bool SourceFile::close()
 		if(ui_editor->isModified()) return false;
 	}
 	
-	mainWindow()->activateMenuable(Menu::SourceFileMenu::menuName(), 0);
+	mainWindow()->activateMenuable(menu::SourceFileMenu::menuName(), 0);
 
 	emit updateActivatable();
 	
@@ -184,7 +184,7 @@ bool SourceFile::fileOpen(const QString &filePath)
 
 	updateLexer();
 	
-	setProject(Project::ProjectPtr());
+	setProject(project::ProjectPtr());
 	
 	return true;
 }
@@ -201,7 +201,7 @@ bool SourceFile::memoryOpen(const QByteArray &ba, const QString &assocPath)
 	return true;
 }
 
-bool SourceFile::openProjectFile(const Project::ProjectPtr &project)
+bool SourceFile::openProjectFile(const project::ProjectPtr &project)
 {
 	return false;
 }
@@ -340,7 +340,7 @@ void SourceFile::refreshSettings()
 		ui_editor->lexer()->setFont(defFont, -1);
 	}
 	
-	Lexer::Factory::ref().setFont(defFont);
+	lexer::Factory::ref().setFont(defFont);
 
 	/* Set other options from settings */
 	settings.beginGroup(AUTO_INDENT);
@@ -459,7 +459,7 @@ bool SourceFile::saveAs()
 bool SourceFile::saveAsFile()
 {
 	QSettings settings;
-	QStringList exts = Lexer::Factory::ref().formattedExtensions();
+	QStringList exts = lexer::Factory::ref().formattedExtensions();
 	
 	QRegExp reg("*." + m_templateExt + "*");
 	reg.setPatternSyntax(QRegExp::Wildcard);
@@ -495,13 +495,13 @@ bool SourceFile::saveAsProject()
 {
 	if(!hasProject()) return false;
 	
-	QStringList exts = Lexer::Factory::ref().extensions();
+	QStringList exts = lexer::Factory::ref().extensions();
 	QStringList nameFilters;
 	foreach(const QString &ext, exts) {
 		nameFilters << "*." + ext;
 	}
 	
-	Dialog::SaveAs dialog(this);
+	dialog::SaveAs dialog(this);
 	dialog.setNameFilters(nameFilters);
 	dialog.setRootPath(project()->location());
 	dialog.setFileName(file().completeBaseName());
@@ -570,7 +570,7 @@ void SourceFile::print()
 void SourceFile::convertToProject()
 {
 	if(!save()) return;
-	Project::ProjectPtr project = mainWindow()->newProject();
+	project::ProjectPtr project = mainWindow()->newProject();
 	fileSaveAs(project->location() + "/" + file().fileName());
 	//project->setTarget(target());
 	setProject(project);
@@ -614,7 +614,7 @@ void SourceFile::showFind()
 	ui_find->show();
 }
 
-void SourceFile::setLexer(Lexer::Constructor *constructor)
+void SourceFile::setLexer(lexer::Constructor *constructor)
 {
 	ui_editor->setLexer(0);
 	if(m_currentLexer) {
@@ -625,7 +625,7 @@ void SourceFile::setLexer(Lexer::Constructor *constructor)
 	if(!constructor) return;
 	m_currentLexer = constructor->construct();
 	ui_editor->setLexer(m_currentLexer->lexer());
-	// Lexer::Factory::setAPIsForLexer(m_currentLexer, m_lexAPI);
+	// lexer::Factory::setAPIsForLexer(m_currentLexer, m_lexAPI);
 	refreshSettings();
 	updateMargins();
 }
@@ -662,14 +662,14 @@ void SourceFile::updateErrors(const Compiler::OutputList &compileResult)
 
 const bool SourceFile::selectTemplate()
 {
-	Dialog::Template tDialog(mainWindow()->templateManager(), this);
+	dialog::Template tDialog(mainWindow()->templateManager(), this);
 	if(tDialog.exec() == QDialog::Rejected) return false;
 
-	Template::File tFile = tDialog.file();
+	templates::File tFile = tDialog.file();
 	
-	Lexer::Constructor *constructor = 0;
+	lexer::Constructor *constructor = 0;
 	if(tFile.hasLexer()) {
-		constructor = Lexer::Factory::ref().constructor(tFile.lexer());
+		constructor = lexer::Factory::ref().constructor(tFile.lexer());
 		m_templateExt = tFile.lexer();
 	}
 	
@@ -690,7 +690,7 @@ void SourceFile::fileChanged(const QFileInfo &file)
 	updateTitle();
 }
 
-void SourceFile::projectChanged(const Project::ProjectPtr &project)
+void SourceFile::projectChanged(const project::ProjectPtr &project)
 {
 	updateTitle();
 }
@@ -703,10 +703,10 @@ void SourceFile::updateTitle()
 void SourceFile::updateLexer()
 {
 	// Update the lexer to the new spec for that extension
-	Lexer::Constructor *constructor1 = Lexer::Factory::ref().constructor(file().completeSuffix());
-	Lexer::Constructor *constructor2 = Lexer::Factory::ref().constructor(file().suffix());
-	Lexer::Constructor *constructor = constructor1 ? constructor1 : constructor2;
-	if(!Lexer::Factory::isLexerFromConstructor(m_currentLexer, constructor)) setLexer(constructor);
+	lexer::Constructor *constructor1 = lexer::Factory::ref().constructor(file().completeSuffix());
+	lexer::Constructor *constructor2 = lexer::Factory::ref().constructor(file().suffix());
+	lexer::Constructor *constructor = constructor1 ? constructor1 : constructor2;
+	if(!lexer::Factory::isLexerFromConstructor(m_currentLexer, constructor)) setLexer(constructor);
 }
 
 void SourceFile::setName(const QString &name)
@@ -725,14 +725,14 @@ QString SourceFile::fullName() const
 	return m_name + " (" + project()->name() + ")";
 }
 
-Kiss::KarPtr SourceFile::archive() const
+kiss::KarPtr SourceFile::archive() const
 {
 	// TODO: Projects
-	Kiss::KarPtr archive = Kiss::Kar::create();
+	kiss::KarPtr archive = kiss::Kar::create();
 	archive->addFile(file().fileName(), ui_editor->text().toAscii());
 	Compiler::OutputList out = LanguageHelperManager::ref().preprocess(archive, QStringList() << file().path());
 	// TODO: I really don't like that this is here.
 	if(Compiler::Output::isSuccess(out)) return archive;
 	mainWindow()->setOutputList(out);
-	return Kiss::KarPtr();
+	return kiss::KarPtr();
 }

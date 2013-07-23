@@ -7,28 +7,28 @@
 #include "file_utils.hpp"
 #include "communication_manager.hpp"
 
-using namespace Kiss;
-using namespace Kiss::Project;
+using namespace kiss;
+using namespace kiss::project;
 
-ProjectPtr Kiss::Project::Project::load(const QString &location)
+ProjectPtr kiss::project::Project::load(const QString &location)
 {
 	if(!QFileInfo(location).isDir()) return ProjectPtr();
 	return ProjectPtr(new Project(location));
 }
 
-bool Kiss::Project::Project::save()
+bool kiss::project::Project::save()
 {
 	QDir dir(m_location);
 	return m_settings.save(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
 }
 
-const bool Kiss::Project::Project::download() const
+const bool kiss::project::Project::download() const
 {
-	using namespace Kiss::Target;
+	using namespace kiss::target;
 
 	const QStringList &depsList = dependencies();
 	foreach(const QString &dep, depsList) {
-		const ProjectPtr &depProject = Project::Project::load(dep);
+		const ProjectPtr &depProject = project::Project::load(dep);
 		if(!depProject) {
 			qDebug() << "ERROR: failed to open dependency" << dep << "for download";
 			return false;
@@ -37,7 +37,7 @@ const bool Kiss::Project::Project::download() const
 		depProject->download();
 	}
 
-	Kiss::KarPtr package = archive();
+	kiss::KarPtr package = archive();
 	if(package.isNull()) return false;
 
 	CommunicationManager::ref().admit(CommunicationEntryPtr(
@@ -47,13 +47,13 @@ const bool Kiss::Project::Project::download() const
 	return true;
 }
 
-const bool Kiss::Project::Project::compile() const
+const bool kiss::project::Project::compile() const
 {
-	using namespace Kiss::Target;
+	using namespace kiss::target;
 
 	const QStringList &depsList = dependencies();
 	foreach(const QString &dep, depsList) {
-		const ProjectPtr &depProject = Project::Project::load(dep);
+		const ProjectPtr &depProject = project::Project::load(dep);
 		if(!depProject) {
 			qDebug() << "ERROR: failed to open dependency" << dep << "for compilation";
 			return false;
@@ -69,16 +69,16 @@ const bool Kiss::Project::Project::compile() const
 		return true;
 }
 
-const bool Kiss::Project::Project::run() const
+const bool kiss::project::Project::run() const
 {
-	using namespace Kiss::Target;
+	using namespace kiss::target;
 	
 	CommunicationManager::ref().admit(CommunicationEntryPtr(
 			new CommunicationEntry(m_target, CommunicationEntry::Run, m_name)));
 		return true;
 }
 
-bool Kiss::Project::Project::addAsCopy(const QString &path)
+bool kiss::project::Project::addAsCopy(const QString &path)
 {
 	QFileInfo info(path);
 	if(!info.isFile()) return false;
@@ -86,19 +86,19 @@ bool Kiss::Project::Project::addAsCopy(const QString &path)
 	return QFile::copy(path, m_location + "/" + info.fileName());
 }
 
-bool Kiss::Project::Project::addAsMovedCopy(const QString &path)
+bool kiss::project::Project::addAsMovedCopy(const QString &path)
 {
 	return (addAsCopy(path) && QFile::remove(path));
 }
 
-bool Kiss::Project::Project::removeFile(const QString &path)
+bool kiss::project::Project::removeFile(const QString &path)
 {
 	if(!QFileInfo(path).isFile()) return false;
 	
 	return QFile::remove(path);
 }
 
-QStringList Kiss::Project::Project::files() const
+QStringList kiss::project::Project::files() const
 {
 	QStringList ret;
 	QFileInfoList infoList = QDir(m_location).entryInfoList(QDir::Files);
@@ -108,7 +108,7 @@ QStringList Kiss::Project::Project::files() const
 	return ret;
 }
 
-bool Kiss::Project::Project::addAsLink(const QString &path)
+bool kiss::project::Project::addAsLink(const QString &path)
 {
 	QStringList linksList = links();
 	QDir projectDir(m_location);
@@ -129,12 +129,12 @@ bool Kiss::Project::Project::addAsLink(const QString &path)
 	return true;
 }
 
-bool Kiss::Project::Project::addAsRelativeLink(const QString &path)
+bool kiss::project::Project::addAsRelativeLink(const QString &path)
 {
 	return addAsLink(FileUtils::relativePath(path, QDir(m_location)));
 }
 
-bool Kiss::Project::Project::removeLink(const QString &path)
+bool kiss::project::Project::removeLink(const QString &path)
 {
 	QStringList linksList = links();
 	QDir projectDir(m_location);
@@ -156,7 +156,7 @@ bool Kiss::Project::Project::removeLink(const QString &path)
 	return true;
 }
 
-QStringList Kiss::Project::Project::links() const
+QStringList kiss::project::Project::links() const
 {
 	QStringList list;
 	
@@ -170,36 +170,36 @@ QStringList Kiss::Project::Project::links() const
 	return list;
 }
 
-const QString Kiss::Project::Project::linksFilePath() const
+const QString kiss::project::Project::linksFilePath() const
 {
 	const QDir dir(m_location);
 	return dir.absoluteFilePath(dir.dirName() + "." + LINKS_EXT);
 }
 
-void Kiss::Project::Project::setSetting(const QString &key, const QString &value)
+void kiss::project::Project::setSetting(const QString &key, const QString &value)
 {
 	m_settings[key] = value;
 	save();
 }
 
-void Kiss::Project::Project::setSettings(const Compiler::Options &settings)
+void kiss::project::Project::setSettings(const Compiler::Options &settings)
 {
 	m_settings = settings;
 	save();
 }
 
-void Kiss::Project::Project::removeSetting(const QString &key)
+void kiss::project::Project::removeSetting(const QString &key)
 {
 	m_settings.remove(key);
 	save();
 }
 
-const Compiler::Options &Kiss::Project::Project::settings() const
+const Compiler::Options &kiss::project::Project::settings() const
 {
 	return m_settings;
 }
 
-void Kiss::Project::Project::setDependencies(const QStringList &deps)
+void kiss::project::Project::setDependencies(const QStringList &deps)
 {
 	QFile depsFile(dependenciesFilePath());
 	if (!depsFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -211,7 +211,7 @@ void Kiss::Project::Project::setDependencies(const QStringList &deps)
 	depsFile.close();
 }
 
-QStringList Kiss::Project::Project::dependencies() const
+QStringList kiss::project::Project::dependencies() const
 {
 	QStringList list;
 	QFile depsFile(dependenciesFilePath());
@@ -226,40 +226,40 @@ QStringList Kiss::Project::Project::dependencies() const
 	return list;
 }
 
-const QString Kiss::Project::Project::dependenciesFilePath() const
+const QString kiss::project::Project::dependenciesFilePath() const
 {
 	const QDir dir(m_location);
 	return dir.absoluteFilePath(dir.dirName() + "." + DEPS_EXT);
 }
 
-void Kiss::Project::Project::setTarget(const Target::TargetPtr &target)
+void kiss::project::Project::setTarget(const target::TargetPtr &target)
 {
 	m_target = target;
 }
 
-Target::TargetPtr Kiss::Project::Project::target() const
+target::TargetPtr kiss::project::Project::target() const
 {
 	return m_target;
 }
 
-void Kiss::Project::Project::setName(const QString &name)
+void kiss::project::Project::setName(const QString &name)
 {
 	m_name = name;
 }
 
-const QString &Kiss::Project::Project::name() const
+const QString &kiss::project::Project::name() const
 {
 	return m_name;
 }
 
-const QString &Kiss::Project::Project::location() const
+const QString &kiss::project::Project::location() const
 {
 	return m_location;
 }
 
-Kiss::KarPtr Kiss::Project::Project::archive() const
+kiss::KarPtr kiss::project::Project::archive() const
 {
-	Kiss::KarPtr archive = Kiss::Kar::create();
+	kiss::KarPtr archive = kiss::Kar::create();
 	QStringList paths = files();
 	foreach(QString path, paths) {
 		QFile file(path);
@@ -278,7 +278,7 @@ Kiss::KarPtr Kiss::Project::Project::archive() const
 	return archive;
 }
 
-Kiss::Project::Project::Project(const QString &location)
+kiss::project::Project::Project(const QString &location)
 	: m_location(location)
 {
 	m_name = QFileInfo(m_location).fileName();

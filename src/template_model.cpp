@@ -8,8 +8,8 @@
 #include <QFileInfo>
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Template;
+using namespace kiss;
+using namespace kiss::templates;
 
 class TemplateItem : public QStandardItem
 {
@@ -101,10 +101,10 @@ Model::Model(const Manager *manager, QObject *parent)
 	: QStandardItemModel(parent),
 	m_manager(manager)
 {
-	connect(m_manager, SIGNAL(packAdded(Kiss::Template::PackPtr)),
-		this, SLOT(packAdded(Kiss::Template::PackPtr)));
-	connect(m_manager, SIGNAL(packRemoved(Kiss::Template::Pack *)),
-		this, SLOT(packRemoved(Kiss::Template::Pack *)));
+	connect(m_manager, SIGNAL(packAdded(kiss::templates::PackPtr)),
+		this, SLOT(packAdded(kiss::templates::PackPtr)));
+	connect(m_manager, SIGNAL(packRemoved(kiss::templates::Pack *)),
+		this, SLOT(packRemoved(kiss::templates::Pack *)));
 	connect(this, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(itemRenamed(QStandardItem *)));
 	
 	foreach(const PackPtr &pack, manager->packs()) packAdded(pack);
@@ -123,10 +123,10 @@ Pack *Model::indexToPack(const QModelIndex &index) const
 	return 0;
 }
 
-Template::File Model::indexToFile(const QModelIndex &index) const
+templates::File Model::indexToFile(const QModelIndex &index) const
 {
 	TemplateItem *templateItem = TemplateItem::cast(itemFromIndex(index));
-	if(!templateItem) return Template::File();
+	if(!templateItem) return templates::File();
 	
 	return templateItem->pack()->file(templateItem->path());
 }
@@ -153,19 +153,19 @@ const bool &Model::isReadOnly() const
 	return m_readOnly;
 }
 
-void Model::packAdded(const Kiss::Template::PackPtr &pack)
+void Model::packAdded(const kiss::templates::PackPtr &pack)
 {
 	appendRow(new PackItem(pack.data(), m_readOnly));
 	
 	connect(pack.data(), SIGNAL(nameChanged(QString)),
 		this, SLOT(packNameChanged(QString)));
-	connect(pack.data(), SIGNAL(fileAdded(QString, Kiss::Template::File)),
-		this, SLOT(packFileAdded(QString, Kiss::Template::File)));
+	connect(pack.data(), SIGNAL(fileAdded(QString, kiss::templates::File)),
+		this, SLOT(packFileAdded(QString, kiss::templates::File)));
 	connect(pack.data(), SIGNAL(fileRemoved(QString)),
 		this, SLOT(packFileRemoved(QString)));
 }
 
-void Model::packRemoved(Kiss::Template::Pack *pack)
+void Model::packRemoved(kiss::templates::Pack *pack)
 {
 	if(!pack) return;
 	
@@ -197,7 +197,7 @@ void Model::packNameChanged(const QString &name)
 	}
 }
 
-void Model::packFileAdded(const QString &path, const Kiss::Template::File &file)
+void Model::packFileAdded(const QString &path, const kiss::templates::File &file)
 {
 	Pack *pack = qobject_cast<Pack *>(sender());
 	if(!pack) return;

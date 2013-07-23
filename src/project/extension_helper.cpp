@@ -2,7 +2,7 @@
 
 #include <QFileInfo>
 
-using namespace Kiss::Project;
+using namespace kiss::project;
 
 QString ExtensionHelper::icon(const QString &file)
 {

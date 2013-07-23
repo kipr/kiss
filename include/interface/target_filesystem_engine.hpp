@@ -3,9 +3,9 @@
 
 #include <QAbstractFileEngine>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class FilesystemEngine : public QAbstractFileEngine
 		{

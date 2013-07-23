@@ -32,9 +32,9 @@
 
 #include <typeinfo>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Plugin
+	namespace plugin
 	{
 		typedef QMap<QString, QPluginLoader *> Map;
 

@@ -25,9 +25,9 @@
 
 #include "manual_target_dialog.hpp"
 
-using namespace Kiss::Dialog;
+using namespace kiss::dialog;
 
-Target::Target(Kiss::Target::InterfaceManager *manager, QWidget *parent)
+Target::Target(kiss::target::InterfaceManager *manager, QWidget *parent)
 	: QDialog(parent),
 	m_manager(manager),
 	m_model(m_manager),
@@ -55,11 +55,11 @@ Target::Target(Kiss::Target::InterfaceManager *manager, QWidget *parent)
 
 Target::~Target()
 {
-	foreach(Kiss::Target::Interface *interface, m_manager->interfaces())
+	foreach(kiss::target::Interface *interface, m_manager->interfaces())
 		interface->invalidateResponder();
 }
 
-Kiss::Target::TargetPtr Target::target() const
+kiss::target::TargetPtr Target::target() const
 {
 	if(!m_manualTarget.isNull()) return m_manualTarget;	
 	return m_model.indexToTarget(ui_targets->selectionModel()->currentIndex());
@@ -67,7 +67,7 @@ Kiss::Target::TargetPtr Target::target() const
 
 void Target::currentTargetChanged(const QModelIndex &index)
 {
-	Kiss::Target::TargetPtr target = m_model.indexToTarget(index);
+	kiss::target::TargetPtr target = m_model.indexToTarget(index);
 	const QString unknown = "Unknown";
 	ui_deviceName->setText(target.data() ? target->displayName() : unknown);
 	ui_deviceType->setText(target.data() ? target->type() : unknown);
@@ -91,7 +91,7 @@ void Target::on_ui_interfaces_currentIndexChanged(int index)
 void Target::on_ui_refresh_clicked()
 {
 	m_model.clear();
-	foreach(Kiss::Target::Interface *interface, m_manager->interfaces())
+	foreach(kiss::target::Interface *interface, m_manager->interfaces())
 		interface->scan(&m_model);
 }
 
@@ -99,7 +99,7 @@ void Target::on_ui_manual_clicked()
 {
 	ManualTarget dialog;
 	if(dialog.exec() == QDialog::Rejected) {
-		m_manualTarget = Kiss::Target::TargetPtr();
+		m_manualTarget = kiss::target::TargetPtr();
 		return;
 	}
 	m_manualTarget = dialog.target();

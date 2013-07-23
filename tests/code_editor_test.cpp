@@ -4,8 +4,8 @@
 #include "c_highlighter.hpp"
 #include "code_editor.hpp"
 
-using namespace Kiss;
-using namespace Kiss::Widget;
+using namespace kiss;
+using namespace kiss::widget;
 
 int main(int argc, char *argv[])
 {

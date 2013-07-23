@@ -12,8 +12,8 @@
 
 #define CUSTOM_KEY "<custom>"
 
-using namespace Kiss;
-using namespace Kiss::Widget;
+using namespace kiss;
+using namespace kiss::widget;
 
 class ComboDelegate : public QStyledItemDelegate
 {
@@ -57,7 +57,7 @@ private:
 	QStringList keys;
 };
 
-ProjectSettings::ProjectSettings(const Project::ProjectPtr &project, MainWindow *mainWindow)
+ProjectSettings::ProjectSettings(const project::ProjectPtr &project, MainWindow *mainWindow)
 	: QWidget(mainWindow),
 	Tab(this, mainWindow),
 	m_block(false)
@@ -72,8 +72,8 @@ ProjectSettings::ProjectSettings(const Project::ProjectPtr &project, MainWindow 
 
 void ProjectSettings::activate()
 {
-	QList<Menu::Menuable *> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
-	foreach(Menu::Menuable *menu, menus) {
+	QList<menu::Menuable *> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
+	foreach(menu::Menuable *menu, menus) {
 		ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menu);
 		if(activatable) activatable->setActive(0);
 	}

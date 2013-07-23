@@ -6,7 +6,7 @@
 #include <QString>
 #include <QList>
 
-namespace Kiss
+namespace kiss
 {
 	class DocumentationLocation
 	{

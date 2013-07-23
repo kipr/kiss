@@ -2,8 +2,8 @@
 
 #include <QMouseEvent>
 
-using namespace Kiss;
-using namespace Kiss::Widget;
+using namespace kiss;
+using namespace kiss::widget;
 
 Icon::Icon(QWidget *parent)
 	: QLabel(parent)

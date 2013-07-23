@@ -1,6 +1,6 @@
 #include "target_response.hpp"
 
-using namespace Kiss::Target;
+using namespace kiss::target;
 
 Response::Response()
 {

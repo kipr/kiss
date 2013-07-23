@@ -4,7 +4,7 @@
 #include "pcompiler/output.hpp"
 #include <QList>
 
-namespace Kiss
+namespace kiss
 {
 	class Lines
 	{

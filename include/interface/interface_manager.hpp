@@ -6,9 +6,9 @@
 #include <QObject>
 #include <QList>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class Interface;
 

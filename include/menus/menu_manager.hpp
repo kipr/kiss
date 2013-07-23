@@ -31,9 +31,9 @@
 #include <QAction>
 #include <QObject>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Menu
+	namespace menu
 	{
 		typedef QList<QAction *> QActionList;
 

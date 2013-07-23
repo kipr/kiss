@@ -12,9 +12,9 @@
 #define DEPS_EXT "deps"
 #define DEPS_SETTING "PROJECT_DEPS"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Project
+	namespace project
 	{
 		class Project;
 		
@@ -50,8 +50,8 @@ namespace Kiss
 			QStringList dependencies() const;
 			const QString dependenciesFilePath() const;
 
-			void setTarget(const Target::TargetPtr &target);
-			Target::TargetPtr target() const;
+			void setTarget(const target::TargetPtr &target);
+			target::TargetPtr target() const;
 
 			void setName(const QString &name);
 			const QString &name() const;
@@ -64,7 +64,7 @@ namespace Kiss
 	
 			QString m_name;
 			QString m_location;
-			Target::TargetPtr m_target;
+			target::TargetPtr m_target;
 			Compiler::Options m_settings;
 		};
 	}

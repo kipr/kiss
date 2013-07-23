@@ -26,7 +26,7 @@
 #include "interface.hpp"
 #include "communication_manager.hpp"
 
-using namespace Kiss::Menu;
+using namespace kiss::menu;
 
 TargetMenu::TargetMenu()
 	: ConcreteMenuable(menuName())
@@ -71,7 +71,7 @@ void TargetMenu::deactivated()
 
 void TargetMenu::update()
 {
-	const bool enabled = Target::CommunicationManager::ref().isIdle();
+	const bool enabled = target::CommunicationManager::ref().isIdle();
 	compileNode->rawAction->setEnabled(enabled);
 	downloadNode->rawAction->setEnabled(enabled);
 	runNode->rawAction->setEnabled(enabled);

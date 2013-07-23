@@ -29,18 +29,18 @@
 
 #include <QDialog>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Dialog
+	namespace dialog
 	{
 		class Target : public QDialog, private Ui::TargetDialog
 		{
 		Q_OBJECT
 		public:
-			Target(Kiss::Target::InterfaceManager *manager, QWidget *parent = 0);
+			Target(kiss::target::InterfaceManager *manager, QWidget *parent = 0);
 			~Target();
 
-			Kiss::Target::TargetPtr target() const;
+			kiss::target::TargetPtr target() const;
 
 		private slots:
 			void currentTargetChanged(const QModelIndex& index);
@@ -50,10 +50,10 @@ namespace Kiss
 			void on_ui_manual_clicked();
 
 		private:
-			Kiss::Target::InterfaceManager *m_manager;
-			Kiss::Target::TargetModel m_model;
-			Kiss::Target::InterfaceModel m_interfaceModel;
-			Kiss::Target::TargetPtr m_manualTarget;
+			kiss::target::InterfaceManager *m_manager;
+			kiss::target::TargetModel m_model;
+			kiss::target::InterfaceModel m_interfaceModel;
+			kiss::target::TargetPtr m_manualTarget;
 		};
 	}
 }

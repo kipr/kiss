@@ -3,9 +3,9 @@
 
 #include "target_response.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class Target;
 		

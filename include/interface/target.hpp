@@ -22,14 +22,14 @@
 #define DOWNLOAD_SOURCE "src"
 #define DOWNLOAD_BINARY "bin"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Project
+	namespace project
 	{
 		class Project;
 	}
 	
-	namespace Target
+	namespace target
 	{
 		class Interface;
 		

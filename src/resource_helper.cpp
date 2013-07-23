@@ -25,7 +25,7 @@
 #include <QDir>
 #include <QDebug>
 
-using namespace Kiss;
+using namespace kiss;
 
 ResourceHelper::ResourceHelper()
 {

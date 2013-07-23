@@ -6,9 +6,9 @@
 
 #include "project_model.hpp"
 
-namespace Kiss
+namespace kiss
 {
-	namespace Project
+	namespace project
 	{
 		class ProjectView : public QTreeView
 		{

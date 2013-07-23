@@ -4,9 +4,9 @@
 #include <QString>
 #include <QByteArray>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Template
+	namespace templates
 	{
 		class File
 		{

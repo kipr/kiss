@@ -5,7 +5,7 @@
 
 #include <QtPlugin>
 
-using namespace Kiss::Lexer;
+using namespace kiss::lexer;
 
 Base *ConstructorPython::construct() const
 {
@@ -56,23 +56,23 @@ QColor PythonLexer::defaultColor(int style) const
 	case FunctionMethodName:
 	case Identifier:
 	case HighlightedIdentifier:
-		return Lexer::Settings::ref().getSetting(DEFAULT, SyntaxStandards::defaultColor());
+		return lexer::Settings::ref().getSetting(DEFAULT, SyntaxStandards::defaultColor());
 
 	case Comment:
 	case CommentBlock:
-		return Lexer::Settings::ref().getSetting(COMMENT, SyntaxStandards::commentColor());
+		return lexer::Settings::ref().getSetting(COMMENT, SyntaxStandards::commentColor());
 
-	case Number: return Lexer::Settings::ref().getSetting(NUMBER, SyntaxStandards::numberColor());
-	case Keyword: return Lexer::Settings::ref().getSetting(KEYWORD, SyntaxStandards::keywordColor());
+	case Number: return lexer::Settings::ref().getSetting(NUMBER, SyntaxStandards::numberColor());
+	case Keyword: return lexer::Settings::ref().getSetting(KEYWORD, SyntaxStandards::keywordColor());
 
 	case DoubleQuotedString:
 	case SingleQuotedString:
 	case TripleDoubleQuotedString:
 	case TripleSingleQuotedString:
-		return Lexer::Settings::ref().getSetting(STRING, SyntaxStandards::stringColor());
+		return lexer::Settings::ref().getSetting(STRING, SyntaxStandards::stringColor());
 
-	case Operator: return Lexer::Settings::ref().getSetting(OPERATOR, SyntaxStandards::operatorColor());
-	case UnclosedString: return Lexer::Settings::ref().getSetting(UNCLOSED_STRING, SyntaxStandards::unclosedStringColor());
+	case Operator: return lexer::Settings::ref().getSetting(OPERATOR, SyntaxStandards::operatorColor());
+	case UnclosedString: return lexer::Settings::ref().getSetting(UNCLOSED_STRING, SyntaxStandards::unclosedStringColor());
     }
 
     return QsciLexerPython::defaultColor(style);
@@ -114,4 +114,4 @@ const bool Python::cStyleBlocks() const
 	return false;
 }
 
-Q_EXPORT_PLUGIN2(python_lexer, Kiss::Lexer::ConstructorPython); 
+Q_EXPORT_PLUGIN2(python_lexer, kiss::lexer::ConstructorPython); 

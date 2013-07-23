@@ -5,7 +5,7 @@
 #include <QDir>
 #include <QString>
 
-namespace Kiss
+namespace kiss
 {
 	class FileUtils
 	{

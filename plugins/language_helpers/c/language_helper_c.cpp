@@ -5,9 +5,9 @@
 #include <QDir>
 #include <QtPlugin>
 
-using namespace Kiss;
+using namespace kiss;
 
-Compiler::OutputList LanguageHelperC::preprocess(const Kiss::KarPtr &archive, const QStringList &searchPaths) const
+Compiler::OutputList LanguageHelperC::preprocess(const kiss::KarPtr &archive, const QStringList &searchPaths) const
 {
 	const static QString exts[] = {
 		".c", ".cpp", ".cc", ".cxx",
@@ -81,4 +81,4 @@ Compiler::OutputList LanguageHelperC::preprocess(const Kiss::KarPtr &archive, co
 	return out;
 }
 
-Q_EXPORT_PLUGIN2(language_helper_c, Kiss::LanguageHelperC);
+Q_EXPORT_PLUGIN2(language_helper_c, kiss::LanguageHelperC);

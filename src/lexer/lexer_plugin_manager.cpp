@@ -1,6 +1,6 @@
 #include "lexer_plugin_manager.hpp"
 
-using namespace Kiss::Lexer;
+using namespace kiss::lexer;
 
 QString PluginManager::getExpectedLocation(const QString &name) const
 {
@@ -9,10 +9,10 @@ QString PluginManager::getExpectedLocation(const QString &name) const
 
 void PluginManager::pluginLoaded(Constructor *plugin)
 {
-	Lexer::Factory::ref().registerLexerConstructor(plugin);
+	lexer::Factory::ref().registerLexerConstructor(plugin);
 }
 
 void PluginManager::pluginUnloaded(Constructor *plugin)
 {
-	Lexer::Factory::ref().unregisterLexerConstructor(plugin);
+	lexer::Factory::ref().unregisterLexerConstructor(plugin);
 }

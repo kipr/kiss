@@ -5,9 +5,9 @@
 #include <QVariant>
 #include <QMetaType>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class Response
 		{
@@ -27,6 +27,6 @@ namespace Kiss
 	}
 }
 
-Q_DECLARE_METATYPE(Kiss::Target::Response);
+Q_DECLARE_METATYPE(kiss::target::Response);
 
 #endif

@@ -4,9 +4,9 @@
 #include <QString>
 #include <QStringList>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Project
+	namespace project
 	{
 		class ExtensionHelper
 		{

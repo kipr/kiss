@@ -1,6 +1,6 @@
 #include "log_window.hpp"
 
-using namespace Kiss::Widget;
+using namespace kiss::widget;
 
 LogWindow::LogWindow()
 	: QWidget(0, Qt::SubWindow)

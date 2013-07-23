@@ -26,9 +26,9 @@
 #include <Qsci/qscilexerpython.h>
 #include <Qsci/qsciapis.h>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Lexer
+	namespace lexer
 	{
 		class PythonLexer : public QsciLexerPython
 		{
@@ -50,7 +50,7 @@ namespace Kiss
 		class ConstructorPython : public Constructor
 		{
 		Q_OBJECT
-		Q_INTERFACES(Kiss::Lexer::Constructor)
+		Q_INTERFACES(kiss::lexer::Constructor)
 		public:
 			ConstructorPython();
 		

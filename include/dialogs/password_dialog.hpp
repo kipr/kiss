@@ -8,9 +8,9 @@ namespace Ui
 	class PasswordDialog;
 }
 
-namespace Kiss
+namespace kiss
 {
-	namespace Dialog
+	namespace dialog
 	{
 		class Password : public QDialog
 		{

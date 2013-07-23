@@ -2,8 +2,8 @@
 
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Target;
+using namespace kiss;
+using namespace kiss::target;
 
 CommunicationEntry::CommunicationEntry(const TargetPtr &target, const CommunicationEntry::Type &type)
 	: m_target(target),
@@ -89,7 +89,7 @@ const quint64 &CommunicationEntry::id() const
 	return m_id;
 }
 
-Kiss::Target::Target::ReturnCode CommunicationEntry::execute() const
+kiss::target::Target::ReturnCode CommunicationEntry::execute() const
 {
 	switch(m_type) {
 	case CommunicationEntry::Custom: return m_target->sendCustom(m_id, m_custom, m_payload);

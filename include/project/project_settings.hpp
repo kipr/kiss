@@ -7,9 +7,9 @@
 #include "ui_ProjectSettingsTab.h"
 
 
-namespace Kiss
+namespace kiss
 {
-	namespace Widget
+	namespace widget
 	{
 		class MainWindow;
 		
@@ -17,7 +17,7 @@ namespace Kiss
 		{
 		Q_OBJECT
 		public:
-			ProjectSettings(const Project::ProjectPtr &project, MainWindow *mainWindow);
+			ProjectSettings(const project::ProjectPtr &project, MainWindow *mainWindow);
 
 			virtual void activate();
 			virtual bool beginSetup();

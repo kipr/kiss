@@ -26,9 +26,9 @@
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qsciapis.h>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Lexer
+	namespace lexer
 	{
 		class JavaScript : public Base, public QsciLexerJavaScript
 		{

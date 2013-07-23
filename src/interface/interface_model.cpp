@@ -3,7 +3,7 @@
 #include "interface.hpp"
 #include "interface_manager.hpp"
 
-using namespace Kiss::Target;
+using namespace kiss::target;
 
 class InterfaceItem : public QStandardItem
 {

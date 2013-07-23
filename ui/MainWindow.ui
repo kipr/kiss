@@ -120,7 +120,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="Kiss::Project::ProjectView" name="ui_projects">
+            <widget class="kiss::project::ProjectView" name="ui_projects">
              <property name="rootIsDecorated">
               <bool>true</bool>
              </property>
@@ -140,7 +140,7 @@
      </layout>
     </item>
     <item>
-     <widget class="Kiss::Widget::CommunicationWidget" name="ui_comm" native="true">
+     <widget class="kiss::widget::CommunicationWidget" name="ui_comm" native="true">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -200,13 +200,13 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>Kiss::Widget::CommunicationWidget</class>
+   <class>kiss::widget::CommunicationWidget</class>
    <extends>QWidget</extends>
    <header>communication_widget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>Kiss::Project::ProjectView</class>
+   <class>kiss::project::ProjectView</class>
    <extends>QTreeView</extends>
    <header>project_view.hpp</header>
   </customwidget>

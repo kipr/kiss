@@ -3,17 +3,17 @@
 
 #include <kar.hpp>
 
-namespace Kiss
+namespace kiss
 {
-	namespace Project
+	namespace project
 	{
 		class LinkedKar
 		{
 		public:
 			
-			static bool addLink(const Kiss::KarPtr &archive, const QString &path);
-			static bool removeLink(const Kiss::KarPtr &archive, const QString &path);
-			static QStringList links(const Kiss::KarPtr &archive);
+			static bool addLink(const kiss::KarPtr &archive, const QString &path);
+			static bool removeLink(const kiss::KarPtr &archive, const QString &path);
+			static QStringList links(const kiss::KarPtr &archive);
 			
 		private:
 			LinkedKar();

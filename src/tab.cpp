@@ -1,6 +1,6 @@
 #include "tab.hpp"
 
-using namespace Kiss::Widget;
+using namespace kiss::widget;
 
 Tab::Tab(QWidget *widget, MainWindow *mainWindow)
 	: m_widget(widget),
@@ -57,13 +57,13 @@ bool Tab::hasFile() const
 	return !m_file.fileName().isEmpty();
 }
 
-void Tab::setProject(const Kiss::Project::ProjectPtr &project)
+void Tab::setProject(const kiss::project::ProjectPtr &project)
 {
 	m_project = project;
 	projectChanged(project);
 }
 
-const Kiss::Project::ProjectPtr &Tab::project() const
+const kiss::project::ProjectPtr &Tab::project() const
 {
 	return m_project;
 }
@@ -77,6 +77,6 @@ void Tab::fileChanged(const QFileInfo&)
 {
 }
 
-void Tab::projectChanged(const Kiss::Project::ProjectPtr&)
+void Tab::projectChanged(const kiss::project::ProjectPtr&)
 {
 }

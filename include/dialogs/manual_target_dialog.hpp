@@ -10,14 +10,14 @@ namespace Ui
 	class ManualTargetDialog;
 }
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class InterfaceModel;
 	}
 	
-	namespace Dialog
+	namespace dialog
 	{
 		class ManualTarget : public QDialog
 		{
@@ -26,11 +26,11 @@ namespace Kiss
 			ManualTarget(QWidget *parent = 0);
 			~ManualTarget();
 			
-			Kiss::Target::TargetPtr target() const;
+			kiss::target::TargetPtr target() const;
 			
 		private:
 			Ui::ManualTargetDialog *ui;
-			Kiss::Target::InterfaceModel *m_model;
+			kiss::target::InterfaceModel *m_model;
 		};
 	}
 }

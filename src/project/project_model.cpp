@@ -10,8 +10,8 @@
 #include <QFileIconProvider>
 #include <QDebug>
 
-using namespace Kiss;
-using namespace Kiss::Project;
+using namespace kiss;
+using namespace kiss::project;
 
 class PathItem : public QStandardItem
 {

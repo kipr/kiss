@@ -10,9 +10,9 @@
 
 class UdpAdvertiser;
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class PortSampler : public QObject, public QRunnable
 		{
@@ -26,16 +26,16 @@ namespace Kiss
 			void found(const QString &port);
 		};
 
-		class KovanSerialInterface : public QObject, public Kiss::Target::Interface
+		class KovanSerialInterface : public QObject, public kiss::target::Interface
 		{
 		Q_OBJECT
-		Q_INTERFACES(Kiss::Target::Interface)
+		Q_INTERFACES(kiss::target::Interface)
 		public:
 			KovanSerialInterface();
 			~KovanSerialInterface();
 			
-			virtual Kiss::Target::TargetPtr createTarget(const QString &address);
-			virtual const bool scan(Kiss::Target::InterfaceResponder *responder);
+			virtual kiss::target::TargetPtr createTarget(const QString &address);
+			virtual const bool scan(kiss::target::InterfaceResponder *responder);
 			virtual void invalidateResponder();
 
 		private slots:
@@ -43,7 +43,7 @@ namespace Kiss
 			void found(const QString &port);
 
 		private:
-			Kiss::Target::InterfaceResponder *m_responder;
+			kiss::target::InterfaceResponder *m_responder;
 		};
 	}
 }

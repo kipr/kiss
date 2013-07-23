@@ -26,10 +26,10 @@
 #include "main_window.hpp"
 #include "documentation.hpp"
 
-using namespace Kiss;
-using namespace Kiss::Menu;
+using namespace kiss;
+using namespace kiss::menu;
 
-DocumentationMenu::DocumentationMenu(Widget::MainWindow *mainWindow)
+DocumentationMenu::DocumentationMenu(widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName()),
 	m_mainWindow(mainWindow)
 {
@@ -41,9 +41,9 @@ DocumentationMenu::DocumentationMenu(Widget::MainWindow *mainWindow)
 
 void DocumentationMenu::triggered()
 {
-	QList<Widget::Documentation *> docs = m_mainWindow->tabs<Widget::Documentation>();
+	QList<widget::Documentation *> docs = m_mainWindow->tabs<widget::Documentation>();
 	if(docs.size() >= 1) m_mainWindow->moveToTab(docs[0]);
-	else m_mainWindow->addTab(new Widget::Documentation(m_mainWindow));
+	else m_mainWindow->addTab(new widget::Documentation(m_mainWindow));
 }
 
 QString DocumentationMenu::menuName()

@@ -5,8 +5,8 @@
 
 #include <QObject>
 
-using namespace Kiss;
-using namespace Kiss::Target;
+using namespace kiss;
+using namespace kiss::target;
 
 // TODO: Try QThread instead of QRunnable for weird time issues
 
@@ -100,8 +100,8 @@ void CommunicationManager::saturate()
 		qDebug() << "Running" << entry->id();
 		CommunicationWorker *worker = new CommunicationWorker(entry);
 		worker->setAutoDelete(true);
-		connect(worker, SIGNAL(finished(Kiss::Target::CommunicationEntryPtr, Kiss::Target::Target::ReturnCode)),
-			SLOT(workerFinished(Kiss::Target::CommunicationEntryPtr, Kiss::Target::Target::ReturnCode)));
+		connect(worker, SIGNAL(finished(kiss::target::CommunicationEntryPtr, kiss::target::Target::ReturnCode)),
+			SLOT(workerFinished(kiss::target::CommunicationEntryPtr, kiss::target::Target::ReturnCode)));
 		QThreadPool::globalInstance()->start(worker);
 		emit began(entry);
 	}

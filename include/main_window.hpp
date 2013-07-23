@@ -41,21 +41,21 @@
 class QListWidgetItem;
 class QProgressBar;
 
-namespace Kiss
+namespace kiss
 {
-	namespace Target
+	namespace target
 	{
 		class Responder;
 		class MainResponder;
 		class CommunicationManager;
 	}
 	
-	namespace Template
+	namespace templates
 	{
 		class Manager;
 	}
 	
-	namespace Widget
+	namespace widget
 	{
 		class SourceFile;
 
@@ -77,11 +77,11 @@ namespace Kiss
 			 * Opens a file with SourceFile tab
 			 * \param filePath Path to file
 			 */
-			bool openFile(const QString &filePath, const Project::ProjectPtr &project = Project::ProjectPtr());
+			bool openFile(const QString &filePath, const project::ProjectPtr &project = project::ProjectPtr());
 			bool memoryOpen(const QByteArray &ba, const QString &assocPath);
-			Project::ProjectPtr newProject(const QString &projectPath);
-			Project::ProjectPtr openProject(const QString &projectFilePath);
-			void closeProject(const Project::ProjectPtr &project);
+			project::ProjectPtr newProject(const QString &projectPath);
+			project::ProjectPtr openProject(const QString &projectFilePath);
+			void closeProject(const project::ProjectPtr &project);
 
 			void initMenus();
 
@@ -147,27 +147,27 @@ namespace Kiss
 
 			bool eventFilter(QObject *target, QEvent *event);
 
-			void projectOpenSettings(const Kiss::Project::ProjectPtr &project);
+			void projectOpenSettings(const kiss::project::ProjectPtr &project);
 
-			Menu::Menuable *menuable(const QString &name);
-			QList<Menu::Menuable *> menuablesExcept(const QStringList &names);
+			menu::Menuable *menuable(const QString &name);
+			QList<menu::Menuable *> menuablesExcept(const QStringList &names);
 			void deactivateMenuablesExcept(const QStringList &names);
-			QList<Menu::Menuable *> menuables();
+			QList<menu::Menuable *> menuables();
 			void activateMenuable(const QString &name, QObject *on);
 			QStringList standardMenus() const;
 			
-			Template::Manager *templateManager() const;
+			templates::Manager *templateManager() const;
 
 			bool canClose();
 			bool canGoPrevious();
 			bool canGoNext();
 						
-			friend class Menu::MainWindowMenu;
+			friend class menu::MainWindowMenu;
 
 		public slots:
 			void importTemplatePack();
 			void newTemplatePack();
-			Project::ProjectPtr newProject();
+			project::ProjectPtr newProject();
 			void newFile();
 			void open();
 			void openProject();
@@ -176,21 +176,21 @@ namespace Kiss
 			void previous();
 			void closeTab(int index, bool force = false);
 			void closeCurrentTab(bool force = false);
-			void closeProjectTabs(const Kiss::Project::ProjectPtr &project);
+			void closeProjectTabs(const kiss::project::ProjectPtr &project);
 			bool closeFile(const QString &file);
 			void about();
 			void settings();
 			void theme();
 
 			const bool download();
-			const bool download(const Kiss::Project::ProjectPtr &project);
+			const bool download(const kiss::project::ProjectPtr &project);
 			const bool compile();
-			const bool compile(const Kiss::Project::ProjectPtr &project);
+			const bool compile(const kiss::project::ProjectPtr &project);
 			const bool run();
-			const bool run(const Kiss::Project::ProjectPtr &project);
+			const bool run(const kiss::project::ProjectPtr &project);
 
 			const bool changeTarget();
-			const bool changeTarget(Kiss::Project::ProjectPtr project);
+			const bool changeTarget(kiss::project::ProjectPtr project);
 
 			void showCompilerOutput(const Compiler::OutputList &results);
 
@@ -229,29 +229,29 @@ namespace Kiss
 			
 			// FIXME: This will cause issues if we ever support
 			// more than one main window
-			void authenticateTarget(const Kiss::Target::TargetPtr &target,
-				Kiss::Target::CommunicationManager *manager);
+			void authenticateTarget(const kiss::target::TargetPtr &target,
+				kiss::target::CommunicationManager *manager);
 				
-			void oldDeviceSoftware(const Kiss::Target::TargetPtr &target);
-			void oldHostSoftware(const Kiss::Target::TargetPtr &target);
+			void oldDeviceSoftware(const kiss::target::TargetPtr &target);
+			void oldHostSoftware(const kiss::target::TargetPtr &target);
 
 		private:
 			Tab *m_currentTab;
 			EditorSettingsDialog m_editorSettingsDialog;
-			Dialog::ThemeSettings m_themeSettingsDialog;
+			dialog::ThemeSettings m_themeSettingsDialog;
 			QMap<QWidget *, Tab *> m_lookup;
-			Menu::Manager m_menuManager;
-			Template::Manager *m_templateManager;
-			Project::Manager m_projectManager;
-			QList<Menu::Menuable *> m_menuables;
+			menu::Manager m_menuManager;
+			templates::Manager *m_templateManager;
+			project::Manager m_projectManager;
+			QList<menu::Menuable *> m_menuables;
 			
 			QProgressBar *m_commProgress;
 			
-			Project::Model m_projectsModel;
+			project::Model m_projectsModel;
 			QMenu *m_projectContextMenu;
 			QMenu *m_fileContextMenu;
 
-			Target::Responder *m_mainResponder;
+			target::Responder *m_mainResponder;
 
 			void addLookup(Tab *tab);
 			void removeLookup(QWidget *widget);
@@ -259,7 +259,7 @@ namespace Kiss
 
 			void showErrorMessages(bool verbose = false);
 
-			bool commPreconditions(const Kiss::Project::ProjectPtr &project);
+			bool commPreconditions(const kiss::project::ProjectPtr &project);
 		};
 	}
 }

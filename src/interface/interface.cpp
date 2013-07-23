@@ -1,6 +1,6 @@
 #include "interface.hpp"
 
-using namespace Kiss::Target;
+using namespace kiss::target;
 
 Interface::Interface(const QString &name)
 	: m_name(name)

@@ -9,7 +9,7 @@
 #define DESCRIPTION_FILE "description.txt"
 #define DECORATION_FILE "decoration.html"
 
-using namespace Kiss;
+using namespace kiss;
 
 DocumentationLocation::DocumentationLocation(const QString &name, const QString &location,
 	const QString &description, const QString &decoration)
