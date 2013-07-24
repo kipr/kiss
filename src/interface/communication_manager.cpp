@@ -18,7 +18,7 @@ CommunicationWorker::CommunicationWorker(const CommunicationEntryPtr &entry)
 void CommunicationWorker::run()
 {
 	fprintf(stderr, "Entry %llu executing...\n", m_entry->id());
-	const Target::Target::ReturnCode success = m_entry->execute();
+	const Target::ReturnCode success = m_entry->execute();
 	fprintf(stderr, "Entry %llu finished!\n", m_entry->id());
 	// qDebug() << "Entry" << m_entry->id() << (!success ? "failed." : "finished!");
 	emit finished(m_entry, success);
@@ -70,7 +70,7 @@ void CommunicationManager::clearQueue(const TargetPtr &target)
 	for(; it != m_queue.end(); ++it) {
 		if((*it)->target().isNull()) continue;
 		if((*it)->target() == target) {
-			emit finished(*it, Target::Target::Error);
+			emit finished(*it, Target::Error);
 			it = m_queue.erase(it);
 		}
 	}
@@ -107,10 +107,10 @@ void CommunicationManager::saturate()
 	}
 }
 
-void CommunicationManager::workerFinished(CommunicationEntryPtr entry, const Target::Target::ReturnCode success)
+void CommunicationManager::workerFinished(CommunicationEntryPtr entry, const Target::ReturnCode success)
 {
 	m_running.removeAll(entry);
-	if(success == Target::Target::AuthenticationFailed) {
+	if(success == Target::AuthenticationFailed) {
 		// If authentication fails, we pause the work queue,
 		// re-add the failed entry to the front of the queue,
 		// and ask for authentication of that target.
@@ -119,17 +119,17 @@ void CommunicationManager::workerFinished(CommunicationEntryPtr entry, const Tar
 		m_queue.prepend(entry);
 		m_queueMutex.unlock();
 		emit targetNeedsAuthentication(entry->target(), this);
-	} else if(success == Target::Target::OldDeviceSoftware) {
+	} else if(success == Target::OldDeviceSoftware) {
 		// We can't talk to this target, so clear
 		// all pending entries
 		clearQueue();
 		emit oldDeviceSoftware(entry->target());
-	} else if(success == Target::Target::OldHostSoftware) {
+	} else if(success == Target::OldHostSoftware) {
 		// We can't talk to this target, so clear
 		// all pending entries
 		clearQueue();
 		emit oldHostSoftware(entry->target());
-	} else if(success != Target::Target::Success) {
+	} else if(success != Target::Success) {
 		
 		// If one comm entry fails for a target, we
 		// clear the queue of all entries for said

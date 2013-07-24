@@ -34,22 +34,22 @@ namespace kiss
 
 			virtual bool available();
 			
-			virtual Target::Target::ReturnCode compile(quint64 id, const QString& name);
-			virtual Target::Target::ReturnCode download(quint64 id, const QString& name, const kiss::KarPtr& archive);
-			virtual Target::Target::ReturnCode run(quint64 id, const QString& name);
+			virtual Target::ReturnCode compile(quint64 id, const QString& name);
+			virtual Target::ReturnCode download(quint64 id, const QString& name, const kiss::KarPtr& archive);
+			virtual Target::ReturnCode run(quint64 id, const QString& name);
 
-			virtual Target::Target::ReturnCode list(quint64 id);
-			virtual Target::Target::ReturnCode deleteProgram(quint64 id, const QString& name);
-			virtual Target::Target::ReturnCode interaction(quint64 id, const QString& command);
+			virtual Target::ReturnCode list(quint64 id);
+			virtual Target::ReturnCode deleteProgram(quint64 id, const QString& name);
+			virtual Target::ReturnCode interaction(quint64 id, const QString& command);
 
-			virtual Target::Target::ReturnCode sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray());
+			virtual Target::ReturnCode sendCustom(quint64 id, const QString& custom, const QByteArray& payload = QByteArray());
 
 			virtual bool setPassword(const QString &password);
 			virtual void clearPassword();
 
 		private:
-			Target::Target::ReturnCode verifyProtocolVersion();
-			Target::Target::ReturnCode authenticate(const quint64 id);
+			Target::ReturnCode verifyProtocolVersion();
+			Target::ReturnCode authenticate(const quint64 id);
 			
 			Transmitter *m_transmitter;
 			TransportLayer m_transport;
