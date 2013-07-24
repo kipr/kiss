@@ -179,4 +179,3 @@ LINK_DIRECTORIES(${KISS_SOURCE_DIR}/lib)
 install(FILES ${INCLUDES} DESTINATION /usr/local/include/kiss/)
 
 add_subdirectory(plugins)
-add_subdirectory(tests)
