@@ -47,7 +47,7 @@ QString Target::version() const {
 	return information().value(VERSION);
 }
 
-void Target::Target::setResponder(Responder *responder)
+void Target::setResponder(Responder *responder)
 {
 	m_responder = responder;
 }

@@ -99,7 +99,7 @@ kiss::target::Target::ReturnCode CommunicationEntry::execute() const
 	case CommunicationEntry::List: return m_target->list(m_id);
 	case CommunicationEntry::Delete: return m_target->deleteProgram(m_id, m_name);
 	case CommunicationEntry::Interaction: return m_target->interaction(m_id, m_name);
-	case CommunicationEntry::Disconnect: return m_target->disconnect() ? Target::Target::Success : Target::Target::Error;
+	case CommunicationEntry::Disconnect: return m_target->disconnect() ? Target::Success : Target::Error;
 	default: qCritical() << "Target does not know how to execute queue entry of type" << m_type;
 	}
 	
