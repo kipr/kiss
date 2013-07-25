@@ -39,7 +39,7 @@ void KovanProtoTarget::fillInformation(const Advert &advert)
 	m_information[DISPLAY_NAME] = advert.name;
 	m_information[SERIAL] = advert.serial;
 	m_information[VERSION] = advert.version;
-	m_information[DEVICE_TYPE] = advert.device;
+	m_information[TARGET_DEVICE_TYPE] = advert.device;
 }
 
 QMap<QString, QString> KovanProtoTarget::information() const

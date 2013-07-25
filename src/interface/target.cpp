@@ -35,7 +35,7 @@ QString Target::commPort() const
 
 QString Target::type() const
 {
-	return information().value(DEVICE_TYPE);
+	return information().value(TARGET_DEVICE_TYPE);
 }
 
 QString Target::serial() const

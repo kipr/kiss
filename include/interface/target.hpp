@@ -13,7 +13,7 @@
 #define NOT_AVAILABLE "N/A"
 
 #define DISPLAY_NAME "disp_name"
-#define DEVICE_TYPE "device_type"
+#define TARGET_DEVICE_TYPE "device_type"
 #define COMM_PORT "comm_port"
 #define SERIAL "serial"
 #define VERSION "version"

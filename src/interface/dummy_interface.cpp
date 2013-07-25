@@ -18,7 +18,7 @@ public:
 	{
 		QMap<QString, QString> ret;
 		ret[DISPLAY_NAME] = "No Target";
-		ret[DEVICE_TYPE] = "Dummy";
+		ret[TARGET_DEVICE_TYPE] = "Dummy";
 		return ret;
 	}
 
