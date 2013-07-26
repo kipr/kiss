@@ -1,7 +1,7 @@
 set(PLUGIN_NAME c_language_helper)
 
 project(${PLUGIN_NAME})
-cmake_minimum_required(VERSION 2.6.0)
+cmake_minimum_required(VERSION 2.8.0)
 
 find_package(Qt4 REQUIRED)
 
