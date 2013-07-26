@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.8.0)
 
 if(APPLE)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -g")
-endif(APPLE)
+endif()
 
 find_package(Qt4 REQUIRED)
 
@@ -51,7 +51,7 @@ add_custom_target(${PLUGIN_NAME}_osx_install_names ALL
 	WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH}
 	DEPENDS ${PLUGIN_NAME})
 install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/interfaces)
-else(APPLE)
+else()
 	install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${EXECUTABLE_OUTPUT_PATH}/interfaces
 		RUNTIME DESTINATION ${EXECUTABLE_OUTPUT_PATH}/interfaces)
-endif(APPLE)
+endif()

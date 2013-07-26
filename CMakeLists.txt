@@ -32,7 +32,7 @@ include_directories(
 if(WIN32)
 include_directories(${CMAKE_SOURCE_DIR}/../prefix/include)
 link_directories(${CMAKE_SOURCE_DIR}/../prefix/lib)
-endif(WIN32)
+endif()
 
 set(QT_USE_QTDECLARATIVE TRUE)
 set(QT_USE_QTNETWORK TRUE)
@@ -96,15 +96,15 @@ add_library(kisside STATIC ${KISS_SRCS_CXX})
 set(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
 if(WIN32)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../prefix/lib)
-else(WIN32)
+else()
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
-endif(WIN32)
+endif()
 
 target_link_libraries(KISS ${QT_LIBRARIES} qscintilla2 pcompiler kar)
 
 if(WIN32)
 	target_link_libraries(KISS ws2_32)
-endif(WIN32)
+endif()
 
 if(APPLE)
 	add_custom_target(MacDeployQt ALL
@@ -131,9 +131,9 @@ if(APPLE)
 	set(OSX_INSTALL_NAMES_SCRIPT "${KISS_SOURCE_DIR}/scripts/osx_install_names.sh")
 	
 	install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents)
-else(APPLE)
+else()
 	install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_SOURCE_DIR}/deploy)
-endif(APPLE)
+endif()
 
 if(APPLE)
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
@@ -169,7 +169,7 @@ add_custom_target(qscintilla_install_names ALL
 		QtDeclarative.framework/Versions/4/QtDeclarative
 	WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
 	DEPENDS KISS Info.plist MacDeployQt)
-endif(APPLE)
+endif()
 
 # Accessory Programs
 
