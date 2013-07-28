@@ -6,10 +6,10 @@
 __attribute__((constructor))
 static void wsa_init(void)
 {
+	WSADATA wsa;
 	static int s_init = 0;
 	if (s_init) return;
 
-	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa)) {
 		fprintf(stderr, "ERROR: WSAStartup failed. Code: %d\n", WSAGetLastError());
 		fprintf(stderr, "ERROR: Network communication will not work.\n");
