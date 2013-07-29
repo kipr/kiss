@@ -2,7 +2,7 @@
 #define _TEMPLATE_PACK_HPP_
 
 #include "template_file.hpp"
-#include <kar.hpp>
+#include <kar/kar.hpp>
 
 #include <QString>
 #include <QIcon>

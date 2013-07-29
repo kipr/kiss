@@ -3,7 +3,7 @@
 
 #include "target.hpp"
 
-#include <kar.hpp>
+#include <kar/kar.hpp>
 
 #include <QQueue>
 #include <QString>

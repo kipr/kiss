@@ -3,7 +3,7 @@
 
 #include "target_responder.hpp"
 
-#include <kar.hpp>
+#include <kar/kar.hpp>
 
 #include <QObject>
 #include <QString>
