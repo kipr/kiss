@@ -31,7 +31,9 @@ include_directories(
 
 if(WIN32)
 include_directories(${CMAKE_SOURCE_DIR}/../prefix/include)
-link_directories(${CMAKE_SOURCE_DIR}/../prefix/lib)
+link_directories(
+	${CMAKE_SOURCE_DIR}/../prefix/lib
+	${QT_LIBRARY_DIR})
 endif()
 
 set(QT_USE_QTDECLARATIVE TRUE)
