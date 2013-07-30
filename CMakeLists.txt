@@ -75,7 +75,7 @@ qt4_wrap_cpp(KISS_SRCS_CXX ${KISS_MOC_SRCS})
 qt4_wrap_ui(KISS_SRCS_CXX ${KISS_UI})
 qt4_add_resources(KISS_SRCS_CXX ${KISS_QRC_FILES})
 
-set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 add_definitions(-O2)
 
