@@ -17,7 +17,7 @@ public:
 	virtual QMap<QString, QString> information() const
 	{
 		QMap<QString, QString> ret;
-		ret[DISPLAY_NAME] = "No Target";
+		ret[TARGET_DISPLAY_NAME] = "No Target";
 		ret[TARGET_DEVICE_TYPE] = "Dummy";
 		return ret;
 	}
