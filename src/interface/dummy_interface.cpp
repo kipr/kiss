@@ -2,6 +2,7 @@
 
 #include "interface_manager.hpp"
 #include "target.hpp"
+#include "kiss_compat.hpp"
 
 using namespace kiss;
 
@@ -80,8 +81,7 @@ public:
 
 using namespace kiss::target;
 
-__attribute__((constructor))
-static void __registerDummy()
+INITIALIZER(__registerDummy)
 {
 	InterfaceManager::ref().addInterface(new DummyInterface());
 }

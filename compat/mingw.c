@@ -2,9 +2,10 @@
 #include <windows.h>
 #include <stdio.h>
 
+#include "kiss_compat.hpp"
+
 // Derived from: https://github.com/jamescoxon/dl-fldigi/blob/master/src/compat/mingw.c
-__attribute__((constructor))
-static void wsa_init(void)
+INITIALIZER(wsa_init)
 {
 	WSADATA wsa;
 	static int s_init = 0;
