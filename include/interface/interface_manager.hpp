@@ -2,7 +2,7 @@
 #define _INTERFACE_MANAGER_HPP_
 
 #include "singleton.hpp"
-#include "kiss_compat.hpp"
+#include "compat.hpp"
 
 #include <QObject>
 #include <QList>

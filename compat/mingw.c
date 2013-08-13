@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <stdio.h>
 
-#include "kiss_compat.hpp"
+#include "compat.hpp"
 
 // Derived from: https://github.com/jamescoxon/dl-fldigi/blob/master/src/compat/mingw.c
 INITIALIZER(wsa_init)

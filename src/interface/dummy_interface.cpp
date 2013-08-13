@@ -2,7 +2,7 @@
 
 #include "interface_manager.hpp"
 #include "target.hpp"
-#include "kiss_compat.hpp"
+#include "compat.hpp"
 
 using namespace kiss;
 
