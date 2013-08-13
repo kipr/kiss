@@ -2,6 +2,7 @@
 #define _INTERFACE_MANAGER_HPP_
 
 #include "singleton.hpp"
+#include "compat.hpp"
 
 #include <QObject>
 #include <QList>
@@ -35,8 +36,7 @@ namespace kiss
 	}
 }
 
-#define REGISTER_INTERFACE(x) __attribute__((constructor)) \
-static void __##x##_register() \
+#define REGISTER_INTERFACE(x) INITIALIZER(__##x##_register) \
 { \
 	InterfaceManager::ref().addInterface(new x()); \
 }

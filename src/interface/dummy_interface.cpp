@@ -2,6 +2,7 @@
 
 #include "interface_manager.hpp"
 #include "target.hpp"
+#include "compat.hpp"
 
 using namespace kiss;
 
@@ -17,8 +18,8 @@ public:
 	virtual QMap<QString, QString> information() const
 	{
 		QMap<QString, QString> ret;
-		ret[DISPLAY_NAME] = "No Target";
-		ret[DEVICE_TYPE] = "Dummy";
+		ret[TARGET_DISPLAY_NAME] = "No Target";
+		ret[TARGET_DEVICE_TYPE] = "Dummy";
 		return ret;
 	}
 
@@ -80,8 +81,7 @@ public:
 
 using namespace kiss::target;
 
-__attribute__((constructor))
-static void __registerDummy()
+INITIALIZER(__registerDummy)
 {
 	InterfaceManager::ref().addInterface(new DummyInterface());
 }

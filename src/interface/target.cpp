@@ -25,26 +25,26 @@ Interface *Target::interface() const
 
 QString Target::displayName() const
 {
-	return information().value(DISPLAY_NAME);
+	return information().value(TARGET_DISPLAY_NAME);
 }
 
 QString Target::commPort() const
 {
-	return information().value(COMM_PORT);
+	return information().value(TARGET_COMM_PORT);
 }
 
 QString Target::type() const
 {
-	return information().value(DEVICE_TYPE);
+	return information().value(TARGET_DEVICE_TYPE);
 }
 
 QString Target::serial() const
 {
-	return information().value(SERIAL);
+	return information().value(TARGET_SERIAL);
 }
 
 QString Target::version() const {
-	return information().value(VERSION);
+	return information().value(TARGET_VERSION);
 }
 
 void Target::setResponder(Responder *responder)

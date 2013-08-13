@@ -3,24 +3,18 @@
 
 #include "target_responder.hpp"
 
-#include <kar.hpp>
+#include <kar/kar.hpp>
 
 #include <QObject>
 #include <QString>
 #include <QMap>
 #include <QSharedPointer>
 
-#define NOT_AVAILABLE "N/A"
-
-#define DISPLAY_NAME "disp_name"
-#define DEVICE_TYPE "device_type"
-#define COMM_PORT "comm_port"
-#define SERIAL "serial"
-#define VERSION "version"
-
-#define DOWNLOAD_TYPE "download_type"
-#define DOWNLOAD_SOURCE "src"
-#define DOWNLOAD_BINARY "bin"
+#define TARGET_DISPLAY_NAME "disp_name"
+#define TARGET_DEVICE_TYPE "device_type"
+#define TARGET_COMM_PORT "comm_port"
+#define TARGET_SERIAL "serial"
+#define TARGET_VERSION "version"
 
 namespace kiss
 {

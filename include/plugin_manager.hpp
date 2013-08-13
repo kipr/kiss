@@ -60,7 +60,7 @@ namespace kiss
 				QFileInfoList files = pluginPath.entryInfoList(QDir::Files | QDir::NoDot | QDir::NoDotDot);
 				qDebug() << "Found" << files.size() << "plugins for loading";
 				foreach(const QFileInfo &file, files) {
-					QString name = file.baseName().mid(3);
+					QString name = file.baseName();
 					loadPlugin(name);
 				}
 			}
@@ -91,7 +91,7 @@ namespace kiss
 				QDir pluginPath(QDir::currentPath());
 				pluginPath.cd(getExpectedLocation(name));
 
-				const QString &pluginPathString = pluginPath.absoluteFilePath("lib" + name + "." + OS_LIB_EXT);
+				const QString &pluginPathString = pluginPath.absoluteFilePath(name + "." + OS_LIB_EXT);
 
 				plugin->setFileName(pluginPathString);
 				if(!plugin->load()) {

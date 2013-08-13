@@ -2,7 +2,7 @@
 #define _PROJECT_HPP_
 
 #include "target.hpp"
-#include <kar.hpp>
+#include <kar/kar.hpp>
 #include <pcompiler/options.hpp>
 
 #include <QSharedPointer>

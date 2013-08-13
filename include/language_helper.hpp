@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QStringList>
 
-#include <kar.hpp>
+#include <kar/kar.hpp>
 #include <pcompiler/output.hpp>
 
 namespace kiss

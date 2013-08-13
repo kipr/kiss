@@ -1,17 +1,17 @@
-PROJECT(KISS)
+project(KISS)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0)
+cmake_minimum_required(VERSION 2.8.0)
 
-FIND_PACKAGE(Qt4 REQUIRED)
+find_package(Qt4 REQUIRED)
 
-SET(INCLUDE ${KISS_SOURCE_DIR}/include)
-SET(RC ${KISS_SOURCE_DIR}/rc)
-SET(SRC ${KISS_SOURCE_DIR}/src)
-SET(UI ${KISS_SOURCE_DIR}/ui)
-SET(TRADEMARKS ${KISS_SOURCE_DIR}/trademarks)
-SET(COMPAT ${KISS_SOURCE_DIR}/compat)
+set(INCLUDE ${KISS_SOURCE_DIR}/include)
+set(RC ${KISS_SOURCE_DIR}/rc)
+set(SRC ${KISS_SOURCE_DIR}/src)
+set(UI ${KISS_SOURCE_DIR}/ui)
+set(TRADEMARKS ${KISS_SOURCE_DIR}/trademarks)
+set(COMPAT ${KISS_SOURCE_DIR}/compat)
 
-SET(KISS_INCLUDE_DIRS ${INCLUDE} 
+set(KISS_INCLUDE_DIRS ${INCLUDE} 
 	${INCLUDE}/dialogs
 	${INCLUDE}/lexer
 	${INCLUDE}/widgets
@@ -21,7 +21,7 @@ SET(KISS_INCLUDE_DIRS ${INCLUDE}
 	${INCLUDE}/compiler
 	${INCLUDE}/interface)
 
-INCLUDE_DIRECTORIES(
+include_directories(
 	${CMAKE_SOURCE_DIR} 
 	${CMAKE_SOURCE_DIR}/src 
 	${KISS_SOURCE_DIR} 
@@ -29,18 +29,20 @@ INCLUDE_DIRECTORIES(
 	${KISS_INCLUDE_DIRS}
 )
 
-IF(WIN32)
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/../prefix/include)
-LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/../prefix/lib)
-ENDIF(WIN32)
+if(WIN32)
+include_directories(${CMAKE_SOURCE_DIR}/../prefix/include)
+link_directories(
+	${CMAKE_SOURCE_DIR}/../prefix/lib
+	${QT_LIBRARY_DIR})
+endif()
 
-SET(QT_USE_QTDECLARATIVE TRUE)
-SET(QT_USE_QTNETWORK TRUE)
-SET(QT_USE_QTSCRIPT TRUE)
+set(QT_USE_QTDECLARATIVE TRUE)
+set(QT_USE_QTNETWORK TRUE)
+set(QT_USE_QTSCRIPT TRUE)
 
-INCLUDE(${QT_USE_FILE})
+include(${QT_USE_FILE})
 
-FILE(GLOB INCLUDES ${INCLUDE}/*.hpp
+file(GLOB INCLUDES ${INCLUDE}/*.hpp
 	${INCLUDE}/lexer/*
 	${INCLUDE}/dialogs/*
 	${INCLUDE}/widgets/*
@@ -50,7 +52,7 @@ FILE(GLOB INCLUDES ${INCLUDE}/*.hpp
 	${INCLUDE}/compiler/*
 	${INCLUDE}/interface/*)
 
-FILE(GLOB SOURCES ${SRC}/*
+file(GLOB SOURCES ${SRC}/*
 	${SRC}/lexer/*
 	${SRC}/dialogs/*
 	${SRC}/widgets/*
@@ -60,85 +62,84 @@ FILE(GLOB SOURCES ${SRC}/*
 	${SRC}/compiler/*
 	${SRC}/interface/*)
 
-FILE(GLOB UIS ${UI}/*)
+file(GLOB UIS ${UI}/*)
 
-SET(KISS_SRCS_CXX ${SOURCES})
-SET(KISS_UI ${UIS})
-SET(KISS_MOC_SRCS ${INCLUDES})
+set(KISS_SRCS_CXX ${SOURCES})
+set(KISS_UI ${UIS})
+set(KISS_MOC_SRCS ${INCLUDES})
 
-SET(KISS_QRC_FILES
+set(KISS_QRC_FILES
 	${RC}/rc.qrc
 	${RC}/logos/logos.qrc
 )
 
-QT4_WRAP_CPP(KISS_SRCS_CXX ${KISS_MOC_SRCS})
-QT4_WRAP_UI(KISS_SRCS_CXX ${KISS_UI})
-QT4_ADD_RESOURCES(KISS_SRCS_CXX ${KISS_QRC_FILES})
+qt4_wrap_cpp(KISS_SRCS_CXX ${KISS_MOC_SRCS})
+qt4_wrap_ui(KISS_SRCS_CXX ${KISS_UI})
+qt4_add_resources(KISS_SRCS_CXX ${KISS_QRC_FILES})
 
-SET(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-ADD_DEFINITIONS(-O2)
+add_definitions(-O2)
 
-IF(APPLE)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -g")
-	LINK_DIRECTORIES(/Library/Frameworks/)
-	ADD_EXECUTABLE(KISS MACOSX_BUNDLE ${KISS_SRCS_CXX})
-ELSEIF(UNIX)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-	ADD_EXECUTABLE(KISS ${KISS_SRCS_CXX})
-ELSEIF(WIN32)
-	SET(COMPAT_SRCS ${COMPAT}/mingw.c)
-	SET(CMAKE_CXX_FLAGS "-Wl,--enable-auto-import")
-	ADD_EXECUTABLE(KISS WIN32 ${KISS_SRCS_CXX} ${COMPAT_SRCS})
-ENDIF()
+if(APPLE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -g")
+	link_directories(/Library/Frameworks/)
+	add_executable(KISS MACOSX_BUNDLE ${KISS_SRCS_CXX} ${INCLUDES})
+elseif(UNIX)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+	add_executable(KISS ${KISS_SRCS_CXX} ${INCLUDES})
+elseif(WIN32)
+	set(COMPAT_SRCS ${COMPAT}/mingw.c)
+	add_executable(KISS WIN32 ${KISS_SRCS_CXX} ${COMPAT_SRCS} ${INCLUDES})
+endif()
 
-ADD_LIBRARY(kisside STATIC ${KISS_SRCS_CXX})
+add_library(kisside STATIC ${KISS_SRCS_CXX} ${INCLUDES})
 
-SET(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
-IF(WIN32)
-SET(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../prefix/lib)
-ELSE(WIN32)
-SET(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
-ENDIF(WIN32)
+set(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
+if(WIN32)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../prefix/lib)
+else()
+set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
+endif()
 
-TARGET_LINK_LIBRARIES(KISS ${QT_LIBRARIES} qscintilla2 pcompiler kar)
+target_link_libraries(KISS ${QT_LIBRARIES} qscintilla2 pcompiler kar)
 
-IF(WIN32)
-	TARGET_LINK_LIBRARIES(KISS ws2_32)
-ENDIF(WIN32)
+if(WIN32)
+	target_link_libraries(KISS ws2_32)
+endif()
 
-IF(APPLE)
-	ADD_CUSTOM_TARGET(MacDeployQt ALL
+if(APPLE)
+	add_custom_target(MacDeployQt ALL
 		COMMAND ${QT_BINARY_DIR}/macdeployqt ${KISS_SOURCE_DIR}/deploy/KISS.app -verbose=0
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS)
 
-	ADD_CUSTOM_TARGET(Info.plist ALL
+	add_custom_target(Info.plist ALL
 		COMMAND ${CMAKE_COMMAND} -E copy ${RC}/Info.plist ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS)
 	
-	ADD_CUSTOM_TARGET(qscintilla ALL
+	add_custom_target(qscintilla ALL
 		COMMAND ${CMAKE_COMMAND} -E copy /Library/Frameworks/libqscintilla2.9.dylib
 			${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Frameworks
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS MacDeployQt)
 	
-	ADD_CUSTOM_TARGET(Icons ALL
+	add_custom_target(Icons ALL
 		COMMAND ${CMAKE_COMMAND} -E copy ${RC}/logos/mac_icon.icns ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Resources
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS Info.plist MacDeployQt)
 		
-	SET(OSX_INSTALL_NAMES_SCRIPT "${KISS_SOURCE_DIR}/scripts/osx_install_names.sh")
+	set(OSX_INSTALL_NAMES_SCRIPT "${KISS_SOURCE_DIR}/scripts/osx_install_names.sh")
 	
 	install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents)
-ELSE(APPLE)
+else()
 	install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_SOURCE_DIR}/deploy)
-ENDIF(APPLE)
+endif()
 
-IF(APPLE)
-SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
-ADD_CUSTOM_TARGET(kiss_osx_install_names ALL 
+if(APPLE)
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
+add_custom_target(kiss_osx_install_names ALL 
 	COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/MacOS/KISS
 		QtCore.framework/Versions/4/QtCore
 		QtScript.framework/Versions/4/QtScript
@@ -154,7 +155,7 @@ ADD_CUSTOM_TARGET(kiss_osx_install_names ALL
 		QtDeclarative.framework/Versions/4/QtDeclarative
 	WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
 	DEPENDS KISS Info.plist MacDeployQt)
-ADD_CUSTOM_TARGET(qscintilla_install_names ALL 
+add_custom_target(qscintilla_install_names ALL 
 	COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/Frameworks/libqscintilla2.9.dylib
 		QtCore.framework/Versions/4/QtCore
 		QtScript.framework/Versions/4/QtScript
@@ -170,11 +171,11 @@ ADD_CUSTOM_TARGET(qscintilla_install_names ALL
 		QtDeclarative.framework/Versions/4/QtDeclarative
 	WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
 	DEPENDS KISS Info.plist MacDeployQt)
-ENDIF(APPLE)
+endif()
 
 # Accessory Programs
 
-LINK_DIRECTORIES(${KISS_SOURCE_DIR}/lib)
+link_directories(${KISS_SOURCE_DIR}/lib)
 
 install(FILES ${INCLUDES} DESTINATION /usr/local/include/kiss/)
 

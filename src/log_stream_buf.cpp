@@ -2,6 +2,7 @@
 #include "log_window.hpp"
 
 #include <cassert>
+#include <functional>
 
 using namespace kiss;
 

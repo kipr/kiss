@@ -1,7 +1,7 @@
 #ifndef _LINKED_KAR_HPP_
 #define _LINKED_KAR_HPP_
 
-#include <kar.hpp>
+#include <kar/kar.hpp>
 
 namespace kiss
 {

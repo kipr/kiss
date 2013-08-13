@@ -1,37 +1,37 @@
-SET(PLUGIN_NAME kovan_serial_interface)
+set(PLUGIN_NAME kovan_serial_interface)
 
-PROJECT(${PLUGIN_NAME})
-cmake_minimum_required(VERSION 2.6.0)
+project(${PLUGIN_NAME})
+cmake_minimum_required(VERSION 2.8.0)
 
-IF(APPLE)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -g")
-ENDIF(APPLE)
+if(APPLE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -g")
+endif()
 
-FIND_PACKAGE(Qt4 REQUIRED)
+find_package(Qt4 REQUIRED)
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDE_DIR} ${KISS_INCLUDE_DIRS} ../shared)
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDE_DIR} ${KISS_INCLUDE_DIRS} ../shared)
 
-INCLUDE(${QT_USE_FILE})
+include(${QT_USE_FILE})
 
-FILE(GLOB LOCAL_INCLUDES *.hpp ../shared/*.hpp)
-FILE(GLOB LOCAL_SOURCES *.cpp ../shared/*.cpp)
+file(GLOB LOCAL_INCLUDES *.hpp ../shared/*.hpp)
+file(GLOB LOCAL_SOURCES *.cpp ../shared/*.cpp)
 
-QT4_WRAP_CPP(INCLUDES_MOC ${LOCAL_INCLUDES})
+qt4_wrap_cpp(INCLUDES_MOC ${LOCAL_INCLUDES})
 
-ADD_DEFINITIONS(${QT_DEFINITIONS})
-ADD_DEFINITIONS(-DQT_PLUGIN)
-ADD_DEFINITIONS(-DQT_DEBUG)
-ADD_DEFINITIONS(-DQT_SHARED)
-ADD_DEFINITIONS(-DQT_DLL)
+add_definitions(${QT_DEFINITIONS})
+add_definitions(-DQT_PLUGIN)
+add_definitions(-DQT_DEBUG)
+add_definitions(-DQT_SHARED)
+add_definitions(-DQT_DLL)
 
-ADD_LIBRARY(${PLUGIN_NAME} SHARED ${LOCAL_SOURCES} ${INCLUDES_MOC})
-LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH})
+add_library(${PLUGIN_NAME} SHARED ${LOCAL_SOURCES} ${INCLUDES_MOC})
+link_directories(${LIBRARY_OUTPUT_PATH})
 
-TARGET_LINK_LIBRARIES(${PLUGIN_NAME} kisside pcompiler kovanserial kar ${QT_LIBRARIES})
+target_link_libraries(${PLUGIN_NAME} kisside pcompiler kovanserial kar ${QT_LIBRARIES})
 
-IF(APPLE)
-SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
-ADD_CUSTOM_TARGET(${PLUGIN_NAME}_osx_install_names ALL 
+if(APPLE)
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
+add_custom_target(${PLUGIN_NAME}_osx_install_names ALL 
 	COMMAND ${OSX_INSTALL_NAMES_SCRIPT} lib${PLUGIN_NAME}.dylib
 		QtCore.framework/Versions/4/QtCore
 		QtScript.framework/Versions/4/QtScript
@@ -50,8 +50,8 @@ ADD_CUSTOM_TARGET(${PLUGIN_NAME}_osx_install_names ALL
 		libkovanserial.dylib
 	WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH}
 	DEPENDS ${PLUGIN_NAME})
-INSTALL(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/interfaces)
-ELSE(APPLE)
-	INSTALL(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${EXECUTABLE_OUTPUT_PATH}/interfaces
+install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/interfaces)
+else()
+	install(TARGETS ${PLUGIN_NAME} LIBRARY DESTINATION ${EXECUTABLE_OUTPUT_PATH}/interfaces
 		RUNTIME DESTINATION ${EXECUTABLE_OUTPUT_PATH}/interfaces)
-ENDIF(APPLE)
+endif()
