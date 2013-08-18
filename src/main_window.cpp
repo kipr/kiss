@@ -659,15 +659,25 @@ void MainWindow::projectAddNew()
 	project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
 	if(!project) return;
 
+	SourceFile *const sourceFile = new SourceFile(this);
+	sourceFile->setProject(project);
+	if(!sourceFile->selectTemplate())
+	{
+		delete sourceFile;
+		return;
+	}
+
 	bool ok = false;
 	const QString fileName = QInputDialog::getText(this, tr("New File"), tr("New File Name:"),
 		QLineEdit::Normal, QString(), &ok);
-	if(!ok) return;
+	if(!ok)
+	{
+		delete sourceFile;
+		return;
+	}
 
-	SourceFile *const sourceFile = new SourceFile(this);
-	sourceFile->setProject(project);
-	addTab(sourceFile);
 	sourceFile->setFile(QDir(project->location()).filePath(fileName));
+	addTab(sourceFile);
 	sourceFile->save();
 }
 

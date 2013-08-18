@@ -62,6 +62,7 @@ namespace kiss
 			bool beginSetup();
 			void completeSetup();
 
+			const bool selectTemplate();
 			bool fileSaveAs(const QString &filePath);
 			bool fileOpen(const QString &filePath);
 			bool memoryOpen(const QByteArray &ba, const QString &assocPath);
@@ -134,8 +135,6 @@ namespace kiss
 		private:
 			bool saveAsFile();
 			bool saveAsProject();
-			
-			const bool selectTemplate();
 
 			void showFind();
 
