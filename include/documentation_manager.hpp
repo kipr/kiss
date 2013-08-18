@@ -5,44 +5,42 @@
 
 #include <QString>
 #include <QList>
+#include <QMap>
 
 namespace kiss
 {
-	class DocumentationLocation
-	{
-	public:
-		DocumentationLocation(const QString &name, const QString &location,
-			const QString &description, const QString &decoration);
-	
-		const QString &name() const;
-		const QString &location() const;
-		const QString &description() const;
-		const QString &decoration() const;
-	
-	private:
-		QString m_name;
-		QString m_location;
-		QString m_description;
-		QString m_decoration;
-	};
+    class DocumentationSource
+    {
+    public:
+        DocumentationSource(const QString &path);
+        
+        QMap<QString, QString> metadata() const;
+        const QString &path() const;
+        
+        bool operator ==(const DocumentationSource &rhs) const;
+        
+    private:
+        void lazyInitMetadata() const;
+        
+        QString _path;
+        mutable QMap<QString, QString> _metadata;
+    };
 
-	class DocumentationManager : public Singleton<DocumentationManager>
-	{
-	public:
-		DocumentationManager();
-		
-		void addLocation(const QString &location);
-		const QList<DocumentationLocation> &locations() const;
-	
-		static QString documentationPath();
-	
-	private:
-		void loadDefaultDocumentation();
-		
-		static const QString description(const QString &location);
-		static const QString decoration(const QString &location);
-		QList<DocumentationLocation> m_locations;
-	};
+    class DocumentationManager : public Singleton<DocumentationManager>
+    {
+    public:
+        DocumentationManager();
+
+        void addDocumentationSource(const DocumentationSource &documentationSource);
+        void removeDocumentationSource(const DocumentationSource &documentationSource);
+        const QList<DocumentationSource> &documentationSources() const;
+
+    private:
+        static QString documentationPath();
+        void loadDefaultDocumentationSources();
+
+        QList<DocumentationSource> _documentationSources;
+    };
 }
 
 #endif

@@ -19,74 +19,71 @@ using namespace kiss;
 using namespace kiss::widget;
 
 Documentation::Documentation(MainWindow *parent)
-	: Tab(new QListWidget(parent), parent)
+    : Tab(new QListWidget(parent), parent)
 {
-	//QListWidget *list = qobject_cast<QListWidget *>(widget());
-	//list->setAlternatingRowColors(true);
 }
 
 void Documentation::activate()
 {
-	QList<menu::Menuable *> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
-	foreach(menu::Menuable *menu, menus) {
-		ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menu);
-		if(activatable) activatable->setActive(0);
-	}
+    QList<menu::Menuable *> menus = mainWindow()->menuablesExcept(mainWindow()->standardMenus());
+    foreach(menu::Menuable *menu, menus) {
+        ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menu);
+        if(activatable) activatable->setActive(0);
+    }
 }
 
 bool Documentation::beginSetup()
 {
-	QListWidget *list = qobject_cast<QListWidget*>(widget());
-	const QString providedBy("Provided by ");
-	foreach(const DocumentationLocation &location, DocumentationManager::ref().locations()) {
-		QListWidgetItem *item = new QListWidgetItem(list);
-		item->setIcon(ResourceHelper::ref().icon("text-x-generic"));
-		item->setData(Qt::UserRole, location.location());
-		item->setSizeHint(QSize(100, 65));
-		list->setItemWidget(item,
-			new TitleDescription(
-				location.name(),
-				location.description(),
-				list)
-			);
-	}
-	list->setIconSize(QSize(50, 50));
-	connect(list, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-		SLOT(itemDoubleClicked(QListWidgetItem*)));
-	
-	return true;
+    QListWidget *list = qobject_cast<QListWidget *>(widget());
+    const QIcon defaultIcon(ResourceHelper::ref().icon("text-x-generic"));
+    Q_FOREACH(const DocumentationSource &d, DocumentationManager::ref().documentationSources()) {
+        QListWidgetItem *item = new QListWidgetItem(list);
+        const QString iconPath = d.metadata().value("icon");
+        item->setIcon(iconPath.isEmpty() ? defaultIcon : QIcon(iconPath));
+        item->setData(Qt::UserRole, d.metadata()["goto"]);
+        item->setSizeHint(QSize(100, 65));
+        list->setItemWidget(item, new TitleDescription(
+            d.metadata()["name"],
+            d.metadata()["description"],
+            list));
+    }
+    list->setIconSize(QSize(50, 50));
+    connect(list, SIGNAL(itemDoubleClicked(QListWidgetItem *)),
+    SLOT(itemDoubleClicked(QListWidgetItem *)));
+
+    return true;
 }
 
 void Documentation::completeSetup()
 {
-	mainWindow()->setTabName(widget(), tr("Documentation"));
+    mainWindow()->setTabName(widget(), tr("Documentation"));
 }
 
 bool Documentation::close()
 {
-	return true;
+    return true;
 }
 
 void Documentation::refreshSettings()
 {
-	
+
 }
 
 void Documentation::itemDoubleClicked(QListWidgetItem *item)
 {
-	const QString &location = item->data(Qt::UserRole).toString();
-	if(location.endsWith("pdf")) {
-		QDesktopServices::openUrl(QUrl::fromUserInput(location));
-		return;
-	}
-	
-#ifdef Q_OS_WIN
-	const QString &sysLocation = "file:///" + location;
-#else
-	const QString &sysLocation = "file://" + location;
-#endif
+    const QString &location = item->data(Qt::UserRole).toString();
+    if(location.endsWith("pdf")) {
+        QDesktopServices::openUrl(QUrl::fromUserInput(location));
+        return;
+    }
 
-	QDesktopServices::openUrl(QUrl::fromUserInput(sysLocation));
+    #ifdef Q_OS_WIN
+    const QString &sysLocation = "file:///" + location;
+    #else
+    const QString &sysLocation = "file://" + location;
+    #endif
+
+    QDesktopServices::openUrl(QUrl::fromUserInput(sysLocation));
 }
 
 #endif

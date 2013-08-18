@@ -1,0 +1,160 @@
+<html>
+  <head>
+    <title>KISS IDE Tutorial</title>
+    <style>
+    .right {
+      float: right;
+      display: block;
+    }
+    .left {
+      float: left;
+      display: block;
+    }
+    body {
+      font-family: Helvetica, sans-serif;
+      background-color: #EEE;
+      width: 800px;
+      margin: 30px auto 30px auto;
+    }
+    .center {
+      text-align: center;
+    }
+    .main {
+      background-color: #FFF;
+      border-color: #999;
+      border: 1px solid;
+      padding: 16px;
+      overflow: auto;
+    }
+    .fill {
+      width: 100%;
+    }
+    .side {
+      width: 40%;
+    }
+    .sside {
+      width: 30%;
+    }
+    .pad {
+      padding: 10px;
+    }
+    pre {
+      background-color: #DDD;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+    <h1 class="center">KISS IDE 4.1 Tutorial</h1>
+    <p>
+      KISS IDE is an instructional integrated development environment for the C and C++ programming languages. In this tutorial, we'll
+      be going over basic usage of the IDE to create a program with dependencies. 
+      <img class="right side" src="kiss.png"></img>
+    </p>
+    
+    <h2>Concepts</h2>
+    <p>Before we get started, it will be helpful to understand a few core concepts of KISS IDE and the C family of languages.</p>
+    <h3>Projects</h3>
+    <p>
+      A <i>project</i> is a collection of source files, resources, and metadata that comprises a functional unit of code. For example,
+      a project could be a program that prints "Hello, World!" to the screen. A project could also be a library that contains several
+      helpful code snippets that other projects <i>depend</i> on.
+    </p>
+    
+    <h3>Dependencies</h3>
+    Every project can <i>depend</i> on other projects to provide other pieces of functionality. For example, a professor (let's call him Dr. Muller) could distribute
+    a project that provided implementations of concepts learned in class. Your project could then <i>depend</i> on Dr. Muller's project, which would allow you to
+    use his code seamlessly with your own code.
+    
+    <h3>Targets</h3>
+    <p>
+      A <i>target</i> is a device or program that KISS IDE communicates with. A target could be a remote computer, your local machine,
+      or even a robot controller. All targets support three primary operations: <i>download</i>, <i>compile</i>, and <i>run</i>.
+      <ul>
+        <li>Download - Sends the active project to the target.</li>
+        <li>Compile - Sends the active project to the target and produce an executable program.</li>
+        <li>Run - Runs the previously compiled program on the target.</li>
+      </ul>
+      These operations are <i>cascading</i>. For example, <i>run</i> will <i>download</i>, <i>compile</i>, <b>and</b> <i>run</i> a project. Target operations
+      are also <i>recursively</i> executed on dependencies. For example, if project A depends on project B and project A is downloaded, project B will be downloaded as well.
+    </p>
+    
+    <h3>Source File</h3>
+    A <i>source file</i> is a file that contains <i>functions</i> and other definitions. For example, if we wanted to declare a function that returned the square of an integer, we could
+    write of something like this:
+    
+    <pre>int square(int a) {
+  return a * a;
+}</pre>
+    
+    <h3>Header File</h3>
+    <p>
+      A header file isn't necessary until a project contains <b>multiple</b> source files. Let's say that we have a source file called <code>my_math.c</code> that contains utility
+      functions like <code>square</code>. We now create another source file called <code>algebra.c</code> that will hold additional functions related to algebra. How do we use
+      our utility function <code>square</code> inside <code>algebra.c</code>, even though it isn't declared inside that source file? The answer is a header file. A header file
+      exposes <i>function prototypes</i> to all source files that <i>include</i> that header.
+    </p>
+    <p>
+      For example, a header file for our <code>my_math.c</code> source file might be called <code>my_math.h</code> and look like this:
+      <pre>int square(int a);</pre>
+      Now all we need to do is add <pre>#include "my_math.h"</pre> to both <code>my_math.c</code> and <code>algebra.c</code> and we're ready to go!
+    </p>
+    
+    <h2>Creating a New Project</h2>
+    <p>
+      Projects are the core abstraction of KISS IDE. To create a project, click the "New Project" icon in the center of the KISS IDE window.
+      This will open the "New Project" dialog. This dialog requires two pieces of information:
+      <img class="right side" src="new_project.png"></img>
+      <ul>
+        <li>Project Name - The name of the project. This will also be the name of the project's folder.</li>
+        <li>Save Location - The location to place the project folder. This can be changed by pressing "Browse".</li>
+      </ul>
+      Once you've decided the project name and save location, press "OK" to create the new project. You should now see the <i>project sidebar</i> on the
+      right hand side of the KISS IDE window.
+    </p>
+    
+    <h2>Creating a New Source File</h2>
+    <p>
+      <img class="left sside pad" src="right_click_proj.png"></img>
+      We've created a project, but it doesn't do anything yet. To do something, we need to first add a <i>source file</i>. A source file contains executable
+      code that the computer can <i>compile</i> and subsequently <i>run</i>.
+    </p>
+    <p>
+      To add a new source file, right click on your project in the project sidebar, then click "Add New File...". This will bring up the "Templates" dialog.
+      The "Templates" dialog allows you to pick a starting point for your new file. For now, let's click <i>C Files > Hello, World!</i> and press "OK".
+      <img class="right side" src="templates.png"></img>
+    </p>
+    <p>
+      Once you've pressed "OK", a new dialog called "New File Name" will appear. Let's name this file <code>hello</code> and press "OK". Notice that this
+      created a file named <code>hello.c</code>. We didn't need to explicitly provide the file's extension. KISS IDE can automatically determine the file
+      extension based on the selected template.
+    </p>
+    <p>
+      You should now see <code>hello.c</code> under your project in the project sidebar. Note that you may need to expand the project by clicking on the
+      project's "+" or arrow icon.
+    </p>
+    <h2>Compiling and Running</h2>
+    <p>
+      Now that we've created a project and a source file, we're ready to download, compile, and run our project as a program. To do that, click "Run" on KISS IDE's toolbar.
+      If this is the first time you've clicked on a target operation, a "Target Selection" dialog will appear. Since we're wanting to run the program locally, click "My Computer"
+      and press "OK". You should now see a progress indicator on KISS. Once the progress indicator disappears, your program should begin executing inside the "My Computer" application.
+      Leave this "My Computer" application open for future target operations.
+    </p>
+    <h2>Depending on Projects</h2>
+    <p>
+      <img class="right side" src="dependencies.png"></img>
+      Let's imagine that Dr. Muller has provided us with a KISS project that we need to <i>depend</i> on for a homework assignment. To add a dependency to our project, we simply
+      right click on the project and click "Project Dependencies". This will bring up the "Dependencies for ..." dialog where we can manage the currently depended upon projects.
+    </p>
+    <p>
+      Click "Add" to add a new KISS project dependency, "Remove" to remove a selected dependency, and "OK" to commit changes.
+    </p>
+
+    <h2>Need Help?</h2>
+    <p>
+      If you have any questions or need assistance, please contact <a href="mailto:bmcdorman@kipr.org">Braden McDorman</a> or <a href="mailto:nzaman@kipr.org">Nafis Zaman</a>.
+    </p>
+    </div>
+    <p class="center">Copyright &copy; 2013 KISS Institute for Practical Robotics</p>
+  </body>
+</html>

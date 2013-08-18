@@ -2,98 +2,78 @@
 
 #include <QFile>
 #include <QFileInfo>
-#include <QTextStream>
 #include <QDir>
+#include <QSettings>
 #include <QDebug>
 
 #define DESCRIPTION_FILE "description.txt"
 #define DECORATION_FILE "decoration.html"
+#define METADATA_FILE "metadata.ini"
 
 using namespace kiss;
 
-DocumentationLocation::DocumentationLocation(const QString &name, const QString &location,
-	const QString &description, const QString &decoration)
-	: m_name(name),
-	m_location(location),
-	m_description(description),
-	m_decoration(decoration)
+DocumentationSource::DocumentationSource(const QString &path)
+    : _path(path)
 {
-	
 }
 
-const QString &DocumentationLocation::name() const
+QMap<QString, QString> DocumentationSource::metadata() const
 {
-	return m_name;
+    if(_metadata.isEmpty()) lazyInitMetadata();
+    return _metadata;
 }
 
-const QString &DocumentationLocation::location() const
+bool DocumentationSource::operator ==(const DocumentationSource &rhs) const
 {
-	return m_location;
+    return _path == rhs._path;
 }
 
-const QString &DocumentationLocation::description() const
+void DocumentationSource::lazyInitMetadata() const
 {
-	return m_description;
+    _metadata.clear();
+    QSettings settings(QDir(_path).absoluteFilePath(METADATA_FILE), QSettings::IniFormat);
+    Q_FOREACH(const QString &key, settings.allKeys()) {
+        _metadata[key] = settings.value(key).toString().replace("${PATH}", _path);
+    }
 }
 
-const QString &DocumentationLocation::decoration() const
+const QString &DocumentationSource::path() const
 {
-	return m_decoration;
+    return _path;
 }
 
 DocumentationManager::DocumentationManager()
 {
-	loadDefaultDocumentation();
+	loadDefaultDocumentationSources();
 }
 
-void DocumentationManager::addLocation(const QString &location)
+void DocumentationManager::addDocumentationSource(const DocumentationSource &documentationSource)
 {
-	const QString name = QFileInfo(location).fileName();
-	QString realLocation = location;
-	QFile file(location + "/goto.txt");
-	if(file.open(QIODevice::ReadOnly)) {
-		realLocation = file.readAll();
-		realLocation = realLocation.trimmed();
-		realLocation = location + "/" + realLocation;
-		file.close();
-	}
-	qDebug() << "Adding documentation source" << name << "from location" << location;
-	m_locations.push_back(DocumentationLocation(name, realLocation,
-		description(location), decoration(location)));
+    _documentationSources.append(documentationSource);
 }
 
-const QList<DocumentationLocation> &DocumentationManager::locations() const
+void DocumentationManager::removeDocumentationSource(const DocumentationSource &documentationSource)
 {
-	return m_locations;
+    _documentationSources.removeAll(documentationSource);
+}
+
+const QList<DocumentationSource> &DocumentationManager::documentationSources() const
+{
+    return _documentationSources;
 }
 
 QString DocumentationManager::documentationPath()
 {
-	return QDir::currentPath() + "/docs";
+	return QDir::current().absoluteFilePath("docs");
 }
 
-void DocumentationManager::loadDefaultDocumentation()
+void DocumentationManager::loadDefaultDocumentationSources()
 {
-	qDebug() << "Loading default documentation from" << documentationPath();
-	
 	QFileInfoList folders = QDir(documentationPath()).entryInfoList(QDir::Dirs | QDir::NoDot | QDir::NoDotDot);
-	foreach(const QFileInfo &folder, folders) addLocation(folder.absoluteFilePath());
+	foreach(const QFileInfo &folder, folders) addDocumentationSource(folder.absoluteFilePath());
 }
 
-const QString DocumentationManager::description(const QString &location)
+bool operator ==(const kiss::DocumentationSource &a, const kiss::DocumentationSource &b)
 {
-	QFile file(location + "/" + DESCRIPTION_FILE);
-	file.open(QIODevice::ReadOnly);
-	QString ret = QTextStream(&file).readAll();
-	file.close();
-	return ret;
-}
-
-const QString DocumentationManager::decoration(const QString &location)
-{
-	QFile file(location + "/" + DECORATION_FILE);
-	file.open(QIODevice::ReadOnly);
-	QString ret = QTextStream(&file).readAll();
-	file.close();
-	return ret;
+    return a.path() == b.path();
 }
