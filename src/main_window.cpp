@@ -442,9 +442,10 @@ void MainWindow::closeAllOthers(Tab *tab)
 
 void MainWindow::open()
 {
-	QStringList filters = lexer::Factory::ref().formattedExtensions();
-	filters << "Template Pack (*.pack)";
+	QStringList filters;
 	filters << "KISS Project (*.kissproj)";
+	filters << lexer::Factory::ref().formattedExtensions();
+	filters << "Template Pack (*.pack)";
 	filters.removeDuplicates();
 	QString filePath = FileUtils::getOpenFileName(this, tr("Open"), filters.join(";;") + ";;All Files (*)");
 	if(filePath.isEmpty()) return;
