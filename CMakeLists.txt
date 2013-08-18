@@ -102,6 +102,12 @@ else()
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
 endif()
 
+if(APPLE)
+    set(KISS_EXTRAS_DIR ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents)
+else()
+    set(KISS_EXTRAS_DIR ${EXECUTABLE_OUTPUT_PATH})
+endif()
+
 target_link_libraries(KISS ${QT_LIBRARIES} qscintilla2 pcompiler kar)
 
 if(WIN32)
@@ -131,11 +137,9 @@ if(APPLE)
 		DEPENDS KISS Info.plist MacDeployQt)
 		
 	set(OSX_INSTALL_NAMES_SCRIPT "${KISS_SOURCE_DIR}/scripts/osx_install_names.sh")
-	
-	install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents)
-else()
-	install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_SOURCE_DIR}/deploy)
 endif()
+
+install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_EXTRAS_DIR})
 
 if(APPLE)
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
@@ -180,3 +184,4 @@ link_directories(${KISS_SOURCE_DIR}/lib)
 install(FILES ${INCLUDES} DESTINATION /usr/local/include/kiss/)
 
 add_subdirectory(plugins)
+add_subdirectory(docs)
