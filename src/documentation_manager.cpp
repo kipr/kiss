@@ -72,8 +72,3 @@ void DocumentationManager::loadDefaultDocumentationSources()
 	QFileInfoList folders = QDir(documentationPath()).entryInfoList(QDir::Dirs | QDir::NoDot | QDir::NoDotDot);
 	foreach(const QFileInfo &folder, folders) addDocumentationSource(folder.absoluteFilePath());
 }
-
-bool operator ==(const kiss::DocumentationSource &a, const kiss::DocumentationSource &b)
-{
-    return a.path() == b.path();
-}
