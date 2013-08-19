@@ -4,6 +4,7 @@
 #include <QFileInfo>
 #include <QWaitCondition>
 #include <QMutex>
+#include <QDebug>
 
 using namespace kiss;
 using namespace kiss::target;
@@ -104,6 +105,7 @@ void ProcessTarget::ensureStarted() const
     if(running) return;
     
     Q_FOREACH(const QString &executablePath, _executablePaths) {
+        qDebug() << "Trying to start" << executablePath;
         if(ProcessManager::start(executablePath)) break;
     }
     
