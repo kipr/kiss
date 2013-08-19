@@ -30,6 +30,7 @@
 #include <QDebug>
 #include <QApplication>
 #include <iostream>
+#include "process_manager.hpp"
 
 using namespace std;
 using namespace kiss;
