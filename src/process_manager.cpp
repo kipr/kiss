@@ -44,7 +44,7 @@ bool ProcessManager::terminate(const QString &name)
     int sig = 0;
     proc_terminate(pid, &sig);
 #elif defined(Q_OS_WIN)
-
+	return false;
 #else
     return false;
 #endif

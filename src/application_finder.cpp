@@ -1,5 +1,7 @@
 #include "application_finder.hpp"
 
+#include <QDir>
+
 using namespace kiss;
 
 void ApplicationFinder::addApplicationPath(const QString &name, const QString &path)
