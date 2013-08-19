@@ -66,8 +66,8 @@ namespace kiss
 
 			virtual ReturnCode sendCustom(quint64 id, const QString &custom, const QByteArray &payload = QByteArray()) = 0;
 			
-			void setResponder(Responder *responder);
-			Responder *responder() const;
+			virtual void setResponder(Responder *responder);
+			virtual Responder *responder() const;
 			
 			virtual bool setPassword(const QString &password) = 0;
 			virtual void clearPassword() = 0; 

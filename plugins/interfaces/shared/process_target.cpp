@@ -2,12 +2,14 @@
 #include "process_manager.hpp"
 
 #include <QFileInfo>
+#include <QWaitCondition>
+#include <QMutex>
 
 using namespace kiss;
 using namespace kiss::target;
 
 ProcessTarget::ProcessTarget(const TargetPtr &target, const QList<QString> &executablePaths)
-    : Target(target->interface(), "Process Target")
+    : Target(target->interface(), "process_target")
     , _target(target)
     , _executablePaths(executablePaths)
 {
@@ -15,19 +17,16 @@ ProcessTarget::ProcessTarget(const TargetPtr &target, const QList<QString> &exec
 
 QMap<QString, QString> ProcessTarget::information() const
 {
-    ensureStarted();
     return _target->information();
 }
 
 bool ProcessTarget::disconnect()
 {
-    ensureStarted();
     return _target->disconnect();
 }
 
 bool ProcessTarget::available()
 {
-    ensureStarted();
     return _target->available();
 }
 
@@ -75,14 +74,22 @@ Target::ReturnCode ProcessTarget::sendCustom(quint64 id, const QString& custom, 
 
 bool ProcessTarget::setPassword(const QString &password)
 {
-    ensureStarted();
     return _target->setPassword(password);
 }
 
 void ProcessTarget::clearPassword()
 {
-    ensureStarted();
     _target->clearPassword();
+}
+
+void ProcessTarget::setResponder(Responder *responder)
+{
+    _target->setResponder(responder);
+}
+
+Responder *ProcessTarget::responder() const
+{
+    return _target->responder();
 }
 
 void ProcessTarget::ensureStarted() const
@@ -99,4 +106,9 @@ void ProcessTarget::ensureStarted() const
     Q_FOREACH(const QString &executablePath, _executablePaths) {
         if(ProcessManager::start(executablePath)) break;
     }
+    
+    QWaitCondition waitCondition;
+    QMutex mutex;
+ 
+    waitCondition.wait(&mutex, 2500);
 }

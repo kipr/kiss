@@ -31,6 +31,9 @@ namespace kiss
             virtual bool setPassword(const QString &password);
             virtual void clearPassword();
             
+            virtual void setResponder(Responder *responder);
+            virtual Responder *responder() const;
+            
         private:
             void ensureStarted() const;
             
