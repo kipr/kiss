@@ -118,6 +118,8 @@ namespace kiss
 			void setName(const QString &name);
 			const QString &name() const;
 			QString fullName() const;
+            
+            const QString &templateExt() const;
 
 			virtual kiss::KarPtr archive() const;
 

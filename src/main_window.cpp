@@ -661,20 +661,23 @@ void MainWindow::projectAddNew()
 
 	SourceFile *const sourceFile = new SourceFile(this);
 	sourceFile->setProject(project);
-	if(!sourceFile->selectTemplate())
-	{
+	if(!sourceFile->selectTemplate()) {
 		delete sourceFile;
 		return;
 	}
 
 	bool ok = false;
-	const QString fileName = QInputDialog::getText(this, tr("New File"), tr("New File Name:"),
+	QString fileName = QInputDialog::getText(this, tr("New File"), tr("New File Name:"),
 		QLineEdit::Normal, QString(), &ok);
-	if(!ok)
-	{
+	if(!ok) {
 		delete sourceFile;
 		return;
 	}
+    
+    if(QFileInfo(fileName).baseName() == fileName) {
+        fileName += ".";
+        fileName += sourceFile->templateExt();
+    }
 
 	sourceFile->setFile(QDir(project->location()).filePath(fileName));
 	addTab(sourceFile);
