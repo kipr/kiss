@@ -20,10 +20,15 @@ QList<QString> ApplicationFinder::applicationPath(const QString &name) const
 ApplicationFinder ApplicationFinder::platform()
 {
     ApplicationFinder finder;
+    QDir c(QDir::current());
 #ifdef Q_OS_MAC
     finder.addApplicationPath("computer", "/Applications/computer.app/Contents/MacOS/computer");
+    c.cdUp();
+    c.cdUp();
+    finder.addApplicationPath("computer", c.absoluteFilePath("computer.app/Contents/MacOS/computer"));
+    c.cdUp();
+    finder.addApplicationPath("computer", c.absoluteFilePath("computer.app/Contents/MacOS/computer"));
 #elif defined(Q_OS_WIN)
-    const QDir c(QDir::current());
     c.cdUp();
     finder.addApplicationPath("computer", c.absoluteFilePath("computer"));
 #endif
