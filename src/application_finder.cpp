@@ -1,5 +1,7 @@
 #include "application_finder.hpp"
 
+#include <QDir>
+
 using namespace kiss;
 
 void ApplicationFinder::addApplicationPath(const QString &name, const QString &path)
@@ -23,7 +25,7 @@ ApplicationFinder ApplicationFinder::platform()
 #ifdef Q_OS_MAC
     finder.addApplicationPath("computer", "/Applications/computer.app/Contents/MacOS/computer");
 #elif defined(Q_OS_WIN)
-    const QDir c(QDir::current());
+    QDir c(QDir::current());
     c.cdUp();
     finder.addApplicationPath("computer", c.absoluteFilePath("computer"));
 #endif
