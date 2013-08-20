@@ -16,6 +16,8 @@
 !define KISS_DIR "C:\Users\Nafis\Documents\Development\kiss"
 !define COMPUTER_DIR "C:\Users\Nafis\Documents\Development\computer"
 !define MINGW_DIR "C:\Users\Nafis\Documents\Development\MinGW"
+!define LIBKOVAN_DOCS_DIR "C:\Users\Nafis\Documents\Development\libkovan\doc"
+!define LINK_DOCS_DIR "C:\Users\Nafis\Documents\Development\link-docs\KIPR Link C Standard Library"
 
 ; Name of the installer
 Name "${APP_NAME_AND_VERSION}"
@@ -87,6 +89,24 @@ Section "MinGW" MinGW
 	File /r "${MINGW_DIR}\*.*"
 SectionEnd
 
+Section "libkovan Documentation" libkovan_doc
+	; Set Section properties
+	SetOverwrite on  ; overwrite existing files
+  	
+	; Set libkovan Documentation Files	
+	SetOutPath "$INSTDIR\KISS\docs\libkovan\"
+	File /r "${LIBKOVAN_DOCS_DIR}\*.*"
+SectionEnd
+
+Section "Link Documentation" link_doc
+	; Set Section properties
+	SetOverwrite on  ; overwrite existing files
+  	
+	; Set Link Documentation Files	
+	SetOutPath "$INSTDIR\KISS\docs\KIPR Link C Standard Library\"
+	File /r "${LINK_DOCS_DIR}\*.*"
+SectionEnd
+
 Section -FinishSection
 	WriteRegStr HKLM "Software\${APP_NAME_AND_VERSION}" "" "$INSTDIR"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME_AND_VERSION}" "DisplayName" "${APP_NAME_AND_VERSION}"
@@ -99,6 +119,8 @@ SectionEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${KISSIDE} "KIPR's Instructional Software System IDE"
 !insertmacro MUI_DESCRIPTION_TEXT ${ComputerTarget} "A target for KISS IDE used to run programs locally"
 !insertmacro MUI_DESCRIPTION_TEXT ${MinGW} "Minimalist GNU for Windows"
+!insertmacro MUI_DESCRIPTION_TEXT ${link_doc} "Documentation for the KIPR Link"
+!insertmacro MUI_DESCRIPTION_TEXT ${libkovan_doc} "Documentation for libkovan"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; Uninstall section
