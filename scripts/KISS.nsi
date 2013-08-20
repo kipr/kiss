@@ -120,7 +120,7 @@ SectionEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${ComputerTarget} "A target for KISS IDE used to run programs locally"
 !insertmacro MUI_DESCRIPTION_TEXT ${MinGW} "Minimalist GNU for Windows"
 !insertmacro MUI_DESCRIPTION_TEXT ${link_doc} "Documentation for the KIPR Link"
-!insertmacro MUI_DESCRIPTION_TEXT ${libkovan_doc} "Documentation for libkovan"
+!insertmacro MUI_DESCRIPTION_TEXT ${libkovan_doc} "Documentation for the libkovan standard library"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; Uninstall section
