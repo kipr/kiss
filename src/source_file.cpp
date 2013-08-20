@@ -725,6 +725,11 @@ QString SourceFile::fullName() const
 	return m_name + " (" + project()->name() + ")";
 }
 
+const QString &SourceFile::templateExt() const
+{
+    return m_templateExt;
+}
+
 kiss::KarPtr SourceFile::archive() const
 {
 	// TODO: Projects

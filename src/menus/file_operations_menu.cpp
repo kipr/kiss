@@ -30,7 +30,7 @@ FileOperationsMenu::FileOperationsMenu()
 	m_file.append(openFile);
 	
 	
-	m_toolbar.append(newFile);
+	// m_toolbar.append(newFile);
 	m_toolbar.append(newProject);
 	m_toolbar.append(openFile);
 	m_toolbar.append(Node::separator());
