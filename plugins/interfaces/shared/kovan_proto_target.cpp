@@ -198,9 +198,8 @@ kiss::target::Target::ReturnCode KovanProtoTarget::download(quint64 id, const QS
 	QByteArray data;
 	QDataStream qStream(&data, QIODevice::ReadWrite);
 	qStream << (*archive);
-	std::istringstream istream;
-	istream.rdbuf()->pubsetbuf(data.data(), data.size());
-	if(!m_proto.sendFile(name.toStdString(), "kar", &istream)) {
+	qDebug() << "Stream size:" << data.size();
+	if(!m_proto.sendFile(name.toStdString(), "kar", (unsigned char *)data.data(), data.size())) {
 		emit response(Response(id, KEY_DOWNLOAD, false));
 		m_proto.hangup();
 		m_transmitter->endSession();
