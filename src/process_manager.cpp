@@ -9,7 +9,8 @@
 #import <sys/proc_info.h>
 #import <libproc.h>
 #elif defined(Q_OS_WIN)
-
+#include <windows.h>
+#include <tlhelp32.h>
 #else
 #warning Compiling without some process management features
 #endif
@@ -21,7 +22,7 @@ bool ProcessManager::isRunDetectionSupported()
 #ifdef Q_OS_MAC
     return true;
 #elif defined(Q_OS_WIN)
-    return false;
+    return true;
 #endif
     return false;
 }
@@ -50,7 +51,7 @@ bool ProcessManager::terminate(const QString &name)
 #endif
 }
 
-Q_PID ProcessManager::lookupPid(const QString &name)
+unsigned long ProcessManager::lookupPid(const QString &name)
 {
 #ifdef Q_OS_MAC
     const int procnum = proc_listpids(PROC_ALL_PIDS, 0, NULL, 0);
@@ -67,7 +68,28 @@ Q_PID ProcessManager::lookupPid(const QString &name)
         if(name == QFileInfo(path).fileName()) return pids[i];
     }
 #elif defined(Q_OS_WIN)
+	const QString &exeName = name + ".exe";
+	PROCESSENTRY32 entry;
+	entry.dwSize = sizeof(PROCESSENTRY32);
 
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if(Process32First(snapshot, &entry))
+	{
+		while(Process32Next(snapshot, &entry))
+		{
+			if(exeName == entry.szExeFile)
+			{
+				HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, false, entry.th32ProcessID);
+				unsigned long pid = GetProcessId(process);
+				CloseHandle(process);
+				CloseHandle(snapshot);
+				return pid;
+			}
+		}
+	}
+	CloseHandle(snapshot);
+
+	return 0;
 #endif
     return 0;
 }
