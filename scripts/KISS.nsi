@@ -18,6 +18,7 @@
 !define MINGW_DIR "C:\Users\Nafis\Documents\Development\MinGW"
 !define LIBKOVAN_DOCS_DIR "C:\Users\Nafis\Documents\Development\libkovan\doc"
 !define LINK_DOCS_DIR "C:\Users\Nafis\Documents\Development\link-docs\KIPR Link C Standard Library"
+!define KISS_ICON "${KISS_DIR}\rc\logos\windows_icon.ico"
 
 ; Name of the installer
 Name "${APP_NAME_AND_VERSION}"
@@ -29,7 +30,7 @@ InstallDir "$PROGRAMFILES\${APP_NAME_AND_VERSION}"
 OutFile "${KISS_DIR}\releases\${INSTALLER_FILENAME}.exe"
 
 ; Modern interface settings
-!define MUI_ICON ${KISS_DIR}\rc\logos\windows_icon.ico
+!define MUI_ICON ${KISS_ICON}
 !define MUI_ABORTWARNING
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "License.txt"
@@ -57,10 +58,10 @@ Section "KISS IDE" KISSIDE
 		
 	; Set up start menu entry
 	CreateDirectory  "$SMPROGRAMS\${APP_NAME_AND_VERSION}"
-	CreateShortCut "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION}.lnk" "$INSTDIR\kiss\kiss.exe"
+	CreateShortCut "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION}.lnk" "$INSTDIR\kiss\kiss.exe" "" ${KISS_ICON} 0
 
 	; Set up desktop shortcut
-	CreateShortCut "$DESKTOP\KISS IDE ${VERSION}.lnk" "$INSTDIR\KISS\kiss.exe"
+	CreateShortCut "$DESKTOP\KISS IDE ${VERSION}.lnk" "$INSTDIR\KISS\kiss.exe" "" ${KISS_ICON} 0
 SectionEnd
 
 Section "Computer Target" ComputerTarget
@@ -74,10 +75,10 @@ Section "Computer Target" ComputerTarget
 	File /r "${COMPUTER_DIR}\dlls\*.*"
 		
 	; Set up start menu entry
-	CreateShortCut "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION} Computer Target.lnk" "$INSTDIR\computer\computer.exe"
+	CreateShortCut "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION} Computer Target.lnk" "$INSTDIR\computer\computer.exe" "" ${KISS_ICON} 0
 
 	; Set up desktop shortcut
-	CreateShortCut "$DESKTOP\KISS IDE ${VERSION} Computer Target.lnk" "$INSTDIR\computer\computer.exe"
+	CreateShortCut "$DESKTOP\KISS IDE ${VERSION} Computer Target.lnk" "$INSTDIR\computer\computer.exe" "" ${KISS_ICON} 0
 SectionEnd
 
 Section "MinGW" MinGW
