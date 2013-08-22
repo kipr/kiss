@@ -73,12 +73,6 @@ Section "Computer Target" ComputerTarget
 	SetOutPath "$INSTDIR\computer\"
 	File /r "${COMPUTER_DIR}\deploy\*.*"
 	File /r "${COMPUTER_DIR}\dlls\*.*"
-		
-	; Set up start menu entry
-	CreateShortCut "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION} Computer Target.lnk" "$INSTDIR\computer\computer.exe" "" ${KISS_ICON} 0
-
-	; Set up desktop shortcut
-	CreateShortCut "$DESKTOP\KISS IDE ${VERSION} Computer Target.lnk" "$INSTDIR\computer\computer.exe" "" ${KISS_ICON} 0
 SectionEnd
 
 Section "MinGW" MinGW
@@ -137,8 +131,6 @@ Section Uninstall
 	; Delete start menu entires and desktop shortcuts
 	Delete "$SMPROGRAMS\${APP_NAME_AND_VERSION}\${APP_NAME_AND_VERSION}.lnk"
 	Delete "$DESKTOP\${APP_NAME_AND_VERSION}.lnk"
-	Delete "$SMPROGRAMS\${APP_NAME_AND_VERSION}\${APP_NAME_AND_VERSION} Computer Target.lnk"
-	Delete "$DESKTOP\${APP_NAME_AND_VERSION} Computer Target.lnk"
 	RMDir  "$SMPROGRAMS\${APP_NAME_AND_VERSION}"
 
 	; Delete the entire install directory
