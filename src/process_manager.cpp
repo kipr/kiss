@@ -68,7 +68,6 @@ unsigned long ProcessManager::lookupPid(const QString &name)
         if(name == QFileInfo(path).fileName()) return pids[i];
     }
 #elif defined(Q_OS_WIN)
-	const QString &exeName = name + ".exe";
 	PROCESSENTRY32 entry;
 	entry.dwSize = sizeof(PROCESSENTRY32);
 
@@ -77,7 +76,7 @@ unsigned long ProcessManager::lookupPid(const QString &name)
 	{
 		while(Process32Next(snapshot, &entry))
 		{
-			if(exeName == entry.szExeFile)
+			if(name == entry.szExeFile)
 			{
 				HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, false, entry.th32ProcessID);
 				unsigned long pid = GetProcessId(process);
