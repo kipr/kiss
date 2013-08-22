@@ -5,7 +5,7 @@
 !define APP_NAME "KISS Platform"
 !define APP_MAJOR_VERSION "4"
 !define APP_MINOR_VERSION "1"
-!define BUILD_NUMBER "1"
+!define BUILD_NUMBER "2"
 
 ; Standard Release app name and version
 !define VERSION "${APP_MAJOR_VERSION}.${APP_MINOR_VERSION}.${BUILD_NUMBER}"
