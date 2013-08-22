@@ -18,7 +18,7 @@
 !define MINGW_DIR "C:\Users\Nafis\Documents\Development\MinGW"
 !define LIBKOVAN_DOCS_DIR "C:\Users\Nafis\Documents\Development\libkovan\doc"
 !define LINK_DOCS_DIR "C:\Users\Nafis\Documents\Development\link-docs\KIPR Link C Standard Library"
-!define KISS_ICON "${KISS_DIR}\rc\logos\windows_icon.ico"
+!define INSTALLER_ICON "${KISS_DIR}\rc\logos\windows_icon.ico"
 
 ; Name of the installer
 Name "${APP_NAME_AND_VERSION}"
@@ -30,7 +30,7 @@ InstallDir "$PROGRAMFILES\${APP_NAME_AND_VERSION}"
 OutFile "${KISS_DIR}\releases\${INSTALLER_FILENAME}.exe"
 
 ; Modern interface settings
-!define MUI_ICON ${KISS_ICON}
+!define MUI_ICON ${INSTALLER_ICON}
 !define MUI_ABORTWARNING
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "License.txt"
@@ -54,8 +54,10 @@ Section "KISS IDE" KISSIDE
 	; Set KISS Files	
 	SetOutPath "$INSTDIR\KISS\"
 	File /r "${KISS_DIR}\deploy\*.*"
-	File /r "${KISS_DIR}\dlls\*.*"
-		
+	File /r "${KISS_DIR}\dlls\*.*"	
+	File ${INSTALLER_ICON}
+	!define KISS_ICON "$INSTDIR\KISS\windows_icon.ico"
+
 	; Set up start menu entry
 	CreateDirectory  "$SMPROGRAMS\${APP_NAME_AND_VERSION}"
 	CreateShortCut "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION}.lnk" "$INSTDIR\kiss\kiss.exe" "" ${KISS_ICON} 0
