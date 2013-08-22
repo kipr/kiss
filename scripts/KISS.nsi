@@ -29,6 +29,7 @@ InstallDir "$PROGRAMFILES\${APP_NAME_AND_VERSION}"
 OutFile "${KISS_DIR}\releases\${INSTALLER_FILENAME}.exe"
 
 ; Modern interface settings
+!define MUI_ICON ${KISS_DIR}\rc\logos\windows_icon.ico
 !define MUI_ABORTWARNING
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "License.txt"
