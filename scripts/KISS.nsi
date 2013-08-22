@@ -46,6 +46,12 @@ OutFile "${KISS_DIR}\releases\${INSTALLER_FILENAME}.exe"
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
+Section "Visual C++ Redistributable" VCRedist
+	SetOutPath $INSTDIR
+    File "${KISS_DIR}\deploy\vcredist_x86.exe"
+    ExecWait "$INSTDIR\vcredist_x86.exe"
+SectionEnd
+
 Section "KISS IDE" KISSIDE
 	; Set Section properties
 	SetOverwrite on  ; overwrite existing files
@@ -114,6 +120,7 @@ SectionEnd
 
 ; Modern install component descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+!insertmacro MUI_DESCRIPTION_TEXT ${VCRedist} "Visual C++ Redistributable for Visual Studio 2012 Update 3"
 !insertmacro MUI_DESCRIPTION_TEXT ${KISSIDE} "KIPR's Instructional Software System IDE"
 !insertmacro MUI_DESCRIPTION_TEXT ${ComputerTarget} "A target for KISS IDE used to run programs locally"
 !insertmacro MUI_DESCRIPTION_TEXT ${MinGW} "Minimalist GNU for Windows"
