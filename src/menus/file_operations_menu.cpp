@@ -15,7 +15,7 @@ FileOperationsMenu::FileOperationsMenu()
 		QKeySequence::Open, this, "open"));
 
 	Node *newSubmenu = node(action(ResourceHelper::ref().icon("page_white.png"), "New"));
-	newSubmenu->children.append(newFile);
+	// newSubmenu->children.append(newFile);
 	newSubmenu->children.append(newProject);
 	newSubmenu->children.append(Node::separator());
 	newSubmenu->children.append(newTemplatePack);
