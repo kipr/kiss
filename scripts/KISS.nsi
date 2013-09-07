@@ -5,7 +5,7 @@
 !define APP_NAME "KISS Platform"
 !define APP_MAJOR_VERSION "4"
 !define APP_MINOR_VERSION "1"
-!define BUILD_NUMBER "1"
+!define BUILD_NUMBER "4"
 
 ; Standard Release app name and version
 !define VERSION "${APP_MAJOR_VERSION}.${APP_MINOR_VERSION}.${BUILD_NUMBER}"
@@ -18,6 +18,7 @@
 !define MINGW_DIR "C:\Users\Nafis\Documents\Development\MinGW"
 !define LIBKOVAN_DOCS_DIR "C:\Users\Nafis\Documents\Development\libkovan\doc"
 !define LINK_DOCS_DIR "C:\Users\Nafis\Documents\Development\link-docs\KIPR Link C Standard Library"
+!define INSTALLER_ICON "${KISS_DIR}\rc\logos\windows_icon.ico"
 
 ; Name of the installer
 Name "${APP_NAME_AND_VERSION}"
@@ -29,6 +30,7 @@ InstallDir "$PROGRAMFILES\${APP_NAME_AND_VERSION}"
 OutFile "${KISS_DIR}\releases\${INSTALLER_FILENAME}.exe"
 
 ; Modern interface settings
+!define MUI_ICON ${INSTALLER_ICON}
 !define MUI_ABORTWARNING
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "License.txt"
@@ -44,6 +46,12 @@ OutFile "${KISS_DIR}\releases\${INSTALLER_FILENAME}.exe"
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
+Section "Visual C++ Redistributable" VCRedist
+	SetOutPath $INSTDIR
+    File "${KISS_DIR}\deploy\vcredist_x86.exe"
+    ExecWait "$INSTDIR\vcredist_x86.exe"
+SectionEnd
+
 Section "KISS IDE" KISSIDE
 	; Set Section properties
 	SetOverwrite on  ; overwrite existing files
@@ -52,14 +60,16 @@ Section "KISS IDE" KISSIDE
 	; Set KISS Files	
 	SetOutPath "$INSTDIR\KISS\"
 	File /r "${KISS_DIR}\deploy\*.*"
-	File /r "${KISS_DIR}\dlls\*.*"
-		
+	File /r "${KISS_DIR}\dlls\*.*"	
+	File ${INSTALLER_ICON}
+	!define KISS_ICON "$INSTDIR\KISS\windows_icon.ico"
+
 	; Set up start menu entry
 	CreateDirectory  "$SMPROGRAMS\${APP_NAME_AND_VERSION}"
-	CreateShortCut "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION}.lnk" "$INSTDIR\kiss\kiss.exe"
+	CreateShortCut "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION}.lnk" "$INSTDIR\kiss\kiss.exe" "" ${KISS_ICON} 0
 
 	; Set up desktop shortcut
-	CreateShortCut "$DESKTOP\KISS IDE ${VERSION}.lnk" "$INSTDIR\KISS\kiss.exe"
+	CreateShortCut "$DESKTOP\KISS IDE ${VERSION}.lnk" "$INSTDIR\KISS\kiss.exe" "" ${KISS_ICON} 0
 SectionEnd
 
 Section "Computer Target" ComputerTarget
@@ -71,12 +81,6 @@ Section "Computer Target" ComputerTarget
 	SetOutPath "$INSTDIR\computer\"
 	File /r "${COMPUTER_DIR}\deploy\*.*"
 	File /r "${COMPUTER_DIR}\dlls\*.*"
-		
-	; Set up start menu entry
-	CreateShortCut "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION} Computer Target.lnk" "$INSTDIR\computer\computer.exe"
-
-	; Set up desktop shortcut
-	CreateShortCut "$DESKTOP\KISS IDE ${VERSION} Computer Target.lnk" "$INSTDIR\computer\computer.exe"
 SectionEnd
 
 Section "MinGW" MinGW
@@ -116,6 +120,7 @@ SectionEnd
 
 ; Modern install component descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+!insertmacro MUI_DESCRIPTION_TEXT ${VCRedist} "Visual C++ Redistributable for Visual Studio 2012 Update 3"
 !insertmacro MUI_DESCRIPTION_TEXT ${KISSIDE} "KIPR's Instructional Software System IDE"
 !insertmacro MUI_DESCRIPTION_TEXT ${ComputerTarget} "A target for KISS IDE used to run programs locally"
 !insertmacro MUI_DESCRIPTION_TEXT ${MinGW} "Minimalist GNU for Windows"
@@ -135,8 +140,6 @@ Section Uninstall
 	; Delete start menu entires and desktop shortcuts
 	Delete "$SMPROGRAMS\${APP_NAME_AND_VERSION}\${APP_NAME_AND_VERSION}.lnk"
 	Delete "$DESKTOP\${APP_NAME_AND_VERSION}.lnk"
-	Delete "$SMPROGRAMS\${APP_NAME_AND_VERSION}\${APP_NAME_AND_VERSION} Computer Target.lnk"
-	Delete "$DESKTOP\${APP_NAME_AND_VERSION} Computer Target.lnk"
 	RMDir  "$SMPROGRAMS\${APP_NAME_AND_VERSION}"
 
 	; Delete the entire install directory

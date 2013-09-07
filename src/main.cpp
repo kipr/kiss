@@ -35,6 +35,10 @@
 using namespace std;
 using namespace kiss;
 
+#ifdef _MSC_VER
+#pragma comment(linker, "/ENTRY:mainCRTStartup")
+#endif
+
 int main(int argc, char **argv)
 {
 	QApplication application(argc, argv);

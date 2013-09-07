@@ -15,7 +15,7 @@ namespace kiss
         static bool terminate(const QString &name);
         
     private:
-        static Q_PID lookupPid(const QString &name);
+        static unsigned long lookupPid(const QString &name);
     };
 }
 

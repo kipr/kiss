@@ -32,7 +32,7 @@ ApplicationFinder ApplicationFinder::platform()
     finder.addApplicationPath("computer", c.absoluteFilePath("computer.app/Contents/MacOS/computer"));
 #elif defined(Q_OS_WIN)
     c.cdUp();
-    finder.addApplicationPath("computer", c.absoluteFilePath("computer"));
+    finder.addApplicationPath("computer", c.absoluteFilePath("computer/computer.exe"));
 #endif
     return finder;
 }
