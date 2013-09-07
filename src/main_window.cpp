@@ -753,7 +753,7 @@ void MainWindow::projectRemoveFile()
 	}
 	else if(m_projectsModel.isFile(index)) {
 		if(QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
-			QT_TR_NOOP("Removing this file will permanently delete it from the project folder. Are you sure you want to remove it?"), 
+			QT_TR_NOOP("Removing this file will permanently delete it. Are you sure you want to remove it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
 		project->removeFile(path);
