@@ -123,8 +123,8 @@ namespace kiss
 			 * \param tab Tab to add
 			 */
 			void addTab(Tab *tab);
-
 			void moveToTab(Tab *tab);
+			bool closeTab(const QString &filePath);
 
 			QList<Tab *> tabs();
 

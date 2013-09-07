@@ -426,6 +426,19 @@ void MainWindow::moveToTab(Tab *tab)
 	ui_tabWidget->setCurrentWidget(tab->widget());
 }
 
+bool MainWindow::closeTab(const QString &filePath)
+{
+	for(int i = 0; i < ui_tabWidget->count(); ++i) {
+		Tab *current = lookup(ui_tabWidget->widget(i));
+		if(filePath == current->file().absoluteFilePath()) {
+			closeTab(i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 QList<Tab *> MainWindow::tabs()
 {
 	return m_lookup.values();
@@ -749,6 +762,7 @@ void MainWindow::projectRemoveFile()
 			QT_TR_NOOP("Removing this file will unlink the file from the project. Are you sure you want to remove it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
+		closeTab(path);
 		project->removeLink(path);
 	}
 	else if(m_projectsModel.isFile(index)) {
@@ -756,6 +770,7 @@ void MainWindow::projectRemoveFile()
 			QT_TR_NOOP("Removing this file will permanently delete it. Are you sure you want to remove it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
+		closeTab(path);
 		project->removeFile(path);
 	}
 }
