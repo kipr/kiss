@@ -1,8 +1,5 @@
 #include "project_view.hpp"
 
-#include <QUrl>
-#include <QDebug>
-
 using namespace kiss::project;
 
 ProjectView::ProjectView(QWidget *parent)
@@ -10,6 +7,7 @@ ProjectView::ProjectView(QWidget *parent)
 {
 	setExpandsOnDoubleClick(true);
 	setAcceptDrops(true);
+	setDragDropMode(QAbstractItemView::DragDrop);
 	setDropIndicatorShown(true);
 }
 
@@ -17,7 +15,7 @@ void ProjectView::dragEnterEvent(QDragEnterEvent *event)
 {
 	activateWindow();
 	raise();
-	event->accept();
+	event->acceptProposedAction();
 }
 
 void ProjectView::dragMoveEvent(QDragMoveEvent *event)
@@ -28,16 +26,5 @@ void ProjectView::dragMoveEvent(QDragMoveEvent *event)
 		// TODO: This assumes a strictly two-level project model
 		else setCurrentIndex(index.parent());
 	}
-	event->setDropAction(Qt::MoveAction);
-	event->accept();
-}
-
-void ProjectView::dropEvent(QDropEvent *event)
-{
-	QStringList files;
-	foreach(QUrl url, event->mimeData()->urls()) {
-		if(url.isLocalFile()) files << url.toLocalFile();
-	}
-
-	emit filesDropped(files);
+	event->acceptProposedAction();
 }

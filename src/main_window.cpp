@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projects->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::EditKeyPressed);
 	ui_projects->setContextMenuPolicy(Qt::CustomContextMenu);
 	ui_projectFrame->setVisible(false);
-	connect(ui_projects, SIGNAL(filesDropped(QStringList)), this, SLOT(projectAddExisting(QStringList)));
+	connect(&m_projectsModel, SIGNAL(filesDropped(QStringList)), this, SLOT(projectAddExisting(QStringList)));
 		
 	setUpdatesEnabled(false);
 
