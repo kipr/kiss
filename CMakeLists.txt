@@ -61,6 +61,14 @@ file(GLOB SOURCES ${SRC}/*
 	${SRC}/project/*
 	${SRC}/compiler/*
 	${SRC}/interface/*)
+  
+if(APPLE)
+  file(GLOB PLATFORM_SOURCES ${SRC}/platform_osx/*)
+elseif(WIN32)
+  file(GLOB PLATFORM_SOURCES ${SRC}/platform_win32/*)
+endif()
+
+set(SOURCES ${SOURCES} ${SRC} ${PLATFORM_SOURCES})
 
 file(GLOB UIS ${UI}/*)
 
@@ -82,6 +90,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 add_definitions(-O2)
 
 if(APPLE)
+  FIND_LIBRARY(COCOA_LIBRARY Cocoa)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -g")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.5")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mmacosx-version-min=10.5")
@@ -90,6 +99,7 @@ if(APPLE)
   set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -mmacosx-version-min=10.5")
 	link_directories(/Library/Frameworks/)
 	add_executable(KISS MACOSX_BUNDLE ${KISS_SRCS_CXX} ${INCLUDES})
+  set(EXTRA_LIBS ${COCOA_LIBRARY})
 elseif(UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 	add_executable(KISS ${KISS_SRCS_CXX} ${INCLUDES})
@@ -113,7 +123,7 @@ else()
     set(KISS_EXTRAS_DIR ${EXECUTABLE_OUTPUT_PATH})
 endif()
 
-target_link_libraries(KISS ${QT_LIBRARIES} qscintilla2 pcompiler kar)
+target_link_libraries(KISS ${QT_LIBRARIES} qscintilla2 pcompiler kar ${EXTRA_LIBS})
 
 if(WIN32)
 	target_link_libraries(KISS ws2_32)
