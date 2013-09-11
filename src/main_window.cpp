@@ -41,6 +41,8 @@
 #include "add_to_project_dialog.hpp"
 #include "project_dep_dialog.hpp"
 
+#include "system_utils.hpp"
+
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QAction>
@@ -335,7 +337,7 @@ void MainWindow::initMenus()
 	m_fileContextMenu = new QMenu(this);
 	m_fileContextMenu->addAction(tr("Rename"), this, SLOT(projectRenameFile()));
 	m_fileContextMenu->addSeparator();
-	m_fileContextMenu->addAction(tr("Remove"), this, SLOT(projectRemoveFile()));
+	m_fileContextMenu->addAction(SystemUtils::supportsMoveToTrash() ? tr("Move to Trash") : tr("Remove"), this, SLOT(projectRemoveFile()));
 }
 
 void MainWindow::setTitle(const QString &title)
@@ -766,7 +768,7 @@ void MainWindow::projectRemoveFile()
 		project->removeLink(path);
 	}
 	else if(m_projectsModel.isFile(index)) {
-		if(QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
+		if(!SystemUtils::supportsMoveToTrash() && QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
 			QT_TR_NOOP("Removing this file will permanently delete it. Are you sure you want to remove it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 

@@ -6,6 +6,7 @@
 
 #include "file_utils.hpp"
 #include "communication_manager.hpp"
+#include "system_utils.hpp"
 
 using namespace kiss;
 using namespace kiss::project;
@@ -94,7 +95,7 @@ bool kiss::project::Project::addAsMovedCopy(const QString &path)
 bool kiss::project::Project::removeFile(const QString &path)
 {
 	if(!QFileInfo(path).isFile()) return false;
-	
+	if(SystemUtils::supportsMoveToTrash()) return SystemUtils::moveToTrash(path);
 	return QFile::remove(path);
 }
 
