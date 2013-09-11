@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QFileIconProvider>
 #include <QDebug>
+#include <QUrl>
 
 using namespace kiss;
 using namespace kiss::project;
@@ -222,7 +223,9 @@ bool Model::isLink(const QModelIndex &index) const
 {
 	ProjectPtr proj = project(index);
 	QStringList list = proj->links();
-	const QString &path = FileItem::fileitem_cast(itemFromIndex(index))->path();
+	FileItem *file = FileItem::fileitem_cast(itemFromIndex(index));
+	if(!file) return false;
+	const QString &path = file->path();
 	const QString &absPath = FileUtils::absolutePath(path, QDir(proj->location()));
 	const QString &relPath = FileUtils::relativePath(path, QDir(proj->location()));
 	
@@ -259,6 +262,67 @@ QString Model::filePath(const QModelIndex &index) const
 	FileItem *projectFile = FileItem::fileitem_cast(itemFromIndex(index));
 	if(!projectFile) return QString();
 	return projectFile->path();
+}
+
+Qt::ItemFlags Model::flags(const QModelIndex &index) const
+{
+	Qt::ItemFlags defaultFlags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+
+	if(isLink(index)) return defaultFlags;
+	if(isFile(index)) return defaultFlags | Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
+	if(isProject(index)) return defaultFlags | Qt::ItemIsDropEnabled;
+	return defaultFlags;
+}
+
+QStringList Model::mimeTypes() const
+{
+	return QStringList() << "application/vnd.text.list";
+}
+
+QMimeData *Model::mimeData(const QModelIndexList &indexes) const
+{
+	QByteArray encodedData;
+	QDataStream stream(&encodedData, QIODevice::WriteOnly);
+	foreach(const QModelIndex &index, indexes) {
+		if(index.isValid()) stream << filePath(index);
+	}
+
+	QMimeData *mimeData = new QMimeData();
+	mimeData->setData("application/vnd.text.list", encodedData);
+	return mimeData;
+}
+
+bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action,
+	int row, int column, const QModelIndex &parent)
+{
+	if(action == Qt::IgnoreAction) return true;
+
+	if(data->hasUrls()) {
+		QStringList files;
+		foreach(QUrl url, data->urls()) {
+			if(url.isLocalFile()) files << url.toLocalFile();
+		}
+
+		emit filesDropped(files);
+	}
+
+	else if(data->hasFormat("application/vnd.text.list")) {
+		QByteArray encodedData = data->data("application/vnd.text.list");
+		QDataStream stream(&encodedData, QIODevice::ReadOnly);
+
+		QStringList files;
+		while(!stream.atEnd()) {
+			QString text;
+			stream >> text;
+			files << text;
+		}
+
+		emit filesDropped(files);
+	}
+
+	else return false;
+
+	return true;
 }
 
 void Model::activeChanged(const ProjectPtr &oldActive, const ProjectPtr &newActive)

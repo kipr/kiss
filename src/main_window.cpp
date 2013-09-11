@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projects->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::EditKeyPressed);
 	ui_projects->setContextMenuPolicy(Qt::CustomContextMenu);
 	ui_projectFrame->setVisible(false);
-	connect(ui_projects, SIGNAL(filesDropped(QStringList)), this, SLOT(projectAddExisting(QStringList)));
+	connect(&m_projectsModel, SIGNAL(filesDropped(QStringList)), this, SLOT(projectAddExisting(QStringList)));
 		
 	setUpdatesEnabled(false);
 
@@ -426,6 +426,19 @@ void MainWindow::moveToTab(Tab *tab)
 	ui_tabWidget->setCurrentWidget(tab->widget());
 }
 
+bool MainWindow::closeTab(const QString &filePath)
+{
+	for(int i = 0; i < ui_tabWidget->count(); ++i) {
+		Tab *current = lookup(ui_tabWidget->widget(i));
+		if(filePath == current->file().absoluteFilePath()) {
+			closeTab(i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 QList<Tab *> MainWindow::tabs()
 {
 	return m_lookup.values();
@@ -749,13 +762,15 @@ void MainWindow::projectRemoveFile()
 			QT_TR_NOOP("Removing this file will unlink the file from the project. Are you sure you want to remove it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
+		closeTab(path);
 		project->removeLink(path);
 	}
 	else if(m_projectsModel.isFile(index)) {
 		if(QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
-			QT_TR_NOOP("Removing this file will permanently delete it from the project folder. Are you sure you want to remove it?"), 
+			QT_TR_NOOP("Removing this file will permanently delete it. Are you sure you want to remove it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
+		closeTab(path);
 		project->removeFile(path);
 	}
 }
@@ -849,6 +864,7 @@ void MainWindow::projectContextMenu(const QPoint &pos)
 
 	if(m_projectsModel.isProject(index))
 		m_projectContextMenu->exec(QCursor::pos());
+	else if(m_projectsModel.isLink(index)) return;
 	else if(m_projectsModel.isFile(index))
 		m_fileContextMenu->exec(QCursor::pos());
 }
