@@ -864,6 +864,7 @@ void MainWindow::projectContextMenu(const QPoint &pos)
 
 	if(m_projectsModel.isProject(index))
 		m_projectContextMenu->exec(QCursor::pos());
+	else if(m_projectsModel.isLink(index)) return;
 	else if(m_projectsModel.isFile(index))
 		m_fileContextMenu->exec(QCursor::pos());
 }
