@@ -64,6 +64,8 @@ file(GLOB SOURCES ${SRC}/*
   
 if(APPLE)
   file(GLOB PLATFORM_SOURCES ${SRC}/platform_osx/*)
+elseif(UNIX)
+  file(GLOB PLATFORM_SOURCES ${SRC}/platform_nix/*)
 elseif(WIN32)
   file(GLOB PLATFORM_SOURCES ${SRC}/platform_win32/*)
 endif()
