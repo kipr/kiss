@@ -262,7 +262,7 @@ kiss::KarPtr kiss::project::Project::archive() const
 {
 	kiss::KarPtr archive = kiss::Kar::create();
 	QStringList paths = files();
-	foreach(QString path, paths) {
+	foreach(const QString &path, paths) {
 		QFile file(path);
 		QFileInfo fileInfo(file);
 		if(fileInfo.suffix() == LINKS_EXT) continue;

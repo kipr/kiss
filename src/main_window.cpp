@@ -171,7 +171,18 @@ project::ProjectPtr MainWindow::newProject()
 		if(ret == QMessageBox::No) return project::ProjectPtr();
 	}
 	
-	return newProject(saveLocation);
+  project::ProjectPtr ret = newProject(saveLocation);
+  if(ret.isNull()) return ret;
+  
+  // Prompt the user to add a new file to their empty project
+  {
+    QMessageBox::StandardButton r = QMessageBox::question(this, tr("Add a New File?"),
+      tr("You just created an empty project. Do you want to add a new file?"),
+      QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    if(r == QMessageBox::Yes) projectAddNew(ret);
+  }
+  
+  return ret;
 }
 
 void MainWindow::newFile()
@@ -673,7 +684,11 @@ void MainWindow::projectAddNew()
 {
 	project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
 	if(!project) return;
+  projectAddNew(project);
+}
 
+void MainWindow::projectAddNew(const project::ProjectPtr &project)
+{
 	SourceFile *const sourceFile = new SourceFile(this);
 	sourceFile->setProject(project);
 	if(!sourceFile->selectTemplate()) {
@@ -694,9 +709,9 @@ void MainWindow::projectAddNew()
         fileName += sourceFile->templateExt();
     }
 
-	sourceFile->setFile(QDir(project->location()).filePath(fileName));
-	addTab(sourceFile);
-	sourceFile->save();
+  sourceFile->setFile(QDir(project->location()).filePath(fileName));
+  addTab(sourceFile);
+  sourceFile->save();
 }
 
 void MainWindow::projectAddExisting()
@@ -1033,6 +1048,11 @@ QList<QObject*> MainWindow::tabs(const QString &name)
 		}
 	}
 	return ret;
+}
+
+project::Manager *MainWindow::projectManager()
+{
+  return &m_projectManager;
 }
 
 bool MainWindow::canClose()

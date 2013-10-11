@@ -71,10 +71,26 @@ void TargetMenu::deactivated()
 
 void TargetMenu::update()
 {
-	const bool enabled = target::CommunicationManager::ref().isIdle();
-	compileNode->rawAction->setEnabled(enabled);
-	downloadNode->rawAction->setEnabled(enabled);
-	runNode->rawAction->setEnabled(enabled);
+  const bool enabled = target::CommunicationManager::ref().isIdle();
+  compileNode->rawAction->setEnabled(enabled);
+  downloadNode->rawAction->setEnabled(enabled);
+  runNode->rawAction->setEnabled(enabled);
+  
+  {
+    kiss::widget::MainWindow *window = qobject_cast<kiss::widget::MainWindow *>(active());
+    const project::ProjectPtr project = window->projectManager()->activeProject();
+    QString extra;
+    if(!project.isNull()) {
+      const QString &name = project->name();
+      const int size = name.length();
+      const static int maxSize = 8;
+      extra += " " + name.left(maxSize);
+    }
+    compileNode->rawAction->setText(tr("Compile%1").arg(extra));
+    downloadNode->rawAction->setText(tr("Download%1").arg(extra));
+    runNode->rawAction->setText(tr("Run%1").arg(extra));
+  }
+  
 	refresh();
 }
 

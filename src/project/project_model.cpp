@@ -46,6 +46,16 @@ public:
 	virtual void refresh()
 	{
 	}
+  
+	virtual void setActive(bool active)
+	{
+		setForeground(active ? Qt::black : Qt::lightGray);
+    for(int i = 0; i < rowCount(); ++i) {
+      PathItem *pathItem = PathItem::pathitem_cast(child(i));
+      if(!pathItem) continue;
+      pathItem->setActive(active);
+    }
+	}
 
 	template<typename T>
 	static PathItem *pathitem_cast(T *item)
@@ -135,11 +145,12 @@ public:
 		return dynamic_cast<ProjectItem *>(item);
 	}
 
-	void setActive(bool active)
-	{
-		if(active) setIcon(ResourceHelper::ref().icon("folder_heart.png"));
-		else setIcon(ResourceHelper::ref().icon("folder.png"));
-	}
+  virtual void setActive(bool active)
+  {
+    FolderItem::setActive(active);
+    if(active) setIcon(ResourceHelper::ref().icon("folder_heart.png"));
+    else setIcon(ResourceHelper::ref().icon("folder.png"));
+  }
 
 	virtual void refresh()
 	{

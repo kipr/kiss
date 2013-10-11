@@ -157,6 +157,8 @@ namespace kiss
 			QStringList standardMenus() const;
 			
 			templates::Manager *templateManager() const;
+      
+      project::Manager *projectManager();
 
 			bool canClose();
 			bool canGoPrevious();
@@ -210,6 +212,7 @@ namespace kiss
 		private slots:
 			void on_ui_tabWidget_currentChanged(int i);
 			void projectAddNew();
+			void projectAddNew(const project::ProjectPtr &project);
 			void projectAddExisting();
 			void projectAddExisting(QStringList files);
 			void projectRenameFile();
