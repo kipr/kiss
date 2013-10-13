@@ -1,3 +1,4 @@
 add_subdirectory(my_computer)
 add_subdirectory(kovan)
 add_subdirectory(kovan_serial)
+add_subdirectory(my_ks2)

@@ -22,17 +22,37 @@ QList<QString> ApplicationFinder::applicationPath(const QString &name) const
 ApplicationFinder ApplicationFinder::platform()
 {
     ApplicationFinder finder;
-    QDir c(QDir::current());
+    
 #ifdef Q_OS_MAC
-    finder.addApplicationPath("computer", "/Applications/computer.app/Contents/MacOS/computer");
-    c.cdUp();
-    c.cdUp();
-    finder.addApplicationPath("computer", c.absoluteFilePath("computer.app/Contents/MacOS/computer"));
-    c.cdUp();
-    finder.addApplicationPath("computer", c.absoluteFilePath("computer.app/Contents/MacOS/computer"));
+    {
+      finder.addApplicationPath("computer", "/Applications/computer.app/Contents/MacOS/computer");
+      QDir c(QDir::current());
+      c.cdUp();
+      c.cdUp();
+      finder.addApplicationPath("computer", c.absoluteFilePath("computer.app/Contents/MacOS/computer"));
+      c.cdUp();
+      finder.addApplicationPath("computer", c.absoluteFilePath("computer.app/Contents/MacOS/computer"));
+    }
+    {
+      finder.addApplicationPath("ks2", "/Applications/ks2.app/Contents/MacOS/ks2");
+      QDir c(QDir::current());
+      c.cdUp();
+      c.cdUp();
+      finder.addApplicationPath("ks2", c.absoluteFilePath("ks2.app/Contents/MacOS/ks2"));
+      c.cdUp();
+      finder.addApplicationPath("ks2", c.absoluteFilePath("ks2.app/Contents/MacOS/ks2"));
+    }
 #elif defined(Q_OS_WIN)
-    c.cdUp();
-    finder.addApplicationPath("computer", c.absoluteFilePath("computer/computer.exe"));
+    {
+      QDir c(QDir::current());
+      c.cdUp();
+      finder.addApplicationPath("computer", c.absoluteFilePath("computer/computer.exe"));
+    }
+    {
+      QDir c(QDir::current());
+      c.cdUp();
+      finder.addApplicationPath("ks2", c.absoluteFilePath("ks2/ks2.exe"));
+    }
 #endif
     return finder;
 }

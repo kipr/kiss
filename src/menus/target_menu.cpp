@@ -78,9 +78,10 @@ void TargetMenu::update()
   
   {
     kiss::widget::MainWindow *window = qobject_cast<kiss::widget::MainWindow *>(active());
-    const project::ProjectPtr project = window->projectManager()->activeProject();
+    project::Manager *manager = window->projectManager();
+    const project::ProjectPtr project = manager->activeProject();
     QString extra;
-    if(!project.isNull()) {
+    if(!project.isNull() && manager->projects().size() != 1) {
       const QString &name = project->name();
       const int size = name.length();
       const static int maxSize = 8;

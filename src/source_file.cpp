@@ -722,7 +722,7 @@ const QString &SourceFile::name() const
 QString SourceFile::fullName() const
 {
 	if(!hasProject()) return m_name;
-	return m_name + " (" + project()->name() + ")";
+	return m_name + " | " + project()->name();
 }
 
 const QString &SourceFile::templateExt() const

@@ -856,7 +856,8 @@ void MainWindow::projectOpenSettings(const project::ProjectPtr &project)
 
 void MainWindow::projectSetActive()
 {
-	m_projectManager.setActiveProject(m_projectsModel.project(ui_projects->currentIndex()));
+  m_projectManager.setActiveProject(m_projectsModel.project(ui_projects->currentIndex()));
+  emit updateActivatable();
 }
 
 void MainWindow::showProjectDock(bool show)
