@@ -47,7 +47,7 @@ namespace kiss
 
 		private slots:
 			void scanStarted();
-			void found(const Advert &ad, const sockaddr_in& addr);
+			void found(const Advert &ad, const sockaddr_in addr);
 
 		private:
 			UdpAdvertiser *m_advertiser;

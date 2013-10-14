@@ -22,7 +22,7 @@ kiss::target::TargetPtr MyKs2Interface::createTarget(const QString &address)
 const bool MyKs2Interface::scan(kiss::target::InterfaceResponder *responder)
 {
     responder->targetScanStarted(this);
-    TcpSerial *serial = new TcpSerial("127.0.0.1", KOVAN_SERIAL_PORT);
+    TcpSerial *serial = new TcpSerial("127.0.0.1", KOVAN_SERIAL_PORT + 1);
     KovanProtoTarget *proto = new KovanProtoTarget(serial, this);
     proto->fillDisplayName("My Link Simulator");
     proto->fillCommPort("localhost");
