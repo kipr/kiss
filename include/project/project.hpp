@@ -23,6 +23,8 @@ namespace kiss
 		class Project
 		{
 		public:
+      virtual ~Project();
+      
 			static ProjectPtr load(const QString &location);
 			bool save();
 
@@ -56,7 +58,7 @@ namespace kiss
 			void setName(const QString &name);
 			const QString &name() const;
 	
-			const QString &location() const;			
+			const QString &location() const;
 			virtual KarPtr archive() const;
 			
 		private:

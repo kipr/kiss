@@ -11,6 +11,11 @@
 using namespace kiss;
 using namespace kiss::project;
 
+Project::~Project()
+{
+  
+}
+
 ProjectPtr kiss::project::Project::load(const QString &location)
 {
 	if(!QFileInfo(location).isDir()) return ProjectPtr();
