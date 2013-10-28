@@ -476,7 +476,7 @@ void MainWindow::open()
 	QString filePath = FileUtils::getOpenFileName(this, tr("Open"), filters.join(";;") + ";;All Files (*)");
 	if(filePath.isEmpty()) return;
 
-	const QString &suffix = QFileInfo(filePath).completeSuffix();
+	const QString &suffix = QFileInfo(filePath).suffix();
 	if(suffix == "pack") {
 		addTab(new TemplateTab(filePath, this));
 		return;
