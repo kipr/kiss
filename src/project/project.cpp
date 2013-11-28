@@ -84,7 +84,7 @@ const bool kiss::project::Project::run() const
 		return true;
 }
 
-bool kiss::project::Project::addAsCopy(const QString &path)
+bool kiss::project::Project::addFileAsCopy(const QString &path)
 {
 	QFileInfo info(path);
 	if(!info.isFile()) return false;
@@ -92,9 +92,9 @@ bool kiss::project::Project::addAsCopy(const QString &path)
 	return QFile::copy(path, m_location + "/" + info.fileName());
 }
 
-bool kiss::project::Project::addAsMovedCopy(const QString &path)
+bool kiss::project::Project::addFileAsMovedCopy(const QString &path)
 {
-	return (addAsCopy(path) && QFile::remove(path));
+	return (addFileAsCopy(path) && QFile::remove(path));
 }
 
 bool kiss::project::Project::removeFile(const QString &path)
@@ -114,7 +114,7 @@ QStringList kiss::project::Project::files() const
 	return ret;
 }
 
-bool kiss::project::Project::addAsLink(const QString &path)
+bool kiss::project::Project::addFileAsLink(const QString &path)
 {
 	QStringList linksList = links();
 	QDir projectDir(m_location);
@@ -135,9 +135,9 @@ bool kiss::project::Project::addAsLink(const QString &path)
 	return true;
 }
 
-bool kiss::project::Project::addAsRelativeLink(const QString &path)
+bool kiss::project::Project::addFileAsRelativeLink(const QString &path)
 {
-	return addAsLink(FileUtils::relativePath(path, QDir(m_location)));
+	return addFileAsLink(FileUtils::relativePath(path, QDir(m_location)));
 }
 
 bool kiss::project::Project::removeLink(const QString &path)

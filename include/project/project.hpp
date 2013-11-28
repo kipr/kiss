@@ -32,13 +32,13 @@ namespace kiss
 			const bool compile() const;
 			const bool run() const;
 
-			bool addAsCopy(const QString &path);
-			bool addAsMovedCopy(const QString &path);
+			bool addFileAsCopy(const QString &path);
+			bool addFileAsMovedCopy(const QString &path);
 			bool removeFile(const QString &path);
 			QStringList files() const;
 
-			bool addAsLink(const QString &path);
-			bool addAsRelativeLink(const QString &path);
+			bool addFileAsLink(const QString &path);
+			bool addFileAsRelativeLink(const QString &path);
 			bool removeLink(const QString &path);
 			QStringList links() const;
 			const QString linksFilePath() const;

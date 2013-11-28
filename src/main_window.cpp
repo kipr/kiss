@@ -25,7 +25,6 @@
 #include "target_dialog.hpp"
 #include "menus.hpp"
 #include "project.hpp"
-#include "project_settings.hpp"
 #include "log.hpp"
 // Used to query supported extensions
 #include "lexer_factory.hpp"
@@ -39,7 +38,7 @@
 #include "file_utils.hpp"
 #include "password_dialog.hpp"
 #include "add_to_project_dialog.hpp"
-#include "project_dep_dialog.hpp"
+#include "project_settings_dialog.hpp"
 
 #include "system_utils.hpp"
 
@@ -339,7 +338,6 @@ void MainWindow::initMenus()
 	m_projectContextMenu->addAction(tr("Add Existing Files..."), this, SLOT(projectAddExisting()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(tr("Set Active"), this, SLOT(projectSetActive()));
-	m_projectContextMenu->addAction(tr("Project Dependencies"), this, SLOT(projectOpenDependencies()));
 	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(projectOpenSettings()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(tr("Close Project"), this, SLOT(closeProject()));
@@ -747,16 +745,16 @@ void MainWindow::projectAddExisting(QStringList files)
 	if(dialog.exec() != QDialog::Accepted) return;
 	switch(dialog.type()) {
 		case AddToProjectDialog::Move:
-			foreach(QString file, files) project->addAsMovedCopy(file);
+			foreach(QString file, files) project->addFileAsMovedCopy(file);
 			break;
 		case AddToProjectDialog::Copy:
-			foreach(QString file, files) project->addAsCopy(file);
+			foreach(QString file, files) project->addFileAsCopy(file);
 			break;
 		case AddToProjectDialog::AbsoluteReference:
-			foreach(QString file, files) project->addAsLink(file);
+			foreach(QString file, files) project->addFileAsLink(file);
 			break;
 		case AddToProjectDialog::RelativeReference:
-			foreach(QString file, files) project->addAsRelativeLink(file);
+			foreach(QString file, files) project->addFileAsRelativeLink(file);
 			break;
 		default:
 			return;
@@ -821,37 +819,20 @@ void MainWindow::deleteProject()
 	if(!FileUtils::remove(project->location())) qWarning() << "Failed to delete project at " << project->location();
 }
 
-void MainWindow::projectOpenDependencies()
+void MainWindow::projectOpenSettings()
 {
 	const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
 
-	dialog::ProjectDepDialog dialog(project->dependencies(), this);
-	dialog.setWindowTitle(tr(QString("Dependencies for " + project->name()).toStdString().c_str()));
+	dialog::ProjectSettingsDialog dialog(project, this);
+	dialog.setWindowTitle(tr(QString("Settings for " + project->name()).toStdString().c_str()));
 	dialog.exec();
 
-	const QStringList &names = dialog.names();
-	if(names.isEmpty()) project->removeSetting(DEPS_SETTING);
-	else project->setSetting(DEPS_SETTING, names.join(" "));
-	project->setDependencies(dialog.paths());
-}
-
-void MainWindow::projectOpenSettings()
-{
-	projectOpenSettings(m_projectsModel.project(ui_projects->currentIndex()));
-}
-
-void MainWindow::projectOpenSettings(const project::ProjectPtr &project)
-{
-	for(int i = 0; i < ui_tabWidget->count(); ++i) {
-		ProjectSettings *tab = dynamic_cast<ProjectSettings*>(ui_tabWidget->widget(i));
-		if(tab && tab->project() == project) {
-			ui_tabWidget->setCurrentIndex(i);
-			on_ui_tabWidget_currentChanged(i);
-			return;
-		}
-	}
-
-	addTab(new ProjectSettings(project, this));
+	const QStringList &depNames = dialog.depNames();
+	if(depNames.isEmpty()) project->removeSetting(DEPS_SETTING);
+	else project->setSetting(DEPS_SETTING, depNames.join(" "));
+	project->setDependencies(dialog.depPaths());
+	
+	project->setSettings(dialog.compilerSettings());
 }
 
 void MainWindow::projectSetActive()
