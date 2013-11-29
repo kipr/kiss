@@ -31,9 +31,6 @@ namespace kiss
 
 		private:
 			void addDep(const QString &fullPath);
-
-			QPushButton *ui_buttonAdd;
-			QPushButton *ui_buttonRemove;
 		};
 	}
 }

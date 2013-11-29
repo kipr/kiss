@@ -11,8 +11,6 @@ ProjectSettingsDialog::ProjectSettingsDialog(project::ProjectPtr project, QWidge
 
 	connect(ui_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(ui_listContents, SIGNAL(currentRowChanged(int)), ui_stackedWidget, SLOT(setCurrentIndex(int)));
-	//connect(ui_buttonAddDep, SIGNAL(clicked()), this, SLOT(addDep()));
-	//connect(ui_buttonRemoveDep, SIGNAL(clicked()), this, SLOT(removeDep()));
 
 	foreach(const QString &dep, project->dependencies()) addDep(dep);
 	
@@ -66,7 +64,7 @@ void ProjectSettingsDialog::addDep(const QString &dirPath)
 	const QString &name = QDir(dirPath).dirName();
 
 	const int &pos = ui_tableDeps->rowCount();
-	ui_tableDeps->insertRow(ui_tableDeps->rowCount());
+	ui_tableDeps->insertRow(pos);
 	ui_tableDeps->setItem(pos, 0, new QTableWidgetItem(name));
 	ui_tableDeps->setItem(pos, 1, new QTableWidgetItem(dirPath));
 }
@@ -90,8 +88,5 @@ void ProjectSettingsDialog::on_ui_buttonAddSetting_clicked()
 
 void ProjectSettingsDialog::on_ui_buttonRemoveSetting_clicked()
 {
-	int row = ui_tableCompile->currentRow();
-	QTableWidgetItem *key = ui_tableCompile->item(row, 0);
-	QString keyString = key ? key->text() : "";
-	ui_tableCompile->removeRow(row);
+	ui_tableCompile->removeRow(ui_tableCompile->currentRow());
 }
