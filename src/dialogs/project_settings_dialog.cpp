@@ -1,5 +1,6 @@
 #include "project_settings_dialog.hpp"
 #include "ui_ProjectSettingsDialog.h"
+#include "compiler_flag_dialog.hpp"
 #include "file_utils.hpp"
 
 using namespace kiss;
@@ -83,6 +84,20 @@ void ProjectSettingsDialog::addDep(const QString &dirPath)
 	ui_tableDeps->setItem(pos, 1, new QTableWidgetItem(dirPath));
 }
 
+void ProjectSettingsDialog::editCompilerFlag(int row)
+{
+	if(row < 0) return;
+	
+	QTableWidgetItem *item1 = ui_tableCompile->item(row, 0);
+	QTableWidgetItem *item2 = ui_tableCompile->item(row, 1);
+	
+	CompilerFlagDialog dialog(this, item1->text(), item2->text());
+	if(dialog.exec() == QDialog::Rejected) return;
+	
+	item1->setText(dialog.flag());
+	item2->setText(dialog.value());
+}
+
 void ProjectSettingsDialog::on_ui_buttonAddDep_clicked()
 {
 	const QString &fullPath = FileUtils::getOpenFileName(this, tr("Add Dependency"), tr("KISS Projects (*.kissproj)"));
@@ -97,10 +112,26 @@ void ProjectSettingsDialog::on_ui_buttonRemoveDep_clicked()
 
 void ProjectSettingsDialog::on_ui_buttonAddSetting_clicked()
 {
-	ui_tableCompile->insertRow(ui_tableCompile->rowCount());
+	CompilerFlagDialog dialog(this);
+	if(dialog.exec() == QDialog::Rejected) return;
+	
+	const int row = ui_tableCompile->rowCount();
+	ui_tableCompile->insertRow(row);
+	ui_tableCompile->setItem(row, 0, new QTableWidgetItem(dialog.flag()));
+	ui_tableCompile->setItem(row, 1, new QTableWidgetItem(dialog.value()));
+}
+
+void ProjectSettingsDialog::on_ui_buttonEditSetting_clicked()
+{
+	editCompilerFlag(ui_tableCompile->currentRow());
 }
 
 void ProjectSettingsDialog::on_ui_buttonRemoveSetting_clicked()
 {
 	ui_tableCompile->removeRow(ui_tableCompile->currentRow());
+}
+
+void ProjectSettingsDialog::on_ui_tableCompile_cellDoubleClicked(int row, int column)
+{
+	editCompilerFlag(row);
 }

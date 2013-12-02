@@ -54,6 +54,9 @@
             <layout class="QVBoxLayout" name="verticalLayout_4">
              <item>
               <widget class="QTableWidget" name="ui_tableCompile">
+               <property name="editTriggers">
+                <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
                <property name="selectionMode">
                 <enum>QAbstractItemView::SingleSelection</enum>
                </property>
@@ -90,6 +93,13 @@
                 <widget class="QPushButton" name="ui_buttonAddSetting">
                  <property name="text">
                   <string>Add</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="ui_buttonEditSetting">
+                 <property name="text">
+                  <string>Edit</string>
                  </property>
                 </widget>
                </item>
