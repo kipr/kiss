@@ -151,8 +151,8 @@ Section Uninstall
 	Delete "$INSTDIR\uninstall.exe"
 
 	; Delete start menu entires and desktop shortcuts
-	Delete "$SMPROGRAMS\${APP_NAME_AND_VERSION}\${APP_NAME_AND_VERSION}.lnk"
-	Delete "$DESKTOP\${APP_NAME_AND_VERSION}.lnk"
+	Delete "$DESKTOP\KISS IDE ${VERSION}.lnk"
+	Delete "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION}.lnk"
 	RMDir  "$SMPROGRAMS\${APP_NAME_AND_VERSION}"
 
 	; Delete the entire install directory
