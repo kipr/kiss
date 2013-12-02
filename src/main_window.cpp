@@ -827,7 +827,7 @@ void MainWindow::projectOpenSettings()
 	const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
 
 	dialog::ProjectSettingsDialog dialog(project, this);
-	dialog.setWindowTitle(tr(QString("Settings for " + project->name()).toStdString().c_str()));
+	dialog.setWindowTitle(tr(QString("Project Settings for " + project->name()).toStdString().c_str()));
 	dialog.exec();
 
 	project->setDeps(dialog.depPaths());
