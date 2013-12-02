@@ -265,7 +265,7 @@
              <item>
               <widget class="QCheckBox" name="ui_boxAutoDep">
                <property name="text">
-                <string>Compile dependencies automatically</string>
+                <string>Download/compile dependencies automatically</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
