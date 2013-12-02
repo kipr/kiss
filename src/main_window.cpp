@@ -169,9 +169,12 @@ project::ProjectPtr MainWindow::newProject()
 			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 		if(ret == QMessageBox::No) return project::ProjectPtr();
 	}
-	
+		
   project::ProjectPtr ret = newProject(saveLocation);
   if(ret.isNull()) return ret;
+  
+  ret->setAutoCompileDeps(true);
+  ret->setCompileLib(false);
   
   // Prompt the user to add a new file to their empty project
   {
@@ -827,12 +830,10 @@ void MainWindow::projectOpenSettings()
 	dialog.setWindowTitle(tr(QString("Settings for " + project->name()).toStdString().c_str()));
 	dialog.exec();
 
-	const QStringList &depNames = dialog.depNames();
-	if(depNames.isEmpty()) project->removeSetting(DEPS_SETTING);
-	else project->setSetting(DEPS_SETTING, depNames.join(" "));
-	project->setDependencies(dialog.depPaths());
-	
-	project->setSettings(dialog.compilerSettings());
+	project->setDeps(dialog.depPaths());
+	project->setCompilerFlags(dialog.compilerFlags());
+	project->setCompileLib(dialog.compileLib());
+	project->setAutoCompileDeps(dialog.autoCompileDeps());
 }
 
 void MainWindow::projectSetActive()

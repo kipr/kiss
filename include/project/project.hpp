@@ -8,14 +8,13 @@
 #include <QSharedPointer>
 
 #define PROJECT_EXT "kissproj"
-#define LINKS_EXT "links"
-#define DEPS_EXT "deps"
-#define DEPS_SETTING "PROJECT_DEPS"
+#define KEY_LINKS "LINKS"
+#define KEY_AUTO_COMPILE_DEPS "AUTO_COMPILE_DEPS"
 
 namespace kiss
 {
 	namespace project
-	{
+	{	
 		class Project;
 		
 		typedef QSharedPointer<Project> ProjectPtr;
@@ -23,7 +22,7 @@ namespace kiss
 		class Project
 		{
 		public:
-      virtual ~Project();
+			virtual ~Project();
       
 			static ProjectPtr load(const QString &location);
 			bool save();
@@ -41,33 +40,40 @@ namespace kiss
 			bool addFileAsRelativeLink(const QString &path);
 			bool removeLink(const QString &path);
 			QStringList links() const;
-			const QString linksFilePath() const;
+			
+			void setDeps(const QStringList &deps);
+			QStringList deps() const;
+			
+			void setAutoCompileDeps(bool autoCompileDeps);
+			bool autoCompileDeps() const;
 	
-			void setSetting(const QString &key, const QString &value);
-			void setSettings(const Compiler::Options &settings);
-			void removeSetting(const QString &key);
-			const Compiler::Options &settings() const;
-
-			void setDependencies(const QStringList &deps);
-			QStringList dependencies() const;
-			const QString dependenciesFilePath() const;
-
+			void setCompilerFlag(const QString &flag, const QString &value);
+			void setCompilerFlags(const Compiler::Options &flags);
+			void removeCompilerFlag(const QString &flag);
+			const Compiler::Options compilerFlags() const;
+			
+			void setCompileLib(bool lib);
+			bool compileLib() const;
+			
 			void setTarget(const target::TargetPtr &target);
 			target::TargetPtr target() const;
 
 			void setName(const QString &name);
 			const QString &name() const;
+			const QString &projectFilename() const;
 	
 			const QString &location() const;
 			virtual KarPtr archive() const;
 			
 		private:
 			Project(const QString &location);
+			QStringList reservedKeys() const;
 	
 			QString m_name;
 			QString m_location;
+			QString m_projectFilename;
 			target::TargetPtr m_target;
-			Compiler::Options m_settings;
+			Compiler::Options m_options;
 		};
 	}
 }

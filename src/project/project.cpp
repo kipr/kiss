@@ -24,23 +24,24 @@ ProjectPtr kiss::project::Project::load(const QString &location)
 
 bool kiss::project::Project::save()
 {
-	QDir dir(m_location);
-	return m_settings.save(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
+	return m_options.save(m_projectFilename);
 }
 
 const bool kiss::project::Project::download() const
 {
 	using namespace kiss::target;
 
-	const QStringList &depsList = dependencies();
-	foreach(const QString &dep, depsList) {
-		const ProjectPtr &depProject = project::Project::load(dep);
-		if(!depProject) {
-			qDebug() << "ERROR: failed to open dependency" << dep << "for download";
-			return false;
+	if(autoCompileDeps()) {
+		const QStringList &depsList = deps();
+		foreach(const QString &dep, depsList) {
+			const ProjectPtr &depProject = project::Project::load(dep);
+			if(!depProject) {
+				qDebug() << "ERROR: failed to open dependency" << dep << "for download";
+				return false;
+			}
+			depProject->setTarget(m_target);
+			depProject->download();
 		}
-		depProject->setTarget(m_target);
-		depProject->download();
 	}
 
 	kiss::KarPtr package = archive();
@@ -57,17 +58,19 @@ const bool kiss::project::Project::compile() const
 {
 	using namespace kiss::target;
 
-	const QStringList &depsList = dependencies();
-	foreach(const QString &dep, depsList) {
-		const ProjectPtr &depProject = project::Project::load(dep);
-		if(!depProject) {
-			qDebug() << "ERROR: failed to open dependency" << dep << "for compilation";
-			return false;
+	if(autoCompileDeps()) {
+		const QStringList &depsList = deps();
+		foreach(const QString &dep, depsList) {
+			const ProjectPtr &depProject = project::Project::load(dep);
+			if(!depProject) {
+				qDebug() << "ERROR: failed to open dependency" << dep << "for compilation";
+				return false;
+			}
+			depProject->setCompileLib(true);
+			depProject->setCompilerFlag("LIBRARY_NAME", depProject->name());
+			depProject->setTarget(m_target);
+			depProject->compile();
 		}
-		depProject->setSetting("TERMINAL_TYPE", "LIBRARY");
-		depProject->setSetting("LIBRARY_NAME", depProject->name());
-		depProject->setTarget(m_target);
-		depProject->compile();
 	}
 
 	CommunicationManager::ref().admit(CommunicationEntryPtr(
@@ -122,15 +125,11 @@ bool kiss::project::Project::addFileAsLink(const QString &path)
 	const QString &relPath = FileUtils::relativePath(path, projectDir);
 	if(!projectDir.exists(path) || linksList.contains(absPath) ||
 		linksList.contains(relPath)) return false;
-
-	QFile linkFile(linksFilePath());
-	if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
-		qWarning() << "Failed to open links file for project!";
-		return false;
-	}
-	QTextStream out(&linkFile);
-	out << path << "\n";
-	linkFile.close();
+	
+	QStringList links = m_options.value(KEY_LINKS).toStringList();
+	links << path;
+	m_options.insert(KEY_LINKS, links);
+	save();
 
 	return true;
 }
@@ -142,100 +141,92 @@ bool kiss::project::Project::addFileAsRelativeLink(const QString &path)
 
 bool kiss::project::Project::removeLink(const QString &path)
 {
-	QStringList linksList = links();
 	QDir projectDir(m_location);
 	if(!projectDir.exists(path)) return false;
 
 	const QString &absPath = FileUtils::absolutePath(path, projectDir);
 	const QString &relPath = FileUtils::relativePath(path, projectDir);
-	if(!linksList.removeOne(absPath) && !linksList.removeOne(relPath)) return false;
+	
+	QStringList links = m_options.value(KEY_LINKS).toStringList();
+	const bool ret1 = links.removeOne(absPath);
+	const bool ret2 = links.removeOne(relPath);
+	m_options.insert(KEY_LINKS, links);
+	
+	save();
 
-	QFile linkFile(linksFilePath());
-	if (!linkFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
-		qWarning() << "Failed to open links file for project!";
-		return false;
-	}
-	QTextStream out(&linkFile);
-	foreach(const QString &entry, linksList) out << entry << "\n";
-	linkFile.close();
-
-	return true;
+	return (ret1 || ret2);
 }
 
 QStringList kiss::project::Project::links() const
+{	
+	return m_options.value(KEY_LINKS).toStringList();
+}
+
+void kiss::project::Project::setDeps(const QStringList &deps)
 {
-	QStringList list;
+	m_options.insert(KEY_DEPS, deps);
+	save();
+}
+
+QStringList kiss::project::Project::deps() const
+{	
+	return m_options.value(KEY_DEPS).toStringList();
+}
+
+void kiss::project::Project::setAutoCompileDeps(bool autoCompileDeps)
+{
+	m_options.insert(KEY_AUTO_COMPILE_DEPS, autoCompileDeps);
+	save();
+}
+
+bool kiss::project::Project::autoCompileDeps() const
+{
+	return m_options.value(KEY_AUTO_COMPILE_DEPS).toBool();
+}
+
+void kiss::project::Project::setCompilerFlag(const QString &flag, const QString &value)
+{
+	m_options.insert(flag, value);
+	save();
+}
+
+void kiss::project::Project::setCompilerFlags(const Compiler::Options &flags)
+{
+	const QStringList reserved = reservedKeys();
+	foreach(const QString &key, m_options.keys()) {
+		if(reserved.contains(key)) continue;
+		m_options.remove(key);
+	}
 	
-	QFile linkFile(linksFilePath());
-	if(linkFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QTextStream in(&linkFile);
-		while(!in.atEnd()) list << in.readLine();
-		linkFile.close();
-	}
-
-	return list;
-}
-
-const QString kiss::project::Project::linksFilePath() const
-{
-	const QDir dir(m_location);
-	return dir.absoluteFilePath(dir.dirName() + "." + LINKS_EXT);
-}
-
-void kiss::project::Project::setSetting(const QString &key, const QString &value)
-{
-	m_settings[key] = value;
+	foreach(const QString &key, flags.keys()) m_options.insert(key, flags.value(key));
+	
 	save();
 }
 
-void kiss::project::Project::setSettings(const Compiler::Options &settings)
+void kiss::project::Project::removeCompilerFlag(const QString &flag)
 {
-	m_settings = settings;
+	m_options.remove(flag);
 	save();
 }
 
-void kiss::project::Project::removeSetting(const QString &key)
+const Compiler::Options kiss::project::Project::compilerFlags() const
 {
-	m_settings.remove(key);
+	Compiler::Options ret = m_options;
+	const QStringList reserved = reservedKeys();
+	foreach(const QString &key, ret.keys()) if(reserved.contains(key)) ret.remove(key);
+	
+	return ret;
+}
+
+void kiss::project::Project::setCompileLib(bool lib)
+{
+	m_options.insert(KEY_COMPILE_LIB, lib);
 	save();
 }
 
-const Compiler::Options &kiss::project::Project::settings() const
+bool kiss::project::Project::compileLib() const
 {
-	return m_settings;
-}
-
-void kiss::project::Project::setDependencies(const QStringList &deps)
-{
-	QFile depsFile(dependenciesFilePath());
-	if (!depsFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		qWarning() << "Failed to open deps file for project!";
-		return;
-	}
-	QTextStream out(&depsFile);
-	foreach(const QString &dep, deps) out << dep << endl;
-	depsFile.close();
-}
-
-QStringList kiss::project::Project::dependencies() const
-{
-	QStringList list;
-	QFile depsFile(dependenciesFilePath());
-	if (!depsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		qWarning() << "Failed to open deps file for project!";
-		return QStringList();
-	}
-	QTextStream in(&depsFile);
-	while(!in.atEnd()) list << in.readLine();
-	depsFile.close();
-
-	return list;
-}
-
-const QString kiss::project::Project::dependenciesFilePath() const
-{
-	const QDir dir(m_location);
-	return dir.absoluteFilePath(dir.dirName() + "." + DEPS_EXT);
+	return m_options.value(KEY_COMPILE_LIB).toBool();
 }
 
 void kiss::project::Project::setTarget(const target::TargetPtr &target)
@@ -258,6 +249,11 @@ const QString &kiss::project::Project::name() const
 	return m_name;
 }
 
+const QString &kiss::project::Project::projectFilename() const
+{
+	return m_projectFilename;
+}
+
 const QString &kiss::project::Project::location() const
 {
 	return m_location;
@@ -270,7 +266,6 @@ kiss::KarPtr kiss::project::Project::archive() const
 	foreach(const QString &path, paths) {
 		QFile file(path);
 		QFileInfo fileInfo(file);
-		if(fileInfo.suffix() == LINKS_EXT) continue;
 		if(file.open(QIODevice::ReadOnly)) {
 			QString fileName = fileInfo.fileName();
 			if(fileInfo.suffix() == PROJECT_EXT) {
@@ -289,22 +284,16 @@ kiss::project::Project::Project(const QString &location)
 {
 	m_name = QFileInfo(m_location).fileName();
 
-	QDir dir(m_location);
-	m_settings = Compiler::Options::load(dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT));
-	m_settings.insert("", "");
+	QDir dir(location);
+	m_projectFilename = dir.absoluteFilePath(dir.dirName() + "." + PROJECT_EXT);
+	m_options = Compiler::Options::load(m_projectFilename);
+	m_options.insert("", "");
 	save();
-	m_settings.remove("");
+	m_options.remove("");
 	save();
+}
 
-	QFile linksFile(linksFilePath());
-	if(!linksFile.exists()) {
-		if(linksFile.open(QIODevice::WriteOnly)) linksFile.close();
-		else qDebug() << "Failed to create" << linksFilePath();
-	}
-
-	QFile depsFile(dependenciesFilePath());
-	if(!depsFile.exists()) {
-		if(depsFile.open(QIODevice::WriteOnly)) depsFile.close();
-		else qDebug() << "Failed to create" << dependenciesFilePath();
-	}
+QStringList kiss::project::Project::reservedKeys() const
+{
+	return QStringList() << KEY_DEPS << KEY_LINKS << KEY_AUTO_COMPILE_DEPS << KEY_COMPILE_LIB;
 }

@@ -60,9 +60,6 @@
                <property name="selectionBehavior">
                 <enum>QAbstractItemView::SelectRows</enum>
                </property>
-               <property name="rowCount">
-                <number>3</number>
-               </property>
                <attribute name="horizontalHeaderDefaultSectionSize">
                 <number>150</number>
                </attribute>
@@ -75,9 +72,6 @@
                <attribute name="verticalHeaderVisible">
                 <bool>false</bool>
                </attribute>
-               <row/>
-               <row/>
-               <row/>
                <column>
                 <property name="text">
                  <string>Key</string>

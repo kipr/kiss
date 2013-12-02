@@ -2,6 +2,7 @@
 #include "ui_ProjectSettingsDialog.h"
 #include "file_utils.hpp"
 
+using namespace kiss;
 using namespace kiss::dialog;
 
 ProjectSettingsDialog::ProjectSettingsDialog(project::ProjectPtr project, QWidget *parent) :
@@ -12,17 +13,20 @@ ProjectSettingsDialog::ProjectSettingsDialog(project::ProjectPtr project, QWidge
 	connect(ui_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(ui_listContents, SIGNAL(currentRowChanged(int)), ui_stackedWidget, SLOT(setCurrentIndex(int)));
 
-	foreach(const QString &dep, project->dependencies()) addDep(dep);
+	foreach(const QString &dep, project->deps()) addDep(dep);
 	
-	const Compiler::Options &settings = project->settings();
-	ui_tableCompile->setRowCount(settings.keys().size());
+	const Compiler::Options &flags = project->compilerFlags();
+	ui_tableCompile->setRowCount(flags.keys().size());
 	quint16 i = 0;
-	foreach(const QString &key, settings.keys()) {
+	foreach(const QString &key, flags.keys()) {
 		ui_tableCompile->setItem(i, 0, new QTableWidgetItem(key));
-		ui_tableCompile->setItem(i, 1, new QTableWidgetItem(settings[key]));
+		ui_tableCompile->setItem(i, 1, new QTableWidgetItem(flags[key].toString()));
 		++i;
 	}
-
+	
+	ui_buttonLibrary->setChecked(project->compileLib());
+	
+	ui_boxAutoDep->setChecked(project->autoCompileDeps());
 }
 
 ProjectSettingsDialog::~ProjectSettingsDialog()
@@ -49,7 +53,7 @@ QStringList ProjectSettingsDialog::depPaths()
 	return list;
 }
 
-Compiler::Options ProjectSettingsDialog::compilerSettings()
+Compiler::Options ProjectSettingsDialog::compilerFlags()
 {
 	Compiler::Options ret;
 	for(int row = 0; row < ui_tableCompile->rowCount(); ++row) {
@@ -57,6 +61,16 @@ Compiler::Options ProjectSettingsDialog::compilerSettings()
 	}
 	
 	return ret;
+}
+
+bool ProjectSettingsDialog::compileLib()
+{
+	return ui_buttonLibrary->isChecked();
+}
+
+bool ProjectSettingsDialog::autoCompileDeps()
+{
+	return ui_boxAutoDep->isChecked();
 }
 
 void ProjectSettingsDialog::addDep(const QString &dirPath)

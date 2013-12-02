@@ -21,7 +21,9 @@ namespace kiss
 
 			QStringList depNames();
 			QStringList depPaths();
-			Compiler::Options compilerSettings();
+			Compiler::Options compilerFlags();
+			bool compileLib();
+			bool autoCompileDeps();
 
 		private slots:
 			void on_ui_buttonAddDep_clicked();

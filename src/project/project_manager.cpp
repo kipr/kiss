@@ -61,5 +61,5 @@ const ProjectPtrList &Manager::projects() const
 
 const QStringList Manager::hiddenExtensions()
 {
-	return QStringList() << PROJECT_EXT << LINKS_EXT << DEPS_EXT;
+	return QStringList() << PROJECT_EXT;
 }
