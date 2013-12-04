@@ -44,6 +44,7 @@ void NewProjectDialog::on_ui_browse_clicked()
 
 void NewProjectDialog::on_ui_projectName_textChanged(const QString&)
 {
+  ui_buttonBox->button(QDialogButtonBox::Ok)->setEnabled(!projectName().isEmpty());
 	updateSaveLocation();
 }
 
