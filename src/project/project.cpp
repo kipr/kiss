@@ -276,7 +276,7 @@ kiss::KarPtr kiss::project::Project::archive() const
 			file.close();
 		}
     // TODO: Make filePath valid dir chars
-		archive->addFile(filePath, file.readAll());
+		archive->addFile(path, file.readAll());
 		file.close();
 	}
 	return archive;

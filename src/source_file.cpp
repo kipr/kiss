@@ -45,6 +45,7 @@
 #include <QDebug>
 #include <math.h>
 #include <scintex/line_numbers_view.hpp>
+#include <scintex/basic_input_controller.hpp>
 
 #include <memory>
 
@@ -62,6 +63,10 @@ SourceFile::SourceFile(MainWindow *parent)
 {
   ui->setupUi(this);
   ui->find->setSourceFile(this);
+  ui->editor->addMarginView(scintex::TextView::Left, new scintex::LineNumbersView);
+  ui->editor->setInputController(new scintex::BasicInputController);
+  ui->editor->setFont(QFont("Menlo", 12));
+  ui->editor->setTextMargins(QMargins(5, 5, 5, 5));
   ui->editor->setModel(&_model);
   
   // ui_editor->setEolMode(QsciScintilla::EolUnix);
@@ -177,6 +182,7 @@ bool SourceFile::fileOpen(const QString &filePath)
 
   QTextStream fileStream(&fileHandle);
   _model.setBacking(fileStream.readAll());
+  qDebug() << "Model setBacking";
   fileHandle.close();
 
 	updateLexer();
