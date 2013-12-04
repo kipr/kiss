@@ -11,7 +11,7 @@ bool SystemUtils::supportsMoveToTrash()
 
 bool SystemUtils::moveToTrash(const QString &path)
 {
-  NSString *fullPath = [[NSString stringWithCString:path.toAscii() encoding:NSASCIIStringEncoding] autorelease];
+  NSString *fullPath = [[NSString stringWithCString:path.toUtf8() encoding:NSASCIIStringEncoding] autorelease];
   return [[NSWorkspace sharedWorkspace] performFileOperation:NSWorkspaceRecycleOperation 
                                  source:[fullPath stringByDeletingLastPathComponent]
                                  destination:@""

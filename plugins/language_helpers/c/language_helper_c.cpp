@@ -81,4 +81,3 @@ Compiler::OutputList LanguageHelperC::preprocess(const kiss::KarPtr &archive, co
 	return out;
 }
 
-Q_EXPORT_PLUGIN2(language_helper_c, kiss::LanguageHelperC);

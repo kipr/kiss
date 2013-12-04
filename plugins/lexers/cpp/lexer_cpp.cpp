@@ -170,4 +170,4 @@ const bool CPP::cStyleBlocks() const
 	return true;
 }
 
-Q_EXPORT_PLUGIN2(cpp_lexer, kiss::lexer::ConstructorCPP); 
+

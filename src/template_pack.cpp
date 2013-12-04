@@ -141,7 +141,7 @@ QString Pack::description() const
 bool Pack::setLexer(const QString &path, const QString &lexer)
 {
 	if(!hasFile(path)) return false;
-	m_archive->setFile(path + LEXER_SUFFIX, lexer.toAscii());
+	m_archive->setFile(path + LEXER_SUFFIX, lexer.toUtf8());
 	return true;
 }
 

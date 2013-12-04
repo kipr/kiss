@@ -4,9 +4,7 @@
 #include <QtPlugin>
 #include <QRunnable>
 #include <QList>
-#include <QHostAddress>
 #include "interface.hpp"
-#include <kovanserial/udp_advertiser.hpp>
 
 class UdpAdvertiser;
 
@@ -29,6 +27,7 @@ namespace kiss
 		class KovanSerialInterface : public QObject, public kiss::target::Interface
 		{
 		Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.kipr.kiss.Interface/1.1" FILE "kovan_serial_interface.json")
 		Q_INTERFACES(kiss::target::Interface)
 		public:
 			KovanSerialInterface();

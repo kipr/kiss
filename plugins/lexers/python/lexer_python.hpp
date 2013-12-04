@@ -50,6 +50,7 @@ namespace kiss
 		class ConstructorPython : public Constructor
 		{
 		Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.kipr.kiss.LexerConstructor/1.0" FILE "lexer_python.json")
 		Q_INTERFACES(kiss::lexer::Constructor)
 		public:
 			ConstructorPython();

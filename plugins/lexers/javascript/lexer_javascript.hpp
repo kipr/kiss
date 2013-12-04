@@ -41,6 +41,7 @@ namespace kiss
 		class ConstructorJavaScript : public Constructor
 		{
 		Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.kipr.kiss.LexerConstructor/1.0" FILE "lexer_javascript.json")
 		Q_INTERFACES(Lexer::Constructor)
 		public:
 			ConstructorJavaScript();

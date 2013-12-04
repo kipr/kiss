@@ -61,7 +61,7 @@ kiss::target::TargetPtr KovanInterface::createTarget(const QString &address)
     if(!ok) return TargetPtr();
   } else if(chunks.size() > 2) return TargetPtr();
   
-	TcpSerial *serial = new TcpSerial(address.toAscii(), port);
+	TcpSerial *serial = new TcpSerial(address.toUtf8(), port);
 	KovanProtoTarget *device = new kiss::target::KovanProtoTarget(serial, this);
 	return TargetPtr(device);
 }
@@ -94,11 +94,11 @@ void KovanInterface::found(const Advert &ad, const sockaddr_in addr)
 {
 	if(!m_responder) return;
 	QHostAddress ha((sockaddr *)&addr);
-	TcpSerial *serial = new TcpSerial(ha.toString().toAscii(), addr.sin_port);
+	TcpSerial *serial = new TcpSerial(ha.toString().toUtf8(), addr.sin_port);
 	KovanProtoTarget *device = new kiss::target::KovanProtoTarget(serial, this);
 	device->fillInformation(ad);
 	device->fillCommPort(ha.toString());
 	m_responder->targetFound(this, TargetPtr(device));
 }
 
-Q_EXPORT_PLUGIN2(kovan_interface, KovanInterface);
+

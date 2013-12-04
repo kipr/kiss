@@ -19,7 +19,6 @@
  **************************************************************************/
 
 #include "editor_settings_dialog.hpp"
-#include "lexer_factory.hpp"
 
 #include <QSettings>
 

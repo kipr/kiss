@@ -271,15 +271,15 @@ kiss::KarPtr kiss::project::Project::archive() const
 		QFile file(path);
 		QFileInfo fileInfo(file);
 		if(fileInfo.suffix() == LINKS_EXT) continue;
-		if(file.open(QIODevice::ReadOnly)) {
-			QString fileName = fileInfo.fileName();
-			if(fileInfo.suffix() == PROJECT_EXT) {
-				fileName.chop(QString(PROJECT_EXT).length());
-				fileName += "ops";
-			}
-			archive->addFile(fileName, file.readAll());
-			file.close();
+		if(!file.open(QIODevice::ReadOnly)) continue;
+		QString filePath = fileInfo.absoluteFilePath();
+		if(fileInfo.suffix() == PROJECT_EXT) {
+			filePath.chop(QString(PROJECT_EXT).length());
+			filePath += "ops";
 		}
+    // TODO: Make filePath valid dir chars
+		archive->addFile(filePath, file.readAll());
+		file.close();
 	}
 	return archive;
 }

@@ -20,12 +20,13 @@
 
 #include "declarative_tab.hpp"
 
-#ifdef BUILD_DECLARATIVE_TAB
-
 #include <QDebug>
 #include <QGraphicsObject>
 
-#include <QtDeclarative>
+#include <QDeclarativeView>
+#include <QDeclarativeContext>
+#include <QDeclarativeError>
+#include <QDeclarativeEngine>
 #include <QDesktopServices>
 
 #include "developer_menu.hpp"
@@ -86,7 +87,7 @@ DeclarativeTab::DeclarativeTab(const QUrl &file, MainWindow *parent)
 	if(!view) return;
 	QString color = "#ffffff";
 	#ifndef Q_OS_WIN
-		color = mainWindow()->palette().color(QPalette::Background).name().toAscii();
+		color = mainWindow()->palette().color(QPalette::Background).name().toUtf8();
 	#endif
 	view->rootContext()->setContextProperty("kissBackground", color);
 	view->rootContext()->setContextProperty("kiss", &m_kiss);
@@ -160,5 +161,3 @@ void DeclarativeTab::refreshSettings()
 {
 	
 }
-
-#endif

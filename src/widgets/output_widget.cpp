@@ -1,5 +1,4 @@
 #include "output_widget.hpp"
-#include "syntax_standards.hpp"
 
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
@@ -21,7 +20,7 @@ public:
 		OutputHighlighter::Rule rule;
 
 		QTextCharFormat keywordFormat;
-		keywordFormat.setForeground(SyntaxStandards::keywordColor());
+		// keywordFormat.setForeground(SyntaxStandards::keywordColor());
 		keywordFormat.setFontWeight(QFont::Bold);
 
 		QStringList keywordPatterns;

@@ -19,9 +19,10 @@
  **************************************************************************/
 
 #include "source_file.hpp"
+#include "ui_SourceFile.h"
+
 
 #include "main_window.hpp"
-#include "lexer_factory.hpp"
 #include "template_manager.hpp"
 #include "template_dialog.hpp"
 #include "password_dialog.hpp"
@@ -43,6 +44,7 @@
 #include <QPrintDialog>
 #include <QDebug>
 #include <math.h>
+#include <scintex/line_numbers_view.hpp>
 
 #include <memory>
 
@@ -52,33 +54,28 @@ using namespace kiss;
 using namespace kiss::widget;
 
 SourceFile::SourceFile(MainWindow *parent)
-	: QWidget(parent),
-	Tab(this, parent),
-	m_debuggerEnabled(false),
-	m_runTab(0),
-	m_currentLexer(0)
+  : QWidget(parent)
+  , Tab(this, parent)
+  , ui(new Ui::SourceFile)
+  , m_debuggerEnabled(false)
+  , m_runTab(0)
 {
-	setupUi(this);
-	
-	ui_find->setSourceFile(this);
-	
-	m_errorIndicator = ui_editor->markerDefine(ResourceHelper::ref().pixmap("bullet_red"));
-	m_warningIndicator = ui_editor->markerDefine(ResourceHelper::ref().pixmap("bullet_yellow"));
-	m_breakIndicator = ui_editor->markerDefine(ResourceHelper::ref().pixmap("bullet_blue"));
-	
-	ui_editor->setModified(false);
-	ui_editor->setEolMode(QsciScintilla::EolUnix);
-	ui_editor->setWrapMode(QsciScintilla::WrapWord);
+  ui->setupUi(this);
+  ui->find->setSourceFile(this);
+  ui->editor->setModel(&_model);
+  
+  // ui_editor->setEolMode(QsciScintilla::EolUnix);
+  // ui_editor->setWrapMode(QsciScintilla::WrapWord);
 	
 	mainWindow()->setStatusMessage("");
 	
-	connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
-	connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
+  // connect(ui_editor, SIGNAL(textChanged()), this, SLOT(updateMargins()));
+  // connect(ui_editor, SIGNAL(modificationChanged(bool)), this, SLOT(sourceModified(bool)));
 	
 	connect(&target::CommunicationManager::ref(), SIGNAL(admitted(CommunicationEntryPtr)), SIGNAL(updateActivatable()));
 	connect(&target::CommunicationManager::ref(), SIGNAL(queueFinished()), SIGNAL(updateActivatable()));
 	
-	ui_find->hide();
+	ui->find->hide();
 	
 	refreshSettings();
 		
@@ -87,7 +84,7 @@ SourceFile::SourceFile(MainWindow *parent)
 
 SourceFile::~SourceFile()
 {
-	setLexer(0);
+  delete ui;
 }
 
 void SourceFile::activate()
@@ -119,7 +116,7 @@ void SourceFile::completeSetup()
 
 bool SourceFile::close()
 {
-	if(!ui_editor->isModified()) return true;
+	// if(!ui->editor->isModified()) return true;
 	
 	QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Unsaved Changes"),
 		tr("Save changes to \"%1\" before closing?").arg(file().fileName()),
@@ -127,9 +124,10 @@ bool SourceFile::close()
 
 	if(ret == QMessageBox::Cancel) return false;
 	
-	if(ret == QMessageBox::Yes) {
-		save();
-		if(ui_editor->isModified()) return false;
+  if(ret == QMessageBox::Yes) {
+    save();
+    // TODO: Save didn't work
+    // if(ui_editor->isModified()) return false;
 	}
 	
 	mainWindow()->activateMenuable(menu::SourceFileMenu::menuName(), 0);
@@ -148,20 +146,21 @@ bool SourceFile::fileSaveAs(const QString &filePath)
 {
 	if(filePath.isEmpty()) return false;
 	
-	ui_editor->convertEols(QsciScintilla::EolUnix);
-	if(ui_editor->text(ui_editor->lines() - 1).length() > 0) {
+	// ui->editor->convertEols(QsciScintilla::EolUnix);
+  // TODO: Append newline
+	/*if(ui_editor->text(ui_editor->lines() - 1).length() > 0) {
 		ui_editor->append("\n");
-	}
+	}*/
 	
 	setFile(filePath);
 	
 	QFile fileHandle(file().filePath());
 	if(!fileHandle.open(QIODevice::WriteOnly)) return false;
 	QTextStream fileStream(&fileHandle);
-	fileStream << ui_editor->text();
+	fileStream << _model.backing();
 	fileHandle.close();
 	
-	ui_editor->setModified(false);
+	// ui_editor->setModified(false);
 	
 	updateLexer();
 	
@@ -176,11 +175,9 @@ bool SourceFile::fileOpen(const QString &filePath)
 	
 	if(!fileHandle.open(QIODevice::ReadOnly)) return false;
 
-	QTextStream fileStream(&fileHandle);
-	ui_editor->setText(fileStream.readAll());
-	fileHandle.close();
-
-	ui_editor->setModified(false);
+  QTextStream fileStream(&fileHandle);
+  _model.setBacking(fileStream.readAll());
+  fileHandle.close();
 
 	updateLexer();
 	
@@ -191,14 +188,10 @@ bool SourceFile::fileOpen(const QString &filePath)
 
 bool SourceFile::memoryOpen(const QByteArray &ba, const QString &assocPath)
 {
-	setFile(assocPath);
-	
-	ui_editor->setText(ba);
-	ui_editor->setModified(false);
-
-	updateLexer();
-		
-	return true;
+  setFile(assocPath);
+  _model.setBacking(ba);
+  updateLexer();
+  return true;
 }
 
 bool SourceFile::openProjectFile(const project::ProjectPtr &project)
@@ -208,7 +201,7 @@ bool SourceFile::openProjectFile(const project::ProjectPtr &project)
 
 void SourceFile::indentAll()
 {
-	if(!m_currentLexer || !m_currentLexer->cStyleBlocks()) return;
+	/*if(!m_currentLexer || !m_currentLexer->cStyleBlocks()) return;
 	
 	setUpdatesEnabled(false);
 
@@ -262,12 +255,12 @@ void SourceFile::indentAll()
 	
 	ui_editor->setCursorPosition(currentLine, currentIndex);
 	
-	setUpdatesEnabled(true);
+	setUpdatesEnabled(true);*/
 }
 
 void SourceFile::keyPressEvent(QKeyEvent *event)
 {
-#ifdef Q_OS_MAC
+  /*#ifdef Q_OS_MAC
 	int ctrlMod = Qt::MetaModifier;
 #else
 	int ctrlMod = Qt::ControlModifier;
@@ -321,13 +314,12 @@ void SourceFile::keyPressEvent(QKeyEvent *event)
 		ui_editor->paste();
 		break;
 	}
-	event->accept();
+	event->accept();*/
 }
 
 void SourceFile::refreshSettings()
 {
-	/* Read font, indent, margin, etc. settings */
-	QSettings settings;
+	/*QSettings settings;
 	settings.beginGroup(EDITOR);
 	if(ui_editor->lexer()) {
 		QColor backgroundColor = settings.value(BACKGROUND_COLOR, QColor(255, 255, 255)).value<QColor>();
@@ -342,7 +334,7 @@ void SourceFile::refreshSettings()
 	
 	lexer::Factory::ref().setFont(defFont);
 
-	/* Set other options from settings */
+
 	settings.beginGroup(AUTO_INDENT);
 	ui_editor->setAutoIndent(settings.value(ENABLED).toBool());
 	
@@ -386,39 +378,21 @@ void SourceFile::refreshSettings()
 	
 	updateMargins();
 	ui_editor->setMarginsBackgroundColor(QColor(Qt::white));
-	ui_editor->setMarginsForegroundColor(QColor(185, 185, 185));
+	ui_editor->setMarginsForegroundColor(QColor(185, 185, 185));*/
 }
 
 void SourceFile::updateMargins()
 {
-	int size = 0;
-	if(ui_editor->marginLineNumbers(0)) {
-		int charWidth = 6;
-		if(ui_editor->lexer()) {
-			QFont font = ui_editor->lexer()->defaultFont();
-			font.setPointSize(font.pointSize() + getZoom());
-			charWidth = QFontMetrics(font).width("0");
-		}
-		size = charWidth + charWidth / 2
-			+ charWidth * (int)ceil(log10(std::max(ui_editor->lines(), 10) + 1));
-	}
-	ui_editor->setMarginWidth(0, size);
-	ui_editor->setMarginWidth(1, 16);
 }
 
 int SourceFile::getZoom()
 {
-	return ui_editor->SendScintilla(QsciScintilla::SCI_GETZOOM);
+	return 0;
 }
 
 void SourceFile::moveTo(const int &line, const int &pos)
 {
-	if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos);
-}
-
-QsciScintilla *SourceFile::editor()
-{
-	return ui_editor;
+	// if(line > 0 && pos >= 0) ui_editor->setCursorPosition(line - 1, pos);
 }
 
 int SourceFile::currentLine() const
@@ -429,25 +403,26 @@ int SourceFile::currentLine() const
 bool SourceFile::breakpointOnLine(int line) const
 {
 	bool markerOnLine = false;
-	foreach(const int &i, m_breakpoints) markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
+	// foreach(const int &i, m_breakpoints)
+  //  markerOnLine |= (ui_editor->markerLine(i) == m_currentLine);
 	return markerOnLine;
 }
 
 void SourceFile::zoomIn()
 {
-	ui_editor->zoomIn();
+	// ui_editor->zoomIn();
 	updateMargins();
 }
 
 void SourceFile::zoomOut()
 {
-	ui_editor->zoomOut();
+	// ui_editor->zoomOut();
 	updateMargins();
 }
 
 void SourceFile::zoomReset()
 {
-	ui_editor->zoomTo(0);
+	// ui_editor->zoomTo(0);
 	updateMargins();
 }
 
@@ -459,7 +434,7 @@ bool SourceFile::saveAs()
 bool SourceFile::saveAsFile()
 {
 	QSettings settings;
-	QStringList exts = lexer::Factory::ref().formattedExtensions();
+	QStringList exts;
 	
 	QRegExp reg("*." + m_templateExt + "*");
 	reg.setPatternSyntax(QRegExp::Wildcard);
@@ -495,7 +470,7 @@ bool SourceFile::saveAsProject()
 {
 	if(!hasProject()) return false;
 	
-	QStringList exts = lexer::Factory::ref().extensions();
+	QStringList exts;
 	QStringList nameFilters;
 	foreach(const QString &ext, exts) {
 		nameFilters << "*." + ext;
@@ -531,27 +506,27 @@ void SourceFile::sourceModified(bool)
 
 void SourceFile::copy()
 {
-	ui_editor->copy();
+	// ui_editor->copy();
 }
 
 void SourceFile::cut()
 {
-	ui_editor->cut();
+	// ui_editor->cut();
 }
 
 void SourceFile::paste()
 {
-	ui_editor->paste();
+	// ui_editor->paste();
 }
 
 void SourceFile::undo()
 {
-	ui_editor->undo();
+	// ui_editor->undo();
 }
 
 void SourceFile::redo()
 {
-	ui_editor->redo();
+	// ui_editor->redo();
 }
 
 void SourceFile::find()
@@ -561,10 +536,7 @@ void SourceFile::find()
 
 void SourceFile::print()
 {
-	QsciPrinter printer;
-	QPrintDialog printDialog(&printer, this);
-	
-	if(printDialog.exec()) printer.printRange(ui_editor);
+  // TODO: Printing
 }
 
 void SourceFile::convertToProject()
@@ -572,7 +544,7 @@ void SourceFile::convertToProject()
 	if(!save()) return;
 	project::ProjectPtr project = mainWindow()->newProject();
 	fileSaveAs(project->location() + "/" + file().fileName());
-	//project->setTarget(target());
+	// project->setTarget(target());
 	setProject(project);
 }
 
@@ -586,19 +558,19 @@ void SourceFile::requestFile()
 
 void SourceFile::toggleBreakpoint(const bool &checked)
 {
-	if(checked) m_breakpoints.append(ui_editor->markerAdd(m_currentLine, m_breakIndicator));
+	/*if(checked) m_breakpoints.append(ui_editor->markerAdd(m_currentLine, m_breakIndicator));
  	else {
-		m_breakpoints.removeAll(ui_editor->markerLine(m_currentLine));
-		ui_editor->markerDelete(m_currentLine, m_breakIndicator);
-	}
+		// m_breakpoints.removeAll(ui_editor->markerLine(m_currentLine));
+		// ui_editor->markerDelete(m_currentLine, m_breakIndicator);
+	}*/
 	
 	emit updateActivatable();
 }
 
 void SourceFile::clearBreakpoints()
 {	
-	foreach(const int &i, m_breakpoints) ui_editor->markerDeleteHandle(i);
-	m_breakpoints.clear();
+	// foreach(const int &i, m_breakpoints) ui_editor->markerDeleteHandle(i);
+	// m_breakpoints.clear();
 	
 	emit updateActivatable();
 }
@@ -611,23 +583,7 @@ void SourceFile::on_ui_editor_cursorPositionChanged(int line, int)
 
 void SourceFile::showFind()
 {
-	ui_find->show();
-}
-
-void SourceFile::setLexer(lexer::Constructor *constructor)
-{
-	ui_editor->setLexer(0);
-	if(m_currentLexer) {
-		// TODO: Move away from QScintilla before I lose my mind.
-		// delete m_currentLexer;
-	}
-	m_currentLexer = 0;
-	if(!constructor) return;
-	m_currentLexer = constructor->construct();
-	ui_editor->setLexer(m_currentLexer->lexer());
-	// lexer::Factory::setAPIsForLexer(m_currentLexer, m_lexAPI);
-	refreshSettings();
-	updateMargins();
+	ui->find->show();
 }
 
 void SourceFile::dropEvent(QDropEvent *)
@@ -636,17 +592,17 @@ void SourceFile::dropEvent(QDropEvent *)
 
 void SourceFile::clearProblems()
 {
-	ui_editor->markerDeleteAll(m_errorIndicator);
-	ui_editor->markerDeleteAll(m_warningIndicator);
+	// ui_editor->markerDeleteAll(m_errorIndicator);
+	// ui_editor->markerDeleteAll(m_warningIndicator);
 }
 
 void SourceFile::markProblems(const Lines &lines)
 {
 	foreach(const Lines::line_t &line, lines.warningLines()) {
-		ui_editor->markerAdd(line, m_warningIndicator);
+		// ui_editor->markerAdd(line, m_warningIndicator);
 	}
 	foreach(const Lines::line_t &line, lines.errorLines()) {
-		ui_editor->markerAdd(line, m_errorIndicator);
+		// ui_editor->markerAdd(line, m_errorIndicator);
 	}
 }
 
@@ -667,17 +623,11 @@ const bool SourceFile::selectTemplate()
 
 	templates::File tFile = tDialog.file();
 	
-	lexer::Constructor *constructor = 0;
-	if(tFile.hasLexer()) {
-		constructor = lexer::Factory::ref().constructor(tFile.lexer());
-		m_templateExt = tFile.lexer();
-	}
-	
-	ui_editor->setText(tFile.resolvedData());
+	_model.setBacking(tFile.resolvedData());
 	
 	// m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
 	
-	if(constructor) setLexer(constructor);
+	// if(constructor) setLexer(constructor);
 	
 	refreshSettings();
 	
@@ -697,16 +647,13 @@ void SourceFile::projectChanged(const project::ProjectPtr &project)
 
 void SourceFile::updateTitle()
 {
-	mainWindow()->setTabName(this, (ui_editor->isModified() ? "* " : "") + fullName());
+  // TODO: Modified *
+  mainWindow()->setTabName(this, fullName());
 }
 
 void SourceFile::updateLexer()
 {
 	// Update the lexer to the new spec for that extension
-	lexer::Constructor *constructor1 = lexer::Factory::ref().constructor(file().completeSuffix());
-	lexer::Constructor *constructor2 = lexer::Factory::ref().constructor(file().suffix());
-	lexer::Constructor *constructor = constructor1 ? constructor1 : constructor2;
-	if(!lexer::Factory::isLexerFromConstructor(m_currentLexer, constructor)) setLexer(constructor);
 }
 
 void SourceFile::setName(const QString &name)
@@ -732,10 +679,10 @@ const QString &SourceFile::templateExt() const
 
 kiss::KarPtr SourceFile::archive() const
 {
-	// TODO: Projects
 	kiss::KarPtr archive = kiss::Kar::create();
-	archive->addFile(file().fileName(), ui_editor->text().toAscii());
-	Compiler::OutputList out = LanguageHelperManager::ref().preprocess(archive, QStringList() << file().path());
+	archive->addFile(file().fileName(), _model.backing().toUtf8());
+	Compiler::OutputList out = LanguageHelperManager::ref().preprocess(archive,
+    QStringList() << file().path());
 	// TODO: I really don't like that this is here.
 	if(Compiler::Output::isSuccess(out)) return archive;
 	mainWindow()->setOutputList(out);

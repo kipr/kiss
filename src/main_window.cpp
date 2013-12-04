@@ -27,8 +27,7 @@
 #include "project.hpp"
 #include "project_settings.hpp"
 #include "log.hpp"
-// Used to query supported extensions
-#include "lexer_factory.hpp"
+
 #include "new_project_dialog.hpp"
 #include "template_manager.hpp"
 #include "template_tab.hpp"
@@ -423,7 +422,7 @@ void MainWindow::addTab(Tab *tab)
 	if(!tab->beginSetup()) return;
 	addLookup(tab);
 	setUpdatesEnabled(false);
-	int tabNum = ui_tabWidget->addTab(tab->widget(), QString::fromAscii(""));
+	int tabNum = ui_tabWidget->addTab(tab->widget(), QString::fromLocal8Bit(""));
 	ui_tabWidget->setCurrentIndex(tabNum);
 	setUpdatesEnabled(true);
 	tab->completeSetup();
@@ -470,7 +469,6 @@ void MainWindow::open()
 {
 	QStringList filters;
 	filters << "KISS Project (*.kissproj)";
-	filters << lexer::Factory::ref().formattedExtensions();
 	filters << "Template Pack (*.pack)";
 	filters.removeDuplicates();
 	QString filePath = FileUtils::getOpenFileName(this, tr("Open"), filters.join(";;") + ";;All Files (*)");
@@ -492,7 +490,7 @@ void MainWindow::open()
 
 void MainWindow::openProject()
 {
-	QStringList filters = lexer::Factory::ref().formattedExtensions();
+	QStringList filters;
 	filters.removeDuplicates();
 	QString filePath = FileUtils::getOpenFileName(this, tr("Open Project"));
 	if(filePath.isEmpty()) return;
@@ -716,7 +714,7 @@ void MainWindow::projectAddNew(const project::ProjectPtr &project)
 
 void MainWindow::projectAddExisting()
 {
-	QStringList filters = lexer::Factory::ref().formattedExtensions();
+	QStringList filters;
 	filters.removeDuplicates();
 	QStringList files = FileUtils::getOpenFileNames(this,
 		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");

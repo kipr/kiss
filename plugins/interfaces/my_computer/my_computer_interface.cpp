@@ -36,4 +36,3 @@ void MyComputerInterface::invalidateResponder()
     
 }
 
-Q_EXPORT_PLUGIN2(my_computer_interface, MyComputerInterface);

@@ -167,4 +167,4 @@ const bool Java::cStyleBlocks() const
 	return true;
 }
 
-Q_EXPORT_PLUGIN2(java_lexer, kiss::lexer::ConstructorJava);
+

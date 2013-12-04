@@ -35,5 +35,3 @@ void MyKs2Interface::invalidateResponder()
 {
     
 }
-
-Q_EXPORT_PLUGIN2(my_computer_interface, MyKs2Interface);

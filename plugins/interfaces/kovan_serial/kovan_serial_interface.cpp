@@ -10,8 +10,6 @@
 #include <QTextStream>
 #include <QDebug>
 
-#include <QTcpSocket>
-#include <QHostAddress>
 #include <QRunnable>
 #include <QThreadPool>
 #include <QBuffer>
@@ -41,7 +39,7 @@ void PortSampler::run()
 	foreach(const QFileInfo &info, list) paths << info.filePath();
 #endif
 	foreach(const QString &path, paths) {
-		UsbSerial usb(path.toAscii());
+		UsbSerial usb(path.toUtf8());
 		if(!usb.makeAvailable()) {
 			qWarning() << "Failed to make port" << path << "available";
 			continue;
@@ -67,7 +65,7 @@ KovanSerialInterface::~KovanSerialInterface()
 kiss::target::TargetPtr KovanSerialInterface::createTarget(const QString &address)
 {
 	// TODO: Add input verification
-	UsbSerial *serial = new UsbSerial(address.toAscii());
+	UsbSerial *serial = new UsbSerial(address.toUtf8());
 	KovanProtoTarget *device = new kiss::target::KovanProtoTarget(serial, this);
 	device->fillDisplayName(address);
 	return TargetPtr(device);
@@ -98,10 +96,10 @@ void KovanSerialInterface::found(const QString &port)
 {
 	if(!m_responder) return;
 	
-	UsbSerial *serial = new UsbSerial(port.toAscii());
+	UsbSerial *serial = new UsbSerial(port.toUtf8());
 	KovanProtoTarget *device = new kiss::target::KovanProtoTarget(serial, this);
 	device->fillCommPort(port);
 	m_responder->targetFound(this, TargetPtr(device));
 }
 
-Q_EXPORT_PLUGIN2(kovan_serial_interface, KovanSerialInterface);
+

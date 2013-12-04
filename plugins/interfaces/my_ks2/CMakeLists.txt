@@ -1,22 +1,16 @@
 set(PLUGIN_NAME my_ks2_interface)
 
 project(${PLUGIN_NAME})
-cmake_minimum_required(VERSION 2.8.0)
+cmake_minimum_required(VERSION 2.8.12)
 
-if(APPLE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -g")
-endif()
+find_package(Qt5Widgets REQUIRED)
 
-find_package(Qt4 REQUIRED)
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDE_DIR} ${KISS_INCLUDE_DIRS} ../shared)
-
-include(${QT_USE_FILE})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${INCLUDE_DIRS} ../shared)
 
 file(GLOB LOCAL_INCLUDES *.hpp ../shared/*.hpp)
 file(GLOB LOCAL_SOURCES *.cpp ../shared/*.cpp)
 
-qt4_wrap_cpp(INCLUDES_MOC ${LOCAL_INCLUDES})
+qt5_wrap_cpp(INCLUDES_MOC ${LOCAL_INCLUDES})
 
 add_definitions(${QT_DEFINITIONS})
 add_definitions(-DQT_PLUGIN)
@@ -25,9 +19,10 @@ add_definitions(-DQT_SHARED)
 add_definitions(-DQT_DLL)
 
 add_library(${PLUGIN_NAME} SHARED ${LOCAL_SOURCES} ${INCLUDES_MOC})
+qt5_use_modules(${PLUGIN_NAME} Widgets)
 link_directories(${LIBRARY_OUTPUT_PATH})
 
-target_link_libraries(${PLUGIN_NAME} kisside pcompiler kovanserial kar ${QT_LIBRARIES})
+target_link_libraries(${PLUGIN_NAME} kisside pcompiler kovanserial kar)
 
 if(APPLE)
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
@@ -36,7 +31,7 @@ add_custom_target(${PLUGIN_NAME}_osx_install_names ALL
 		QtCore.framework/Versions/4/QtCore
 		QtScript.framework/Versions/4/QtScript
 		QtDBus.framework/Versions/4/QtDBus
-		QtGui.framework/Versions/4/QtGui
+		QtGui.framework/Versions/5/QtGui
 		QtNetwork.framework/Versions/4/QtNetwork
 		QtXml.framework/Versions/4/QtXml
 		QtXmlPatterns.framework/Versions/4/QtXmlPatterns

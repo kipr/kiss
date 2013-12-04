@@ -24,14 +24,16 @@
 #include "tab.hpp"
 #include "output_helper.hpp"
 
-#include "ui_SourceFile.h"
-
-#include <Qsci/qsciscintilla.h>
-#include <Qsci/qscilexer.h>
-#include <Qsci/qsciapis.h>
 #include <QString>
 #include <QFileInfo>
 #include <QKeyEvent>
+
+#include <scintex/basic_text_model.hpp>
+
+namespace Ui
+{
+  class SourceFile;
+}
 
 namespace kiss
 {
@@ -40,17 +42,11 @@ namespace kiss
 		class Project;
 	}
 	
-	namespace lexer
-	{
-		class Constructor;
-		class Base;
-	}
-	
 	namespace widget
 	{
 		class MainWindow;
 
-		class SourceFile : public QWidget, public Tab, private Ui::SourceFile
+		class SourceFile : public QWidget, public Tab
 		{
 		Q_OBJECT
 		public:
@@ -74,8 +70,6 @@ namespace kiss
 			int getZoom();
 
 			void moveTo(const int &line, const int &pos);
-
-			QsciScintilla *editor();
 
 			int currentLine() const;
 			bool breakpointOnLine(int line) const;
@@ -118,8 +112,8 @@ namespace kiss
 			void setName(const QString &name);
 			const QString &name() const;
 			QString fullName() const;
-            
-            const QString &templateExt() const;
+      
+      const QString &templateExt() const;
 
 			virtual kiss::KarPtr archive() const;
 
@@ -135,12 +129,12 @@ namespace kiss
 			void on_ui_editor_cursorPositionChanged(int line, int index);
 			
 		private:
+      Ui::SourceFile *ui;
+    
 			bool saveAsFile();
 			bool saveAsProject();
 
 			void showFind();
-
-			void setLexer(lexer::Constructor *constructor);
 
 			int m_zoomLevel;
 			void dropEvent(QDropEvent *event);
@@ -167,9 +161,9 @@ namespace kiss
 			void updateTitle();
 			void updateLexer();
 			
-			kiss::lexer::Base *m_currentLexer;
-
 			QString m_name;
+      
+      scintex::BasicTextModel _model;
 		};
 	}
 }

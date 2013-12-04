@@ -1,17 +1,23 @@
 project(KISS)
 
-cmake_minimum_required(VERSION 2.8.0)
+cmake_minimum_required(VERSION 2.8.12)
 
-find_package(Qt4 REQUIRED)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(INCLUDE ${KISS_SOURCE_DIR}/include)
-set(RC ${KISS_SOURCE_DIR}/rc)
-set(SRC ${KISS_SOURCE_DIR}/src)
-set(UI ${KISS_SOURCE_DIR}/ui)
-set(TRADEMARKS ${KISS_SOURCE_DIR}/trademarks)
-set(COMPAT ${KISS_SOURCE_DIR}/compat)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Network REQUIRED)
+find_package(Qt5PrintSupport REQUIRED)
+find_package(Qt5Declarative REQUIRED)
 
-set(KISS_INCLUDE_DIRS ${INCLUDE} 
+
+set(INCLUDE ${CMAKE_SOURCE_DIR}/include)
+set(RC ${CMAKE_SOURCE_DIR}/rc)
+set(SRC ${CMAKE_SOURCE_DIR}/src)
+set(UI ${CMAKE_SOURCE_DIR}/ui)
+set(TRADEMARKS ${CMAKE_SOURCE_DIR}/trademarks)
+set(COMPAT ${CMAKE_SOURCE_DIR}/compat)
+
+set(INCLUDE_DIRS ${INCLUDE} 
 	${INCLUDE}/dialogs
 	${INCLUDE}/lexer
 	${INCLUDE}/widgets
@@ -24,26 +30,17 @@ set(KISS_INCLUDE_DIRS ${INCLUDE}
 include_directories(
 	${CMAKE_SOURCE_DIR} 
 	${CMAKE_SOURCE_DIR}/src 
-	${KISS_SOURCE_DIR} 
-	${KISS_BINARY_DIR} 
-	${KISS_INCLUDE_DIRS}
+	${CMAKE_SOURCE_DIR} 
+	${CMAKE_BINARY_DIR} 
+	${INCLUDE_DIRS}
 )
 
 if(WIN32)
 include_directories(${CMAKE_SOURCE_DIR}/../prefix/include)
-link_directories(
-	${CMAKE_SOURCE_DIR}/../prefix/lib
-	${QT_LIBRARY_DIR})
+link_directories(${CMAKE_SOURCE_DIR}/../prefix/lib)
 endif()
 
-set(QT_USE_QTDECLARATIVE TRUE)
-set(QT_USE_QTNETWORK TRUE)
-set(QT_USE_QTSCRIPT TRUE)
-
-include(${QT_USE_FILE})
-
 file(GLOB INCLUDES ${INCLUDE}/*.hpp
-	${INCLUDE}/lexer/*
 	${INCLUDE}/dialogs/*
 	${INCLUDE}/widgets/*
 	${INCLUDE}/menus/* 
@@ -53,7 +50,6 @@ file(GLOB INCLUDES ${INCLUDE}/*.hpp
 	${INCLUDE}/interface/*)
 
 file(GLOB SOURCES ${SRC}/*
-	${SRC}/lexer/*
 	${SRC}/dialogs/*
 	${SRC}/widgets/*
 	${SRC}/menus/*
@@ -74,39 +70,38 @@ set(SOURCES ${SOURCES} ${SRC} ${PLATFORM_SOURCES})
 
 file(GLOB UIS ${UI}/*)
 
-set(KISS_SRCS_CXX ${SOURCES})
-set(KISS_UI ${UIS})
-set(KISS_MOC_SRCS ${INCLUDES})
+set(SRCS_CXX ${SOURCES})
+set(UI ${UIS})
+set(MOC_SRCS ${INCLUDES})
 
-set(KISS_QRC_FILES
+set(QRC_FILES
 	${RC}/rc.qrc
 	${RC}/logos/logos.qrc
 )
 
-qt4_wrap_cpp(KISS_SRCS_CXX ${KISS_MOC_SRCS})
-qt4_wrap_ui(KISS_SRCS_CXX ${KISS_UI})
-qt4_add_resources(KISS_SRCS_CXX ${KISS_QRC_FILES})
+qt5_wrap_cpp(SRCS_CXX ${MOC_SRCS})
+qt5_wrap_ui(SRCS_CXX ${UI})
+qt5_add_resources(SRCS_CXX ${QRC_FILES})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-
-add_definitions(-O2)
+add_definitions(-Wall -O2)
 
 if(APPLE)
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
 	link_directories(/Library/Frameworks/ /usr/local/lib)
 	include_directories(/usr/local/include /usr/include)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include")
-	add_executable(KISS MACOSX_BUNDLE ${KISS_SRCS_CXX} ${INCLUDES})
+	add_executable(KISS MACOSX_BUNDLE ${SRCS_CXX} ${INCLUDES})
   set(EXTRA_LIBS ${COCOA_LIBRARY})
 elseif(UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-	add_executable(KISS ${KISS_SRCS_CXX} ${INCLUDES})
+	add_executable(KISS ${SRCS_CXX} ${INCLUDES})
 elseif(WIN32)
 	set(COMPAT_SRCS ${COMPAT}/mingw.c)
-	add_executable(KISS WIN32 ${KISS_SRCS_CXX} ${COMPAT_SRCS} ${INCLUDES})
+	add_executable(KISS WIN32 ${SRCS_CXX} ${COMPAT_SRCS} ${INCLUDES})
 endif()
 
-add_library(kisside STATIC ${KISS_SRCS_CXX} ${INCLUDES})
+add_library(kisside STATIC ${SRCS_CXX} ${INCLUDES})
+qt5_use_modules(kisside Widgets Network PrintSupport Declarative)
 
 set(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
 if(WIN32)
@@ -121,7 +116,8 @@ else()
     set(KISS_EXTRAS_DIR ${EXECUTABLE_OUTPUT_PATH})
 endif()
 
-target_link_libraries(KISS ${QT_LIBRARIES} qscintilla2 pcompiler kar ${EXTRA_LIBS})
+qt5_use_modules(KISS Widgets Network PrintSupport Declarative)
+target_link_libraries(KISS scintex pcompiler kar ${EXTRA_LIBS})
 
 if(WIN32)
 	target_link_libraries(KISS ws2_32)
@@ -129,7 +125,7 @@ endif()
 
 if(APPLE)
 	add_custom_target(MacDeployQt ALL
-		COMMAND ${QT_BINARY_DIR}/macdeployqt ${KISS_SOURCE_DIR}/deploy/KISS.app -verbose=0
+		COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt ${KISS_SOURCE_DIR}/deploy/KISS.app -verbose=0
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS)
 

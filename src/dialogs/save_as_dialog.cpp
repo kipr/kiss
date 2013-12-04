@@ -20,7 +20,8 @@ SaveAs::SaveAs(QWidget *parent)
 	ui->setupUi(this);
 	
 	ui->tree->setModel(m_model);
-	ui->tree->header()->setResizeMode(0, QHeaderView::Stretch);
+  // TODO: Doesn't work in Qt5??
+  // ui->tree->header()->setResizeMode(0, QHeaderView::Stretch);
 	
 	connect(ui->tree->selectionModel(),
 		SIGNAL(currentRowChanged(QModelIndex, QModelIndex)),

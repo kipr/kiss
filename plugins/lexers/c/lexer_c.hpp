@@ -51,6 +51,7 @@ namespace kiss
 		class ConstructorC : public Constructor
 		{
 		Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.kipr.kiss.LexerConstructor/1.0" FILE "lexer_c.json")
 		Q_INTERFACES(kiss::lexer::Constructor)
 		public:
 			ConstructorC();

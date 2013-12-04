@@ -5,7 +5,6 @@
 #include "interface_manager.hpp"
 #include "interface_plugin_manager.hpp"
 #include "language_helper_plugin_manager.hpp"
-#include "lexer_plugin_manager.hpp"
 
 #include <QIcon>
 #include <QApplication>
@@ -17,21 +16,21 @@
 
 using namespace kiss;
 
-void debugLogHandler(QtMsgType type, const char *msg)
+void debugLogHandler(QtMsgType type, const QMessageLogContext &m, const QString &msg)
 {
 	switch (type) {
 	case QtDebugMsg:
-		Log::ref().debug(msg);
+		Log::ref().debug(msg.toUtf8());
 		break;
 	case QtWarningMsg:
-		Log::ref().warning(msg);
+		Log::ref().warning(msg.toUtf8());
 		break;
 	case QtCriticalMsg:
-		Log::ref().error(msg);
+		Log::ref().error(msg.toUtf8());
 		break;
 	case QtFatalMsg:
-		Log::ref().error(msg);
-		fprintf(stderr, "FATAL ERROR: \"%s\"\n", msg);
+		Log::ref().error(msg.toUtf8());
+		fprintf(stderr, "FATAL ERROR: \"%s\"\n", msg.toUtf8().data());
 		fprintf(stderr, "KISS IDE is unexpectedly going down. Sorry about that. :(\n");
 		abort();
 	}
@@ -40,7 +39,7 @@ void debugLogHandler(QtMsgType type, const char *msg)
 void StandardEnvironment::createStandardEnvironment()
 {
 	// Install debug handler
-	qInstallMsgHandler(debugLogHandler);
+	qInstallMessageHandler(debugLogHandler);
 	
 	// Setup QApplication
 #ifdef Q_OS_MAC
@@ -58,5 +57,4 @@ void StandardEnvironment::createStandardEnvironment()
 	
 	LanguageHelperPluginManager::ref().loadAll();
 	target::InterfacePluginManager::ref().loadAll();
-	lexer::PluginManager::ref().loadAll();
 }

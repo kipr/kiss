@@ -50,6 +50,7 @@ namespace kiss
 		class ConstructorCPP : public Constructor
 		{
 		Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.kipr.kiss.LexerConstructor/1.0" FILE "lexer_cpp.json")
 		Q_INTERFACES(kiss::lexer::Constructor)
 		public:
 			ConstructorCPP();

@@ -10,6 +10,7 @@ namespace kiss
         class MyComputerInterface : public QObject, public kiss::target::Interface
         {
         Q_OBJECT
+        Q_PLUGIN_METADATA(IID "com.kipr.kiss.Interface/1.1" FILE "my_computer_interface.json")
         Q_INTERFACES(kiss::target::Interface)
         public:
             MyComputerInterface();

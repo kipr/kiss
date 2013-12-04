@@ -25,8 +25,6 @@
 
 #include <QObject>
 
-#ifdef BUILD_DECLARATIVE_TAB
-
 #include "tab.hpp"
 
 #include <QUrl>
@@ -95,4 +93,3 @@ namespace kiss
 
 #endif
 
-#endif

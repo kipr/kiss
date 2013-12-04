@@ -57,8 +57,8 @@ void SourceFind::show()
 
 void SourceFind::on_ui_next_clicked()
 {
-	if(m_findModified) m_sourceFile->editor()->findFirst(ui_find->text(), false, ui_matchCase->isChecked(), false, true);
-	else m_sourceFile->editor()->findNext();
+	// if(m_findModified) m_sourceFile->editor()->findFirst(ui_find->text(), false, ui_matchCase->isChecked(), false, true);
+	// else m_sourceFile->editor()->findNext();
 	m_findModified = false;
 }
 
@@ -74,10 +74,10 @@ void SourceFind::on_ui_matchCase_stateChanged(int)
 
 void SourceFind::on_ui_replaceNext_clicked()
 {
-	m_sourceFile->editor()->replace(ui_replace->text()); on_ui_next_clicked();
+	// m_sourceFile->editor()->replace(ui_replace->text()); on_ui_next_clicked();
 }
 
 void SourceFind::on_ui_replaceAll_clicked()
 {
-	m_sourceFile->editor()->setText(m_sourceFile->editor()->text().replace(ui_find->text(), ui_replace->text()));
+	// m_sourceFile->editor()->setText(m_sourceFile->editor()->text().replace(ui_find->text(), ui_replace->text()));
 }

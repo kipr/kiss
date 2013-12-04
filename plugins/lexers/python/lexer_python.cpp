@@ -114,4 +114,4 @@ const bool Python::cStyleBlocks() const
 	return false;
 }
 
-Q_EXPORT_PLUGIN2(python_lexer, kiss::lexer::ConstructorPython); 
+
