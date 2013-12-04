@@ -266,18 +266,14 @@ kiss::KarPtr kiss::project::Project::archive() const
 	foreach(const QString &path, paths) {
 		QFile file(path);
 		QFileInfo fileInfo(file);
-		if(file.open(QIODevice::ReadOnly)) {
-			QString fileName = fileInfo.fileName();
-			if(fileInfo.suffix() == PROJECT_EXT) {
-				fileName.chop(QString(PROJECT_EXT).length());
-				fileName += "ops";
-			}
-			archive->addFile(fileName, file.readAll());
-			file.close();
-		}
-    // TODO: Make filePath valid dir chars
-		archive->addFile(path, file.readAll());
-		file.close();
+		if(!file.open(QIODevice::ReadOnly)) continue;
+    QString fileName = fileInfo.fileName();
+    if(fileInfo.suffix() == PROJECT_EXT) {
+      fileName.chop(QString(PROJECT_EXT).length());
+      fileName += "ops";
+    }
+    archive->addFile(fileName, file.readAll());
+    file.close();
 	}
 	return archive;
 }
