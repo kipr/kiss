@@ -218,7 +218,6 @@ namespace kiss
 			void projectRenameFile();
 			void projectRemoveFile();
 			void deleteProject();
-			void projectOpenDependencies();
 			void projectOpenSettings();
 			void projectSetActive();
 			void openRecent();

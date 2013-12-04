@@ -32,8 +32,8 @@ namespace kiss
 
 			static const QStringList hiddenExtensions();
 		signals:
-			void activeChanged(const kiss::project::ProjectPtr &oldActive,
-				const kiss::project::ProjectPtr &newActive);
+			void activeChanged(const ProjectPtr &oldActive,
+				const ProjectPtr &newActive);
 			
 		private:
 			ProjectPtrList m_projects;

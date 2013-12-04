@@ -11,8 +11,8 @@ namespace kiss
 		class ExtensionHelper
 		{
 		public:
-			static QString icon(const QString &file);
-			static bool isFileEditable(const QString &file);
+			static const QString icon(const QString &file);
+			static const bool isFileEditable(const QString &file);
 			static const QStringList libExtensions();
 		};
 	}

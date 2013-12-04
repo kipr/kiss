@@ -10,6 +10,7 @@
 #include <QFileIconProvider>
 #include <QDebug>
 #include <QUrl>
+#include <QMessageBox>
 
 using namespace kiss;
 using namespace kiss::project;
@@ -163,7 +164,7 @@ public:
 			appendRow(item);
 		}
 
-		const QStringList &deps = m_project->dependencies();
+		const QStringList &deps = m_project->deps();
 		foreach(const QString &dep, deps) {
 			appendRow(new FileItem(dep));
 		}
@@ -198,8 +199,8 @@ void Model::addProject(ProjectPtr project)
 	m_paths.append(path);
 	insertRow(0, new ProjectItem(QFileInfo(path).absoluteFilePath(), project));
 	m_watcher.addPath(path);
-	m_watcher.addPath(project->linksFilePath());
-	m_watcher.addPath(project->dependenciesFilePath());
+	
+	m_watcher.addPath(project->projectFilename());
 }
 
 void Model::removeProject(ProjectPtr project)
@@ -207,8 +208,6 @@ void Model::removeProject(ProjectPtr project)
 	const QString &path = project->location();
 	m_paths.removeAll(path);
 	m_watcher.removePath(path);
-	m_watcher.removePath(project->linksFilePath());
-	m_watcher.removePath(project->dependenciesFilePath());
 
 	QString absolutePath = QFileInfo(path).absoluteFilePath();
 	QStandardItem *root = invisibleRootItem();
@@ -370,7 +369,7 @@ void Model::fileChanged(const QString &path)
 {
 	const QFileInfo pathInfo(path);
 	const QString &suffix = pathInfo.suffix();
-	if(suffix == LINKS_EXT || suffix == DEPS_EXT) directoryChanged(pathInfo.absolutePath());
+	if(suffix == PROJECT_EXT) directoryChanged(pathInfo.absolutePath());
 }
 
 void Model::itemChanged(QStandardItem *item)

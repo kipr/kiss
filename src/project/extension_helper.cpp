@@ -4,7 +4,7 @@
 
 using namespace kiss::project;
 
-QString ExtensionHelper::icon(const QString &file)
+const QString ExtensionHelper::icon(const QString &file)
 {
 	QFileInfo fileInfo(file);
 	if(fileInfo.isDir()) return "brick.png";
@@ -12,7 +12,7 @@ QString ExtensionHelper::icon(const QString &file)
 	return "page_white.png";
 }
 
-bool ExtensionHelper::isFileEditable(const QString &file)
+const bool ExtensionHelper::isFileEditable(const QString &file)
 {
 	// TODO: better way to determine editable files
 	return !libExtensions().contains(QFileInfo(file).suffix());

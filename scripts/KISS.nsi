@@ -4,8 +4,8 @@
 ; Define KISS application name and version number
 !define APP_NAME "KISS Platform"
 !define APP_MAJOR_VERSION "4"
-!define APP_MINOR_VERSION "1"
-!define BUILD_NUMBER "4"
+!define APP_MINOR_VERSION "2"
+!define BUILD_NUMBER "8"
 
 ; Standard Release app name and version
 !define VERSION "${APP_MAJOR_VERSION}.${APP_MINOR_VERSION}.${BUILD_NUMBER}"
@@ -15,6 +15,7 @@
 ; Paths to files to build into the installer
 !define KISS_DIR "C:\Users\Nafis\Documents\Development\kiss"
 !define COMPUTER_DIR "C:\Users\Nafis\Documents\Development\computer"
+!define KS2_DIR "C:\Users\Nafis\Documents\Development\ks2"
 !define MINGW_DIR "C:\Users\Nafis\Documents\Development\MinGW"
 !define LIBKOVAN_DOCS_DIR "C:\Users\Nafis\Documents\Development\libkovan\doc"
 !define LINK_DOCS_DIR "C:\Users\Nafis\Documents\Development\link-docs\KIPR Link C Standard Library"
@@ -57,7 +58,7 @@ Section "KISS IDE" KISSIDE
 	SetOverwrite on  ; overwrite existing files
 	SectionIn RO     ; cannot be unchecked  
   	
-	; Set KISS Files	
+	; Set KISS Files
 	SetOutPath "$INSTDIR\KISS\"
 	File /r "${KISS_DIR}\deploy\*.*"
 	File /r "${KISS_DIR}\dlls\*.*"	
@@ -77,10 +78,21 @@ Section "Computer Target" ComputerTarget
 	SetOverwrite on  ; overwrite existing files
 	SectionIn RO     ; cannot be unchecked
   	
-	; Set Computer Files	
+	; Set Computer Files
 	SetOutPath "$INSTDIR\computer\"
 	File /r "${COMPUTER_DIR}\deploy\*.*"
 	File /r "${COMPUTER_DIR}\dlls\*.*"
+SectionEnd
+
+Section "KISS Simulator" SimTarget
+	; Set Section properties
+	SetOverwrite on  ; overwrite existing files
+	SectionIn RO     ; cannot be unchecked
+  	
+	; Set Simulator Files
+	SetOutPath "$INSTDIR\ks2\"
+	File /r "${KS2_DIR}\deploy\*.*"
+	File /r "${KS2_DIR}\dlls\*.*"
 SectionEnd
 
 Section "MinGW" MinGW
@@ -123,6 +135,7 @@ SectionEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${VCRedist} "Visual C++ Redistributable for Visual Studio 2012 Update 3"
 !insertmacro MUI_DESCRIPTION_TEXT ${KISSIDE} "KIPR's Instructional Software System IDE"
 !insertmacro MUI_DESCRIPTION_TEXT ${ComputerTarget} "A target for KISS IDE used to run programs locally"
+!insertmacro MUI_DESCRIPTION_TEXT ${SimTarget} "A target for KISS IDE used to simulate programs"
 !insertmacro MUI_DESCRIPTION_TEXT ${MinGW} "Minimalist GNU for Windows"
 !insertmacro MUI_DESCRIPTION_TEXT ${link_doc} "Documentation for the KIPR Link"
 !insertmacro MUI_DESCRIPTION_TEXT ${libkovan_doc} "Documentation for the libkovan standard library"
@@ -138,8 +151,8 @@ Section Uninstall
 	Delete "$INSTDIR\uninstall.exe"
 
 	; Delete start menu entires and desktop shortcuts
-	Delete "$SMPROGRAMS\${APP_NAME_AND_VERSION}\${APP_NAME_AND_VERSION}.lnk"
-	Delete "$DESKTOP\${APP_NAME_AND_VERSION}.lnk"
+	Delete "$DESKTOP\KISS IDE ${VERSION}.lnk"
+	Delete "$SMPROGRAMS\${APP_NAME_AND_VERSION}\KISS IDE ${VERSION}.lnk"
 	RMDir  "$SMPROGRAMS\${APP_NAME_AND_VERSION}"
 
 	; Delete the entire install directory
