@@ -7,9 +7,9 @@ ProjectMenu::ProjectMenu()
 {
   m_projectMenu = new Node(menuName());
   
-  m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white.png"), "Add New File",
+  m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white.png"), "Add New File...",
 		QKeySequence::UnknownKey, this, "activeProjectAddNew")));
-  m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white.png"), "Add Existing Files",
+  m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white.png"), "Add Existing Files...",
 		QKeySequence::UnknownKey, this, "activeProjectAddExisting")));
   m_projectMenu->children.append(Node::separator());
   m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("folder_wrench.png"), "Project Settings",
