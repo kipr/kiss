@@ -1,5 +1,5 @@
 #ifndef _PROJECT_MENU_HPP_
-#define _SOURCE_FILE_MENU_HPP_
+#define _PROJECT_MENU_HPP_
 
 #include "activatable.hpp"
 #include "concrete_menuable.hpp"
