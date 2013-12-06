@@ -342,19 +342,19 @@ void MainWindow::initMenus()
 	connect(ui_tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
 
 	m_projectContextMenu = new QMenu(this);
-	m_projectContextMenu->addAction(tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
-	m_projectContextMenu->addAction(tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
 	m_projectContextMenu->addSeparator();
-	m_projectContextMenu->addAction(tr("Set Active"), this, SLOT(projectSetActive()));
-	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_heart.png"), tr("Set Active"), this, SLOT(projectSetActive()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_wrench.png"),tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
 	m_projectContextMenu->addSeparator();
-	m_projectContextMenu->addAction(tr("Close Project"), this, SLOT(selectedProjectClose()));
-	m_projectContextMenu->addAction(tr("Delete Project"), this, SLOT(selectedProjectDelete()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder.png"), tr("Close Project"), this, SLOT(selectedProjectClose()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_delete.png"), tr("Delete Project"), this, SLOT(selectedProjectDelete()));
 
 	m_fileContextMenu = new QMenu(this);
-	m_fileContextMenu->addAction(tr("Rename"), this, SLOT(projectRenameFile()));
+	m_fileContextMenu->addAction(ResourceHelper::ref().icon("textfield_rename.png"), tr("Rename"), this, SLOT(projectRenameFile()));
 	m_fileContextMenu->addSeparator();
-	m_fileContextMenu->addAction(SystemUtils::supportsMoveToTrash() ? tr("Move to Trash") : tr("Remove"), this, SLOT(projectRemoveFile()));
+	m_fileContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), SystemUtils::supportsMoveToTrash() ? tr("Move to Trash") : tr("Remove"), this, SLOT(projectRemoveFile()));
 }
 
 void MainWindow::setTitle(const QString &title)
