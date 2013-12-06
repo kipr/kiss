@@ -11,7 +11,7 @@ FileOperationsMenu::FileOperationsMenu()
 		QKeySequence("Ctrl+Shift+N"), this, "newProject"));
 	Node *newTemplatePack = node(activeAction(ResourceHelper::ref().icon("package"), "New Template Pack",
 		QKeySequence::UnknownKey, this, "newTemplatePack"));
-	Node *openFile = node(activeAction(ResourceHelper::ref().icon("folder"), "Open...",
+	Node *openFile = node(activeAction(ResourceHelper::ref().icon("folder.png"), "Open...",
 		QKeySequence::Open, this, "open"));
 
 	Node *newSubmenu = node(action(ResourceHelper::ref().icon("page_white.png"), "New"));
