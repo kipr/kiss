@@ -27,9 +27,10 @@ bool Manager::openProject(const ProjectPtr &project)
 bool Manager::closeProject(const ProjectPtr &project)
 {
 	if(!m_projects.contains(project)) return false;
-
+  
+  bool wasActive = (project == m_activeProject);
 	m_projects.removeAll(project);
-	if(project == m_activeProject) {
+	if(wasActive) {
 		m_projects.isEmpty() ? setActiveProject(ProjectPtr()) : setActiveProject(m_projects.last());
 	}
 

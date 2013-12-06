@@ -29,5 +29,6 @@
 #include "developer_menu.hpp"
 #include "documentation_menu.hpp"
 #include "file_operations_menu.hpp"
+#include "project_menu.hpp"
 
 #endif

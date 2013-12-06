@@ -79,9 +79,6 @@ namespace kiss
 			 */
 			bool openFile(const QString &filePath, const project::ProjectPtr &project = project::ProjectPtr());
 			bool memoryOpen(const QByteArray &ba, const QString &assocPath);
-			project::ProjectPtr newProject(const QString &projectPath);
-			project::ProjectPtr openProject(const QString &projectFilePath);
-			void closeProject(const project::ProjectPtr &project);
 
 			void initMenus();
 
@@ -147,6 +144,12 @@ namespace kiss
 
 			bool eventFilter(QObject *target, QEvent *event);
 
+			project::ProjectPtr newProject(const QString &projectPath);
+			project::ProjectPtr openProject(const QString &projectFilePath);
+      void projectAddNew(const project::ProjectPtr &project);
+      void projectAddExisting(const project::ProjectPtr &project, QStringList files);
+      void projectClose(const project::ProjectPtr &project);
+      void projectDelete(const project::ProjectPtr &project);
 			void projectOpenSettings(const kiss::project::ProjectPtr &project);
 
 			menu::Menuable *menuable(const QString &name);
@@ -173,7 +176,7 @@ namespace kiss
 			void newFile();
 			void open();
 			void openProject();
-			void closeProject();
+      
 			void next();
 			void previous();
 			void closeTab(int index, bool force = false);
@@ -211,14 +214,22 @@ namespace kiss
 
 		private slots:
 			void on_ui_tabWidget_currentChanged(int i);
-			void projectAddNew();
-			void projectAddNew(const project::ProjectPtr &project);
-			void projectAddExisting();
-			void projectAddExisting(QStringList files);
+      
+      void activeProjectAddNew();
+      void activeProjectAddExisting();
+      void activeProjectClose();
+      void activeProjectDelete();
+      void activeProjectOpenSettings();
+			void selectedProjectAddNew();
+			void selectedProjectAddExisting();
+      void selectedProjectClose();
+      void selectedProjectDelete();
+      void selectedProjectOpenSettings();
+      void droppedProjectAddExisting(QStringList files);
+      
 			void projectRenameFile();
 			void projectRemoveFile();
-			void deleteProject();
-			void projectOpenSettings();
+      
 			void projectSetActive();
 			void openRecent();
 

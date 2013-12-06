@@ -75,7 +75,8 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projects->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::EditKeyPressed);
 	ui_projects->setContextMenuPolicy(Qt::CustomContextMenu);
 	ui_projectFrame->setVisible(false);
-	connect(&m_projectsModel, SIGNAL(filesDropped(QStringList)), this, SLOT(projectAddExisting(QStringList)));
+	connect(&m_projectsModel, SIGNAL(filesDropped(QStringList)), this,
+    SLOT(droppedProjectAddExisting(QStringList)));
 		
 	setUpdatesEnabled(false);
 
@@ -273,6 +274,7 @@ project::ProjectPtr MainWindow::openProject(const QString &projectPath)
 	if(!m_projectManager.projects().isEmpty()) {
 		ui_projectFrame->setVisible(true);
 		activateMenuable(menu::TargetMenu::menuName(), this);
+    activateMenuable(menu::ProjectMenu::menuName(), this);
 	}
 
 	return project;
@@ -315,6 +317,10 @@ void MainWindow::initMenus()
 	TargetMenu *targetMenu = new TargetMenu;
 	m_menuManager.registerMenus(targetMenu);
 	m_menuables.append(targetMenu);
+  
+  ProjectMenu *projectMenu = new ProjectMenu();
+  m_menuManager.registerMenus(projectMenu);
+  m_menuables.append(projectMenu);
 
 #ifdef BUILD_DEVELOPER_TOOLS
 	DeveloperMenu *developerMenu = new DeveloperMenu(this);
@@ -336,14 +342,14 @@ void MainWindow::initMenus()
 	connect(ui_tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
 
 	m_projectContextMenu = new QMenu(this);
-	m_projectContextMenu->addAction(tr("Add New File..."), this, SLOT(projectAddNew()));
-	m_projectContextMenu->addAction(tr("Add Existing Files..."), this, SLOT(projectAddExisting()));
+	m_projectContextMenu->addAction(tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
+	m_projectContextMenu->addAction(tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(tr("Set Active"), this, SLOT(projectSetActive()));
-	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(projectOpenSettings()));
+	m_projectContextMenu->addAction(tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
 	m_projectContextMenu->addSeparator();
-	m_projectContextMenu->addAction(tr("Close Project"), this, SLOT(closeProject()));
-	m_projectContextMenu->addAction(tr("Delete Project"), this, SLOT(deleteProject()));
+	m_projectContextMenu->addAction(tr("Close Project"), this, SLOT(selectedProjectClose()));
+	m_projectContextMenu->addAction(tr("Delete Project"), this, SLOT(selectedProjectDelete()));
 
 	m_fileContextMenu = new QMenu(this);
 	m_fileContextMenu->addAction(tr("Rename"), this, SLOT(projectRenameFile()));
@@ -679,15 +685,20 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	setUpdatesEnabled(true);
 }
 
-void MainWindow::projectAddNew()
+void MainWindow::activeProjectAddNew()
 {
-	project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
-	if(!project) return;
-  projectAddNew(project);
+  projectAddNew(m_projectManager.activeProject());
+}
+
+void MainWindow::selectedProjectAddNew()
+{
+  projectAddNew(m_projectsModel.project(ui_projects->currentIndex()));
 }
 
 void MainWindow::projectAddNew(const project::ProjectPtr &project)
 {
+  if(!project) return;
+  
 	SourceFile *const sourceFile = new SourceFile(this);
 	sourceFile->setProject(project);
 	if(!sourceFile->selectTemplate()) {
@@ -713,19 +724,29 @@ void MainWindow::projectAddNew(const project::ProjectPtr &project)
   sourceFile->save();
 }
 
-void MainWindow::projectAddExisting()
+void MainWindow::activeProjectAddExisting()
 {
 	QStringList filters;
 	filters.removeDuplicates();
 	QStringList files = FileUtils::getOpenFileNames(this,
 		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
-
-	projectAddExisting(files);
+    
+  projectAddExisting(m_projectManager.activeProject(), files);
 }
 
-void MainWindow::projectAddExisting(QStringList files)
+void MainWindow::selectedProjectAddExisting()
 {
-	if(files.isEmpty()) return;
+	QStringList filters;
+	filters.removeDuplicates();
+	QStringList files = FileUtils::getOpenFileNames(this,
+		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
+    
+	projectAddExisting(m_projectsModel.project(ui_projects->currentIndex()), files);
+}
+
+void MainWindow::projectAddExisting(const project::ProjectPtr &project, QStringList files)
+{
+  if(!project || files.isEmpty()) return;
 
 	for(int i = 0; i < ui_tabWidget->count(); ++i) {
 		SourceFile *sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
@@ -738,9 +759,6 @@ void MainWindow::projectAddExisting(QStringList files)
 			return;
 		}
 	}
-
-	project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
-	if(!project) return;
 
 	AddToProjectDialog dialog(this);
 	if(dialog.exec() != QDialog::Accepted) return;
@@ -760,6 +778,11 @@ void MainWindow::projectAddExisting(QStringList files)
 		default:
 			return;
 	}
+}
+
+void MainWindow::droppedProjectAddExisting(QStringList files)
+{
+  projectAddExisting(m_projectsModel.project(ui_projects->currentIndex()), files);
 }
 
 void MainWindow::projectRenameFile()
@@ -791,39 +814,67 @@ void MainWindow::projectRemoveFile()
 	}
 }
 
-void MainWindow::closeProject()
+void MainWindow::activeProjectClose()
 {
-	closeProject(m_projectsModel.project(ui_projects->currentIndex()));
+  projectClose(m_projectManager.activeProject());
 }
 
-void MainWindow::closeProject(const project::ProjectPtr &project)
+void MainWindow::selectedProjectClose()
 {
-	if(!project || !m_projectManager.closeProject(project)) return;
+	projectClose(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+void MainWindow::projectClose(const project::ProjectPtr &project)
+{
+	if(!project || !m_projectManager.projects().contains(project)) return;
 
 	closeProjectTabs(project);
 	m_projectManager.unsetActiveProject(project);
 	m_projectsModel.removeProject(project);
+  m_projectManager.closeProject(project);
 	if(m_projectManager.projects().isEmpty()) {
 		ui_projectFrame->setVisible(false);
 		activateMenuable(menu::TargetMenu::menuName(), 0);
+    activateMenuable(menu::ProjectMenu::menuName(), 0);
 	}
 }
 
-void MainWindow::deleteProject()
+void MainWindow::activeProjectDelete()
 {
+  projectDelete(m_projectManager.activeProject());
+}
+
+void MainWindow::selectedProjectDelete()
+{
+  projectDelete(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+void MainWindow::projectDelete(const project::ProjectPtr &project)
+{
+  if(!project) return;
+  
 	if(QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
 			QT_TR_NOOP("Deleting this project will delete all contents of the project folder. Are you sure you want to delete it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
-	const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
-	closeProject(project);
-	if(!FileUtils::remove(project->location())) qWarning() << "Failed to delete project at " << project->location();
+  if(!FileUtils::remove(project->location())) qWarning() << "Failed to delete project at " << project->location();
+	else projectClose(project);
 }
 
-void MainWindow::projectOpenSettings()
+void MainWindow::activeProjectOpenSettings()
 {
-	const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
+  projectOpenSettings(m_projectManager.activeProject());
+}
 
+void MainWindow::selectedProjectOpenSettings()
+{
+  projectOpenSettings(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+void MainWindow::projectOpenSettings(const project::ProjectPtr &project)
+{
+  if(!project) return;
+  
 	dialog::ProjectSettingsDialog dialog(project, this);
 	dialog.setWindowTitle(tr(QString("Project Settings for " + project->name()).toStdString().c_str()));
 	dialog.exec();
@@ -997,7 +1048,8 @@ void MainWindow::activateMenuable(const QString &name, QObject *on)
 
 QStringList MainWindow::standardMenus() const
 {
-	return QStringList() << menu::FileOperationsMenu::menuName() << menu::MainWindowMenu::menuName() << menu::TargetMenu::menuName()
+	return QStringList() << menu::FileOperationsMenu::menuName() << menu::MainWindowMenu::menuName()
+    << menu::TargetMenu::menuName() << menu::ProjectMenu::menuName()
 #ifdef BUILD_DOCUMENTATION_TAB
 	<< menu::DocumentationMenu::menuName()
 #endif
