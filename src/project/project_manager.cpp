@@ -19,7 +19,9 @@ Manager::~Manager()
 bool Manager::openProject(const ProjectPtr &project)
 {
 	if(m_projects.contains(project)) return false;
+  
 	m_projects.append(project);
+  if(m_projects.size() == 1) setActiveProject(project);
 
 	return true;
 }
@@ -28,12 +30,9 @@ bool Manager::closeProject(const ProjectPtr &project)
 {
 	if(!m_projects.contains(project)) return false;
   
-  bool wasActive = (project == m_activeProject);
-	m_projects.removeAll(project);
-	if(wasActive) {
-		m_projects.isEmpty() ? setActiveProject(ProjectPtr()) : setActiveProject(m_projects.last());
-	}
-
+  m_projects.removeAll(project);
+  if(project == m_activeProject) m_projects.isEmpty() ? setActiveProject(ProjectPtr()) : setActiveProject(m_projects.last());
+  
 	return true;
 }
 

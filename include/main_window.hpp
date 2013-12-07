@@ -151,6 +151,7 @@ namespace kiss
       void projectClose(const project::ProjectPtr &project);
       void projectDelete(const project::ProjectPtr &project);
 			void projectOpenSettings(const kiss::project::ProjectPtr &project);
+      void projectSetActive(const kiss::project::ProjectPtr &project);
 
 			menu::Menuable *menuable(const QString &name);
 			QList<menu::Menuable *> menuablesExcept(const QStringList &names);
@@ -225,12 +226,12 @@ namespace kiss
       void selectedProjectClose();
       void selectedProjectDelete();
       void selectedProjectOpenSettings();
+      void selectedProjectSetActive();
       void droppedProjectAddExisting(QStringList files);
       
 			void projectRenameFile();
 			void projectRemoveFile();
       
-			void projectSetActive();
 			void openRecent();
 
 			void errorClicked(QListWidgetItem *item);

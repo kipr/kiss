@@ -267,10 +267,9 @@ project::ProjectPtr MainWindow::openProject(const QString &projectPath)
 {
 	project::ProjectPtr project = project::Project::load(projectPath);
 	Log::ref().info(QString("Opening project at %1").arg(projectPath));
-	if(!project || !m_projectManager.openProject(project)) return project::ProjectPtr();
-	
-	m_projectsModel.addProject(project);
-	m_projectManager.setActiveProject(project);
+	if(!project) return project::ProjectPtr();
+  m_projectsModel.addProject(project);
+  if(!m_projectManager.openProject(project)) return project::ProjectPtr();
 	if(!m_projectManager.projects().isEmpty()) {
 		ui_projectFrame->setVisible(true);
 		activateMenuable(menu::TargetMenu::menuName(), this);
@@ -345,7 +344,7 @@ void MainWindow::initMenus()
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
 	m_projectContextMenu->addSeparator();
-	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_heart.png"), tr("Set Active"), this, SLOT(projectSetActive()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_heart.png"), tr("Set Active"), this, SLOT(selectedProjectSetActive()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_wrench.png"),tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder.png"), tr("Close Project"), this, SLOT(selectedProjectClose()));
@@ -676,9 +675,13 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	if(i < 0) return;
 	
 	setUpdatesEnabled(false);
+  setTitle("");
 	m_currentTab = lookup(ui_tabWidget->widget(i));
-	setTitle("");
-	if(m_currentTab) m_currentTab->activate();
+	if(m_currentTab) {
+    m_currentTab->activate();
+    const project::ProjectPtr project = m_currentTab->project();
+    if(project) projectSetActive(project);
+  }
 	
 	emit updateActivatable();
 	
@@ -826,12 +829,10 @@ void MainWindow::selectedProjectClose()
 
 void MainWindow::projectClose(const project::ProjectPtr &project)
 {
-	if(!project || !m_projectManager.projects().contains(project)) return;
+	if(!project || !m_projectManager.closeProject(project)) return;
 
 	closeProjectTabs(project);
-	m_projectManager.unsetActiveProject(project);
 	m_projectsModel.removeProject(project);
-  m_projectManager.closeProject(project);
 	if(m_projectManager.projects().isEmpty()) {
 		ui_projectFrame->setVisible(false);
 		activateMenuable(menu::TargetMenu::menuName(), 0);
@@ -885,9 +886,14 @@ void MainWindow::projectOpenSettings(const project::ProjectPtr &project)
 	project->setAutoCompileDeps(dialog.autoCompileDeps());
 }
 
-void MainWindow::projectSetActive()
+void MainWindow::selectedProjectSetActive()
 {
-  m_projectManager.setActiveProject(m_projectsModel.project(ui_projects->currentIndex()));
+  projectSetActive(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+void MainWindow::projectSetActive(const project::ProjectPtr &project)
+{
+  m_projectManager.setActiveProject(project);
   emit updateActivatable();
 }
 
