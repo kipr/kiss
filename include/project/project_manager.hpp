@@ -24,8 +24,7 @@ namespace kiss
 			bool openProject(const ProjectPtr &project);
 			bool closeProject(const ProjectPtr &project);
 
-			void setActiveProject(const ProjectPtr &project);
-			void unsetActiveProject(const ProjectPtr &project);
+			bool setActiveProject(const ProjectPtr &project);
 			const ProjectPtr &activeProject() const;
 			
 			const ProjectPtrList &projects() const;

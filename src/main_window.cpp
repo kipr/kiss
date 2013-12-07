@@ -893,7 +893,7 @@ void MainWindow::selectedProjectSetActive()
 
 void MainWindow::projectSetActive(const project::ProjectPtr &project)
 {
-  m_projectManager.setActiveProject(project);
+  if(!m_projectManager.setActiveProject(project)) return;
   emit updateActivatable();
 }
 

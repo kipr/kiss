@@ -36,17 +36,15 @@ bool Manager::closeProject(const ProjectPtr &project)
 	return true;
 }
 
-void Manager::setActiveProject(const ProjectPtr &project)
+bool Manager::setActiveProject(const ProjectPtr &project)
 {
+  if(project == m_activeProject) return false;
+  
 	const ProjectPtr old = m_activeProject;
 	m_activeProject = project;
 	emit activeChanged(old, m_activeProject);
-}
-
-void Manager::unsetActiveProject(const ProjectPtr &project)
-{
-	if(project != m_activeProject) return;
-	m_projects.isEmpty() ? setActiveProject(ProjectPtr()) : setActiveProject(m_projects.last());	
+  
+  return true;
 }
 
 const ProjectPtr &Manager::activeProject() const
