@@ -226,7 +226,6 @@ namespace kiss
       void selectedProjectClose();
       void selectedProjectDelete();
       void selectedProjectOpenSettings();
-      void selectedProjectSetActive();
       void droppedProjectAddExisting(QStringList files);
       
 			void projectRenameFile();

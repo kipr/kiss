@@ -344,7 +344,6 @@ void MainWindow::initMenus()
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
 	m_projectContextMenu->addSeparator();
-	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_heart.png"), tr("Set Active"), this, SLOT(selectedProjectSetActive()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_wrench.png"),tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder.png"), tr("Close Project"), this, SLOT(selectedProjectClose()));
@@ -884,11 +883,6 @@ void MainWindow::projectOpenSettings(const project::ProjectPtr &project)
 	project->setCompilerFlags(dialog.compilerFlags());
 	project->setCompileLib(dialog.compileLib());
 	project->setAutoCompileDeps(dialog.autoCompileDeps());
-}
-
-void MainWindow::selectedProjectSetActive()
-{
-  projectSetActive(m_projectsModel.project(ui_projects->currentIndex()));
 }
 
 void MainWindow::projectSetActive(const project::ProjectPtr &project)
