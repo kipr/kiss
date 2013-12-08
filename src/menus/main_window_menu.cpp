@@ -50,7 +50,7 @@ MainWindowMenu::MainWindowMenu(widget::MainWindow *mainWindow)
 	
 	m_edit.append(Node::separator());
 	m_edit.append(node(activeAction("cog.png", "Settings", QKeySequence::Preferences, this, "settings")));
-	m_edit.append(node(activeAction("palette.png", "Theme Settings", QKeySequence::Preferences, this, "theme")));
+	//m_edit.append(node(activeAction("palette.png", "Theme Settings", QKeySequence::Preferences, this, "theme")));
 	
 	QAction *about = activeAction("information", "About KISS IDE", QKeySequence::UnknownKey, this, "about");
 	m_help.append(node(about));
