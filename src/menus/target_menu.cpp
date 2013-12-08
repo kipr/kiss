@@ -34,14 +34,14 @@ TargetMenu::TargetMenu()
 	// Put manuals in "Target"
 	m_targetMenu = new Node("Target");
 	
-	m_targetMenu->children.append(compileNode = node(activeAction("bricks", "Compile", QKeySequence("Alt+C"), this, "compile")));
-	m_targetMenu->children.append(downloadNode = node(activeAction("ruby_blue", "Download", QKeySequence("Alt+D"), this, "download")));
-	m_targetMenu->children.append(runNode = node(activeAction("arrow_right", "Run", QKeySequence("Alt+R"), this, "run")));
+	m_targetMenu->children.append(compileNode = node(activeAction("bricks", "Compile", QKeySequence("Alt+C"), this, "activeProjectCompile")));
+	m_targetMenu->children.append(downloadNode = node(activeAction("ruby_blue", "Download", QKeySequence("Alt+D"), this, "activeProjectDownload")));
+	m_targetMenu->children.append(runNode = node(activeAction("arrow_right", "Run", QKeySequence("Alt+R"), this, "activeProjectRun")));
 	m_toolbar.append(compileNode);
 	m_toolbar.append(runNode);
 	m_targetMenu->children.append(Node::separator());
 	m_targetMenu->children.append(Node::separator());
-	m_targetMenu->children.append(node(activeAction("computer", "Change Target", QKeySequence("Alt+T"), this, "changeTarget")));
+	m_targetMenu->children.append(node(activeAction("computer", "Change Target", QKeySequence("Alt+T"), this, "activeProjectChangeTarget")));
 	m_targetMenu->children.append(Node::separator());
 	
 	compileNode->hideOnDisable = false;

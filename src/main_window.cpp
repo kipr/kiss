@@ -344,6 +344,10 @@ void MainWindow::initMenus()
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
 	m_projectContextMenu->addSeparator();
+  m_projectContextMenu->addAction(ResourceHelper::ref().icon("bricks"),tr("Compile"), this, SLOT(selectedProjectCompile()));
+  m_projectContextMenu->addAction(ResourceHelper::ref().icon("arrow_right"),tr("Run"), this, SLOT(selectedProjectRun()));
+  m_projectContextMenu->addAction(ResourceHelper::ref().icon("computer"),tr("Change Target"), this, SLOT(selectedProjectChangeTarget()));
+  m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_wrench.png"),tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder.png"), tr("Close Project"), this, SLOT(selectedProjectClose()));
@@ -592,75 +596,12 @@ bool MainWindow::commPreconditions(const kiss::project::ProjectPtr &project)
 
 	if(project->target() && project->target()->available()) return true;
 	
-	if(!changeTarget(project)) return false;
+	if(!projectChangeTarget(project)) return false;
 	if(!project->target()->available()) {
 		setStatusMessage(tr("Target \"%1\" is not available for communication.").arg(project->target()->displayName()));
 		return false;
 	}
 
-	return true;
-}
-
-const bool MainWindow::download()
-{
-	return download(m_projectManager.activeProject());
-}
-
-const bool MainWindow::download(const project::ProjectPtr &project)
-{
-	if(!commPreconditions(project)) return false;
-
-	return project->download();
-}
-
-const bool MainWindow::compile()
-{
-	return compile(m_projectManager.activeProject());
-}
-
-const bool MainWindow::compile(const project::ProjectPtr &project)
-{
-	if(!commPreconditions(project)) return false;
-
-	bool success = true;
-	success &= project->download();
-	success &= project->compile();
-
-	return success;
-}
-
-const bool MainWindow::run()
-{
-	return run(m_projectManager.activeProject());
-}
-
-const bool MainWindow::run(const project::ProjectPtr &project)
-{
-	if(!commPreconditions(project)) return false;
-
-	bool success = true;
-	success &= project->download();
-	success &= project->compile();
-	success &= project->run();
-
-	return success;
-}
-
-const bool MainWindow::changeTarget()
-{
-	return changeTarget(m_projectManager.activeProject());
-}
-
-const bool MainWindow::changeTarget(kiss::project::ProjectPtr project)
-{
-	dialog::Target targetDialog(&target::InterfaceManager::ref(), this);
-	if(targetDialog.exec() == QDialog::Rejected) return false;
-	if(targetDialog.target().isNull()) return false;
-	project->setTarget(targetDialog.target());
-	
-	// This hooks up all important callbacks
-	project->target()->setResponder(m_mainResponder);
-		
 	return true;
 }
 
@@ -746,6 +687,11 @@ void MainWindow::selectedProjectAddExisting()
 	projectAddExisting(m_projectsModel.project(ui_projects->currentIndex()), files);
 }
 
+void MainWindow::droppedProjectAddExisting(QStringList files)
+{
+  projectAddExisting(m_projectsModel.project(ui_projects->currentIndex()), files);
+}
+
 void MainWindow::projectAddExisting(const project::ProjectPtr &project, QStringList files)
 {
   if(!project || files.isEmpty()) return;
@@ -779,40 +725,6 @@ void MainWindow::projectAddExisting(const project::ProjectPtr &project, QStringL
 			break;
 		default:
 			return;
-	}
-}
-
-void MainWindow::droppedProjectAddExisting(QStringList files)
-{
-  projectAddExisting(m_projectsModel.project(ui_projects->currentIndex()), files);
-}
-
-void MainWindow::projectRenameFile()
-{
-	ui_projects->edit(ui_projects->currentIndex());
-}
-
-void MainWindow::projectRemoveFile()
-{
-	const QModelIndex &index = ui_projects->currentIndex();
-	const QString &path = m_projectsModel.filePath(index);
-	project::ProjectPtr project = m_projectsModel.project(index);
-
-	if(m_projectsModel.isLink(index)) {
-		if(QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
-			QT_TR_NOOP("Removing this file will unlink the file from the project. Are you sure you want to remove it?"), 
-			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
-
-		closeTab(path);
-		project->removeLink(path);
-	}
-	else if(m_projectsModel.isFile(index)) {
-		if(!SystemUtils::supportsMoveToTrash() && QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
-			QT_TR_NOOP("Removing this file will permanently delete it. Are you sure you want to remove it?"), 
-			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
-
-		closeTab(path);
-		project->removeFile(path);
 	}
 }
 
@@ -889,6 +801,118 @@ void MainWindow::projectSetActive(const project::ProjectPtr &project)
 {
   if(!m_projectManager.setActiveProject(project)) return;
   emit updateActivatable();
+}
+
+const bool MainWindow::activeProjectDownload()
+{
+	return projectDownload(m_projectManager.activeProject());
+}
+
+const bool MainWindow::selectedProjectDownload()
+{
+  return projectDownload(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+const bool MainWindow::projectDownload(const project::ProjectPtr &project)
+{
+	if(!commPreconditions(project)) return false;
+
+	return project->download();
+}
+
+const bool MainWindow::activeProjectCompile()
+{
+	return projectCompile(m_projectManager.activeProject());
+}
+
+const bool MainWindow::selectedProjectCompile()
+{
+  return projectCompile(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+const bool MainWindow::projectCompile(const project::ProjectPtr &project)
+{
+	if(!commPreconditions(project)) return false;
+
+	bool success = true;
+	success &= project->download();
+	success &= project->compile();
+
+	return success;
+}
+
+const bool MainWindow::activeProjectRun()
+{
+	return projectRun(m_projectManager.activeProject());
+}
+
+const bool MainWindow::selectedProjectRun()
+{
+  return projectRun(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+const bool MainWindow::projectRun(const project::ProjectPtr &project)
+{
+	if(!commPreconditions(project)) return false;
+
+	bool success = true;
+	success &= project->download();
+	success &= project->compile();
+	success &= project->run();
+
+	return success;
+}
+
+const bool MainWindow::activeProjectChangeTarget()
+{
+	return projectChangeTarget(m_projectManager.activeProject());
+}
+
+const bool MainWindow::selectedProjectChangeTarget()
+{
+  return projectChangeTarget(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+const bool MainWindow::projectChangeTarget(kiss::project::ProjectPtr project)
+{
+	dialog::Target targetDialog(&target::InterfaceManager::ref(), this);
+	if(targetDialog.exec() == QDialog::Rejected) return false;
+	if(targetDialog.target().isNull()) return false;
+	project->setTarget(targetDialog.target());
+	
+	// This hooks up all important callbacks
+	project->target()->setResponder(m_mainResponder);
+		
+	return true;
+}
+
+void MainWindow::projectRenameFile()
+{
+	ui_projects->edit(ui_projects->currentIndex());
+}
+
+void MainWindow::projectRemoveFile()
+{
+	const QModelIndex &index = ui_projects->currentIndex();
+	const QString &path = m_projectsModel.filePath(index);
+	project::ProjectPtr project = m_projectsModel.project(index);
+
+	if(m_projectsModel.isLink(index)) {
+		if(QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
+			QT_TR_NOOP("Removing this file will unlink the file from the project. Are you sure you want to remove it?"), 
+			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
+
+		closeTab(path);
+		project->removeLink(path);
+	}
+	else if(m_projectsModel.isFile(index)) {
+		if(!SystemUtils::supportsMoveToTrash() && QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
+			QT_TR_NOOP("Removing this file will permanently delete it. Are you sure you want to remove it?"), 
+			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
+
+		closeTab(path);
+		project->removeFile(path);
+	}
 }
 
 void MainWindow::showProjectDock(bool show)
