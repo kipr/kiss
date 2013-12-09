@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <title>KISS IDE Tutorial: Hello World!</title>
+    <style>
+    .right {
+      float: right;
+      display: block;
+    }
+    .left {
+      float: left;
+      display: block;
+    }
+    body {
+      font-family: Helvetica, sans-serif;
+      background-color: #EEE;
+      width: 800px;
+      margin: 30px auto 30px auto;
+    }
+    .center {
+      text-align: center;
+    }
+    .main {
+      background-color: #FFF;
+      border-color: #999;
+      border: 1px solid;
+      padding: 16px;
+      overflow: auto;
+    }
+    .fill {
+      width: 100%;
+    }
+    .side {
+      width: 40%;
+    }
+    .sside {
+      width: 30%;
+    }
+    .pad {
+      padding: 10px;
+    }
+    pre {
+      background-color: #DDD;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+    <h1 class="center">KISS IDE 4.2 Tutorial: Hello World!</h1>
+    <p>
+      KISS IDE is an instructional integrated development environment for the C and C++ programming languages. In this tutorial, you will create and run a Hello World project.
+    </p>
+    
+    <h2>Creating a New Project</h2>
+    <img class="right side pad" src="new_project.png"></img>
+    <p>First, you need to create a new project.</p>
+    <ol>
+      <li>Click the "New Project" icon in the center of the KISS IDE window. (Alternatively, you can go to File -> New -> New Project.)</li>
+      <li>Enter a project name (e.g. "HelloWorld") and choose a save location (e.g. your "My Documents" folder). This information will be important in finding your project at a later time.</li>
+      <li>Press "OK" to create the new project. The <i>project sidebar</i> will appear on the right hand side of the KISS IDE window, and your new project will be listed there.</li>
+    </ol>
+    
+    <h2>Adding a New File</h2>
+    <img class="right side" src="templates.png"></img>
+    <p>Next, you need to add a file to your project. This file will contain your program.</p>
+    <ol>
+      <li>After creating the project, a dialog will prompt you to add a new file to the project. Click "Yes." (Alternatively, you can right-click on the project in the sidebar and click "Add New File...").</li>
+      <li>This will bring up the "Templates" dialog, which contains several sample programs. Select C Files -> Hello, World! and click "OK."</li>
+      <li>Give the new file a name (e.g. 'hello.c') and click "OK." Your new file will automatically open in the KISS IDE editor.</li>
+    </ol>
+    
+    <h2>Compiling and Running</h2>
+    <p>Now that you've created a project and source file, it's time to compile and run your program!</p>
+    <ol>
+      <li>Click "Run" on the toolbar at the top of KISS IDE.</li>
+      <li>Since this is the first time you've compiled or run this project, a "Target Selection" dialog will appear. You can run your program on a number of targets including your computer, a simulator, and a KIPR Link. For now, run the program locally on your computer by choosing the "My Computer" target and clicking "OK."</li>
+      <li>You will see a progress indicator at the bottom of KISS IDE while your program compiles. Once compilation finishes, the progress indicator will disappear and your program will run inside the "My Computer" application. You can leave this "My Computer" application open if you plan on running more programs.</li>        
+    </ol>
+    <img class="center fill" src="computer.png"></img>
+    
+    <h2>Need Help?</h2>
+    <p>
+      If you have any questions or need assistance, please contact <a href="mailto:bmcdorman@kipr.org">Braden McDorman</a> or <a href="mailto:nzaman@kipr.org">Nafis Zaman</a>.
+    </p>
+    </div>
+    <p class="center">Copyright &copy; 2013 KISS Institute for Practical Robotics</p>
+  </body>
+</html>
