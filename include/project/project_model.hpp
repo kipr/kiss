@@ -23,9 +23,9 @@ namespace kiss
 			void removeProject(ProjectPtr project);
 			const QStringList &projects() const;
 
-			void setDependencies(ProjectPtr project, const QStringList &deps);
+			// void setDependencies(ProjectPtr project, const QStringList &deps);
 
-			bool isDependency(const QModelIndex &index) const;
+			// bool isDependency(const QModelIndex &index) const;
 			bool isProject(const QModelIndex &index) const;
 			bool isLink(const QModelIndex &index) const;
 			bool isFile(const QModelIndex &index) const;

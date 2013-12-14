@@ -164,10 +164,10 @@ public:
 			appendRow(item);
 		}
 
-		const QStringList &deps = m_project->deps();
+		/*const QStringList &deps = m_project->deps();
 		foreach(const QString &dep, deps) {
 			appendRow(new FileItem(dep));
-		}
+		}*/
 	}
 
 	ProjectPtr project() const
