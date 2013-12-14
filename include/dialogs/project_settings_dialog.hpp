@@ -31,11 +31,11 @@ namespace kiss
 			void on_ui_buttonAddSetting_clicked();
 			void on_ui_buttonEditSetting_clicked();
 			void on_ui_buttonRemoveSetting_clicked();
-			
 			void on_ui_tableCompile_cellDoubleClicked(int row, int column);
 
 		private:
 			void addDep(const QString &fullPath);
+      void addSetting(const QString &flag, const QString &value);
 			void editCompilerFlag(int row);
 		};
 	}

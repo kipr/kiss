@@ -17,16 +17,9 @@ ProjectSettingsDialog::ProjectSettingsDialog(project::ProjectPtr project, QWidge
 	foreach(const QString &dep, project->deps()) addDep(dep);
 	
 	const Compiler::Options &flags = project->compilerFlags();
-	ui_tableCompile->setRowCount(flags.keys().size());
-	quint16 i = 0;
-	foreach(const QString &key, flags.keys()) {
-		ui_tableCompile->setItem(i, 0, new QTableWidgetItem(key));
-		ui_tableCompile->setItem(i, 1, new QTableWidgetItem(flags[key].toString()));
-		++i;
-	}
+	foreach(const QString &key, flags.keys()) addSetting(key, flags[key].toString());
 	
 	ui_buttonLibrary->setChecked(project->compileLib());
-	
 	ui_boxAutoDep->setChecked(project->autoCompileDeps());
 }
 
@@ -78,10 +71,28 @@ void ProjectSettingsDialog::addDep(const QString &dirPath)
 {
 	const QString &name = QDir(dirPath).dirName();
 
+  QTableWidgetItem *projectItem = new QTableWidgetItem(name);
+  QTableWidgetItem *pathItem = new QTableWidgetItem(dirPath);
+  projectItem->setToolTip(projectItem->text());
+  pathItem->setToolTip(pathItem->text());
+  
 	const int &pos = ui_tableDeps->rowCount();
 	ui_tableDeps->insertRow(pos);
-	ui_tableDeps->setItem(pos, 0, new QTableWidgetItem(name));
-	ui_tableDeps->setItem(pos, 1, new QTableWidgetItem(dirPath));
+	ui_tableDeps->setItem(pos, 0, projectItem);
+	ui_tableDeps->setItem(pos, 1, pathItem);
+}
+
+void ProjectSettingsDialog::addSetting(const QString &flag, const QString &value)
+{
+  QTableWidgetItem *flagItem = new QTableWidgetItem(flag);
+  QTableWidgetItem *valueItem = new QTableWidgetItem(value);
+  flagItem->setToolTip(flag);
+  valueItem->setToolTip(value);
+	
+	const int numRows = ui_tableCompile->rowCount();
+	ui_tableCompile->insertRow(numRows);
+	ui_tableCompile->setItem(numRows, 0, flagItem);
+	ui_tableCompile->setItem(numRows, 1, valueItem);
 }
 
 void ProjectSettingsDialog::editCompilerFlag(int row)
@@ -114,11 +125,7 @@ void ProjectSettingsDialog::on_ui_buttonAddSetting_clicked()
 {
 	CompilerFlagDialog dialog(this);
 	if(dialog.exec() == QDialog::Rejected) return;
-	
-	const int row = ui_tableCompile->rowCount();
-	ui_tableCompile->insertRow(row);
-	ui_tableCompile->setItem(row, 0, new QTableWidgetItem(dialog.flag()));
-	ui_tableCompile->setItem(row, 1, new QTableWidgetItem(dialog.value()));
+  addSetting(dialog.flag(), dialog.value());
 }
 
 void ProjectSettingsDialog::on_ui_buttonEditSetting_clicked()
