@@ -113,13 +113,13 @@ public:
 
 	virtual void refresh()
 	{
-		for(int i = 0; i < rowCount(); ++i) removeRow(i--);
+    removeRows(0, rowCount());
 		QFileInfoList entries = dir().entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDot | QDir::NoDotDot);
 		const QStringList &hidden = Manager::hiddenExtensions();
 		foreach(const QFileInfo &entry, entries) {
 			if(hidden.contains(entry.suffix())) continue;
-			appendRow(entry.isDir() ? (PathItem *)new FolderItem(entry.absoluteFilePath())
-				: (PathItem *)new FileItem(entry.absoluteFilePath()));
+      if(entry.isDir()) appendRow(new FolderItem(entry.absoluteFilePath()));
+      else appendRow(new FileItem(entry.absoluteFilePath()));
 		}
 	}
 
@@ -255,16 +255,9 @@ bool Model::isFileEditable(const QModelIndex &index) const
 
 ProjectPtr Model::project(const QModelIndex &index) const
 {
-	QStandardItem *item = itemFromIndex(index);
-	ProjectItem *projectItem = ProjectItem::projectitem_cast(item);
-	if(!projectItem) {
-		FileItem *projectFile = FileItem::fileitem_cast(item);
-		if(!projectFile) return ProjectPtr();
-		// TODO: This assumes a strictly two-level project model
-		projectItem = ProjectItem::projectitem_cast(projectFile->parent());
-	}
-
-	return projectItem ? projectItem->project() : ProjectPtr();
+	ProjectItem *projectItem = ProjectItem::projectitem_cast(itemFromIndex(index));
+  if(projectItem) return projectItem->project();
+  return project(index.parent());
 }
 
 QString Model::filePath(const QModelIndex &index) const
