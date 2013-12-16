@@ -112,7 +112,7 @@ public:
 	virtual void refresh()
 	{
     removeRows(0, rowCount());
-		QFileInfoList entries = dir().entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDot | QDir::NoDotDot);
+		QFileInfoList entries = dir().entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDot | QDir::NoDotDot, QDir::DirsFirst);
 		const QStringList &hidden = Manager::hiddenExtensions();
 		foreach(const QFileInfo &entry, entries) {
 			if(hidden.contains(entry.suffix())) continue;
