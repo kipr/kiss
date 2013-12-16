@@ -339,6 +339,7 @@ void MainWindow::initMenus()
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
 	m_projectContextMenu->addSeparator();
+  m_projectContextMenu->addAction(ResourceHelper::ref().icon("ruby_blue"),tr("Download"), this, SLOT(selectedProjectDownload()));
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("bricks"),tr("Compile"), this, SLOT(selectedProjectCompile()));
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("arrow_right"),tr("Run"), this, SLOT(selectedProjectRun()));
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("computer"),tr("Change Target"), this, SLOT(selectedProjectChangeTarget()));
