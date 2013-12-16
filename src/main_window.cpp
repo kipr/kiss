@@ -335,6 +335,7 @@ void MainWindow::initMenus()
 	ui_tabWidget->setTabsClosable(true);
 	connect(ui_tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
 
+  const QString &trashLabel = SystemUtils::supportsMoveToTrash() ? tr("Move to Trash") : tr("Delete");
 	m_projectContextMenu = new QMenu(this);
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white_add.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white_add.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
@@ -348,16 +349,16 @@ void MainWindow::initMenus()
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_wrench.png"),tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder.png"), tr("Close Project"), this, SLOT(selectedProjectClose()));
-	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_delete.png"), tr("Delete Project"), this, SLOT(selectedProjectDelete()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_delete.png"), trashLabel, this, SLOT(selectedProjectDelete()));
   
   m_folderContextMenu = new QMenu(this);
   m_folderContextMenu->addAction(ResourceHelper::ref().icon("folder_add"), tr("Add Folder"), this, SLOT(projectAddFolder()));
-  m_folderContextMenu->addAction(ResourceHelper::ref().icon("folder_delete.png"), SystemUtils::supportsMoveToTrash() ? tr("Move to Trash") : tr("Remove"), this, SLOT(projectRemoveFolder()));
+  m_folderContextMenu->addAction(ResourceHelper::ref().icon("folder_delete.png"), trashLabel, this, SLOT(projectRemoveFolder()));
 
 	m_fileContextMenu = new QMenu(this);
 	m_fileContextMenu->addAction(ResourceHelper::ref().icon("textfield_rename.png"), tr("Rename"), this, SLOT(projectRenameFile()));
 	m_fileContextMenu->addSeparator();
-	m_fileContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), SystemUtils::supportsMoveToTrash() ? tr("Move to Trash") : tr("Remove"), this, SLOT(projectRemoveFile()));
+	m_fileContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), trashLabel, this, SLOT(projectRemoveFile()));
 }
 
 void MainWindow::setTitle(const QString &title)
@@ -775,7 +776,8 @@ void MainWindow::projectDelete(const project::ProjectPtr &project)
 			QT_TR_NOOP("Deleting this project will delete all contents of the project folder. Are you sure you want to delete it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
-  if(!FileUtils::remove(project->location())) qWarning() << "Failed to delete project at " << project->location();
+  if(!project->removeFolder(project->location()))
+    QMessageBox::warning(this, tr("Failed to Delete Project"), tr("KISS IDE could not delete the project folder."));
 	else projectClose(project);
 }
 
@@ -907,12 +909,12 @@ void MainWindow::projectAddFolder()
 void MainWindow::projectRemoveFolder()
 {
 	if(QMessageBox::question(this, tr("Are You Sure?"),
-		tr("Removing this folder will delete it and its contents. Are you sure you want to remove it?"), 
+		tr("Deleting this folder will delete it and its contents. Are you sure you want to delete it?"), 
 		QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
   project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
   if(!project->removeFolder(m_projectsModel.filePath(ui_projects->currentIndex())))
-    QMessageBox::warning(this, tr("Failed to Remove Folder"), tr("KISS IDE could not remove that folder."));
+    QMessageBox::warning(this, tr("Failed to Delete Folder"), tr("KISS IDE could not delete that folder."));
 }
 
 void MainWindow::projectRenameFile()
@@ -928,15 +930,15 @@ void MainWindow::projectRemoveFile()
 
 	if(m_projectsModel.isLink(index)) {
 		if(QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
-			QT_TR_NOOP("Removing this file will unlink the file from the project. Are you sure you want to remove it?"), 
+			QT_TR_NOOP("Deleting this file will unlink the file from the project. Are you sure you want to delete it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
 		closeTab(path);
 		project->removeLink(path);
 	}
 	else if(m_projectsModel.isFile(index)) {
-		if(!SystemUtils::supportsMoveToTrash() && QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
-			QT_TR_NOOP("Removing this file will permanently delete it. Are you sure you want to remove it?"), 
+		if(QMessageBox::question(this, QT_TR_NOOP("Are You Sure?"),
+			QT_TR_NOOP("Are you sure you want to delete the file?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
 		closeTab(path);
