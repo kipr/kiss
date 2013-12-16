@@ -40,6 +40,9 @@ namespace kiss
 			bool addFileAsRelativeLink(const QString &path);
 			bool removeLink(const QString &path);
 			QStringList links() const;
+      
+      bool addFolder(const QString &path, const QString &folderName);
+      bool removeFolder(const QString &path);
 			
 			void setDeps(const QStringList &deps);
 			QStringList deps() const;

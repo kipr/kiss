@@ -338,6 +338,7 @@ void MainWindow::initMenus()
 	m_projectContextMenu = new QMenu(this);
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
+  m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_add"), tr("Add Folder"), this, SLOT(projectAddFolder()));
 	m_projectContextMenu->addSeparator();
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("ruby_blue"),tr("Download"), this, SLOT(selectedProjectDownload()));
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("bricks"),tr("Compile"), this, SLOT(selectedProjectCompile()));
@@ -348,6 +349,10 @@ void MainWindow::initMenus()
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder.png"), tr("Close Project"), this, SLOT(selectedProjectClose()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_delete.png"), tr("Delete Project"), this, SLOT(selectedProjectDelete()));
+  
+  m_folderContextMenu = new QMenu(this);
+  m_folderContextMenu->addAction(ResourceHelper::ref().icon("folder_add"), tr("Add Folder"), this, SLOT(projectAddFolder()));
+  m_folderContextMenu->addAction(ResourceHelper::ref().icon("folder_delete.png"), SystemUtils::supportsMoveToTrash() ? tr("Move to Trash") : tr("Remove"), this, SLOT(projectRemoveFolder()));
 
 	m_fileContextMenu = new QMenu(this);
 	m_fileContextMenu->addAction(ResourceHelper::ref().icon("textfield_rename.png"), tr("Rename"), this, SLOT(projectRenameFile()));
@@ -887,6 +892,29 @@ const bool MainWindow::projectChangeTarget(kiss::project::ProjectPtr project)
 	return true;
 }
 
+void MainWindow::projectAddFolder()
+{
+	bool ok = false;
+	const QString folderName = QInputDialog::getText(this, tr("New Folder"), tr("New Folder Name:"),
+		QLineEdit::Normal, QString(), &ok);
+	if(!ok) return;
+  
+  project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
+  if(!project->addFolder(m_projectsModel.filePath(ui_projects->currentIndex()), folderName))
+		QMessageBox::warning(this, tr("Failed to Create Folder"), tr("KISS IDE could not create that folder. Make sure the name is valid."));
+}
+
+void MainWindow::projectRemoveFolder()
+{
+	if(QMessageBox::question(this, tr("Are You Sure?"),
+		tr("Removing this folder will delete it and its contents. Are you sure you want to remove it?"), 
+		QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
+
+  project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
+  if(!project->removeFolder(m_projectsModel.filePath(ui_projects->currentIndex())))
+    QMessageBox::warning(this, tr("Failed to Remove Folder"), tr("KISS IDE could not remove that folder."));
+}
+
 void MainWindow::projectRenameFile()
 {
 	ui_projects->edit(ui_projects->currentIndex());
@@ -938,6 +966,8 @@ void MainWindow::projectContextMenu(const QPoint &pos)
 
 	if(m_projectsModel.isProject(index))
 		m_projectContextMenu->exec(QCursor::pos());
+  else if(m_projectsModel.isFolder(index))
+    m_folderContextMenu->exec(QCursor::pos());
 	else if(m_projectsModel.isLink(index)) return;
 	else if(m_projectsModel.isFile(index))
 		m_fileContextMenu->exec(QCursor::pos());

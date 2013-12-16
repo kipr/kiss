@@ -231,6 +231,8 @@ namespace kiss
       const bool selectedProjectChangeTarget();
       void droppedProjectAddExisting(QStringList files);
       
+      void projectAddFolder();
+      void projectRemoveFolder();
 			void projectRenameFile();
 			void projectRemoveFile();
       
@@ -265,6 +267,7 @@ namespace kiss
 			
 			project::Model m_projectsModel;
 			QMenu *m_projectContextMenu;
+      QMenu *m_folderContextMenu;
 			QMenu *m_fileContextMenu;
 
 			target::Responder *m_mainResponder;

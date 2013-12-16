@@ -162,6 +162,18 @@ QStringList kiss::project::Project::links() const
 	return m_options.value(KEY_LINKS).toStringList();
 }
 
+bool kiss::project::Project::addFolder(const QString &path, const QString &folderName)
+{
+  return QDir(path).mkdir(folderName);
+}
+
+bool kiss::project::Project::removeFolder(const QString &path)
+{
+	if(!QDir(path).exists()) return false;
+	if(SystemUtils::supportsMoveToTrash()) return SystemUtils::moveToTrash(path);
+	return FileUtils::remove(path);
+}
+
 void kiss::project::Project::setDeps(const QStringList &deps)
 {
 	m_options.insert(KEY_DEPS, deps);
