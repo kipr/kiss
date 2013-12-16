@@ -35,45 +35,50 @@
 using namespace kiss;
 using namespace kiss::widget;
 
-DeclarativeTools::DeclarativeTools(MainWindow *mainWindow)
-	: m_mainWindow(mainWindow)
+DeclarativeTools::DeclarativeTools(MainWindow *const mainWindow, DeclarativeTab *const tab)
+	: _mainWindow(mainWindow)
+  , _tab(tab)
 {
-	
 }
 
 void DeclarativeTools::newProject()
 {
-	m_mainWindow->newProject();
+  _mainWindow->newProject();
 }
 
 void DeclarativeTools::open()
 {
-	m_mainWindow->open();
+  _mainWindow->open();
 }
 
 void DeclarativeTools::openWeb(const QString &url)
 {
-	QDesktopServices::openUrl(QUrl::fromUserInput(url));
+  QDesktopServices::openUrl(QUrl::fromUserInput(url));
+}
+
+void DeclarativeTools::setClosable(const bool closable)
+{
+  // _tab->setClosable(closable);
 }
 
 void DeclarativeTools::settings()
 {
-	m_mainWindow->settings();
+  _mainWindow->settings();
 }
 
 const QStringList DeclarativeTools::templates(const QString &target)
 {
-	return QStringList();
+  return QStringList();
 }
 
 void DeclarativeTools::tellActivated()
 {
-	emit activated();
+  emit activated();
 }
 
 void DeclarativeTools::tellCompletedSetup()
 {
-	emit completedSetup();
+  emit completedSetup();
 }
 
 DeclarativeTab::DeclarativeTab(const QUrl &file, MainWindow *parent)
@@ -81,25 +86,25 @@ DeclarativeTab::DeclarativeTab(const QUrl &file, MainWindow *parent)
 #ifdef BUILD_DEVELOPER_TOOLS
 	m_watcher(this), 
 #endif
-	m_kiss(parent)
+	m_kiss(parent, this)
 {
-	QDeclarativeView *view = dynamic_cast<QDeclarativeView*>(widget());
-	if(!view) return;
-	QString color = "#ffffff";
-	#ifndef Q_OS_WIN
-		color = mainWindow()->palette().color(QPalette::Background).name().toUtf8();
-	#endif
-	view->rootContext()->setContextProperty("kissBackground", color);
-	view->rootContext()->setContextProperty("kiss", &m_kiss);
-	view->rootContext()->setContextProperty("tab", this);
-	view->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
-	view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+  QDeclarativeView *view = dynamic_cast<QDeclarativeView*>(widget());
+  if(!view) return;
+  QString color = "#ffffff";
+  #ifndef Q_OS_WIN
+  color = mainWindow()->palette().color(QPalette::Background).name().toUtf8();
+  #endif
+  view->rootContext()->setContextProperty("kissBackground", color);
+  view->rootContext()->setContextProperty("kiss", &m_kiss);
+  view->rootContext()->setContextProperty("tab", this);
+  view->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
+  view->setResizeMode(QDeclarativeView::SizeRootObjectToView);
 #ifdef BUILD_DEVELOPER_TOOLS
-	const QString &localFile = file.toLocalFile();
-	if(!localFile.isEmpty()) {
-		m_watcher.addPath(localFile);
-		connect(&m_watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reload()));
-	}
+  const QString &localFile = file.toLocalFile();
+  if(!localFile.isEmpty()) {
+    m_watcher.addPath(localFile);
+    connect(&m_watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reload()));
+  }
 #endif
 }
 

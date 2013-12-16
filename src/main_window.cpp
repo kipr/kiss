@@ -159,17 +159,17 @@ void MainWindow::newTemplatePack()
 
 project::ProjectPtr MainWindow::newProject()
 {
-	dialog::NewProjectDialog dialog(this);
-	if(dialog.exec() == QDialog::Rejected) return project::ProjectPtr();
+  dialog::NewProjectDialog dialog(this);
+  if(dialog.exec() == QDialog::Rejected) return project::ProjectPtr();
 
-	const QString &saveLocation = dialog.saveLocation();
-	if(QDir(saveLocation).exists()) {
-		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
-			tr("Overwrite %1?").arg(saveLocation),
-			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-		if(ret == QMessageBox::No) return project::ProjectPtr();
-	}
-		
+  const QString &saveLocation = dialog.saveLocation();
+  if(QDir(saveLocation).exists()) {
+    QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
+      tr("Overwrite %1?").arg(saveLocation),
+      QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if(ret == QMessageBox::No) return project::ProjectPtr();
+  }
+
   project::ProjectPtr ret = newProject(saveLocation);
   if(ret.isNull()) return ret;
   
@@ -480,18 +480,18 @@ void MainWindow::open()
 	QString filePath = FileUtils::getOpenFileName(this, tr("Open"), filters.join(";;") + ";;All Files (*)");
 	if(filePath.isEmpty()) return;
 
-	const QString &suffix = QFileInfo(filePath).suffix();
-	if(suffix == "pack") {
-		addTab(new TemplateTab(filePath, this));
-		return;
-	}
+  const QString &suffix = QFileInfo(filePath).suffix();
+  if(suffix == "pack") {
+    addTab(new TemplateTab(filePath, this));
+    return;
+  }
 
-	if(suffix == "kissproj") {
-		openProject(QFileInfo(filePath).absolutePath());
-		return;
-	}
-	
-	openFile(filePath);
+  if(suffix == "kissproj") {
+    openProject(QFileInfo(filePath).absolutePath());
+    return;
+  }
+
+  openFile(filePath);
 }
 
 void MainWindow::openProject()
@@ -583,51 +583,51 @@ void MainWindow::theme()
 
 bool MainWindow::commPreconditions(const kiss::project::ProjectPtr &project)
 {
-	for(int i = 0; i < ui_tabWidget->count(); ++i) {
-		Tab *current = lookup(ui_tabWidget->widget(i));
-		if(current->project() != project) continue;
-		SourceFile *sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
-		if(!sourceFile) continue;
-		if(!sourceFile->save()) return false;
-	}
+  for(int i = 0; i < ui_tabWidget->count(); ++i) {
+    Tab *const current = lookup(ui_tabWidget->widget(i));
+    if(current->project() != project) continue;
+    SourceFile *const sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
+    if(!sourceFile) continue;
+    if(!sourceFile->save()) return false;
+  }
 
-	if(project->target() && project->target()->available()) return true;
-	
-	if(!changeTarget(project)) return false;
-	if(!project->target()->available()) {
-		setStatusMessage(tr("Target \"%1\" is not available for communication.").arg(project->target()->displayName()));
-		return false;
-	}
+  if(project->target() && project->target()->available()) return true;
 
-	return true;
+  if(!changeTarget(project)) return false;
+  if(!project->target()->available()) {
+    setStatusMessage(tr("Target \"%1\" is not available for communication.").arg(project->target()->displayName()));
+    return false;
+  }
+
+  return true;
 }
 
 const bool MainWindow::download()
 {
-	return download(m_projectManager.activeProject());
+  return download(m_projectManager.activeProject());
 }
 
 const bool MainWindow::download(const project::ProjectPtr &project)
 {
-	if(!commPreconditions(project)) return false;
+  if(!commPreconditions(project)) return false;
 
-	return project->download();
+  return project->download();
 }
 
 const bool MainWindow::compile()
 {
-	return compile(m_projectManager.activeProject());
+  return compile(m_projectManager.activeProject());
 }
 
 const bool MainWindow::compile(const project::ProjectPtr &project)
 {
-	if(!commPreconditions(project)) return false;
+  if(!commPreconditions(project)) return false;
 
-	bool success = true;
-	success &= project->download();
-	success &= project->compile();
+  bool success = true;
+  success &= project->download();
+  success &= project->compile();
 
-	return success;
+  return success;
 }
 
 const bool MainWindow::run()
@@ -1026,43 +1026,43 @@ menu::Menuable *MainWindow::menuable(const QString &name)
 
 QList<menu::Menuable *> MainWindow::menuablesExcept(const QStringList &names)
 {
-	QList<menu::Menuable *> ret;
-	foreach(menu::Menuable *menuable, m_menuables) {
-		if(!names.contains(menuable->name())) ret.append(menuable);
-	}
-	return ret;
+  QList<menu::Menuable *> ret;
+  Q_FOREACH(menu::Menuable *const menuable, m_menuables) {
+    if(!names.contains(menuable->name())) ret.append(menuable);
+  }
+  return ret;
 }
 
 void MainWindow::deactivateMenuablesExcept(const QStringList &names)
 {
-	foreach(menu::Menuable *menu, menuablesExcept(names)) {
-		ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menu);
-		if(activatable) activatable->setActive(0);
-	}
+  Q_FOREACH(menu::Menuable *const menu, menuablesExcept(names)) {
+    ActivatableObject *const activatable = dynamic_cast<ActivatableObject *>(menu);
+    if(activatable) activatable->setActive(0);
+  }
 }
 
 QList<menu::Menuable *> MainWindow::menuables()
 {
-	return m_menuables;
+  return m_menuables;
 }
 
 void MainWindow::activateMenuable(const QString &name, QObject *on)
 {
-	ActivatableObject *activatable = dynamic_cast<ActivatableObject *>(menuable(name));
+	ActivatableObject *const activatable = dynamic_cast<ActivatableObject *>(menuable(name));
 	activatable->setActive(on);
 }
 
 QStringList MainWindow::standardMenus() const
 {
-	return QStringList() << menu::FileOperationsMenu::menuName() << menu::MainWindowMenu::menuName()
+  return QStringList() << menu::FileOperationsMenu::menuName() << menu::MainWindowMenu::menuName()
     << menu::TargetMenu::menuName() << menu::ProjectMenu::menuName()
 #ifdef BUILD_DOCUMENTATION_TAB
-	<< menu::DocumentationMenu::menuName()
+    << menu::DocumentationMenu::menuName()
 #endif
 #ifdef BUILD_DEVELOPER_TOOLS
-	<< menu::DeveloperMenu::menuName()
+    << menu::DeveloperMenu::menuName()
 #endif
-	;
+    ;
 }
 
 templates::Manager *MainWindow::templateManager() const
@@ -1072,21 +1072,21 @@ templates::Manager *MainWindow::templateManager() const
 
 QList<QObject*> MainWindow::tabs(const QString &name)
 {
-	QList<QObject *> ret;
-	QList<Tab *> all = tabs();
-	foreach(Tab *tab, all) {
-		QObject *t = dynamic_cast<QObject *>(tab);
-		if(!t) continue;
-		const QMetaObject *meta = t->metaObject();
-		while(meta != 0) {
-			if(name == meta->className()) {
-				ret.append(t);
-				break;
-			}
-			meta = meta->superClass();
-		}
-	}
-	return ret;
+  QList<QObject *> ret;
+  QList<Tab *> all = tabs();
+  Q_FOREACH(Tab *const tab, all) {
+    QObject *const t = dynamic_cast<QObject *>(tab);
+    if(!t) continue;
+    const QMetaObject *meta = t->metaObject();
+    while(meta != 0) {
+      if(name == meta->className()) {
+        ret.append(t);
+        break;
+      }
+      meta = meta->superClass();
+    }
+  }
+  return ret;
 }
 
 project::Manager *MainWindow::projectManager()
