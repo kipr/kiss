@@ -5,25 +5,32 @@
 #include "concrete_menuable.hpp"
 
 namespace kiss
-{	
-	namespace menu
-	{
-		class ProjectMenu : public ConcreteMenuable, public ActivatableObject
-		{
-		Q_OBJECT
-		public:
+{  
+  namespace menu
+  {
+    class ProjectMenu : public ConcreteMenuable, public ActivatableObject
+    {
+    Q_OBJECT
+    public:
       ProjectMenu();
+      void refresh();
 
-			static QString menuName();
+      static QString menuName();
+      
+    public slots:
+      void update();
 
-		protected:
-			void activated();
-			void deactivated();
+    protected:
+      void activated();
+      void deactivated();
       
     private:
       Node *m_projectMenu;
-		};
-	}
+      Node *compileNode;
+      Node *downloadNode;
+      Node *runNode;
+    };
+  }
 }
 
 #endif

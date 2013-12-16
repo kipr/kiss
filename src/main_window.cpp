@@ -272,7 +272,6 @@ project::ProjectPtr MainWindow::openProject(const QString &projectPath)
   if(!m_projectManager.openProject(project)) return project::ProjectPtr();
 	if(!m_projectManager.projects().isEmpty()) {
 		ui_projectFrame->setVisible(true);
-		activateMenuable(menu::TargetMenu::menuName(), this);
     activateMenuable(menu::ProjectMenu::menuName(), this);
 	}
 
@@ -312,10 +311,6 @@ void MainWindow::initMenus()
 	mainWindowMenu->setActive(this);
 	m_menuManager.addActivation(mainWindowMenu);
 	m_menuables.append(mainWindowMenu);
-	
-	TargetMenu *targetMenu = new TargetMenu;
-	m_menuManager.registerMenus(targetMenu);
-	m_menuables.append(targetMenu);
   
   ProjectMenu *projectMenu = new ProjectMenu();
   m_menuManager.registerMenus(projectMenu);
@@ -746,7 +741,6 @@ void MainWindow::projectClose(const project::ProjectPtr &project)
 	m_projectsModel.removeProject(project);
 	if(m_projectManager.projects().isEmpty()) {
 		ui_projectFrame->setVisible(false);
-		activateMenuable(menu::TargetMenu::menuName(), 0);
     activateMenuable(menu::ProjectMenu::menuName(), 0);
 	}
 }
@@ -1073,7 +1067,7 @@ void MainWindow::activateMenuable(const QString &name, QObject *on)
 QStringList MainWindow::standardMenus() const
 {
 	return QStringList() << menu::FileOperationsMenu::menuName() << menu::MainWindowMenu::menuName()
-    << menu::TargetMenu::menuName() << menu::ProjectMenu::menuName()
+    << menu::ProjectMenu::menuName()
 #ifdef BUILD_DOCUMENTATION_TAB
 	<< menu::DocumentationMenu::menuName()
 #endif

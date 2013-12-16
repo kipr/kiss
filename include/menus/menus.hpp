@@ -22,7 +22,6 @@
 #define _MENUS_HPP_
 
 #include "menu_manager.hpp"
-#include "target_menu.hpp"
 #include "source_file_menu.hpp"
 #include "template_pack_menu.hpp"
 #include "main_window_menu.hpp"

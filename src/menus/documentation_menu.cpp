@@ -22,7 +22,6 @@
 
 #ifdef BUILD_DOCUMENTATION_TAB
 
-#include "target_menu.hpp"
 #include "main_window.hpp"
 #include "documentation.hpp"
 
@@ -33,7 +32,6 @@ DocumentationMenu::DocumentationMenu(widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName()),
 	m_mainWindow(mainWindow)
 {
-	Node *targetMenu = new Node("Target");
 	Node *doc = node(action("report", "Documentation"));
 	m_help.append(doc);
 	m_help.append(Node::separator());
