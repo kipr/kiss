@@ -21,10 +21,6 @@ void ProjectView::dragEnterEvent(QDragEnterEvent *event)
 void ProjectView::dragMoveEvent(QDragMoveEvent *event)
 {
 	const QModelIndex &index = indexAt(event->pos());
-	if(index.isValid()) {
-		if(index.parent() == QModelIndex()) setCurrentIndex(index);
-		// TODO: This assumes a strictly two-level project model
-		else setCurrentIndex(index.parent());
-	}
+	if(index.isValid()) setCurrentIndex(index);
 	event->acceptProposedAction();
 }

@@ -227,6 +227,11 @@ bool Model::isProject(const QModelIndex &index) const
 	return ProjectItem::projectitem_cast(itemFromIndex(index));
 }
 
+bool Model::isFolder(const QModelIndex &index) const
+{
+  return FolderItem::folderitem_cast(itemFromIndex(index));
+}
+
 bool Model::isLink(const QModelIndex &index) const
 {
 	ProjectPtr proj = project(index);
@@ -260,9 +265,9 @@ ProjectPtr Model::project(const QModelIndex &index) const
 
 QString Model::filePath(const QModelIndex &index) const
 {
-	FileItem *projectFile = FileItem::fileitem_cast(itemFromIndex(index));
-	if(!projectFile) return QString();
-	return projectFile->path();
+	PathItem *item = PathItem::pathitem_cast(itemFromIndex(index));
+	if(!item) return QString();
+	return item->path();
 }
 
 Qt::ItemFlags Model::flags(const QModelIndex &index) const
@@ -295,7 +300,7 @@ QMimeData *Model::mimeData(const QModelIndexList &indexes) const
 
 bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action,
 	int row, int column, const QModelIndex &parent)
-{
+{ 
 	if(action == Qt::IgnoreAction) return true;
 
 	if(data->hasUrls()) {

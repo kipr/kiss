@@ -181,7 +181,7 @@ project::ProjectPtr MainWindow::newProject()
     QMessageBox::StandardButton r = QMessageBox::question(this, tr("Add a New File?"),
       tr("You just created an empty project. Do you want to add a new file?"),
       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    if(r == QMessageBox::Yes) projectAddNew(ret);
+    if(r == QMessageBox::Yes) projectAddNew(ret, ret->location());
   }
   
   return ret;
@@ -626,15 +626,17 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 
 void MainWindow::activeProjectAddNew()
 {
-  projectAddNew(m_projectManager.activeProject());
+  const project::ProjectPtr &project = m_projectManager.activeProject();
+  projectAddNew(project, project->location());
 }
 
 void MainWindow::selectedProjectAddNew()
 {
-  projectAddNew(m_projectsModel.project(ui_projects->currentIndex()));
+  const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
+  projectAddNew(project, project->location());
 }
 
-void MainWindow::projectAddNew(const project::ProjectPtr &project)
+void MainWindow::projectAddNew(const project::ProjectPtr &project, const QString &dest)
 {
   if(!project) return;
   
@@ -658,7 +660,7 @@ void MainWindow::projectAddNew(const project::ProjectPtr &project)
         fileName += sourceFile->templateExt();
     }
 
-  sourceFile->setFile(QDir(project->location()).filePath(fileName));
+  sourceFile->setFile(QDir(dest).filePath(fileName));
   addTab(sourceFile);
   sourceFile->save();
 }
@@ -670,7 +672,8 @@ void MainWindow::activeProjectAddExisting()
 	QStringList files = FileUtils::getOpenFileNames(this,
 		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
     
-  projectAddExisting(m_projectManager.activeProject(), files);
+  const project::ProjectPtr &project = m_projectManager.activeProject();
+  projectAddExisting(project, files, project->location());
 }
 
 void MainWindow::selectedProjectAddExisting()
@@ -679,16 +682,19 @@ void MainWindow::selectedProjectAddExisting()
 	filters.removeDuplicates();
 	QStringList files = FileUtils::getOpenFileNames(this,
 		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
-    
-	projectAddExisting(m_projectsModel.project(ui_projects->currentIndex()), files);
+  
+  const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
+	projectAddExisting(project, files, project->location());
 }
 
 void MainWindow::droppedProjectAddExisting(QStringList files)
 {
-  projectAddExisting(m_projectsModel.project(ui_projects->currentIndex()), files);
+  const QModelIndex current = ui_projects->currentIndex();
+  projectAddExisting(m_projectsModel.project(current), files,
+    m_projectsModel.isFolder(current) ? m_projectsModel.filePath(current) : m_projectsModel.filePath(current.parent()));
 }
 
-void MainWindow::projectAddExisting(const project::ProjectPtr &project, QStringList files)
+void MainWindow::projectAddExisting(const project::ProjectPtr &project, QStringList files, const QString &dest)
 {
   if(!project || files.isEmpty()) return;
 
@@ -708,10 +714,10 @@ void MainWindow::projectAddExisting(const project::ProjectPtr &project, QStringL
 	if(dialog.exec() != QDialog::Accepted) return;
 	switch(dialog.type()) {
 		case AddToProjectDialog::Move:
-			foreach(QString file, files) project->addFileAsMovedCopy(file);
+			foreach(QString file, files) project->addFileAsMovedCopy(file, dest);
 			break;
 		case AddToProjectDialog::Copy:
-			foreach(QString file, files) project->addFileAsCopy(file);
+			foreach(QString file, files) project->addFileAsCopy(file, dest);
 			break;
 		case AddToProjectDialog::AbsoluteReference:
 			foreach(QString file, files) project->addFileAsLink(file);

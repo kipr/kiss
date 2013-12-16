@@ -27,6 +27,7 @@ namespace kiss
 
 			// bool isDependency(const QModelIndex &index) const;
 			bool isProject(const QModelIndex &index) const;
+      bool isFolder(const QModelIndex &index) const;
 			bool isLink(const QModelIndex &index) const;
 			bool isFile(const QModelIndex &index) const;
 			bool isFileEditable(const QModelIndex &index) const;

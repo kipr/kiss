@@ -146,8 +146,8 @@ namespace kiss
 
 			project::ProjectPtr newProject(const QString &projectPath);
 			project::ProjectPtr openProject(const QString &projectFilePath);
-      void projectAddNew(const project::ProjectPtr &project);
-      void projectAddExisting(const project::ProjectPtr &project, QStringList files);
+      void projectAddNew(const project::ProjectPtr &project, const QString &dest);
+      void projectAddExisting(const project::ProjectPtr &project, QStringList files, const QString &dest);
       void projectClose(const project::ProjectPtr &project);
       void projectDelete(const project::ProjectPtr &project);
 			void projectOpenSettings(const kiss::project::ProjectPtr &project);

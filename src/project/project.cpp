@@ -87,17 +87,17 @@ const bool kiss::project::Project::run() const
 		return true;
 }
 
-bool kiss::project::Project::addFileAsCopy(const QString &path)
+bool kiss::project::Project::addFileAsCopy(const QString &path, const QString &dest)
 {
 	QFileInfo info(path);
 	if(!info.isFile()) return false;
 
-	return QFile::copy(path, m_location + "/" + info.fileName());
+	return QFile::copy(path, dest + "/" + info.fileName());
 }
 
-bool kiss::project::Project::addFileAsMovedCopy(const QString &path)
+bool kiss::project::Project::addFileAsMovedCopy(const QString &path, const QString &dest)
 {
-	return (addFileAsCopy(path) && QFile::remove(path));
+	return (addFileAsCopy(path, dest) && QFile::remove(path));
 }
 
 bool kiss::project::Project::removeFile(const QString &path)
