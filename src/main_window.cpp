@@ -336,8 +336,8 @@ void MainWindow::initMenus()
 	connect(ui_tabWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
 
 	m_projectContextMenu = new QMenu(this);
-	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
-	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white_add.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white_add.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_add"), tr("Add Folder"), this, SLOT(projectAddFolder()));
 	m_projectContextMenu->addSeparator();
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("ruby_blue"),tr("Download"), this, SLOT(selectedProjectDownload()));
