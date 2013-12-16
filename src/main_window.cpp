@@ -349,11 +349,11 @@ void MainWindow::initMenus()
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_wrench.png"),tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder.png"), tr("Close Project"), this, SLOT(selectedProjectClose()));
-	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_delete.png"), trashLabel, this, SLOT(selectedProjectDelete()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), trashLabel, this, SLOT(selectedProjectDelete()));
   
   m_folderContextMenu = new QMenu(this);
   m_folderContextMenu->addAction(ResourceHelper::ref().icon("folder_add"), tr("Add Folder"), this, SLOT(projectAddFolder()));
-  m_folderContextMenu->addAction(ResourceHelper::ref().icon("folder_delete.png"), trashLabel, this, SLOT(projectRemoveFolder()));
+  m_folderContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), trashLabel, this, SLOT(projectRemoveFolder()));
 
 	m_fileContextMenu = new QMenu(this);
 	m_fileContextMenu->addAction(ResourceHelper::ref().icon("textfield_rename.png"), tr("Rename"), this, SLOT(projectRenameFile()));

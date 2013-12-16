@@ -2,6 +2,7 @@
 
 #include "main_window.hpp"
 #include "communication_manager.hpp"
+#include "system_utils.hpp"
 
 using namespace kiss::menu;
 
@@ -10,9 +11,9 @@ ProjectMenu::ProjectMenu()
 {
   m_projectMenu = new Node(menuName());
   
-  m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white.png"), "Add New File...",
+  m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white_add.png"), "Add New File...",
     QKeySequence::UnknownKey, this, "activeProjectAddNew")));
-  m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white.png"), "Add Existing Files...",
+  m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white_add.png"), "Add Existing Files...",
     QKeySequence::UnknownKey, this, "activeProjectAddExisting")));
   m_projectMenu->children.append(Node::separator());
   m_projectMenu->children.append(downloadNode = node(activeAction("ruby_blue", "Download",
@@ -29,7 +30,7 @@ ProjectMenu::ProjectMenu()
   m_projectMenu->children.append(Node::separator());
   m_projectMenu->children.append(node(activeAction("folder.png", "Close Project",
     QKeySequence::UnknownKey, this, "activeProjectClose")));
-  m_projectMenu->children.append(node(activeAction("folder_delete.png", "Delete Project",
+  m_projectMenu->children.append(node(activeAction("bin_closed.png", SystemUtils::supportsMoveToTrash() ? tr("Move to Trash") : tr("Delete"),
     QKeySequence::UnknownKey, this, "activeProjectDelete")));
     
   m_actions.append(m_projectMenu);
