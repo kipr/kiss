@@ -152,6 +152,10 @@ namespace kiss
       void projectDelete(const project::ProjectPtr &project);
 			void projectOpenSettings(const kiss::project::ProjectPtr &project);
       void projectSetActive(const kiss::project::ProjectPtr &project);
+			const bool projectDownload(const kiss::project::ProjectPtr &project);
+			const bool projectCompile(const kiss::project::ProjectPtr &project);
+			const bool projectRun(const kiss::project::ProjectPtr &project);
+      const bool projectChangeTarget(kiss::project::ProjectPtr project);
 
 			menu::Menuable *menuable(const QString &name);
 			QList<menu::Menuable *> menuablesExcept(const QStringList &names);
@@ -188,16 +192,6 @@ namespace kiss
 			void settings();
 			void theme();
 
-			const bool download();
-			const bool download(const kiss::project::ProjectPtr &project);
-			const bool compile();
-			const bool compile(const kiss::project::ProjectPtr &project);
-			const bool run();
-			const bool run(const kiss::project::ProjectPtr &project);
-
-			const bool changeTarget();
-			const bool changeTarget(kiss::project::ProjectPtr project);
-
 			void showCompilerOutput(const Compiler::OutputList &results);
 
 			void showProjectDock(bool show = true);
@@ -221,12 +215,20 @@ namespace kiss
       void activeProjectClose();
       void activeProjectDelete();
       void activeProjectOpenSettings();
+      const bool activeProjectDownload();
+      const bool activeProjectCompile();
+      const bool activeProjectRun();
+      const bool activeProjectChangeTarget();
+      
 			void selectedProjectAddNew();
 			void selectedProjectAddExisting();
       void selectedProjectClose();
       void selectedProjectDelete();
       void selectedProjectOpenSettings();
-      void selectedProjectSetActive();
+      const bool selectedProjectDownload();
+      const bool selectedProjectCompile();
+      const bool selectedProjectRun();
+      const bool selectedProjectChangeTarget();
       void droppedProjectAddExisting(QStringList files);
       
 			void projectRenameFile();
