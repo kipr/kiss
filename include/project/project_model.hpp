@@ -47,6 +47,9 @@ namespace kiss
 			void directoryChanged(const QString &path);
 			void fileChanged(const QString &path);
 			void itemChanged(QStandardItem *item);
+      
+    private:
+      void refreshAll(QStandardItem *item);
 			
 		signals:
 			void filesDropped(QStringList files);

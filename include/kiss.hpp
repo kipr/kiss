@@ -21,15 +21,15 @@
 #ifndef __KISS_H__
 #define __KISS_H__
 
-#define LEXER_FOLDER "lexers"
-#define TARGET_FOLDER "targets"
-#define TEMPLATES_FOLDER "templates"
-#define COMPILERS_FOLDER "compilers"
-#define TEMPLATE_EXT "template"
-#define TARGET_EXT "target"
-#define USER_FOLDER "user"
+#define LEXER_FOLDER     ("lexers")
+#define TARGET_FOLDER    ("targets")
+#define TEMPLATES_FOLDER ("templates")
+#define COMPILERS_FOLDER ("compilers")
+#define TEMPLATE_EXT     ("template")
+#define TARGET_EXT       ("target")
+#define USER_FOLDER      ("user")
 
-#define TEMPORARY_FOLDER "kiss"
+#define TEMPORARY_FOLDER ("kiss")
 
 #ifdef Q_OS_WIN
 #define OS_NAME "win"
@@ -42,10 +42,10 @@
 #define OS_LIB_EXT "so"
 #endif
 
-#define KISS_IDE_VERSION_MAJOR 4
-#define KISS_IDE_VERSION_MINOR 2
-#define KISS_IDE_VERSION_BUILD 8
+#define KISS_IDE_VERSION_MAJOR 5
+#define KISS_IDE_VERSION_MINOR 0
+#define KISS_IDE_VERSION_BUILD 0
 
-#define KISS_IDE_VERSION_CODENAME "Helium"
+#define KISS_IDE_VERSION_CODENAME "Lithium"
 
 #endif

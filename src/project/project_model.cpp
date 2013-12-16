@@ -39,7 +39,7 @@ public:
 		m_path = path;
 	}
 
-	const QString &path()
+	const QString &path() const
 	{
 		return m_path;
 	}
@@ -76,7 +76,6 @@ public:
 	{
 		setIcon(ResourceHelper::ref().icon(ExtensionHelper::icon(path)));
 		setEditable(true);
-		refresh();
 	}
 
 	virtual void refresh()
@@ -103,7 +102,6 @@ public:
 
 	{
 		setIcon(ResourceHelper::ref().icon("folder.png"));
-		refresh();
 	}
 
 	QDir dir()
@@ -134,16 +132,10 @@ class ProjectItem : public FolderItem
 {
 public:
 	ProjectItem(const QString &path, ProjectPtr project)
-			: FolderItem(path),
-			m_project(project)
+    : FolderItem(path),
+    m_project(project)
 	{
-		refresh();
-	}
-
-	template<typename T>
-	static ProjectItem *projectitem_cast(T *item)
-	{
-		return dynamic_cast<ProjectItem *>(item);
+    FolderItem(QFileInfo(project->location()).absoluteFilePath());
 	}
 
   virtual void setActive(bool active)
@@ -174,6 +166,12 @@ public:
 	{
 		return m_project;
 	}
+  
+	template<typename T>
+	static ProjectItem *projectitem_cast(T *item)
+	{
+		return dynamic_cast<ProjectItem *>(item);
+	}
 
 private:
 	ProjectPtr m_project;
@@ -197,9 +195,9 @@ void Model::addProject(ProjectPtr project)
 	if(m_paths.contains(path)) return;
 
 	m_paths.append(path);
-	insertRow(0, new ProjectItem(QFileInfo(path).absoluteFilePath(), project));
+	insertRow(0, new ProjectItem(path, project));
+  
 	m_watcher.addPath(path);
-	
 	m_watcher.addPath(project->projectFilename());
 }
 
@@ -344,18 +342,15 @@ void Model::activeChanged(const ProjectPtr &oldActive, const ProjectPtr &newActi
 }
 
 void Model::directoryChanged(const QString &path)
-{
-	const QString &absolutePath = QFileInfo(path).absoluteFilePath();
-	QStandardItem *root = invisibleRootItem();
-	for(int i = 0; i < root->rowCount(); ++i) {
-		QStandardItem *child = root->child(i);
-		ProjectItem *projectItem = ProjectItem::projectitem_cast(child);
-		if(!projectItem) continue;
-
-		const QString &itemPath = projectItem->path();
-		if(itemPath != absolutePath && itemPath != path) continue;
-		projectItem->refresh();
-	}
+{ 
+  QList<QStandardItem *> matches = findItems(QDir(path).dirName(),
+    Qt::MatchExactly | Qt::MatchRecursive);
+  foreach(QStandardItem *match, matches) {
+    const FolderItem *folderItem = FolderItem::folderitem_cast(match);
+    if(!folderItem || folderItem->path() != path) continue;
+    refreshAll(match);
+    break;
+  }
 }
 
 void Model::fileChanged(const QString &path)
@@ -370,4 +365,15 @@ void Model::itemChanged(QStandardItem *item)
 	PathItem *pathItem = PathItem::pathitem_cast(item);
 	if(!pathItem) return;
 	pathItem->rename(pathItem->text());
+}
+
+void Model::refreshAll(QStandardItem *item)
+{
+  FolderItem *folderItem = FolderItem::folderitem_cast(item);
+  if(!folderItem) return;
+  
+  m_watcher.addPath(folderItem->path());
+  if(ProjectItem *projectItem = ProjectItem::projectitem_cast(item)) projectItem->refresh();
+  else folderItem->refresh();
+  for(int i = 0; i < folderItem->rowCount(); ++i) refreshAll(folderItem->child(i, 0));
 }

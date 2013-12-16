@@ -38,17 +38,20 @@ namespace kiss
 	namespace widget
 	{
 		class MainWindow;
-		
+		class DeclarativeTab;
+    
+    
 		class DeclarativeTools : public QObject
 		{
 		Q_OBJECT
 		public:
-			DeclarativeTools(MainWindow *mainWindow);
+			DeclarativeTools(MainWindow *const mainWindow, DeclarativeTab *const tab);
 
 		public slots:
 			void newProject();
 			void open();
 			void openWeb(const QString &url);
+      void setClosable(const bool closable);
 			void settings();
 
 			const QStringList templates(const QString &target);
@@ -61,7 +64,8 @@ namespace kiss
 			void completedSetup();
 
 		private:
-			MainWindow *m_mainWindow;
+			MainWindow *const _mainWindow;
+      DeclarativeTab *const _tab;
 		};
 
 		class DeclarativeTab : public QObject, public Tab
