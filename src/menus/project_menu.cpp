@@ -15,10 +15,10 @@ ProjectMenu::ProjectMenu()
   m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white.png"), "Add Existing Files...",
     QKeySequence::UnknownKey, this, "activeProjectAddExisting")));
   m_projectMenu->children.append(Node::separator());
-  m_projectMenu->children.append(compileNode = node(activeAction("bricks", "Compile",
-    QKeySequence("Alt+C"), this, "activeProjectCompile")));
   m_projectMenu->children.append(downloadNode = node(activeAction("ruby_blue", "Download",
     QKeySequence("Alt+D"), this, "activeProjectDownload")));
+  m_projectMenu->children.append(compileNode = node(activeAction("bricks", "Compile",
+    QKeySequence("Alt+C"), this, "activeProjectCompile")));
   m_projectMenu->children.append(runNode = node(activeAction("arrow_right", "Run",
     QKeySequence("Alt+R"), this, "activeProjectRun")));
   m_projectMenu->children.append(node(activeAction("computer", "Change Target",
