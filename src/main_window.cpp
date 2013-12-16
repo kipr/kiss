@@ -337,22 +337,28 @@ void MainWindow::initMenus()
 
   const QString &trashLabel = SystemUtils::supportsMoveToTrash() ? tr("Move to Trash") : tr("Delete");
 	m_projectContextMenu = new QMenu(this);
-	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white_add.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
-	m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white_add.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
-  m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_add"), tr("Add Folder"), this, SLOT(projectAddFolder()));
+	QAction *newFileAction =
+    m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white_add.png"), tr("Add New File..."), this, SLOT(selectedProjectAddNew()));
+	QAction *existFileAction =
+    m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white_add.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
+  QAction *addFolderAction = 
+    m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_add"), tr("Add Folder"), this, SLOT(projectAddFolder()));
 	m_projectContextMenu->addSeparator();
-  m_projectContextMenu->addAction(ResourceHelper::ref().icon("ruby_blue"),tr("Download"), this, SLOT(selectedProjectDownload()));
-  m_projectContextMenu->addAction(ResourceHelper::ref().icon("bricks"),tr("Compile"), this, SLOT(selectedProjectCompile()));
-  m_projectContextMenu->addAction(ResourceHelper::ref().icon("arrow_right"),tr("Run"), this, SLOT(selectedProjectRun()));
-  m_projectContextMenu->addAction(ResourceHelper::ref().icon("computer"),tr("Change Target"), this, SLOT(selectedProjectChangeTarget()));
+  m_projectContextMenu->addAction(ResourceHelper::ref().icon("ruby_blue"), tr("Download"), this, SLOT(selectedProjectDownload()));
+  m_projectContextMenu->addAction(ResourceHelper::ref().icon("bricks"), tr("Compile"), this, SLOT(selectedProjectCompile()));
+  m_projectContextMenu->addAction(ResourceHelper::ref().icon("arrow_right"), tr("Run"), this, SLOT(selectedProjectRun()));
+  m_projectContextMenu->addAction(ResourceHelper::ref().icon("computer"), tr("Change Target"), this, SLOT(selectedProjectChangeTarget()));
   m_projectContextMenu->addSeparator();
-	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_wrench.png"),tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
+	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_wrench.png"), tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder.png"), tr("Close Project"), this, SLOT(selectedProjectClose()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), trashLabel, this, SLOT(selectedProjectDelete()));
   
   m_folderContextMenu = new QMenu(this);
-  m_folderContextMenu->addAction(ResourceHelper::ref().icon("folder_add"), tr("Add Folder"), this, SLOT(projectAddFolder()));
+	m_folderContextMenu->addAction(newFileAction);
+	m_folderContextMenu->addAction(existFileAction);
+  m_folderContextMenu->addAction(addFolderAction);
+  m_folderContextMenu->addSeparator();
   m_folderContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), trashLabel, this, SLOT(projectRemoveFolder()));
 
 	m_fileContextMenu = new QMenu(this);
@@ -639,7 +645,7 @@ void MainWindow::activeProjectAddNew()
 void MainWindow::selectedProjectAddNew()
 {
   const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
-  projectAddNew(project, project->location());
+  projectAddNew(project, m_projectsModel.filePath(ui_projects->currentIndex()));
 }
 
 void MainWindow::projectAddNew(const project::ProjectPtr &project, const QString &dest)
@@ -690,7 +696,7 @@ void MainWindow::selectedProjectAddExisting()
 		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
   
   const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
-	projectAddExisting(project, files, project->location());
+	projectAddExisting(project, files, m_projectsModel.filePath(ui_projects->currentIndex()));
 }
 
 void MainWindow::droppedProjectAddExisting(QStringList files)
