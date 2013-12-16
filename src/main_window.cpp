@@ -1029,6 +1029,8 @@ void MainWindow::projectDoubleClicked(const QModelIndex &index)
 	project::ProjectPtr project = m_projectsModel.project(index);
 	if(m_projectsModel.isFileEditable(index))
 		openFile(m_projectsModel.filePath(index), project);
+  else if(m_projectsModel.isFolder(index))
+    ui_projects->setExpanded(index, !ui_projects->isExpanded(index));
 }
 
 void MainWindow::authenticateTarget(const kiss::target::TargetPtr &target,

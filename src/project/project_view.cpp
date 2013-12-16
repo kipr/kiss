@@ -5,7 +5,6 @@ using namespace kiss::project;
 ProjectView::ProjectView(QWidget *parent)
 : QTreeView(parent)
 {
-	setExpandsOnDoubleClick(true);
 	setAcceptDrops(true);
 	setDragDropMode(QAbstractItemView::DragDrop);
 	setDropIndicatorShown(true);
