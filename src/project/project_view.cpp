@@ -10,6 +10,11 @@ ProjectView::ProjectView(QWidget *parent)
 	setDropIndicatorShown(true);
 }
 
+QModelIndex ProjectView::currentIndex() const
+{
+  return selectionModel()->currentIndex();
+}
+
 void ProjectView::dragEnterEvent(QDragEnterEvent *event)
 {
 	activateWindow();

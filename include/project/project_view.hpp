@@ -15,6 +15,7 @@ namespace kiss
 			Q_OBJECT
 		public:
 			ProjectView(QWidget *parent = 0);
+      QModelIndex currentIndex() const;
 		protected:
 			void dragEnterEvent(QDragEnterEvent *event);
 			void dragMoveEvent(QDragMoveEvent *event);

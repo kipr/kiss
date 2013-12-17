@@ -74,6 +74,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projects->setModel(&m_projectsModel);
 	ui_projects->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::EditKeyPressed);
 	ui_projects->setContextMenuPolicy(Qt::CustomContextMenu);
+  ui_projectSplitter->setStretchFactor(0, 2);
 	ui_projectFrame->setVisible(false);
 	connect(&m_projectsModel, SIGNAL(filesDropped(QStringList)), this,
     SLOT(droppedProjectAddExisting(QStringList)));
@@ -93,6 +94,9 @@ MainWindow::MainWindow(QWidget *parent)
 	
 	connect(&m_projectManager, SIGNAL(activeChanged(kiss::project::ProjectPtr, kiss::project::ProjectPtr)),
 		&m_projectsModel, SLOT(activeChanged(kiss::project::ProjectPtr, kiss::project::ProjectPtr)));
+    
+  connect(ui_projects->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
+    this, SLOT(updateInfoBox(const QModelIndex &)));
 		
 	connect(&target::CommunicationManager::ref(),
 		SIGNAL(targetNeedsAuthentication(kiss::target::TargetPtr, kiss::target::CommunicationManager *)),
@@ -636,6 +640,19 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	setUpdatesEnabled(true);
 }
 
+void MainWindow::updateInfoBox(const QModelIndex &current)
+{
+  if(m_projectsModel.isProject(current)) {
+    const project::ProjectPtr &project = m_projectsModel.project(current);
+    if(!project) return;
+    ui_infoBox->showProjectInfo(project->name(), project->location(), project->deps());
+  }
+  else {
+    QFileInfo fileInfo(m_projectsModel.filePath(current));
+    ui_infoBox->showFileInfo(fileInfo.fileName(), fileInfo.absoluteFilePath());
+  }
+}
+
 void MainWindow::activeProjectAddNew()
 {
   const project::ProjectPtr &project = m_projectManager.activeProject();
@@ -809,6 +826,8 @@ void MainWindow::projectOpenSettings(const project::ProjectPtr &project)
 	project->setCompilerFlags(dialog.compilerFlags());
 	project->setCompileLib(dialog.compileLib());
 	project->setAutoCompileDeps(dialog.autoCompileDeps());
+  
+  updateInfoBox(ui_projects->currentIndex());
 }
 
 void MainWindow::projectSetActive(const project::ProjectPtr &project)

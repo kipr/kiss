@@ -25,9 +25,6 @@
   <property name="windowTitle">
    <string>KIPR's Instructional Software System</string>
   </property>
-  <property name="windowOpacity">
-   <double>1.000000000000000</double>
-  </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
@@ -82,17 +79,12 @@
         <attribute name="title">
          <string>Tab 1</string>
         </attribute>
+        <zorder>ui_projectSplitter</zorder>
        </widget>
       </widget>
       <widget class="QFrame" name="ui_projectFrame">
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
-       </property>
-       <property name="lineWidth">
-        <number>0</number>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">
@@ -102,28 +94,66 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="kiss::project::ProjectView" name="ui_projects">
-          <property name="minimumSize">
-           <size>
-            <width>150</width>
-            <height>0</height>
-           </size>
+         <widget class="QSplitter" name="ui_projectSplitter">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="rootIsDecorated">
-           <bool>true</bool>
-          </property>
-          <property name="headerHidden">
-           <bool>true</bool>
-          </property>
-          <property name="expandsOnDoubleClick">
-           <bool>false</bool>
-          </property>
+          <widget class="kiss::project::ProjectView" name="ui_projects">
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="rootIsDecorated">
+            <bool>true</bool>
+           </property>
+           <property name="headerHidden">
+            <bool>true</bool>
+           </property>
+           <property name="expandsOnDoubleClick">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="kiss::widget::InfoBox" name="ui_infoBox">
+           <property name="lineWidth">
+            <number>10</number>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::NoSelection</enum>
+           </property>
+           <property name="showGrid">
+            <bool>false</bool>
+           </property>
+           <property name="cornerButtonEnabled">
+            <bool>false</bool>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string>Property</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Value</string>
+            </property>
+           </column>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -138,6 +168,9 @@
         <height>150</height>
        </size>
       </property>
+      <zorder>tableWidget</zorder>
+      <zorder>ui_projects</zorder>
+      <zorder>verticalLayoutWidget</zorder>
      </widget>
     </item>
     <item>
@@ -148,6 +181,7 @@
         <height>150</height>
        </size>
       </property>
+      <zorder>splitter</zorder>
      </widget>
     </item>
    </layout>
@@ -210,6 +244,11 @@
    <class>kiss::project::ProjectView</class>
    <extends>QTreeView</extends>
    <header>project_view.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>kiss::widget::InfoBox</class>
+   <extends>QTableWidget</extends>
+   <header>info_box.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>
