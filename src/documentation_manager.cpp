@@ -6,7 +6,6 @@
 #include <QSettings>
 #include <QDebug>
 
-#define DESCRIPTION_FILE "description.txt"
 #define DECORATION_FILE "decoration.html"
 #define METADATA_FILE "metadata.ini"
 
@@ -70,5 +69,8 @@ QString DocumentationManager::documentationPath()
 void DocumentationManager::loadDefaultDocumentationSources()
 {
 	QFileInfoList folders = QDir(documentationPath()).entryInfoList(QDir::Dirs | QDir::NoDot | QDir::NoDotDot);
-	foreach(const QFileInfo &folder, folders) addDocumentationSource(folder.absoluteFilePath());
+	foreach(const QFileInfo &folder, folders) {
+    if(!QDir(folder.absoluteFilePath()).exists(METADATA_FILE)) continue;
+    addDocumentationSource(folder.absoluteFilePath());
+  }
 }
