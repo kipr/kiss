@@ -47,6 +47,7 @@
 #include <QDebug>
 #include <QNetworkProxyFactory>
 #include <QSettings>
+#include <QDesktopServices>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -353,6 +354,8 @@ void MainWindow::initMenus()
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("arrow_right"), tr("Run"), this, SLOT(selectedProjectRun()));
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("computer"), tr("Change Target"), this, SLOT(selectedProjectChangeTarget()));
   m_projectContextMenu->addSeparator();
+  QAction *fileBrowserAction = 
+    m_projectContextMenu->addAction(ResourceHelper::ref().icon("mouse"), tr("View in File Browser"), this, SLOT(selectedProjectFileBrowser()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_wrench.png"), tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
 	m_projectContextMenu->addSeparator();
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder.png"), tr("Close Project"), this, SLOT(selectedProjectClose()));
@@ -363,10 +366,13 @@ void MainWindow::initMenus()
 	m_folderContextMenu->addAction(existFileAction);
   m_folderContextMenu->addAction(addFolderAction);
   m_folderContextMenu->addSeparator();
+  m_folderContextMenu->addAction(fileBrowserAction);
+  m_folderContextMenu->addSeparator();
   m_folderContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), trashLabel, this, SLOT(projectRemoveFolder()));
 
 	m_fileContextMenu = new QMenu(this);
 	m_fileContextMenu->addAction(ResourceHelper::ref().icon("textfield_rename.png"), tr("Rename"), this, SLOT(projectRenameFile()));
+  m_fileContextMenu->addAction(fileBrowserAction);
 	m_fileContextMenu->addSeparator();
 	m_fileContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), trashLabel, this, SLOT(projectRemoveFile()));
 }
@@ -802,6 +808,14 @@ void MainWindow::projectDelete(const project::ProjectPtr &project)
   if(!project->removeFolder(project->location()))
     QMessageBox::warning(this, tr("Failed to Delete Project"), tr("KISS IDE could not delete the project folder."));
 	else projectClose(project);
+}
+
+void MainWindow::selectedProjectFileBrowser()
+{
+  QString path = m_projectsModel.filePath(ui_projects->currentIndex());
+  if(!QFileInfo(path).isDir()) path = QFileInfo(path).absolutePath();
+  if(!QDesktopServices::openUrl(QUrl::fromLocalFile(path)))
+    QMessageBox::warning(this, tr("Failed to Open in File Browser"), tr("KISS IDE could not open the file browser."));
 }
 
 void MainWindow::activeProjectOpenSettings()

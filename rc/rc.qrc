@@ -39,6 +39,7 @@
         <file>icon_set/icons/textfield_rename.png</file>
         <file>icon_set/icons/folder_add.png</file>
         <file>icon_set/icons/page_white_add.png</file>
+        <file>icon_set/icons/mouse.png</file>
     </qresource>
     <qresource prefix="/shortcuts/target">
         <file>icon_set/icons/report.png</file>

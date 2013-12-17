@@ -225,6 +225,7 @@ namespace kiss
 			void selectedProjectAddExisting();
       void selectedProjectClose();
       void selectedProjectDelete();
+      void selectedProjectFileBrowser();
       void selectedProjectOpenSettings();
       const bool selectedProjectDownload();
       const bool selectedProjectCompile();
