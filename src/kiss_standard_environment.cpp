@@ -3,8 +3,15 @@
 #include "log.hpp"
 #include "target.hpp"
 #include "interface_manager.hpp"
-#include "interface_plugin_manager.hpp"
-#include "language_helper_plugin_manager.hpp"
+#include "language_helper_manager.hpp"
+
+
+#include "kovan_interface.hpp"
+#include "kovan_serial_interface.hpp"
+#include "my_computer_interface.hpp"
+#include "my_ks2_interface.hpp"
+
+#include "language_helper_c.hpp"
 
 #include <QIcon>
 #include <QApplication>
@@ -55,6 +62,11 @@ void StandardEnvironment::createStandardEnvironment()
 	QApplication::setApplicationName("KISS");
 	QApplication::setWindowIcon(QIcon(":/icon.png"));
 	
-	LanguageHelperPluginManager::ref().loadAll();
-	target::InterfacePluginManager::ref().loadAll();
+	LanguageHelperManager::ref().addLanguageHelper(new LanguageHelperC);
+  
+  using namespace target;
+  InterfaceManager::ref().addInterface(new KovanInterface);
+  InterfaceManager::ref().addInterface(new KovanSerialInterface);
+  InterfaceManager::ref().addInterface(new MyKs2Interface);
+  InterfaceManager::ref().addInterface(new MyComputerInterface);
 }
