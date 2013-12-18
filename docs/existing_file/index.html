@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <title>KISS IDE Tutorial: Existing Files</title>
+    <link type="text/css" rel="stylesheet" href="../common/style.css" />
+  </head>
+  <body>
+    <div class="main">
+    <h1 class="center">KISS IDE 4.2 Tutorial: Existing Files</h1>
+    <p>
+      KISS IDE is an instructional integrated development environment for the C and C++ programming languages. In this tutorial, you will create a project that contains a file you already have.
+    </p>
+    
+    <h2>Method 1: Adding an Existing File to a Project</h2>
+    <img class="right sside pad" src="right_click_existing.png"></img>
+    <p>The preferred method of using existing files is to directly add them to a project.</p>
+    <ol>
+      <li>Open a project by clicking on the "Open" icon in the center of the KISS IDE window and choosing the .kissproj file in your project folder. (Alternatively, you can go to File -> Open...) If you have not created a project yet, create one by clicking on the "New Project" icon. When prompted to add a new file, click "No."</li>
+      <li>In the project sidebar, right-click on your project and click "Add Existing Files..." Choose the file(s) you want to add to your project.</li>
+      <li>A dialog will ask you how to add the file(s) in the project. In most cases, one of the first two options is sufficient.
+        <ol type="I">
+          <li><i>Make a copy and move the copy to the project folder:</i> Copies the original file into the project folder. The original file remains in the original location.</li>
+          <li><i>Move to the project folder:</i> Moves the original file into the project folder. The original file does not remain in the original location.</li>
+          <li><i>Make a reference (absolute path):</i> The project adds a reference to the file instead of adding it to the project folder. The original file is not touched. The reference is made using an absolute path, which is useful if the file never moves.</li>
+          <li><i>Make a reference (relative path):</i> Same as above, but the reference is made using a relative path, which is useful if the project and file move together.</li>
+        </ol>
+        Choose an option and click "OK."</li>
+      <li>The file(s) will appear under your project in the project sidebar. You may have to expand your project by double-clicking it.</li>
+    </ol>
+    
+    <h2>Method 2: Creating a Project from a File</h2>
+    <p>Alternatively, you can create a new project out of an existing file that is <i>not</i> already part of a KISS project.</p>
+    <ol>
+      <li>Open the existing file by clicking on the "Open" icon in the center of the KISS IDE window and choosing the file. (Alternatively, you can go to File -> Open...) You may have to change the filter from "KISS Project (*.kissproj)" to "All Files (*)".</li>
+      <img class="right side" src="project_prompt.png"></img>
+      <li>A dialog will prompt you to create a project with this file. Click "Yes."</li>
+      <li>Give the project a name and save location. Click "OK."</li>
+      <li>The new project, including the existing file, will appear in the project sidebar. You may have to expand your project by double-clicking it to see the file.</li>
+    </ol>
+    <p>Note: The file is copied to the project folder, so the original file remains in the original location. See Method 1 to add more existing files.</p>
+    
+    <h2>Need Help?</h2>
+    <p>
+      If you have any questions or need assistance, please contact <a href="mailto:bmcdorman@kipr.org">Braden McDorman</a> or <a href="mailto:nzaman@kipr.org">Nafis Zaman</a>.
+    </p>
+    </div>
+    <p class="center">Copyright &copy; 2013 KISS Institute for Practical Robotics</p>
+  </body>
+</html>
