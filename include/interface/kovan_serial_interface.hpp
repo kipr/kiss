@@ -1,5 +1,5 @@
-#ifndef _KOVAN_INTERFACE_HPP_
-#define _KOVAN_INTERFACE_HPP_
+#ifndef _KOVAN_SERIAL_INTERFACE_HPP_
+#define _KOVAN_SERIAL_INTERFACE_HPP_
 
 #include <QtPlugin>
 #include <QRunnable>
@@ -27,7 +27,6 @@ namespace kiss
 		class KovanSerialInterface : public QObject, public kiss::target::Interface
 		{
 		Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.kipr.kiss.Interface/1.1" FILE "kovan_serial_interface.json")
 		Q_INTERFACES(kiss::target::Interface)
 		public:
 			KovanSerialInterface();

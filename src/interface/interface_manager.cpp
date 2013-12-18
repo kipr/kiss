@@ -11,8 +11,7 @@ InterfaceManager::InterfaceManager()
 
 InterfaceManager::~InterfaceManager()
 {
-	// TODO: This is a memory leak for non-plugin interfaces.
-	// qDeleteAll(m_interfaces);
+  qDeleteAll(m_interfaces);
 }
 
 void InterfaceManager::addInterface(Interface *interface)

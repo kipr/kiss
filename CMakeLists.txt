@@ -36,8 +36,8 @@ include_directories(
 )
 
 if(WIN32)
-include_directories(${CMAKE_SOURCE_DIR}/../prefix/include)
-link_directories(${CMAKE_SOURCE_DIR}/../prefix/lib)
+  include_directories(${CMAKE_SOURCE_DIR}/../prefix/include)
+  link_directories(${CMAKE_SOURCE_DIR}/../prefix/lib)
 endif()
 
 file(GLOB INCLUDES ${INCLUDE}/*.hpp
@@ -72,14 +72,14 @@ file(GLOB UIS ${UI}/*)
 
 set(SRCS_CXX ${SOURCES})
 set(UI ${UIS})
-set(MOC_SRCS ${INCLUDES})
 
 set(QRC_FILES
 	${RC}/rc.qrc
 	${RC}/logos/logos.qrc
 )
 
-qt5_wrap_cpp(SRCS_CXX ${MOC_SRCS})
+set(CMAKE_AUTOMOC ON)
+
 qt5_wrap_ui(SRCS_CXX ${UI})
 qt5_add_resources(SRCS_CXX ${QRC_FILES})
 
@@ -89,26 +89,16 @@ if(APPLE)
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
 	link_directories(/Library/Frameworks/ /usr/local/lib)
 	include_directories(/usr/local/include /usr/include)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include")
 	add_executable(KISS MACOSX_BUNDLE ${SRCS_CXX} ${INCLUDES})
   set(EXTRA_LIBS ${COCOA_LIBRARY})
 elseif(UNIX)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 	add_executable(KISS ${SRCS_CXX} ${INCLUDES})
 elseif(WIN32)
 	set(COMPAT_SRCS ${COMPAT}/mingw.c)
 	add_executable(KISS WIN32 ${SRCS_CXX} ${COMPAT_SRCS} ${INCLUDES})
 endif()
 
-add_library(kisside STATIC ${SRCS_CXX} ${INCLUDES})
-qt5_use_modules(kisside Widgets Network PrintSupport Declarative)
-
 set(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
-if(WIN32)
-set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../prefix/lib)
-else()
-set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
-endif()
 
 if(APPLE)
     set(KISS_EXTRAS_DIR ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents)
@@ -117,7 +107,7 @@ else()
 endif()
 
 qt5_use_modules(KISS Widgets Network PrintSupport Declarative)
-target_link_libraries(KISS scintex pcompiler kar ${EXTRA_LIBS})
+target_link_libraries(KISS scintex pcompiler kar kovanserial ${EXTRA_LIBS})
 
 if(WIN32)
 	target_link_libraries(KISS ws2_32)
@@ -188,7 +178,4 @@ endif()
 
 link_directories(${KISS_SOURCE_DIR}/lib)
 
-install(FILES ${INCLUDES} DESTINATION /usr/local/include/kiss/)
-
-add_subdirectory(plugins)
 add_subdirectory(docs)

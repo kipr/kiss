@@ -7,6 +7,10 @@ Interface::Interface(const QString &name)
 {
 }
 
+Interface::~Interface()
+{
+}
+
 const QString &Interface::name() const
 {
 	return m_name;

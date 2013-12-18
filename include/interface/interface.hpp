@@ -15,6 +15,7 @@ namespace kiss
 		{
 		public:
 			Interface(const QString &name);
+      virtual ~Interface();
 
 			const QString &name() const;
 			
