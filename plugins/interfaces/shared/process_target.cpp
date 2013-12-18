@@ -112,6 +112,6 @@ void ProcessTarget::ensureStarted() const
   
   QWaitCondition waitCondition;
   QMutex mutex;
-
+  mutex.lock();
   waitCondition.wait(&mutex, 3000);
 }
