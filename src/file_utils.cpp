@@ -40,7 +40,7 @@ bool kiss::FileUtils::remove(const QString &path)
 
 QString kiss::FileUtils::getExistingDirectory(QWidget *parent, const QString &caption, QFileDialog::Options options)
 {
-	QString dirPath = QFileDialog::getExistingDirectory(parent, caption, FileUtils::openPath(), options);
+	QString dirPath = QFileDialog::getExistingDirectory(parent, caption, FileUtils::openPath() + "/*", options);
 	if(!dirPath.isEmpty()) QSettings().setValue(OPEN_PATH, QDir(dirPath).absolutePath());
 
 	return dirPath;
@@ -49,7 +49,7 @@ QString kiss::FileUtils::getExistingDirectory(QWidget *parent, const QString &ca
 QString kiss::FileUtils::getOpenFileName(QWidget *parent, const QString &caption, const QString &filter,
 	QString *selectedFilter, QFileDialog::Options options)
 {
-	QString filePath = QFileDialog::getOpenFileName(parent, caption, FileUtils::openPath(), filter, selectedFilter, options);
+	QString filePath = QFileDialog::getOpenFileName(parent, caption, FileUtils::openPath() + "/*", filter, selectedFilter, options);
 	if(!filePath.isEmpty()) QSettings().setValue(OPEN_PATH, QFileInfo(filePath).absolutePath());
 
 	return filePath;
@@ -58,7 +58,7 @@ QString kiss::FileUtils::getOpenFileName(QWidget *parent, const QString &caption
 QStringList kiss::FileUtils::getOpenFileNames(QWidget *parent, const QString &caption, const QString &filter,
 	QString *selectedFilter, QFileDialog::Options options)
 {
-	QStringList filePaths = QFileDialog::getOpenFileNames(parent, caption, FileUtils::openPath(), filter, selectedFilter, options);
+	QStringList filePaths = QFileDialog::getOpenFileNames(parent, caption, FileUtils::openPath() + "/*", filter, selectedFilter, options);
 	if(!filePaths.isEmpty()) QSettings().setValue(OPEN_PATH, QFileInfo(filePaths.at(0)).absolutePath());
 
 	return filePaths;
@@ -67,7 +67,7 @@ QStringList kiss::FileUtils::getOpenFileNames(QWidget *parent, const QString &ca
 QString kiss::FileUtils::getSaveFileName(QWidget *parent, const QString &caption, const QString &filter,
 	QString *selectedFilter, QFileDialog::Options options)
 {
-	QString filePath = QFileDialog::getSaveFileName(parent, caption, FileUtils::savePath(), filter, selectedFilter, options);
+	QString filePath = QFileDialog::getSaveFileName(parent, caption, FileUtils::savePath() + "/*", filter, selectedFilter, options);
 	if(!filePath.isEmpty()) QSettings().setValue(SAVE_PATH, QFileInfo(filePath).absolutePath());
 
 	return filePath;
