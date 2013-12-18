@@ -36,8 +36,8 @@ include_directories(
 )
 
 if(WIN32)
-include_directories(${CMAKE_SOURCE_DIR}/../prefix/include)
-link_directories(${CMAKE_SOURCE_DIR}/../prefix/lib)
+  include_directories(${CMAKE_SOURCE_DIR}/../prefix/include)
+  link_directories(${CMAKE_SOURCE_DIR}/../prefix/lib)
 endif()
 
 file(GLOB INCLUDES ${INCLUDE}/*.hpp
@@ -89,11 +89,9 @@ if(APPLE)
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
 	link_directories(/Library/Frameworks/ /usr/local/lib)
 	include_directories(/usr/local/include /usr/include)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include")
 	add_executable(KISS MACOSX_BUNDLE ${SRCS_CXX} ${INCLUDES})
   set(EXTRA_LIBS ${COCOA_LIBRARY})
 elseif(UNIX)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 	add_executable(KISS ${SRCS_CXX} ${INCLUDES})
 elseif(WIN32)
 	set(COMPAT_SRCS ${COMPAT}/mingw.c)
@@ -179,7 +177,5 @@ endif()
 # Accessory Programs
 
 link_directories(${KISS_SOURCE_DIR}/lib)
-
-install(FILES ${INCLUDES} DESTINATION /usr/local/include/kiss/)
 
 add_subdirectory(docs)
