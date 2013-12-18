@@ -36,6 +36,13 @@ bool Manager::closeProject(const ProjectPtr &project)
 	return true;
 }
 
+const ProjectPtr &Manager::openedProject(const QString &path) const
+{
+  Q_FOREACH(const ProjectPtr &project, m_projects) if(project->location() == path) return project;
+  
+  return ProjectPtr();
+}
+
 bool Manager::setActiveProject(const ProjectPtr &project)
 {
   if(project == m_activeProject) return false;

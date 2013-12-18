@@ -290,6 +290,19 @@ kiss::KarPtr kiss::project::Project::archive() const
 	return archive;
 }
 
+QString kiss::project::Project::associatedProject(const QString &path)
+{
+  QDir dir = QFileInfo(path).isDir() ? QDir(path) : QFileInfo(path).absoluteDir();
+  dir.setFilter(QDir::Files);
+  dir.setNameFilters(QStringList() << (QString("*.") + PROJECT_EXT));
+  while(!dir.isRoot()) {
+    if(!dir.entryInfoList().isEmpty()) return dir.absolutePath();
+    dir.cdUp();
+  }
+    
+  return QString();
+}
+
 kiss::project::Project::Project(const QString &location)
 	: m_location(location)
 {

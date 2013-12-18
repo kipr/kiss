@@ -144,6 +144,7 @@ namespace kiss
 
 			bool eventFilter(QObject *target, QEvent *event);
 
+      project::ProjectPtr newProject();
 			project::ProjectPtr newProject(const QString &projectPath);
 			project::ProjectPtr openProject(const QString &projectFilePath);
       void projectAddNew(const project::ProjectPtr &project, const QString &dest);
@@ -177,7 +178,7 @@ namespace kiss
 		public slots:
 			void importTemplatePack();
 			void newTemplatePack();
-			project::ProjectPtr newProject();
+			project::ProjectPtr newEmptyProject();
 			void newFile();
 			void open();
 			void openProject();

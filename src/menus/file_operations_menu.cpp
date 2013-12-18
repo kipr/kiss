@@ -8,7 +8,7 @@ FileOperationsMenu::FileOperationsMenu()
 	Node *newFile = node(activeAction(ResourceHelper::ref().icon("page_white.png"), "New File",
 		QKeySequence::New, this, "newFile"));
 	Node *newProject = node(activeAction(ResourceHelper::ref().icon("brick.png"), "New Project",
-		QKeySequence("Ctrl+Shift+N"), this, "newProject"));
+		QKeySequence("Ctrl+Shift+N"), this, "newEmptyProject"));
 	Node *newTemplatePack = node(activeAction(ResourceHelper::ref().icon("package"), "New Template Pack",
 		QKeySequence::UnknownKey, this, "newTemplatePack"));
 	Node *openFile = node(activeAction(ResourceHelper::ref().icon("folder.png"), "Open...",

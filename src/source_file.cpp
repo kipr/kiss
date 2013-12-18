@@ -186,9 +186,7 @@ bool SourceFile::fileOpen(const QString &filePath)
   fileHandle.close();
 
 	updateLexer();
-	
-	setProject(project::ProjectPtr());
-	
+		
 	return true;
 }
 
@@ -198,11 +196,6 @@ bool SourceFile::memoryOpen(const QByteArray &ba, const QString &assocPath)
   _model.setBacking(ba);
   updateLexer();
   return true;
-}
-
-bool SourceFile::openProjectFile(const project::ProjectPtr &project)
-{
-	return false;
 }
 
 void SourceFile::indentAll()

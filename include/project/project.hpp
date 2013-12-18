@@ -67,6 +67,8 @@ namespace kiss
 	
 			const QString &location() const;
 			virtual KarPtr archive() const;
+      
+      static QString associatedProject(const QString &path);
 			
 		private:
 			Project(const QString &location);

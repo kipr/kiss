@@ -62,7 +62,6 @@ namespace kiss
 			bool fileSaveAs(const QString &filePath);
 			bool fileOpen(const QString &filePath);
 			bool memoryOpen(const QByteArray &ba, const QString &assocPath);
-			bool openProjectFile(const project::ProjectPtr &project);
 
 			bool close();
 

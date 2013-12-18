@@ -75,7 +75,9 @@ MainWindow::MainWindow(QWidget *parent)
 	ui_projects->setModel(&m_projectsModel);
 	ui_projects->setEditTriggers(QAbstractItemView::SelectedClicked | QAbstractItemView::EditKeyPressed);
 	ui_projects->setContextMenuPolicy(Qt::CustomContextMenu);
-  ui_projectSplitter->setStretchFactor(0, 2);
+  ui_projectSplitter->setStretchFactor(0, 6);
+  ui_projectSplitter->setStretchFactor(1, 1);
+  ui_infoBox->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui_projectFrame->setVisible(false);
 	connect(&m_projectsModel, SIGNAL(filesDropped(QStringList)), this,
     SLOT(droppedProjectAddExisting(QStringList)));
@@ -162,36 +164,6 @@ void MainWindow::newTemplatePack()
 	addTab(new TemplateTab(templates::Pack::create(), this));
 }
 
-project::ProjectPtr MainWindow::newProject()
-{
-	dialog::NewProjectDialog dialog(this);
-	if(dialog.exec() == QDialog::Rejected) return project::ProjectPtr();
-
-	const QString &saveLocation = dialog.saveLocation();
-	if(QDir(saveLocation).exists()) {
-		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
-			tr("Overwrite %1?").arg(saveLocation),
-			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-		if(ret == QMessageBox::No) return project::ProjectPtr();
-	}
-		
-  project::ProjectPtr ret = newProject(saveLocation);
-  if(ret.isNull()) return ret;
-  
-  ret->setAutoCompileDeps(true);
-  ret->setCompileLib(false);
-  
-  // Prompt the user to add a new file to their empty project
-  {
-    QMessageBox::StandardButton r = QMessageBox::question(this, tr("Add a New File?"),
-      tr("You just created an empty project. Do you want to add a new file?"),
-      QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    if(r == QMessageBox::Yes) projectAddNew(ret, ret->location());
-  }
-  
-  return ret;
-}
-
 void MainWindow::newFile()
 {
 	addTab(new SourceFile(this));
@@ -200,22 +172,48 @@ void MainWindow::newFile()
 bool MainWindow::openFile(const QString &file, const project::ProjectPtr &project)
 {
 	QFileInfo fileInfo(file);
-
 	if(!fileInfo.isFile() || !fileInfo.isReadable()) return false;
 
+  // If the file is already open, just switch to it
 	for(int i = 0; i < ui_tabWidget->count(); ++i) {
 		SourceFile *sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
 		if(sourceFile && sourceFile->file() == file) {
 			ui_tabWidget->setCurrentIndex(i);
-			on_ui_tabWidget_currentChanged(i);
 			return true;
 		}
 	}
+  
+  SourceFile *sourceFile = new SourceFile(this);
+  sourceFile->setProject(project);
+  QString fileToOpen = file;
+  
+  // Files opened outside of projects
+  if(!project) {
+    const QString projectDir = project::Project::associatedProject(file);
+    if(projectDir.isNull()) {
+      if(QMessageBox::question(this, tr("Create project?"),
+        tr("You are opening a file that is not part of a KISS project. "
+          "Creating a project will allow you to compile and run your program. Do you want to create a project with the file?"),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes) {
+          project::ProjectPtr createdProject = newProject();
+          createdProject->addFileAsCopy(file, createdProject->location());
+          sourceFile->setProject(createdProject);
+          fileToOpen = QDir(createdProject->location()).filePath(fileInfo.fileName());
+        }
+    }
+    else {
+      if(project::ProjectPtr project = m_projectManager.openedProject(projectDir))
+        sourceFile->setProject(project);
+      else if(QMessageBox::question(this, tr("Open associated project?"),
+        tr("You are opening a file that is part of a KISS project. "
+          "Opening the whole project will allow you to compile and run your program. Do you want to open the project?"),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+          sourceFile->setProject(openProject(projectDir));
+    }
+  }
 	
-	/* Attempt to open the selected file */
-	SourceFile *sourceFile = new SourceFile(this);
-	
-	if(!sourceFile->fileOpen(file)) {
+	// Attempt to open the selected file
+	if(!sourceFile->fileOpen(fileToOpen)) {
 		dialog::Message::showError(this, "simple_error", QStringList() <<
 			tr("Could not open ") + QFileInfo(sourceFile->file()).fileName() <<
 			tr("Unable to open file for reading."));
@@ -223,11 +221,9 @@ bool MainWindow::openFile(const QString &file, const project::ProjectPtr &projec
 		return false;
 	}
 	
-	sourceFile->setProject(project);
-
 	QSettings settings;
 	QStringList current = settings.value(RECENTS).toStringList().mid(0, 5);
-	current.push_front(fileInfo.absoluteFilePath());
+	current.push_front(QFileInfo(fileToOpen).absoluteFilePath());
 	current.removeDuplicates();
 	settings.setValue(RECENTS, current);
 	
@@ -246,7 +242,6 @@ bool MainWindow::memoryOpen(const QByteArray &ba, const QString &assocPath)
 		SourceFile *sourceFile = dynamic_cast<SourceFile*>(ui_tabWidget->widget(i));
 		if(sourceFile && sourceFile->file() == assocPath) {
 			ui_tabWidget->setCurrentIndex(i);
-			on_ui_tabWidget_currentChanged(i);
 			return true;
 		}
 	}
@@ -281,6 +276,42 @@ project::ProjectPtr MainWindow::openProject(const QString &projectPath)
 	}
 
 	return project;
+}
+
+project::ProjectPtr MainWindow::newEmptyProject()
+{
+  project::ProjectPtr project = newProject();
+  if(project.isNull()) return project;
+  
+  // Prompt the user to add a new file to their empty project
+  if(QMessageBox::question(this, tr("Add a New File?"),
+  tr("You just created an empty project. Do you want to add a new file?"),
+  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+    projectAddNew(project, project->location());
+  
+  return project;
+}
+
+project::ProjectPtr MainWindow::newProject()
+{
+	dialog::NewProjectDialog dialog(this);
+	if(dialog.exec() == QDialog::Rejected) return project::ProjectPtr();
+
+	const QString &saveLocation = dialog.saveLocation();
+	if(QDir(saveLocation).exists()) {
+		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
+			tr("Overwrite %1?").arg(saveLocation),
+			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+		if(ret == QMessageBox::No) return project::ProjectPtr();
+	}
+		
+  project::ProjectPtr ret = newProject(saveLocation);
+  if(ret.isNull()) return ret;
+  
+  ret->setAutoCompileDeps(true);
+  ret->setCompileLib(false);
+  
+  return ret;
 }
 
 project::ProjectPtr MainWindow::newProject(const QString &projectPath)
@@ -502,17 +533,9 @@ void MainWindow::open()
 	if(filePath.isEmpty()) return;
 
 	const QString &suffix = QFileInfo(filePath).suffix();
-	if(suffix == "pack") {
-		addTab(new TemplateTab(filePath, this));
-		return;
-	}
-
-	if(suffix == "kissproj") {
-		openProject(QFileInfo(filePath).absolutePath());
-		return;
-	}
-	
-	openFile(filePath);
+  if(suffix == "kissproj") openProject(QFileInfo(filePath).absolutePath());
+	else if(suffix == "pack") addTab(new TemplateTab(filePath, this));
+	else openFile(filePath);
 }
 
 void MainWindow::openProject()

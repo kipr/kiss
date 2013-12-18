@@ -30,7 +30,7 @@ Rectangle {
 			imageSource: 'new.png'
 			title: 'New Project'
 			onClicked: {
-				kiss.newProject()
+				kiss.newEmptyProject()
 			}
 		}
 		ImageButton
