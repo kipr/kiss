@@ -23,7 +23,7 @@ namespace kiss
 			
 			bool openProject(const ProjectPtr &project);
 			bool closeProject(const ProjectPtr &project);
-      const ProjectPtr &openedProject(const QString &path) const;
+      const ProjectPtr openedProject(const QString &path) const;
 
 			bool setActiveProject(const ProjectPtr &project);
 			const ProjectPtr &activeProject() const;
