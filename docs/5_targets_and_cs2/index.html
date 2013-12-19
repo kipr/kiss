@@ -1,0 +1,71 @@
+<html>
+<head>
+  <title>KISS IDE 5.0 Tutorial: Targets and cs2</title>
+  <link type="text/css" rel="stylesheet" href="../common/style.css" />
+</head>
+<body>
+  <div class="main">
+    <h1 class="center">KISS IDE 5.0 Tutorial: Targets and cs2</h1>
+    <p>
+      KISS IDE is an instructional integrated development environment for the C and C++ programming languages. In this tutorial, you will learn about KISS targets in general and cs2 in detail.
+    </p>
+    
+    <h2>Targets</h2>
+    <!--<img class="right sside pad" src="multi_project.png" /></img>-->
+    <p>
+      A <i>target</i> is a device or program that KISS IDE communicates with. A target could be a your local machine, a Link Simulator, or even a robot controller. All targets support three primary operations: <i>download</i>, <i>compile</i>, and <i>run</i>.
+      <ul>
+        <li>Download - Sends the project to the target.</li>
+        <li>Compile - Compiles the project on the target and produces an executable program.</li>
+        <li>Run - Runs the previously compiled program on the target.</li>
+      </ul>
+      These operations are <i>cascading</i>. For example, <i>run</i> will <i>download</i>, <i>compile</i>, <b>and</b> <i>run</i> a project. Target operations are also <i>recursively</i> executed on dependencies. For example, if project A depends on project B and project A is downloaded, project B will be downloaded as well.
+    </p>
+    <p>
+      When you perform a target operation on a project for the first time, a dialog will prompt you to choose a target. Future operations on that project will occur on the target you choose. You can change the target anytime through the "Project" menu or by right-clicking on an open proejct. Each project has its own target, allowing you to easily work on several projects with different targets.
+    </p>
+    
+    <h2>cs2</h2>
+    <h3>Basics</h3>
+    <p>
+      cs2 is an application that combines two different KISS targets:
+      <ul>
+        <li>My Computer - Executes programs and displays output. This target is best for programs that do not use robot functions.</li>
+        <li>Link Simulator 2D - Executes programs, simulates robot motors and sensors in a world represented by a board, and displays output. This target is best for programs that use robot functions.</li>
+      </ul>
+      The interface changes automatically between Simulator and Computer depending on which target you choose for your project. 
+    </p>
+    <h3>Programs</h3>
+    <p>
+      cs2 stores downloaded projects so that they can be rerun later without recompiling. Since both Simulator and Computer can access these projects, the project interface remains the same between them. By default the project sidebar is on the left, and it lists previously downloaded projects. You can run a project by selecting it and clicking "Run" at the bottom. The interface may switch, depending on the project's associated target. You can delete a project by selecting it and clicking "Delete" at the bottom.
+    </p>
+    <h3>Link Simulator</h3>
+    <h4>The Robot</h4>
+    <p>
+      The robot starts in the upper left corner. You can move it by clicking it and dragging it around. You can change its orientation by holding "Shift," clicking it, and rotating it. Pressing the "Reset" button at the top will move the robot back to the corner.
+    </p>
+    <h4>The Light</h4>
+    <p>
+      The light, represented by a circle, also starts in the upper left corner. You can move it by clicking it and dragging it around. You can turn the light on and off by double-clicking it. Pressing the "Reset" button at the top will move the light back to the corner.
+    </p>
+    <h4>Sensors</h4>
+    <p>
+      Analog and digital sensor values are shown in tables on the right side. These values update while a program is running. Sensors have default mappings to ports, but you can click "Port Configuration" to assign ports according to the needs of your program. In this dialog, click on the circle next to a sensor and then click on the circle next to a port to connect them. Save your custom configuration for later use by clicking "New Config" before altering connections.
+    </p>
+    <h4>Boards</h4>
+    <p>
+      Boards serve as the world in which your simulated robot runs. They consist of several elements, such as walls and lines. Currently, the default board is the Botball 2013 game board. You can change the board by including a board file (with extension <code>.board</code>) with your project. When the project is compiled, the Simulator will automatically switch to the included board file. In addition, the board file will be available for future use by clicking "Select Board" in the Simulator.
+    </p>
+    <h3>My Computer</h3>
+    <p>
+      The Computer interface is much simpler than the Simulator interface. The majority of the interface is the console, which displays output from programs.
+    </p>
+
+    <h2>Need Help?</h2>
+    <p>
+      If you have any questions or need assistance, please contact <a href="mailto:bmcdorman@kipr.org">Braden McDorman</a> or <a href="mailto:nzaman@kipr.org">Nafis Zaman</a>.
+    </p>
+  </div>
+  <p class="center">Copyright &copy; 2013 KISS Institute for Practical Robotics</p>
+</body>
+</html>
