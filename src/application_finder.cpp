@@ -35,9 +35,7 @@ ApplicationFinder ApplicationFinder::platform()
     }
 #elif defined(Q_OS_WIN)
     {
-      QDir c(QDir::current());
-      c.cdUp();
-      finder.addApplicationPath("cs2", c.absoluteFilePath("cs2/cs2.exe"));
+      finder.addApplicationPath("cs2", QDir::current().absoluteFilePath("cs2.exe"));
     }
 #endif
     return finder;
