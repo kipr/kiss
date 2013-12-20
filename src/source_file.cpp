@@ -32,7 +32,6 @@
 #include "language_helper_manager.hpp"
  #include "file_utils.hpp"
 
-#include <Qsci/qscilexercpp.h>
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
@@ -40,7 +39,6 @@
 #include <QDir>
 #include <QSettings>
 #include <QFont>
-#include <Qsci/qsciprinter.h>
 #include <QPrintDialog>
 #include <QDebug>
 #include <math.h>
