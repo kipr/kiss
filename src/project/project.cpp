@@ -7,6 +7,7 @@
 #include "file_utils.hpp"
 #include "communication_manager.hpp"
 #include "system_utils.hpp"
+#include <pcompiler/compiler_options.hpp>
 
 using namespace kiss;
 using namespace kiss::project;
