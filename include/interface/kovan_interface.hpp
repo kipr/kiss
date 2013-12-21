@@ -30,7 +30,7 @@ namespace kiss
 			quint64 m_sampleTime;
 			quint16 m_samples;
 			
-			QList<QHostAddress> m_found;
+			QList<IncomingAdvert> m_found;
 		};
 
 		class KovanInterface : public QObject, public kiss::target::Interface

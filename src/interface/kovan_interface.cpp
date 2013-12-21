@@ -30,9 +30,12 @@ void AdvertSampler::run()
       sockaddr_in mod = it->sender;
       mod.sin_port = it->ad.port;
       QHostAddress addr((sockaddr *)&mod);
-      if(m_found.contains(addr)) continue;
-      m_found.push_back(addr);
-      emit found((*it).ad, mod);
+      IncomingAdvert incoming;
+      incoming.ad = it->ad;
+      incoming.sender = mod;
+      if(m_found.contains(incoming)) continue;
+      m_found.push_back(incoming);
+      emit found(it->ad, mod);
     }
   }
 }
