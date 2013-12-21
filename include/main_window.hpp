@@ -149,8 +149,10 @@ namespace kiss
 			project::ProjectPtr openProject(const QString &projectFilePath);
       void projectAddNew(const project::ProjectPtr &project, const QString &dest);
       void projectAddExisting(const project::ProjectPtr &project, QStringList files, const QString &dest);
+      void projectAddFolder(const project::ProjectPtr &project, const QString &dest);
       void projectClose(const project::ProjectPtr &project);
       void projectDelete(const project::ProjectPtr &project);
+      void projectFileBrowser(const QString &path);
 			void projectOpenSettings(const kiss::project::ProjectPtr &project);
       void projectSetActive(const kiss::project::ProjectPtr &project);
 			const bool projectDownload(const kiss::project::ProjectPtr &project);
@@ -214,8 +216,10 @@ namespace kiss
       
       void activeProjectAddNew();
       void activeProjectAddExisting();
+      void activeProjectAddFolder();
       void activeProjectClose();
       void activeProjectDelete();
+      void activeProjectFileBrowser();
       void activeProjectOpenSettings();
       const bool activeProjectDownload();
       const bool activeProjectCompile();
@@ -224,6 +228,7 @@ namespace kiss
       
 			void selectedProjectAddNew();
 			void selectedProjectAddExisting();
+      void selectedProjectAddFolder();
       void selectedProjectClose();
       void selectedProjectDelete();
       void selectedProjectFileBrowser();
@@ -234,7 +239,6 @@ namespace kiss
       const bool selectedProjectChangeTarget();
       void droppedProjectAddExisting(QStringList files);
       
-      void projectAddFolder();
       void projectRemoveFolder();
 			void projectRenameFile();
 			void projectRemoveFile();

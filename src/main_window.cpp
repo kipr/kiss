@@ -378,7 +378,7 @@ void MainWindow::initMenus()
 	QAction *existFileAction =
     m_projectContextMenu->addAction(ResourceHelper::ref().icon("page_white_add.png"), tr("Add Existing Files..."), this, SLOT(selectedProjectAddExisting()));
   QAction *addFolderAction = 
-    m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_add"), tr("Add Folder"), this, SLOT(projectAddFolder()));
+    m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_add"), tr("Add Folder"), this, SLOT(selectedProjectAddFolder()));
 	m_projectContextMenu->addSeparator();
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("ruby_blue"), tr("Download"), this, SLOT(selectedProjectDownload()));
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("bricks"), tr("Compile"), this, SLOT(selectedProjectCompile()));
@@ -788,6 +788,30 @@ void MainWindow::projectAddExisting(const project::ProjectPtr &project, QStringL
 	}
 }
 
+void MainWindow::activeProjectAddFolder()
+{
+  const project::ProjectPtr &project = m_projectManager.activeProject();
+  projectAddFolder(project, project->location());
+}
+
+void MainWindow::selectedProjectAddFolder()
+{
+  projectAddFolder(m_projectsModel.project(ui_projects->currentIndex()),
+    m_projectsModel.filePath(ui_projects->currentIndex()));
+}
+
+void MainWindow::projectAddFolder(const project::ProjectPtr &project, const QString &dest)
+{
+	bool ok = false;
+	const QString folderName = QInputDialog::getText(this, tr("New Folder"), tr("New Folder Name:"),
+		QLineEdit::Normal, QString(), &ok);
+	if(!ok) return;
+  
+  if(!project->addFolder(dest, folderName))
+		QMessageBox::warning(this, tr("Failed to Create Folder"),
+      tr("KISS IDE could not create that folder. Make sure the name is valid."));
+}
+
 void MainWindow::activeProjectClose()
 {
   projectClose(m_projectManager.activeProject());
@@ -833,11 +857,19 @@ void MainWindow::projectDelete(const project::ProjectPtr &project)
 	else projectClose(project);
 }
 
+void MainWindow::activeProjectFileBrowser()
+{
+  projectFileBrowser(m_projectManager.activeProject()->location());
+}
+
 void MainWindow::selectedProjectFileBrowser()
 {
-  QString path = m_projectsModel.filePath(ui_projects->currentIndex());
-  if(!QFileInfo(path).isDir()) path = QFileInfo(path).absolutePath();
-  if(!QDesktopServices::openUrl(QUrl::fromLocalFile(path)))
+  projectFileBrowser(m_projectsModel.filePath(ui_projects->currentIndex()));
+}
+
+void MainWindow::projectFileBrowser(const QString &path)
+{
+  if(!QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo(path).isDir() ? path : QFileInfo(path).absolutePath())))
     QMessageBox::warning(this, tr("Failed to Open in File Browser"), tr("KISS IDE could not open the file browser."));
 }
 
@@ -954,18 +986,6 @@ const bool MainWindow::projectChangeTarget(kiss::project::ProjectPtr project)
 	project->target()->setResponder(m_mainResponder);
 		
 	return true;
-}
-
-void MainWindow::projectAddFolder()
-{
-	bool ok = false;
-	const QString folderName = QInputDialog::getText(this, tr("New Folder"), tr("New Folder Name:"),
-		QLineEdit::Normal, QString(), &ok);
-	if(!ok) return;
-  
-  project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
-  if(!project->addFolder(m_projectsModel.filePath(ui_projects->currentIndex()), folderName))
-		QMessageBox::warning(this, tr("Failed to Create Folder"), tr("KISS IDE could not create that folder. Make sure the name is valid."));
 }
 
 void MainWindow::projectRemoveFolder()
