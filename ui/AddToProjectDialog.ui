@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Add to Project</string>
+   <string>Add Existing Files</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -24,7 +24,7 @@
    <item>
     <widget class="QRadioButton" name="ui_copyButton">
      <property name="text">
-      <string>Make a copy and move the copy to the project folder</string>
+      <string>Make a copy and move the copy to the folder</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -34,7 +34,7 @@
    <item>
     <widget class="QRadioButton" name="ui_moveButton">
      <property name="text">
-      <string>Move to the project folder</string>
+      <string>Move to the folder</string>
      </property>
     </widget>
    </item>
