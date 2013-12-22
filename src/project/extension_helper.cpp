@@ -13,6 +13,7 @@ const QString ExtensionHelper::icon(const QString &file)
   if(suffix == "c") return "page_white_c.png";
   if(suffix == "cpp") return "page_white_cpp.png";
   if(suffix == "h" || suffix == "hpp") return "page_white_h.png";
+  if(suffix == "board") return "world.png";
   return "page_white.png";
 }
 

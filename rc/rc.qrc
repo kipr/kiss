@@ -93,6 +93,7 @@
         <file>keypad/MyButton.qml</file>
         <file>targets/default_target.png</file>
         <file>icon_set/icons/page_white_link.png</file>
+        <file>icon_set/icons/world.png</file>
     </qresource>
     <qresource prefix="/sourcefile">
         <file>icon_set/icons/bullet_red.png</file>
