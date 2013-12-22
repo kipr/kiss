@@ -3,6 +3,7 @@
 #include "template_pack.hpp"
 #include "template_manager.hpp"
 #include "resource_helper.hpp"
+#include "project/extension_helper.hpp"
 
 #include <QStandardItem>
 #include <QFileInfo>
@@ -20,7 +21,7 @@ public:
 		m_pack(pack)
 	{
 		setEditable(!readOnly);
-		setIcon(QIcon(":/icon_set/icons/page_white_" + pack->lexer(path) + ".png"));
+    setIcon(ResourceHelper::ref().icon(kiss::project::ExtensionHelper::iconFromExtension(pack->lexer(path))));
 	}
 	
 	const QString &path()
