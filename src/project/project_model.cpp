@@ -18,11 +18,12 @@ using namespace kiss::project;
 class PathItem : public QStandardItem
 {
 public:
-	PathItem(const QString &path)
+	PathItem(const QString &path, bool active)
 			: QStandardItem(QFileInfo(path).fileName()),
 			m_path(path)
 	{
 		setEditable(false);
+    setActive(active);
 	}
 
 	bool rename(const QString &name)
@@ -44,12 +45,11 @@ public:
 		return m_path;
 	}
 
-	virtual void refresh()
-	{
-	}
+	virtual void refresh() {}
   
 	virtual void setActive(bool active)
 	{
+    m_active = active;
 		setForeground(active ? Qt::black : Qt::lightGray);
     for(int i = 0; i < rowCount(); ++i) {
       PathItem *pathItem = PathItem::pathitem_cast(child(i));
@@ -66,20 +66,17 @@ public:
 
 protected:
 	QString m_path;
+  bool m_active;
 };
 
 class FileItem : public PathItem
 {
 public:
-	FileItem(const QString &path)
-			: PathItem(path)
+	FileItem(const QString &path, bool active)
+			: PathItem(path, active)
 	{
 		setIcon(ResourceHelper::ref().icon(ExtensionHelper::icon(path)));
 		setEditable(true);
-	}
-
-	virtual void refresh()
-	{
 	}
 
 	bool isFileEditable()
@@ -94,11 +91,32 @@ public:
 	}
 };
 
+class LinkItem : public PathItem
+{
+public:
+	LinkItem(const QString &path, bool active)
+			: PathItem(path, active)
+	{
+		setIcon(ResourceHelper::ref().icon("page_white_link.png"));
+	}
+
+	bool isFileEditable()
+	{
+		return ExtensionHelper::isFileEditable(m_path);
+	}
+
+	template<typename T>
+	static PathItem *linkitem_cast(T *item)
+	{
+		return dynamic_cast<LinkItem *>(item);
+	}
+};
+
 class FolderItem : public PathItem
 {
 public:
-	FolderItem(const QString &path)
-			: PathItem(path)
+	FolderItem(const QString &path, bool active)
+			: PathItem(path, active)
 
 	{
 		setIcon(ResourceHelper::ref().icon("folder.png"));
@@ -116,8 +134,8 @@ public:
 		const QStringList &hidden = Manager::hiddenExtensions();
 		foreach(const QFileInfo &entry, entries) {
 			if(hidden.contains(entry.suffix())) continue;
-      if(entry.isDir()) appendRow(new FolderItem(entry.absoluteFilePath()));
-      else appendRow(new FileItem(entry.absoluteFilePath()));
+      if(entry.isDir()) appendRow(new FolderItem(entry.absoluteFilePath(), m_active));
+      else appendRow(new FileItem(entry.absoluteFilePath(), m_active));
 		}
 	}
 
@@ -131,11 +149,11 @@ public:
 class ProjectItem : public FolderItem
 {
 public:
-	ProjectItem(const QString &path, ProjectPtr project)
-    : FolderItem(path),
+	ProjectItem(const QString &path, ProjectPtr project, bool active)
+    : FolderItem(path, active),
     m_project(project)
 	{
-    FolderItem(QFileInfo(project->location()).absoluteFilePath());
+    setActive(active);
 	}
 
   virtual void setActive(bool active)
@@ -150,12 +168,8 @@ public:
 		FolderItem::refresh();
 
 		const QStringList &list = m_project->links();
-		foreach(const QString &entry, list) {
-			PathItem *item = (PathItem*)new FileItem(FileUtils::absolutePath(entry, QDir(m_path)));
-      item->setIcon(ResourceHelper::ref().icon("page_white_link.png"));
-			item->setForeground(Qt::gray);
-			appendRow(item);
-		}
+		foreach(const QString &entry, list)
+      appendRow(new LinkItem(FileUtils::absolutePath(entry, QDir(m_path)), m_active));
 	}
 
 	ProjectPtr project() const
@@ -191,7 +205,7 @@ void Model::addProject(ProjectPtr project)
 	if(m_paths.contains(path)) return;
 
 	m_paths.append(path);
-	insertRow(0, new ProjectItem(path, project));
+	insertRow(0, new ProjectItem(path, project, false));
   
 	m_watcher.addPath(path);
 	m_watcher.addPath(project->projectFilename());
@@ -230,15 +244,7 @@ bool Model::isFolder(const QModelIndex &index) const
 
 bool Model::isLink(const QModelIndex &index) const
 {
-	ProjectPtr proj = project(index);
-	QStringList list = proj->links();
-	FileItem *file = FileItem::fileitem_cast(itemFromIndex(index));
-	if(!file) return false;
-	const QString &path = file->path();
-	const QString &absPath = FileUtils::absolutePath(path, QDir(proj->location()));
-	const QString &relPath = FileUtils::relativePath(path, QDir(proj->location()));
-	
-	return list.contains(absPath) || list.contains(relPath);
+  return LinkItem::linkitem_cast(itemFromIndex(index));
 }
 
 bool Model::isFile(const QModelIndex &index) const

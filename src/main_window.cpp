@@ -400,6 +400,9 @@ void MainWindow::initMenus()
   m_folderContextMenu->addAction(fileBrowserAction);
   m_folderContextMenu->addSeparator();
   m_folderContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), trashLabel, this, SLOT(projectRemoveFolder()));
+  
+  m_linkContextMenu = new QMenu(this);
+  m_linkContextMenu->addAction(ResourceHelper::ref().icon("bin_closed.png"), tr("Delete"), this, SLOT(projectRemoveFile()));
 
 	m_fileContextMenu = new QMenu(this);
 	m_fileContextMenu->addAction(ResourceHelper::ref().icon("textfield_rename.png"), tr("Rename"), this, SLOT(projectRenameFile()));
@@ -1052,7 +1055,8 @@ void MainWindow::projectContextMenu(const QPoint &pos)
 		m_projectContextMenu->exec(QCursor::pos());
   else if(m_projectsModel.isFolder(index))
     m_folderContextMenu->exec(QCursor::pos());
-	else if(m_projectsModel.isLink(index)) return;
+	else if(m_projectsModel.isLink(index))
+    m_linkContextMenu->exec(QCursor::pos());
 	else if(m_projectsModel.isFile(index))
 		m_fileContextMenu->exec(QCursor::pos());
 }

@@ -275,6 +275,7 @@ namespace kiss
 			project::Model m_projectsModel;
 			QMenu *m_projectContextMenu;
       QMenu *m_folderContextMenu;
+      QMenu *m_linkContextMenu;
 			QMenu *m_fileContextMenu;
 
 			target::Responder *m_mainResponder;
