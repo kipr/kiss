@@ -152,14 +152,10 @@ public:
 		const QStringList &list = m_project->links();
 		foreach(const QString &entry, list) {
 			PathItem *item = (PathItem*)new FileItem(FileUtils::absolutePath(entry, QDir(m_path)));
+      item->setIcon(ResourceHelper::ref().icon("page_white_link.png"));
 			item->setForeground(Qt::gray);
 			appendRow(item);
 		}
-
-		/*const QStringList &deps = m_project->deps();
-		foreach(const QString &dep, deps) {
-			appendRow(new FileItem(dep));
-		}*/
 	}
 
 	ProjectPtr project() const

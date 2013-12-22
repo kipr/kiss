@@ -7,9 +7,13 @@ using namespace kiss::project;
 const QString ExtensionHelper::icon(const QString &file)
 {
 	QFileInfo fileInfo(file);
+  const QString &suffix = fileInfo.suffix();
 	if(fileInfo.isDir()) return "brick.png";
-	if(libExtensions().contains(fileInfo.suffix())) return "package.png";
-	return "page_white.png";
+	if(libExtensions().contains(suffix)) return "package.png";
+  if(suffix == "c") return "page_white_c.png";
+  if(suffix == "cpp") return "page_white_cpp.png";
+  if(suffix == "h" || suffix == "hpp") return "page_white_h.png";
+  return "page_white.png";
 }
 
 const bool ExtensionHelper::isFileEditable(const QString &file)
