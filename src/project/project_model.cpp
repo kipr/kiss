@@ -106,7 +106,7 @@ public:
 	}
 
 	template<typename T>
-	static PathItem *linkitem_cast(T *item)
+	static LinkItem *linkitem_cast(T *item)
 	{
 		return dynamic_cast<LinkItem *>(item);
 	}
@@ -255,7 +255,8 @@ bool Model::isFile(const QModelIndex &index) const
 bool Model::isFileEditable(const QModelIndex &index) const
 {
 	FileItem *fileItem = FileItem::fileitem_cast(itemFromIndex(index));
-	return fileItem && fileItem->isFileEditable();
+  LinkItem *linkItem = LinkItem::linkitem_cast(itemFromIndex(index));
+	return (fileItem && fileItem->isFileEditable()) || (linkItem && linkItem->isFileEditable());
 }
 
 ProjectPtr Model::project(const QModelIndex &index) const
