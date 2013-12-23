@@ -154,6 +154,7 @@ public:
     m_project(project)
 	{
     setActive(active);
+    refresh();
 	}
 
   virtual void setActive(bool active)
