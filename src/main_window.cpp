@@ -26,6 +26,7 @@
 #include "menus.hpp"
 #include "project.hpp"
 #include "log.hpp"
+#include "lexer_factory.hpp"
 
 #include "new_project_dialog.hpp"
 #include "template_manager.hpp"
@@ -530,6 +531,7 @@ void MainWindow::open()
 {
 	QStringList filters;
 	filters << "KISS Project (*.kissproj)";
+  filters << lexer::Factory::ref().formattedExtensions();
 	filters << "Template Pack (*.pack)";
 	filters.removeDuplicates();
 	QString filePath = FileUtils::getOpenFileName(this, tr("Open"), filters.join(";;") + ";;All Files (*)");
@@ -543,7 +545,7 @@ void MainWindow::open()
 
 void MainWindow::openProject()
 {
-	QStringList filters;
+	QStringList filters = lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
 	QString filePath = FileUtils::getOpenFileName(this, tr("Open Project"));
 	if(filePath.isEmpty()) return;
@@ -728,7 +730,7 @@ void MainWindow::projectAddNew(const project::ProjectPtr &project, const QString
 
 void MainWindow::activeProjectAddExisting()
 {
-	QStringList filters;
+	QStringList filters = lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
 	QStringList files = FileUtils::getOpenFileNames(this,
 		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
@@ -739,7 +741,7 @@ void MainWindow::activeProjectAddExisting()
 
 void MainWindow::selectedProjectAddExisting()
 {
-	QStringList filters;
+	QStringList filters = lexer::Factory::ref().formattedExtensions();
 	filters.removeDuplicates();
 	QStringList files = FileUtils::getOpenFileNames(this,
 		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");

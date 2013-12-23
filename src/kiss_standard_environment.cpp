@@ -5,7 +5,6 @@
 #include "interface_manager.hpp"
 #include "language_helper_manager.hpp"
 
-
 #include "kovan_interface.hpp"
 #include "kovan_serial_interface.hpp"
 #include "my_computer_interface.hpp"
@@ -69,4 +68,6 @@ void StandardEnvironment::createStandardEnvironment()
   InterfaceManager::ref().addInterface(new KovanSerialInterface);
   InterfaceManager::ref().addInterface(new MyKs2Interface);
   InterfaceManager::ref().addInterface(new MyComputerInterface);
+  
+  // lexer::PluginManager::ref().loadAll();
 }

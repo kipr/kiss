@@ -24,11 +24,12 @@
 #include "tab.hpp"
 #include "output_helper.hpp"
 
+#include <Qsci/qsciscintilla.h>
+#include <Qsci/qscilexer.h>
+#include <Qsci/qsciapis.h>
 #include <QString>
 #include <QFileInfo>
 #include <QKeyEvent>
-
-#include <scintex/basic_text_model.hpp>
 
 namespace Ui
 {
@@ -41,6 +42,12 @@ namespace kiss
 	{
 		class Project;
 	}
+  
+  namespace lexer
+  {
+    class Constructor;
+    class Base;
+  }
 	
 	namespace widget
 	{
@@ -69,6 +76,8 @@ namespace kiss
 			int getZoom();
 
 			void moveTo(const int &line, const int &pos);
+      
+      QsciScintilla *editor();
 
 			int currentLine() const;
 			bool breakpointOnLine(int line) const;
@@ -125,7 +134,7 @@ namespace kiss
 			virtual void projectChanged(const project::ProjectPtr &project);
 
 		private slots:
-			void on_ui_editor_cursorPositionChanged(int line, int index);
+			void on_editor_cursorPositionChanged(int line, int index);
 			
 		private:
       Ui::SourceFile *ui;
@@ -134,6 +143,8 @@ namespace kiss
 			bool saveAsProject();
 
 			void showFind();
+      
+      void setLexer(lexer::Constructor *constructor);
 
 			int m_zoomLevel;
 			void dropEvent(QDropEvent *event);
@@ -159,10 +170,10 @@ namespace kiss
 			
 			void updateTitle();
 			void updateLexer();
-			
-			QString m_name;
       
-      scintex::BasicTextModel _model;
+      kiss::lexer::Base *m_currentLexer;
+			
+			QString m_name;      
 		};
 	}
 }

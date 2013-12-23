@@ -47,7 +47,8 @@ file(GLOB INCLUDES ${INCLUDE}/*.hpp
 	${INCLUDE}/js/*
 	${INCLUDE}/project/*
 	${INCLUDE}/compiler/*
-	${INCLUDE}/interface/*)
+	${INCLUDE}/interface/*
+  ${INCLUDE}/lexer/*)
 
 file(GLOB SOURCES ${SRC}/*
 	${SRC}/dialogs/*
@@ -56,7 +57,8 @@ file(GLOB SOURCES ${SRC}/*
 	${SRC}/js/*
 	${SRC}/project/*
 	${SRC}/compiler/*
-	${SRC}/interface/*)
+	${SRC}/interface/*
+  ${SRC}/lexer/*)
   
 if(APPLE)
   file(GLOB PLATFORM_SOURCES ${SRC}/platform_osx/*)
@@ -107,7 +109,7 @@ else()
 endif()
 
 qt5_use_modules(KISS Widgets Network PrintSupport Declarative)
-target_link_libraries(KISS scintex pcompiler kar kovanserial ${EXTRA_LIBS})
+target_link_libraries(KISS qscintilla2 pcompiler kar kovanserial ${EXTRA_LIBS})
 
 if(WIN32)
 	target_link_libraries(KISS ws2_32)
@@ -124,8 +126,8 @@ if(APPLE)
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS)
 	
-	add_custom_target(copy_scintex ALL
-		COMMAND ${CMAKE_COMMAND} -E copy /usr/local/lib/libscintex.dylib
+	add_custom_target(copy_qscintilla ALL
+		COMMAND ${CMAKE_COMMAND} -E copy /Library/Frameworks/libqscintilla2.9.dylib
 			${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Frameworks
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS)
@@ -158,7 +160,7 @@ if(APPLE)
 #   WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
 #   DEPENDS KISS Info.plist MacDeployQt)
 # add_custom_target(qscintilla_install_names ALL 
-#   COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/Frameworks/libscintex.dylib
+#   COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/Frameworks/libqscintilla2.9.dylib
 #     QtCore.framework/Versions/5/QtCore
 #     QtScript.framework/Versions/5/QtScript
 #     QtGui.framework/Versions/5/QtGui
