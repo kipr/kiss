@@ -1,6 +1,11 @@
 ; Header for Modern UI
 !include "MUI.nsh"
 
+; Driver installer utility flies
+!include "nsis-lib\winver.nsh"
+!include "nsis-lib\drvsetup.nsh"
+!include "nsis-lib\windrvinstall.nsh"
+
 ; Define KISS application name and version number
 !define APP_NAME "KISS Platform"
 !define APP_MAJOR_VERSION "5"
@@ -109,6 +114,21 @@ Section "Link Documentation" link_doc
 	File /r "${LINK_DOCS_DIR}\*.*"
 SectionEnd
 
+Section "Link Driver" linkDriver
+	SetOutPath "$INSTDIR\LinkDriver"
+
+	File kiprlink.inf
+
+	; The directory of the .inf file
+	Push "$INSTDIR\LinkDriver"
+	; The filepath of the .inf file
+	Push "$INSTDIR\LinkDriver\kiprlink.inf"
+	; The HID (Hardware ID) of the device
+	Push "USB\VID_0525&PID_A4A7"
+
+	Call InstallUpgradeDriver
+SectionEnd
+
 Section -FinishSection
 	WriteRegStr HKLM "Software\${APP_NAME_AND_VERSION}" "" "$INSTDIR"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME_AND_VERSION}" "DisplayName" "${APP_NAME_AND_VERSION}"
@@ -124,6 +144,7 @@ SectionEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${MinGW} "Minimalist GNU for Windows"
 !insertmacro MUI_DESCRIPTION_TEXT ${link_doc} "Documentation for the KIPR Link"
 !insertmacro MUI_DESCRIPTION_TEXT ${libkovan_doc} "Documentation for the libkovan standard library"
+!insertmacro MUI_DESCRIPTION_TEXT ${linkDriver} "Windows driver for communication with the KIPR Link"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; Uninstall section
