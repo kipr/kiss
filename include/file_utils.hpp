@@ -12,6 +12,7 @@ namespace kiss
 	public:
 		static QString absolutePath(const QString &path, const QDir &originDir);
 		static QString relativePath(const QString &path, const QDir &originDir);
+    static bool copy(const QString &path, const QString &dest);
 		static bool remove(const QString &path);
 
 		static QString getExistingDirectory(QWidget *parent = 0, const QString &caption = QString(),

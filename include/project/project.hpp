@@ -33,7 +33,7 @@ namespace kiss
 
 			bool addFileAsCopy(const QString &path, const QString &dest);
 			bool addFileAsMovedCopy(const QString &path, const QString &dest);
-			bool removeFile(const QString &path);
+			bool remove(const QString &path);
 			QStringList files() const;
 
 			bool addFileAsLink(const QString &path);
@@ -42,7 +42,6 @@ namespace kiss
 			QStringList links() const;
       
       bool addFolder(const QString &path, const QString &folderName);
-      bool removeFolder(const QString &path);
 			
 			void setDeps(const QStringList &deps);
 			QStringList deps() const;

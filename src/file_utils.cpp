@@ -19,23 +19,37 @@ QString kiss::FileUtils::relativePath(const QString &path, const QDir &originDir
 	return originDir.relativeFilePath(path);
 }
 
+bool kiss::FileUtils::copy(const QString &path, const QString &dest)
+{
+  QFileInfo pathInfo(path);
+  const QDir pathDir(path);
+  const QDir destDir(dest);
+  if(pathInfo.isFile()) return destDir.mkpath("../") && QFile::copy(path, dest);
+  if(!pathInfo.isDir()) return false;
+  
+  if(!destDir.mkpath(".")) return false;
+  bool success = true;
+  const QFileInfoList infoList = pathDir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+  Q_FOREACH(const QFileInfo &info, infoList) success &= copy(info.filePath(), destDir.filePath(info.fileName()));
+    
+  return success;
+}
+
 bool kiss::FileUtils::remove(const QString &path)
 {
+  QFileInfo fileInfo(path);
+  if(fileInfo.isFile()) return QFile::remove(path);
+  if(!fileInfo.isDir()) return false;
+  
 	QDir dir(path);
 	if(!dir.exists()) return true;
 
-	QFileInfoList entries = dir.entryInfoList(QDir::NoDotAndDotDot
-		| QDir::System | QDir::Hidden | QDir::AllDirs | QDir::Files,
-		QDir::DirsFirst);
+  bool success = true;
+	foreach(const QFileInfo &entry, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System
+    | QDir::Hidden | QDir::AllDirs | QDir::Files, QDir::DirsFirst))
+      success &= remove(entry.absoluteFilePath());
 
-	foreach(const QFileInfo &entry, entries) {
-		const QString entryPath = entry.absoluteFilePath();
-		if(!(entry.isDir() ? remove(entryPath) : QFile::remove(entryPath))) return false;
-	}
-
-	if(!dir.rmdir(path)) return false;
-
-	return true;
+	return dir.rmdir(path) && success;
 }
 
 QString kiss::FileUtils::getExistingDirectory(QWidget *parent, const QString &caption, QFileDialog::Options options)

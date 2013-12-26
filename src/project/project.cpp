@@ -90,20 +90,17 @@ const bool kiss::project::Project::run() const
 
 bool kiss::project::Project::addFileAsCopy(const QString &path, const QString &dest)
 {
-	QFileInfo info(path);
-	if(!info.isFile()) return false;
-
-	return QFile::copy(path, dest + "/" + info.fileName());
+  return FileUtils::copy(path, QDir(dest).filePath(QFileInfo(path).fileName()));
 }
 
 bool kiss::project::Project::addFileAsMovedCopy(const QString &path, const QString &dest)
 {
-	return (addFileAsCopy(path, dest) && QFile::remove(path));
+	return (addFileAsCopy(path, dest) && remove(path));
 }
 
-bool kiss::project::Project::removeFile(const QString &path)
+bool kiss::project::Project::remove(const QString &path)
 {
-	if(!QFileInfo(path).isFile()) return false;
+	if(!QFileInfo(path).exists()) return false;
 	if(SystemUtils::supportsMoveToTrash()) return SystemUtils::moveToTrash(path);
 	return QFile::remove(path);
 }
@@ -166,13 +163,6 @@ QStringList kiss::project::Project::links() const
 bool kiss::project::Project::addFolder(const QString &path, const QString &folderName)
 {
   return QDir(path).mkdir(folderName);
-}
-
-bool kiss::project::Project::removeFolder(const QString &path)
-{
-	if(!QDir(path).exists()) return false;
-	if(SystemUtils::supportsMoveToTrash()) return SystemUtils::moveToTrash(path);
-	return FileUtils::remove(path);
 }
 
 void kiss::project::Project::setDeps(const QStringList &deps)

@@ -855,7 +855,7 @@ void MainWindow::projectDelete(const project::ProjectPtr &project)
 			QT_TR_NOOP("Deleting this project will delete all contents of the project folder. Are you sure you want to delete it?"), 
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
-  if(!project->removeFolder(project->location()))
+  if(!project->remove(project->location()))
     QMessageBox::warning(this, tr("Failed to Delete Project"), tr("KISS IDE could not delete the project folder."));
 	else projectClose(project);
 }
@@ -998,7 +998,7 @@ void MainWindow::projectRemoveFolder()
 		QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
   project::ProjectPtr project = m_projectsModel.project(ui_projects->currentIndex());
-  if(!project->removeFolder(m_projectsModel.filePath(ui_projects->currentIndex())))
+  if(!project->remove(m_projectsModel.filePath(ui_projects->currentIndex())))
     QMessageBox::warning(this, tr("Failed to Delete Folder"), tr("KISS IDE could not delete that folder."));
 }
 
@@ -1027,7 +1027,7 @@ void MainWindow::projectRemoveFile()
 			QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) return;
 
 		closeTab(path);
-		project->removeFile(path);
+		project->remove(path);
 	}
 }
 

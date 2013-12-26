@@ -281,6 +281,7 @@ Qt::ItemFlags Model::flags(const QModelIndex &index) const
 	if(isLink(index)) return defaultFlags;
 	if(isFile(index)) return defaultFlags | Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
 	if(isProject(index)) return defaultFlags | Qt::ItemIsDropEnabled;
+  if(isFolder(index)) return defaultFlags | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 	return defaultFlags;
 }
 
