@@ -40,15 +40,9 @@ bool kiss::FileUtils::remove(const QString &path)
   QFileInfo fileInfo(path);
   if(!fileInfo.exists()) return true;
   if(fileInfo.isFile()) return QFile::remove(path);
-  if(!fileInfo.isDir()) return false;
-  
-	QDir dir(path);
-  bool success = true;
-	foreach(const QFileInfo &entry, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System
-    | QDir::Hidden | QDir::AllDirs | QDir::Files, QDir::DirsFirst))
-      success &= remove(entry.absoluteFilePath());
-
-	return dir.rmdir(path) && success;
+  // TODO: Qt recommends not using this for user-visible directories... but we'll use it anyway
+  if(fileInfo.isDir()) return QDir(path).removeRecursively();
+  return false;
 }
 
 QString kiss::FileUtils::getExistingDirectory(QWidget *parent, const QString &caption, QFileDialog::Options options)
