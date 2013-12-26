@@ -116,10 +116,10 @@ if(WIN32)
 endif()
 
 if(APPLE)
-  # add_custom_target(MacDeployQt ALL
-  #   COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt ${KISS_SOURCE_DIR}/deploy/KISS.app -verbose=0
-  #   WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-  #   DEPENDS KISS)
+  add_custom_target(MacDeployQt ALL
+    COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt ${KISS_SOURCE_DIR}/deploy/KISS.app -verbose=0
+    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    DEPENDS KISS)
 
 	add_custom_target(Info.plist ALL
 		COMMAND ${CMAKE_COMMAND} -E copy ${RC}/Info.plist ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents
@@ -127,15 +127,25 @@ if(APPLE)
 		DEPENDS KISS)
 	
 	add_custom_target(copy_qscintilla ALL
-		COMMAND ${CMAKE_COMMAND} -E copy /Library/Frameworks/libqscintilla2.9.dylib
+		COMMAND ${CMAKE_COMMAND} -E copy ${_qt5Core_install_prefix}/lib/libqscintilla2.9.dylib
 			${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Frameworks
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS)
+    
+	add_custom_target(make_rc ALL
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Resources/
+		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+		DEPENDS KISS)
+    
+  add_custom_target(copy_qtconf ALL
+    COMMAND ${CMAKE_COMMAND} -E copy ${RC}/qt.conf ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Resources/qt.conf
+    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    DEPENDS KISS make_rc)
 	
 	add_custom_target(Icons ALL
 		COMMAND ${CMAKE_COMMAND} -E copy ${RC}/logos/mac_icon.icns ${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Resources
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-		DEPENDS KISS Info.plist)
+		DEPENDS KISS Info.plist make_rc)
 		
 	set(OSX_INSTALL_NAMES_SCRIPT "${KISS_SOURCE_DIR}/scripts/osx_install_names.sh")
 endif()
@@ -143,37 +153,41 @@ endif()
 install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_EXTRAS_DIR})
 
 if(APPLE)
-# set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
-# add_custom_target(kiss_osx_install_names ALL 
-#   COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/MacOS/KISS
-#     QtCore.framework/Versions/5/QtCore
-#     QtScript.framework/Versions/5/QtScript
-#     QtGui.framework/Versions/5/QtGui
-#     QtWidgets.framework/Versions/5/QtWidgets
-#     QtNetwork.framework/Versions/5/QtNetwork
-#     QtXml.framework/Versions/5/QtXml
-#     QtXmlPatterns.framework/Versions/5/QtXmlPatterns
-#     QtSvg.framework/Versions/5/QtSvg
-#     QtSql.framework/Versions/5/QtSql
-#     QtWebKit.framework/Versions/5/QtWebKit
-#     QtDeclarative.framework/Versions/5/QtDeclarative
-#   WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-#   DEPENDS KISS Info.plist MacDeployQt)
-# add_custom_target(qscintilla_install_names ALL 
-#   COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/Frameworks/libqscintilla2.9.dylib
-#     QtCore.framework/Versions/5/QtCore
-#     QtScript.framework/Versions/5/QtScript
-#     QtGui.framework/Versions/5/QtGui
-#     QtWidgets.framework/Versions/5/QtWidgets
-#     QtNetwork.framework/Versions/5/QtNetwork
-#     QtXml.framework/Versions/5/QtXml
-#     QtXmlPatterns.framework/Versions/5/QtXmlPatterns
-#     QtSvg.framework/Versions/5/QtSvg
-#     QtSql.framework/Versions/5/QtSql
-#     QtWebKit.framework/Versions/5/QtWebKit
-#     QtDeclarative.framework/Versions/5/QtDeclarative
-#   WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-# DEPENDS KISS Info.plist MacDeployQt)
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
+add_custom_target(kiss_osx_install_names ALL 
+  COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/MacOS/KISS
+    ${_qt5Core_install_prefix}/lib
+    QtCore.framework/Versions/5/QtCore
+    QtScript.framework/Versions/5/QtScript
+    QtPrintSupport.framework/Versions/5/QtPrintSupport
+    QtGui.framework/Versions/5/QtGui
+    QtWidgets.framework/Versions/5/QtWidgets
+    QtNetwork.framework/Versions/5/QtNetwork
+    QtXml.framework/Versions/5/QtXml
+    QtXmlPatterns.framework/Versions/5/QtXmlPatterns
+    QtSvg.framework/Versions/5/QtSvg
+    QtSql.framework/Versions/5/QtSql
+    QtWebKit.framework/Versions/5/QtWebKit
+    QtDeclarative.framework/Versions/5/QtDeclarative
+  WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+  DEPENDS KISS Info.plist MacDeployQt)
+add_custom_target(qscintilla_install_names ALL 
+  COMMAND ${OSX_INSTALL_NAMES_SCRIPT} ${EXECUTABLE_OUTPUT_PATH}/KISS.app/Contents/Frameworks/libqscintilla2.9.dylib
+    ${_qt5Core_install_prefix}/lib
+    QtCore.framework/Versions/5/QtCore
+    QtScript.framework/Versions/5/QtScript
+    QtPrintSupport.framework/Versions/5/QtPrintSupport
+    QtGui.framework/Versions/5/QtGui
+    QtWidgets.framework/Versions/5/QtWidgets
+    QtNetwork.framework/Versions/5/QtNetwork
+    QtXml.framework/Versions/5/QtXml
+    QtXmlPatterns.framework/Versions/5/QtXmlPatterns
+    QtSvg.framework/Versions/5/QtSvg
+    QtSql.framework/Versions/5/QtSql
+    QtWebKit.framework/Versions/5/QtWebKit
+    QtDeclarative.framework/Versions/5/QtDeclarative
+  WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+DEPENDS KISS Info.plist MacDeployQt)
 endif()
 
 # Accessory Programs
