@@ -304,7 +304,7 @@ project::ProjectPtr MainWindow::newProject()
 			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 		if(ret == QMessageBox::No) return project::ProjectPtr();
 	}
-		
+	
   project::ProjectPtr ret = newProject(saveLocation);
   if(ret.isNull()) return ret;
   

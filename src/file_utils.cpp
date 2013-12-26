@@ -38,12 +38,11 @@ bool kiss::FileUtils::copy(const QString &path, const QString &dest)
 bool kiss::FileUtils::remove(const QString &path)
 {
   QFileInfo fileInfo(path);
+  if(!fileInfo.exists()) return true;
   if(fileInfo.isFile()) return QFile::remove(path);
   if(!fileInfo.isDir()) return false;
   
 	QDir dir(path);
-	if(!dir.exists()) return true;
-
   bool success = true;
 	foreach(const QFileInfo &entry, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System
     | QDir::Hidden | QDir::AllDirs | QDir::Files, QDir::DirsFirst))
