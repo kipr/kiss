@@ -27,7 +27,7 @@ const bool MyKs2Interface::scan(kiss::target::InterfaceResponder *responder)
     proto->fillDisplayName("My Link Simulator");
     proto->fillCommPort("localhost");
     
-    responder->targetFound(this, TargetPtr(new ProcessTarget(TargetPtr(proto), ApplicationFinder::platform().applicationPath("ks2"))));
+    responder->targetFound(this, TargetPtr(new ProcessTarget(TargetPtr(proto), ApplicationFinder::platform().applicationPath("cs2"))));
     return true;
 }
 
