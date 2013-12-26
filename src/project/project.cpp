@@ -102,7 +102,7 @@ bool kiss::project::Project::remove(const QString &path)
 {
 	if(!QFileInfo(path).exists()) return false;
 	if(SystemUtils::supportsMoveToTrash()) return SystemUtils::moveToTrash(path);
-	return QFile::remove(path);
+	return FileUtils::remove(path);
 }
 
 QStringList kiss::project::Project::files() const
