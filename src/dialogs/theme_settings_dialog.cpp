@@ -22,7 +22,8 @@
 #include "ui_ThemeSettingsDialog.h"
 
 #include "editor_settings_dialog.hpp"
-// #include "syntax_standards.hpp"
+#include "syntax_standards.hpp"
+#include "lexer_factory.hpp"
 
 #include <QSettings>
 #include <QColor>
@@ -51,7 +52,7 @@ ThemeSettings::ThemeSettings(QWidget *parent)
 	}
 	
 	readSettings();
-	// lexer::Settings::ref().setSettings(m_lexerSettings);
+	lexer::Settings::ref().setSettings(m_lexerSettings);
 }
 
 ThemeSettings::~ThemeSettings()
@@ -97,12 +98,12 @@ void ThemeSettings::readSettings()
 	ui->backgroundColorBox->setColor(settings.value(BACKGROUND_COLOR, QColor(255, 255, 255)).value<QColor>());
 
 	// Figure out the font and set it
-	// const QString &fontString = settings.value(FONT, SyntaxStandards::fontName()).toString();
-	// ui->fontBox->setCurrentFont(QFont(fontString));
+	const QString &fontString = settings.value(FONT, SyntaxStandards::fontName()).toString();
+	ui->fontBox->setCurrentFont(QFont(fontString));
 	
 	// Figure out the font size and set the widget
-	// const int fontSize = settings.value(FONT_SIZE, SyntaxStandards::fontSize()).toInt();
-	// ui->fontSizeBox->setValue(fontSize);
+	const int fontSize = settings.value(FONT_SIZE, SyntaxStandards::fontSize()).toInt();
+	ui->fontSizeBox->setValue(fontSize);
 	
 	// Read the lexer settings
 	m_lexerSettings.clear();
@@ -129,14 +130,14 @@ void ThemeSettings::writeSettings()
 	settings.beginGroup(LEXER);
 	QMap<QString, QColor>::const_iterator i = m_lexerSettings.constBegin();
 	for(; i != m_lexerSettings.constEnd(); ++i) settings.setValue(i.key(), i.value());
-	// lexer::Settings::ref().setSettings(m_lexerSettings);
+	lexer::Settings::ref().setSettings(m_lexerSettings);
 	settings.endGroup();
 	settings.endGroup();
 }
 
 void ThemeSettings::setDefaults()
 {
-	/*m_lexerSettings[DEFAULT] = SyntaxStandards::defaultColor();
+	m_lexerSettings[DEFAULT] = SyntaxStandards::defaultColor();
 	m_lexerSettings[COMMENT] = SyntaxStandards::commentColor();
 	m_lexerSettings[DOC_COMMENT] = SyntaxStandards::docColor();
 	m_lexerSettings[NUMBER] = SyntaxStandards::numberColor();
@@ -146,7 +147,7 @@ void ThemeSettings::setDefaults()
 	m_lexerSettings[OPERATOR] = SyntaxStandards::operatorColor();
 	m_lexerSettings[UNCLOSED_STRING] = SyntaxStandards::unclosedStringColor();
 	m_lexerSettings[DOC_KEYWORD] = SyntaxStandards::docKeywordColor();
-	m_lexerSettings[DOC_KEYWORD_ERROR] = SyntaxStandards::docKeywordErrorColor();*/
+	m_lexerSettings[DOC_KEYWORD_ERROR] = SyntaxStandards::docKeywordErrorColor();
 	updateBoxes();
 }
 
@@ -176,7 +177,7 @@ void ThemeSettings::settingChanged(QColor color)
 
 void ThemeSettings::updateBoxes()
 {
-	/*m_boxes[0]->setColor(m_lexerSettings.value(DEFAULT, SyntaxStandards::defaultColor()));
+	m_boxes[0]->setColor(m_lexerSettings.value(DEFAULT, SyntaxStandards::defaultColor()));
 	m_boxes[1]->setColor(m_lexerSettings.value(COMMENT, SyntaxStandards::commentColor()));
 	m_boxes[2]->setColor(m_lexerSettings.value(DOC_COMMENT, SyntaxStandards::docColor()));
 	m_boxes[3]->setColor(m_lexerSettings.value(NUMBER, SyntaxStandards::numberColor()));
@@ -186,5 +187,5 @@ void ThemeSettings::updateBoxes()
 	m_boxes[7]->setColor(m_lexerSettings.value(OPERATOR, SyntaxStandards::operatorColor()));
 	m_boxes[8]->setColor(m_lexerSettings.value(UNCLOSED_STRING, SyntaxStandards::unclosedStringColor()));
 	m_boxes[9]->setColor(m_lexerSettings.value(DOC_KEYWORD, SyntaxStandards::docKeywordColor()));
-	m_boxes[10]->setColor(m_lexerSettings.value(DOC_KEYWORD_ERROR, SyntaxStandards::docKeywordErrorColor()));*/
+	m_boxes[10]->setColor(m_lexerSettings.value(DOC_KEYWORD_ERROR, SyntaxStandards::docKeywordErrorColor()));
 }

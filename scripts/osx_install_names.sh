@@ -21,12 +21,15 @@ install_framework_paths()
         for i in ${FRAMEWORK_LIST}
         do
                 install_name_tool -change /Library/Frameworks/${i} @executable_path/../Frameworks/${i} ${TARGET}
-		install_name_tool -change ${i} @executable_path/../Frameworks/${i} ${TARGET}
+                install_name_tool -change ${PREFIX}/${i} @executable_path/../Frameworks/${i} ${TARGET}
+                install_name_tool -change ${i} @executable_path/../Frameworks/${i} ${TARGET}
         done
 
 }
 
 TARGET=$1
+shift
+PREFIX=$1
 shift
 FRAMEWORKS=$@
 

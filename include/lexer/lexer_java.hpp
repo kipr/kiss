@@ -18,66 +18,51 @@
  *  If not, see <http://www.gnu.org/licenses/>.                           *
  **************************************************************************/
 
-#include "source_find_widget.hpp"
+#ifndef _LEXER_JAVA_HPP_
+#define _LEXER_JAVA_HPP_
 
-#include "source_file.hpp"
+#include "lexer_factory.hpp"
 
-using namespace kiss;
-using namespace kiss::widget;
+#include <Qsci/qscilexerjava.h>
+#include <Qsci/qsciapis.h>
 
-SourceFind::SourceFind(QWidget *parent)
-	: QWidget(parent),
-	m_sourceFile(0)
+namespace kiss
 {
-	setupUi(this);
+	namespace lexer
+	{
+		class JavaLexer : public QsciLexerCPP
+		{
+		public:
+			QColor defaultColor(int style) const;
+			QFont font(int style) const;
+			QFont defaultFont(int style) const;
+		};
+
+		class Java : public Base
+		{
+		public:
+			Java(const Constructor *constructor);
+			~Java();
+
+			virtual const bool cStyleBlocks() const;
+		};
+	
+		class ConstructorJava : public Constructor
+		{
+		Q_OBJECT
+		Q_INTERFACES(kiss::lexer::Constructor)
+		public:
+			ConstructorJava();
+		
+			Base *construct() const;
+			Base *construct(const QString& apis) const;
+		
+			Base *_new() const;
+			void _delete(Base *base) const;
+		
+			QStringList extensions() const;
+		};
+	}
 }
 
-void SourceFind::setSourceFile(SourceFile *sourceFile)
-{
-	m_sourceFile = sourceFile;
-}
-
-void SourceFind::setModified(const bool &m)
-{
-	m_findModified = m;
-}
-
-bool SourceFind::isModified() const
-{
-	return m_findModified;
-}
-
-void SourceFind::show()
-{
-	ui_find->clear();
-	ui_replace->clear();
-	QWidget::show();
-	ui_find->setFocus(Qt::PopupFocusReason);
-}
-
-void SourceFind::on_ui_next_clicked()
-{
-	if(m_findModified) m_sourceFile->editor()->findFirst(ui_find->text(), false, ui_matchCase->isChecked(), false, true);
-	else m_sourceFile->editor()->findNext();
-	m_findModified = false;
-}
-
-void SourceFind::on_ui_find_textChanged(const QString&)
-{
-	m_findModified = true;
-}
-
-void SourceFind::on_ui_matchCase_stateChanged(int)
-{
-	m_findModified = true;
-}
-
-void SourceFind::on_ui_replaceNext_clicked()
-{
-	m_sourceFile->editor()->replace(ui_replace->text()); on_ui_next_clicked();
-}
-
-void SourceFind::on_ui_replaceAll_clicked()
-{
-	m_sourceFile->editor()->setText(m_sourceFile->editor()->text().replace(ui_find->text(), ui_replace->text()));
-}
+#endif
