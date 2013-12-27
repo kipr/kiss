@@ -662,10 +662,12 @@ const bool SourceFile::selectTemplate()
 	templates::File tFile = tDialog.file();
 	
   lexer::Constructor *constructor = 0;
-  	if(tFile.hasLexer()) {
-  		constructor = lexer::Factory::ref().constructor(tFile.lexer());
-  		m_templateExt = tFile.lexer();
-  	}
+  if(tFile.hasLexer()) {
+  	constructor = lexer::Factory::ref().constructor(tFile.lexer());
+  	m_templateExt = tFile.lexer();
+  }
+  
+  ui->editor->setText(tFile.resolvedData());
 	
 	// m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
 	
