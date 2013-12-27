@@ -3,6 +3,7 @@
 #include "log.hpp"
 #include "target.hpp"
 #include "interface_manager.hpp"
+#include "lexer_factory.hpp"
 #include "language_helper_manager.hpp"
 
 #include "kovan_interface.hpp"
@@ -10,7 +11,10 @@
 #include "my_computer_interface.hpp"
 #include "my_ks2_interface.hpp"
 
+#include "lexer_c.hpp"
+
 #include "language_helper_c.hpp"
+
 
 #include <QIcon>
 #include <QApplication>
@@ -68,6 +72,9 @@ void StandardEnvironment::createStandardEnvironment()
   InterfaceManager::ref().addInterface(new KovanSerialInterface);
   InterfaceManager::ref().addInterface(new MyKs2Interface);
   InterfaceManager::ref().addInterface(new MyComputerInterface);
+  
+  using namespace lexer;
+  Factory::ref().registerLexerConstructor(new ConstructorC);
   
   // lexer::PluginManager::ref().loadAll();
 }
