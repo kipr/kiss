@@ -12,9 +12,12 @@
 #include "my_ks2_interface.hpp"
 
 #include "lexer_c.hpp"
+#include "lexer_cpp.hpp"
+#include "lexer_java.hpp"
+#include "lexer_javascript.hpp"
+#include "lexer_python.hpp"
 
 #include "language_helper_c.hpp"
-
 
 #include <QIcon>
 #include <QApplication>
@@ -75,6 +78,10 @@ void StandardEnvironment::createStandardEnvironment()
   
   using namespace lexer;
   Factory::ref().registerLexerConstructor(new ConstructorC);
+  Factory::ref().registerLexerConstructor(new ConstructorCPP);
+  Factory::ref().registerLexerConstructor(new ConstructorJava);
+  Factory::ref().registerLexerConstructor(new ConstructorJavaScript);
+  Factory::ref().registerLexerConstructor(new ConstructorPython);
   
   // lexer::PluginManager::ref().loadAll();
 }
