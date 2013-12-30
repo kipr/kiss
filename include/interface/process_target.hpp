@@ -10,7 +10,7 @@ namespace kiss
         class ProcessTarget : public Target
         {
         public:
-            ProcessTarget(const TargetPtr &target, const QList<QString> &executablePaths);
+            ProcessTarget(const TargetPtr &target, const QStringList &executablePaths, const QStringList &args = QStringList());
             
             virtual QMap<QString, QString> information() const; // Needs to be cached
 
@@ -38,7 +38,8 @@ namespace kiss
             void ensureStarted() const;
             
             TargetPtr _target;
-            QList<QString> _executablePaths;
+            QStringList _executablePaths;
+            QStringList _args;
         };
     }
 }

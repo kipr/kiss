@@ -17,10 +17,11 @@ using namespace kiss::target;
   } \
   return ret
 
-ProcessTarget::ProcessTarget(const TargetPtr &target, const QList<QString> &executablePaths)
+ProcessTarget::ProcessTarget(const TargetPtr &target, const QStringList &executablePaths, const QStringList &args)
   : Target(target->interface(), "process_target")
   , _target(target)
   , _executablePaths(executablePaths)
+  , _args(args)
 {
 }
 
@@ -98,16 +99,14 @@ void ProcessTarget::ensureStarted() const
 {
   if(!ProcessManager::isRunDetectionSupported()) return;
   
-  bool running = false;
   Q_FOREACH(const QString &executablePath, _executablePaths) {
     const QString name = QFileInfo(executablePath).fileName();
-    running |= ProcessManager::isRunning(name);
+    if(ProcessManager::isRunning(name)) return;
   }
-  if(running) return;
   
   Q_FOREACH(const QString &executablePath, _executablePaths) {
     qDebug() << "Trying to start" << executablePath;
-    if(ProcessManager::start(executablePath)) break;
+    if(ProcessManager::start(executablePath, _args)) break;
   }
   
   QWaitCondition waitCondition;
