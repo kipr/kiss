@@ -1,5 +1,5 @@
-#include "template_dialog.hpp"
-#include "ui_template_dialog.h"
+#include "new_file_dialog.hpp"
+#include "ui_new_file_dialog.h"
 
 #include "template_manager.hpp"
 #include "template_model.hpp"
@@ -26,38 +26,48 @@ public:
 	}
 };
 
-Template::Template(kiss::templates::Manager *manager, QWidget *parent)
+NewFile::NewFile(kiss::templates::Manager *manager, QWidget *parent)
 	: QDialog(parent),
 	m_manager(manager),
 	m_model(0),
-	ui(new Ui::TemplateDialog())
+	ui(new Ui::NewFileDialog())
 {
 	ui->setupUi(this);
 	m_model = new kiss::templates::Model(m_manager, ui->templates);
 	m_model->setReadOnly(true);
 	ui->templates->setModel(m_model);
 	ui->templates->setItemDelegate(new ItemDelegate(this));
+	ui->templates->expandAll();
 	ui->removePack->setEnabled(false);
+  m_helpText = ui->description->toPlainText();
+  updateAcceptable();
+  
 	connect(ui->templates->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
 		this, SLOT(selectionChanged(QItemSelection)));
+  connect(ui->templates->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+  	this, SLOT(updateAcceptable()));
+  connect(ui->fileName, SIGNAL(textChanged(QString)), this, SLOT(updateAcceptable()));
 	connect(ui->removePack, SIGNAL(clicked()), this, SLOT(removeSelectedPack()));
-	m_helpText = ui->description->toPlainText();
-	ui->templates->expandAll();
 }
 
-Template::~Template()
+NewFile::~NewFile()
 {
 	delete ui;
 }
 
-kiss::templates::File Template::file() const
+QString NewFile::fileName() const
+{
+  return ui->fileName->text();
+}
+
+kiss::templates::File NewFile::templateFile() const
 {
 	QItemSelection selection = ui->templates->selectionModel()->selection();
 	if(selection.indexes().isEmpty()) return kiss::templates::File();
 	return m_model->indexToFile(selection.indexes()[0]);
 }
 
-void Template::selectionChanged(const QItemSelection &selection)
+void NewFile::selectionChanged(const QItemSelection &selection)
 {
 	const bool singular = selection.indexes().size() == 1;
 	
@@ -84,7 +94,7 @@ void Template::selectionChanged(const QItemSelection &selection)
 	ui->description->setVisible(true);
 }
 
-void Template::removeSelectedPack()
+void NewFile::removeSelectedPack()
 {
 	QItemSelection selection = ui->templates->selectionModel()->selection();
 	if(selection.indexes().size() != 1) return;
@@ -92,4 +102,10 @@ void Template::removeSelectedPack()
 	kiss::templates::Pack *pack = m_model->indexToPack(index);
 	if(!pack) return;
 	m_manager->removePack(pack, true);
+}
+
+void NewFile::updateAcceptable()
+{
+  const bool enabled = ui->templates->selectionModel()->hasSelection() && !fileName().isEmpty();
+  ui->buttons->button(QDialogButtonBox::Ok)->setEnabled(enabled);
 }

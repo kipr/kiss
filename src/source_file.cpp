@@ -23,8 +23,6 @@
 
 #include "main_window.hpp"
 #include "lexer_factory.hpp"
-#include "template_manager.hpp"
-#include "template_dialog.hpp"
 #include "password_dialog.hpp"
 #include "save_as_dialog.hpp"
 #include "source_file_menu.hpp"
@@ -106,10 +104,8 @@ void SourceFile::activate()
 
 bool SourceFile::beginSetup()
 {
-	if(!hasFile()) {
-		if(!selectTemplate()) return false;
-	} else updateLexer();
-
+	if(!hasFile()) return false;
+	updateLexer();
 	return true;
 }
 
@@ -654,28 +650,17 @@ void SourceFile::updateErrors(const Compiler::OutputList &compileResult)
 	markProblems(lines);
 }
 
-const bool SourceFile::selectTemplate()
+void SourceFile::setTemplate(templates::File tFile)
 {
-	dialog::Template tDialog(mainWindow()->templateManager(), this);
-	if(tDialog.exec() == QDialog::Rejected) return false;
-
-	templates::File tFile = tDialog.file();
-	
   lexer::Constructor *constructor = 0;
   if(tFile.hasLexer()) {
   	constructor = lexer::Factory::ref().constructor(tFile.lexer());
   	m_templateExt = tFile.lexer();
   }
-  
   ui->editor->setText(tFile.resolvedData());
-	
-	// m_lexAPI = QString(targetPath).replace(QString(".") + TARGET_EXT, ".api");
-	
 	if(constructor) setLexer(constructor);
 	
 	refreshSettings();
-	
-	return true;
 }
 
 void SourceFile::fileChanged(const QFileInfo &file)

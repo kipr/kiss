@@ -27,6 +27,7 @@
 #include "project.hpp"
 #include "log.hpp"
 #include "lexer_factory.hpp"
+#include "new_file_dialog.hpp"
 
 #include "new_project_dialog.hpp"
 #include "template_manager.hpp"
@@ -703,27 +704,18 @@ void MainWindow::projectAddNew(const project::ProjectPtr &project, const QString
 {
   if(!project) return;
   
+	dialog::NewFile newFileDialog(m_templateManager, this);
+	if(newFileDialog.exec() == QDialog::Rejected) return;
+  QString fileName = newFileDialog.fileName();
+	templates::File tFile = newFileDialog.templateFile();
+  
 	SourceFile *const sourceFile = new SourceFile(this);
 	sourceFile->setProject(project);
-	if(!sourceFile->selectTemplate()) {
-		delete sourceFile;
-		return;
-	}
-
-	bool ok = false;
-	QString fileName = QInputDialog::getText(this, tr("New File"), tr("New File Name:"),
-		QLineEdit::Normal, QString(), &ok);
-	if(!ok) {
-		delete sourceFile;
-		return;
-	}
-    
-    if(QFileInfo(fileName).baseName() == fileName) {
-        fileName += ".";
-        fileName += sourceFile->templateExt();
-    }
-
+  sourceFile->setTemplate(tFile);
+  
+  if(QFileInfo(fileName).suffix().isEmpty()) fileName += "." + sourceFile->templateExt();
   sourceFile->setFile(QDir(dest).filePath(fileName));
+  
   addTab(sourceFile);
   sourceFile->save();
 }

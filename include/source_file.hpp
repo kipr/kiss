@@ -23,6 +23,7 @@
 
 #include "tab.hpp"
 #include "output_helper.hpp"
+#include "template_file.hpp"
 
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexer.h>
@@ -65,7 +66,7 @@ namespace kiss
 			bool beginSetup();
 			void completeSetup();
 
-			const bool selectTemplate();
+      void setTemplate(templates::File tFile);
 			bool fileSaveAs(const QString &filePath);
 			bool fileOpen(const QString &filePath);
 			bool memoryOpen(const QByteArray &ba, const QString &assocPath);
