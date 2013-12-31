@@ -25,7 +25,8 @@ set(INCLUDE_DIRS ${INCLUDE}
 	${INCLUDE}/js
 	${INCLUDE}/project
 	${INCLUDE}/compiler
-	${INCLUDE}/interface)
+	${INCLUDE}/interface
+	${INCLUDE}/template)
 
 include_directories(
 	${CMAKE_SOURCE_DIR} 
@@ -42,23 +43,25 @@ endif()
 
 file(GLOB INCLUDES ${INCLUDE}/*.hpp
 	${INCLUDE}/dialogs/*
+	${INCLUDE}/lexer/*
 	${INCLUDE}/widgets/*
 	${INCLUDE}/menus/* 
 	${INCLUDE}/js/*
 	${INCLUDE}/project/*
 	${INCLUDE}/compiler/*
 	${INCLUDE}/interface/*
-  ${INCLUDE}/lexer/*)
+	${INCLUDE}/template/*)
 
 file(GLOB SOURCES ${SRC}/*
 	${SRC}/dialogs/*
+	${SRC}/lexer/*
 	${SRC}/widgets/*
 	${SRC}/menus/*
 	${SRC}/js/*
 	${SRC}/project/*
 	${SRC}/compiler/*
 	${SRC}/interface/*
-  ${SRC}/lexer/*)
+	${SRC}/template/*)
   
 if(APPLE)
   file(GLOB PLATFORM_SOURCES ${SRC}/platform_osx/*)
