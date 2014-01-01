@@ -144,10 +144,11 @@ namespace kiss
 
 			bool eventFilter(QObject *target, QEvent *event);
 
-      project::ProjectPtr newProject();
+      project::ProjectPtr newProjectFromFile(const QString &file);
 			project::ProjectPtr newProject(const QString &projectPath);
 			project::ProjectPtr openProject(const QString &projectFilePath);
       void projectAddNew(const project::ProjectPtr &project, const QString &dest);
+      void projectAddExisting(const project::ProjectPtr &project, const QString &dest);
       void projectAddExisting(const project::ProjectPtr &project, QStringList files, const QString &dest);
       void projectAddFolder(const project::ProjectPtr &project, const QString &dest);
       void projectClose(const project::ProjectPtr &project);
@@ -178,9 +179,9 @@ namespace kiss
 			friend class menu::MainWindowMenu;
 
 		public slots:
+      project::ProjectPtr newProject();
 			void importTemplatePack();
 			void newTemplatePack();
-			project::ProjectPtr newEmptyProject();
 			void newFile();
 			void open();
 			void openProject();

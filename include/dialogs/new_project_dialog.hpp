@@ -3,29 +3,38 @@
 
 #include <QDialog>
 
-#include "ui_NewProjectDialog.h"
+namespace Ui
+{
+  class NewProjectDialog;
+}
 
 namespace kiss
 {
 	namespace dialog
 	{
-		class NewProjectDialog : public QDialog, private Ui::NewProjectDialog
+		class NewProjectDialog : public QDialog
 		{
 		Q_OBJECT
 		public:
 			NewProjectDialog(QWidget *parent = 0);
+      
+      void limitTypeButtons();
 
 			QString projectName() const;
 			QString saveLocation() const;
+      bool emptyProject() const;
+      bool newFile() const;
+      bool existingFile() const;
 
 		public slots:
-			void on_ui_browse_clicked();
-			void on_ui_projectName_textChanged(const QString &text);
+			void on_browse_clicked();
+			void on_projectName_textChanged(const QString &text);
 			
 		private:
 			void updateSaveLocation();
 
 			QString m_savePath;
+      Ui::NewProjectDialog *ui;
 		};
 	}
 }

@@ -197,10 +197,9 @@ bool MainWindow::openFile(const QString &file, const project::ProjectPtr &projec
         tr("You are opening a file that is not part of a KISS project. "
           "Creating a project will allow you to compile and run your program. Do you want to create a project with the file?"),
         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes) {
-          project::ProjectPtr createdProject = newProject();
-          createdProject->addFileAsCopy(file, createdProject->location());
+          project::ProjectPtr createdProject = newProjectFromFile(file);
+          if(createdProject) fileToOpen = QDir(createdProject->location()).filePath(fileInfo.fileName());
           sourceFile->setProject(createdProject);
-          fileToOpen = QDir(createdProject->location()).filePath(fileInfo.fileName());
         }
     }
     else {
@@ -280,48 +279,50 @@ project::ProjectPtr MainWindow::openProject(const QString &projectPath)
 	return project;
 }
 
-project::ProjectPtr MainWindow::newEmptyProject()
-{
-  project::ProjectPtr project = newProject();
-  if(project.isNull()) return project;
-  
-  // Prompt the user to add a new file to their empty project
-  if(QMessageBox::question(this, tr("Add a New File?"),
-  tr("You just created an empty project. Do you want to add a new file?"),
-  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
-    projectAddNew(project, project->location());
-  
-  return project;
-}
-
 project::ProjectPtr MainWindow::newProject()
 {
 	dialog::NewProjectDialog dialog(this);
 	if(dialog.exec() == QDialog::Rejected) return project::ProjectPtr();
+  
+  project::ProjectPtr project = newProject(dialog.saveLocation());
+  if(!project) return project;
+  if(dialog.newFile()) projectAddNew(project, project->location());
+  else if(dialog.existingFile()) projectAddExisting(project, project->location());
+  
+  return project;
+}
 
-	const QString &saveLocation = dialog.saveLocation();
-	if(QDir(saveLocation).exists()) {
-		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
-			tr("Overwrite %1?").arg(saveLocation),
-			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-		if(ret == QMessageBox::No) return project::ProjectPtr();
-	}
-	
-  project::ProjectPtr ret = newProject(saveLocation);
-  if(ret.isNull()) return ret;
+project::ProjectPtr MainWindow::newProjectFromFile(const QString &file)
+{
+	dialog::NewProjectDialog dialog(this);
+  dialog.limitTypeButtons();
+	if(dialog.exec() == QDialog::Rejected) return project::ProjectPtr();
   
-  ret->setAutoCompileDeps(true);
-  ret->setCompileLib(false);
+  project::ProjectPtr project = newProject(dialog.saveLocation());
+  if(project) project->addFileAsCopy(file, project->location());
   
-  return ret;
+  return project;
 }
 
 project::ProjectPtr MainWindow::newProject(const QString &projectPath)
 {
+	if(QDir(projectPath).exists()) {
+		QMessageBox::StandardButton ret = QMessageBox::question(this, tr("Are You Sure?"),
+			tr("%1 already exists. Are you sure you want to overwrite it?").arg(projectPath),
+			QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+		if(ret == QMessageBox::No) return project::ProjectPtr();
+	}
+  
 	if(!FileUtils::remove(projectPath)) return project::ProjectPtr();
 	if(!QDir().mkpath(projectPath)) return project::ProjectPtr();
+  
+  project::ProjectPtr ret = openProject(projectPath);
+  if(!ret.isNull()) {
+    ret->setAutoCompileDeps(true);
+    ret->setCompileLib(false);
+  }
 
-	return openProject(projectPath);
+	return ret;
 }
 
 void MainWindow::initMenus()
@@ -722,24 +723,14 @@ void MainWindow::projectAddNew(const project::ProjectPtr &project, const QString
 
 void MainWindow::activeProjectAddExisting()
 {
-	QStringList filters = lexer::Factory::ref().formattedExtensions();
-	filters.removeDuplicates();
-	QStringList files = FileUtils::getOpenFileNames(this,
-		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
-    
   const project::ProjectPtr &project = m_projectManager.activeProject();
-  projectAddExisting(project, files, project->location());
+  if(project) projectAddExisting(project, project->location());
 }
 
 void MainWindow::selectedProjectAddExisting()
-{
-	QStringList filters = lexer::Factory::ref().formattedExtensions();
-	filters.removeDuplicates();
-	QStringList files = FileUtils::getOpenFileNames(this,
-		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
-  
+{ 
   const project::ProjectPtr &project = m_projectsModel.project(ui_projects->currentIndex());
-	projectAddExisting(project, files, m_projectsModel.filePath(ui_projects->currentIndex()));
+	if(project) projectAddExisting(project, m_projectsModel.filePath(ui_projects->currentIndex()));
 }
 
 void MainWindow::droppedProjectAddExisting(QStringList files)
@@ -747,6 +738,15 @@ void MainWindow::droppedProjectAddExisting(QStringList files)
   const QModelIndex current = ui_projects->currentIndex();
   projectAddExisting(m_projectsModel.project(current), files,
     m_projectsModel.isFolder(current) ? m_projectsModel.filePath(current) : m_projectsModel.filePath(current.parent()));
+}
+
+void MainWindow::projectAddExisting(const project::ProjectPtr &project, const QString &dest)
+{
+	QStringList filters = lexer::Factory::ref().formattedExtensions();
+	filters.removeDuplicates();
+	QStringList files = FileUtils::getOpenFileNames(this,
+		tr("Select Files to Add"), filters.join(";;") + ";;All Files (*)");
+  projectAddExisting(project, files, dest);
 }
 
 void MainWindow::projectAddExisting(const project::ProjectPtr &project, QStringList files, const QString &dest)

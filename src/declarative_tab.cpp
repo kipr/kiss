@@ -41,9 +41,9 @@ DeclarativeTools::DeclarativeTools(MainWindow *const mainWindow, DeclarativeTab 
 {
 }
 
-void DeclarativeTools::newEmptyProject()
+void DeclarativeTools::newProject()
 {
-  _mainWindow->newEmptyProject();
+  _mainWindow->newProject();
 }
 
 void DeclarativeTools::open()

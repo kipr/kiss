@@ -48,7 +48,7 @@ namespace kiss
 			DeclarativeTools(MainWindow *const mainWindow, DeclarativeTab *const tab);
 
 		public slots:
-			void newEmptyProject();
+			void newProject();
 			void open();
 			void openWeb(const QString &url);
       void setClosable(const bool closable);
