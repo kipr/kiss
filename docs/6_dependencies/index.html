@@ -1,0 +1,87 @@
+<html>
+<head>
+  <title>KISS IDE 5.0 Tutorial: Dependencies</title>
+  <link type="text/css" rel="stylesheet" href="../common/style.css" />
+</head>
+<body>
+  <div class="main">
+    <h1 class="center">KISS IDE 5.0 Tutorial: Dependencies</h1>
+    <p>
+      KISS IDE is an instructional integrated development environment for the C and C++ programming languages. In this tutorial, you will learn about creating and using dependencies in KISS.
+    </p>
+    
+    <h2>Libraries in C</h2>
+    Libraries can help you group related functions together, speed up compilation, or share code with others. In general, libraries are made up of <i>source files</i> and <i>header files</i>.
+    <h3>Source Files</h3>
+    <p>A source file is a file that contains functions and other definitions. For example, if we wanted to declare a function that returned the square of an integer, we would write something like this:
+      <pre>
+int square(int a) {
+    return a * a;
+}</pre></p>
+    
+    <h3>Header Files</h3>
+    <p>Header files are necessary so that other files have an idea of the functions defined in source files. In other words, header files declare the functions that source files define. Let's say that we have a source file called <code>my_math.c</code> that contains utility functions like <code>square</code>. Then we create another source file called <code>algebra.c</code>. How do we use <code>square</code> from <code>my_math.c</code> in <code>algebra.c</code>? The answer is a header file. A header file exposes function prototypes to all source files that <code>#include</code> that header.</p>
+    <p>For example, a header for our <code>my_math.c</code> source file might be called <code>my_math.h</code> and look like this:
+      <pre>int square(int a);</pre>
+      Now all we have to do is add <pre>#include "my_math.h"</pre> to both <code>my_math.c</code> and <code>algebra.c</code> and we're ready to go!</p>
+    
+    <h2>Dependencies in KISS</h2>
+    <p>Dependencies in KISS represent libraries. When you create a project that is a dependency, it will be compiled as a library instead of an executable. Then, other projects can depend on the dependency and use its functions.</p>
+    
+    <h3>Creating a Dependency</h3>
+    First, create a simple library of functions that will serve as your dependency.
+    <ol>
+      <li>Create a new project with a new file, as in the "Hello World!" tutorial. Name the project <code>PrintLibrary</code>. Name the new file <code>print_lib.h</code> and select the C header file template. This will be the header for your library.</li>
+      <li>In this file, insert the following after the <code>#define</code> line:
+        <pre>
+void printHello();
+void printBye();</pre>
+        These are the function prototypes that will be available to source files.</li>
+        <li>Add a new file to the project by right-clicking on it and clicking "Add New File..." Name the new file <code>print_lib.c</code> and select the C blank file template. This will be the source file for your library.</li>
+        <li>In this file, insert the following lines:
+          <pre>
+#include "print_lib.h"
+#include &ltstdio.h&gt
+
+void printHello()
+{
+    printf("Hello there!\n");
+}
+
+void printBye()
+{
+    printf("Goodbye!\n");
+}</pre>
+          These are the definitions of the functions declared in your header.</li>
+    </ol>
+    
+    <h3>Using a Dependency</h3>
+    Now that you have created a dependency, you can create a separate project that depends on your dependency.
+    <ol>
+      <li>Create a new project with a new file, as in the "Hello World!" tutorial. Name the new file <code>main.c</code> and select the C Hello World template. This will be your main file, and it will call functions from your library.</li>
+      <li>Make this file look like the following:
+        <pre>
+#include "PrintLibrary/print_lib.h"
+
+int main()
+{
+  printHello();
+  printBye();
+	
+  return 0;
+}</pre>
+The main function calls the two functions from your library. It knows that these functions exist because they are declared in the included header. Notice that, because the included header is part of a different project, the <code>#include</code> statement is prefixed with the name of its project (in this case, "PrintLibrary").
+      </li>
+      <img class="right side" src="dependencies.png"></img>
+      <li>Finally, you must add PrintLibrary as a dependency of your main project. Right-click on your main project and click "Project Settings." Switch to "Dependencies" on the left side. Click "Add," select the <code>.kissproj</code> file associated with PrintLibrary, and click "Open." PrintLibrary will appear as a dependency in the table. Click "OK."</li>
+      <li>Test everything by compiling and running your main project. Compiling a project automatically compiles all dependencies, so PrintLibrary will automatically be downloaded and compiled.</li>
+    </ol>
+
+    <h2>Need Help?</h2>
+    <p>
+      If you have any questions or need assistance, you can call KIPR at 405-579-4609 (M-F, 8:30 a.m. - 5:00 p.m. CST) or email <a href="mailto:support@kipr.org">KIPR support</a>.
+    </p>
+  </div>
+  <p class="center">Copyright &copy; 2013 KISS Institute for Practical Robotics</p>
+</body>
+</html>
