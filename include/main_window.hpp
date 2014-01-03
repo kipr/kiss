@@ -213,7 +213,7 @@ namespace kiss
 
 		private slots:
 			void on_ui_tabWidget_currentChanged(int i);
-      void updateInfoBox(const QModelIndex &current);
+      void updateInfoBox();
       
       void activeProjectAddNew();
       void activeProjectAddExisting();

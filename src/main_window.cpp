@@ -101,7 +101,7 @@ MainWindow::MainWindow(QWidget *parent)
 		&m_projectsModel, SLOT(activeChanged(kiss::project::ProjectPtr, kiss::project::ProjectPtr)));
     
   connect(ui_projects->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
-    this, SLOT(updateInfoBox(const QModelIndex &)));
+    this, SLOT(updateInfoBox()));
 		
 	connect(&target::CommunicationManager::ref(),
 		SIGNAL(targetNeedsAuthentication(kiss::target::TargetPtr, kiss::target::CommunicationManager *)),
@@ -676,17 +676,15 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	setUpdatesEnabled(true);
 }
 
-void MainWindow::updateInfoBox(const QModelIndex &current)
+void MainWindow::updateInfoBox()
 {
+  const QModelIndex current = ui_projects->currentIndex();
   if(m_projectsModel.isProject(current)) {
     const project::ProjectPtr &project = m_projectsModel.project(current);
     if(!project) return;
-    ui_infoBox->showProjectInfo(project->name(), project->location(), project->deps());
+    ui_infoBox->showProjectInfo(project);
   }
-  else {
-    QFileInfo fileInfo(m_projectsModel.filePath(current));
-    ui_infoBox->showFileInfo(fileInfo.fileName(), fileInfo.absoluteFilePath());
-  }
+  else ui_infoBox->showFileInfo(m_projectsModel.filePath(current));
 }
 
 void MainWindow::activeProjectAddNew()
@@ -893,7 +891,7 @@ void MainWindow::projectOpenSettings(const project::ProjectPtr &project)
 	project->setCompileLib(dialog.compileLib());
 	project->setAutoCompileDeps(dialog.autoCompileDeps());
   
-  updateInfoBox(ui_projects->currentIndex());
+  updateInfoBox();
 }
 
 void MainWindow::projectSetActive(const project::ProjectPtr &project)
@@ -981,6 +979,8 @@ const bool MainWindow::projectChangeTarget(kiss::project::ProjectPtr project)
 	
 	// This hooks up all important callbacks
 	project->target()->setResponder(m_mainResponder);
+  
+  updateInfoBox();
 		
 	return true;
 }
