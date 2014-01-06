@@ -912,9 +912,14 @@ const bool MainWindow::selectedProjectDownload()
 
 const bool MainWindow::projectDownload(const project::ProjectPtr &project)
 {
-	if(!commPreconditions(project)) return false;
-
-	return project->download();
+  if(!commPreconditions(project)) return false;
+  if(project->download()) return true;
+  dialog::Message::showError(this, "simple_error_with_action", QStringList() <<
+    tr("Failed to download project.") <<
+    tr("The project could not be downloaded.") <<
+    tr("If the project has dependencies, make sure each dependency exists and the paths are "
+      "correct. Otherwise, the project may be corrupt."));
+  return false;
 }
 
 const bool MainWindow::activeProjectCompile()
