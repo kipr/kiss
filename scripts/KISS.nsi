@@ -37,6 +37,8 @@ OutFile "${KISS_DIR}\releases\${INSTALLER_FILENAME}.exe"
 ; Modern interface settings
 !define MUI_ICON ${INSTALLER_ICON}
 !define MUI_ABORTWARNING
+!define MUI_FINISHPAGE_RUN "$INSTDIR\KISS\KISS.exe"
+!define MUI_FINISHPAGE_RUN_TEXT "Run KISS IDE now"
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "License.txt"
 !insertmacro MUI_PAGE_COMPONENTS
