@@ -25,6 +25,8 @@
 
 #include "manual_target_dialog.hpp"
 
+#include <QDebug>
+
 using namespace kiss::dialog;
 
 Target::Target(kiss::target::InterfaceManager *manager, QWidget *parent)
@@ -38,19 +40,18 @@ Target::Target(kiss::target::InterfaceManager *manager, QWidget *parent)
 	m_interfaceModel.setAllInterface(true);
 	ui_interfaces->setModel(&m_interfaceModel);
 	
+  ui_buttons->button(QDialogButtonBox::Ok)->setEnabled(false);
 	ui_targetInfo->hide();
 	
 	connect(ui_targets->selectionModel(),
 		SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
 		SLOT(currentTargetChanged(const QModelIndex&)));
-		
 	connect(ui_targets,
 		SIGNAL(doubleClicked(const QModelIndex&)),
 		SLOT(targetChosen(const QModelIndex&)));
-		
-	ui_buttons->button(QDialogButtonBox::Ok)->setEnabled(false);
-	
-	on_ui_refresh_clicked();
+  connect(ui_interfaces, SIGNAL(currentIndexChanged(int)), SLOT(on_ui_refresh_clicked()));
+  
+  on_ui_refresh_clicked();
 }
 
 Target::~Target()
@@ -83,16 +84,14 @@ void Target::targetChosen(const QModelIndex &index)
 	accept();
 }
 
-void Target::on_ui_interfaces_currentIndexChanged(int index)
-{
-	currentTargetChanged(QModelIndex());
-}
-
 void Target::on_ui_refresh_clicked()
 {
+  kiss::target::Interface *filter = m_interfaceModel.rowToInterface(ui_interfaces->currentIndex());
 	m_model.clear();
-	foreach(kiss::target::Interface *interface, m_manager->interfaces())
+	foreach(kiss::target::Interface *interface, m_manager->interfaces()) {
+    if(filter && interface->name() != filter->name()) continue;
 		interface->scan(&m_model);
+  }
 }
 
 void Target::on_ui_manual_clicked()
