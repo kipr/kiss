@@ -173,7 +173,7 @@ void MainWindow::newFile()
 
 bool MainWindow::openFile(const QString &file, const project::ProjectPtr &project)
 {
-  qDebug() << "------OPEN_FILE:" << file << "FOR PROJECT:" << project->location();
+  qDebug() << "------OPEN_FILE:" << file << "FOR PROJECT:" << (project ? project->location() : "<none>");
 	QFileInfo fileInfo(file);
 	if(!fileInfo.isFile() || !fileInfo.isReadable()) return false;
 
