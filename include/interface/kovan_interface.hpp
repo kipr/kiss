@@ -24,6 +24,7 @@ namespace kiss
 
 		signals:
 			void found(const Advert &ad, const sockaddr_in &addr);
+      void runFinished();
 
 		private:
 			UdpAdvertiser *m_advertiser;
@@ -33,7 +34,7 @@ namespace kiss
 			QList<IncomingAdvert> m_found;
 		};
 
-		class KovanInterface : public QObject, public kiss::target::Interface
+		class KovanInterface : public kiss::target::Interface
 		{
 		Q_OBJECT
 		Q_INTERFACES(kiss::target::Interface)

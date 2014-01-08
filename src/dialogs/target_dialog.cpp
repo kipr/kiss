@@ -86,24 +86,6 @@ void Target::targetChosen(const QModelIndex &index)
 	accept();
 }
 
-void Target::on_ui_refresh_clicked()
-{
-  ui_refresh->setEnabled(false);
-  kiss::target::Interface *filter = m_interfaceModel.rowToInterface(ui_interfaces->currentIndex());
-  m_model.clear();
-  
-  ui_progress->setRange(0, m_manager->interfaces().size() - 1);
-  ui_progress->reset();
-  ui_progress->show();
-	foreach(kiss::target::Interface *interface, m_manager->interfaces()) {
-    if(filter && interface->name() != filter->name()) continue;
-		interface->scan(&m_model);
-    ui_progress->setValue(ui_progress->value() + 1);
-  }
-  QTimer::singleShot(500, ui_progress, SLOT(hide()));
-  ui_refresh->setEnabled(true);
-}
-
 void Target::on_ui_manual_clicked()
 {
 	ManualTarget dialog;
@@ -113,4 +95,39 @@ void Target::on_ui_manual_clicked()
 	}
 	m_manualTarget = dialog.target();
 	accept();
+}
+
+void Target::on_ui_refresh_clicked()
+{
+  ui_refresh->setEnabled(false);
+  kiss::target::Interface *filter = m_interfaceModel.rowToInterface(ui_interfaces->currentIndex());
+  m_model.clear();
+  
+  QList<kiss::target::Interface *> interfaces;
+  if(!filter) interfaces = m_manager->interfaces();
+  else foreach(kiss::target::Interface *interface, m_manager->interfaces())
+    if(interface->name() == filter->name()) interfaces.append(interface);
+  
+  ui_progress->setRange(0, interfaces.size() - 1);
+  ui_progress->reset();
+  ui_progress->show();
+    
+	foreach(kiss::target::Interface *interface, interfaces) {
+    connect(interface, SIGNAL(scanFinished(kiss::target::Interface *)),
+      this, SLOT(interfaceFinished(kiss::target::Interface *)));
+		interface->scan(&m_model);
+  }
+}
+
+void Target::interfaceFinished(kiss::target::Interface *interface)
+{
+  disconnect(interface, SIGNAL(scanFinished(kiss::target::Interface *)),
+    this, SLOT(interfaceFinished(kiss::target::Interface *)));
+  int newValue = ui_progress->value() + 1;
+  ui_progress->setValue(newValue);
+  if(newValue != ui_progress->maximum()) return;
+  
+  ui_progress->hide();
+  ui_refresh->setEnabled(true);
+  
 }

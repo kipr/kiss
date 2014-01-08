@@ -45,8 +45,9 @@ namespace kiss
 		private slots:
 			void currentTargetChanged(const QModelIndex& index);
 			void targetChosen(const QModelIndex& index);
-			void on_ui_refresh_clicked();
 			void on_ui_manual_clicked();
+      void on_ui_refresh_clicked();
+      void interfaceFinished(kiss::target::Interface *interface);
 
 		private:
 			kiss::target::InterfaceManager *m_manager;

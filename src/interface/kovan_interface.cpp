@@ -38,6 +38,7 @@ void AdvertSampler::run()
       emit found(it->ad, mod);
     }
   }
+  emit runFinished();
 }
 
 KovanInterface::KovanInterface()
@@ -78,6 +79,7 @@ const bool KovanInterface::scan(InterfaceResponder *responder)
 	qRegisterMetaType<Advert>("Advert");
 	qRegisterMetaType<sockaddr_in>("sockaddr_in");
 	connect(sampler, SIGNAL(found(Advert, sockaddr_in)), SLOT(found(Advert, sockaddr_in)));
+  connect(sampler, SIGNAL(runFinished()), this, SLOT(emitScanFinished()));
 	QThreadPool::globalInstance()->start(sampler);
 	return true;
 }

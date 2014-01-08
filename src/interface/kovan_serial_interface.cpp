@@ -50,6 +50,7 @@ void PortSampler::run()
 		proto.hangup();
 		usb.endSession();
 	}
+  emit runFinished();
 }
 
 KovanSerialInterface::KovanSerialInterface()
@@ -77,6 +78,7 @@ const bool KovanSerialInterface::scan(InterfaceResponder *responder)
 	PortSampler *sampler = new PortSampler();
 	sampler->setAutoDelete(true);
 	connect(sampler, SIGNAL(found(QString)), SLOT(found(QString)));
+  connect(sampler, SIGNAL(runFinished()), this, SLOT(emitScanFinished()));
 	QThreadPool::globalInstance()->start(sampler);
 	return true;
 }

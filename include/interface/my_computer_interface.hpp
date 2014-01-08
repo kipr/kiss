@@ -7,7 +7,7 @@ namespace kiss
 {
     namespace target
     {
-        class MyComputerInterface : public QObject, public kiss::target::Interface
+        class MyComputerInterface : public kiss::target::Interface
         {
         Q_OBJECT
         Q_INTERFACES(kiss::target::Interface)

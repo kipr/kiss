@@ -9,7 +9,7 @@ namespace kiss
 {
 	namespace target
 	{
-		class DummyInterface : public QObject, public Interface
+		class DummyInterface : public Interface
 		{
 		Q_OBJECT
 		Q_INTERFACES(kiss::target::Interface)

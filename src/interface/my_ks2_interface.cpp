@@ -28,6 +28,7 @@ const bool MyKs2Interface::scan(kiss::target::InterfaceResponder *responder)
     proto->fillCommPort("localhost");
     
     responder->targetFound(this, TargetPtr(new ProcessTarget(TargetPtr(proto), ApplicationFinder::platform().applicationPath("cs2"))));
+    emitScanFinished();
     return true;
 }
 

@@ -22,9 +22,10 @@ namespace kiss
 
 		signals:
 			void found(const QString &port);
+      void runFinished();
 		};
 
-		class KovanSerialInterface : public QObject, public kiss::target::Interface
+		class KovanSerialInterface : public kiss::target::Interface
 		{
 		Q_OBJECT
 		Q_INTERFACES(kiss::target::Interface)

@@ -101,6 +101,7 @@ const bool DummyInterface::scan(kiss::target::InterfaceResponder *responder)
 {
 	responder->targetScanStarted(this);
 	responder->targetFound(this, TargetPtr(new DummyTarget(this)));
+  emit scanFinished(this);
 	return true;
 }
 

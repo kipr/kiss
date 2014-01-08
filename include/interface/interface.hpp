@@ -11,8 +11,9 @@ namespace kiss
 {
 	namespace target
 	{
-		class Interface
+		class Interface : public QObject
 		{
+    Q_OBJECT
 		public:
 			Interface(const QString &name);
       virtual ~Interface();
@@ -22,6 +23,10 @@ namespace kiss
 			virtual kiss::target::TargetPtr createTarget(const QString &address) = 0;
 			virtual const bool scan(InterfaceResponder *responder) = 0;
 			virtual void invalidateResponder() = 0;
+    protected slots:
+      void emitScanFinished();
+    signals:
+      void scanFinished(kiss::target::Interface *interface);
 		private:
 			QString m_name;
 		};

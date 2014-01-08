@@ -28,6 +28,7 @@ const bool MyComputerInterface::scan(kiss::target::InterfaceResponder *responder
     proto->fillCommPort("localhost");
     
     responder->targetFound(this, TargetPtr(new ProcessTarget(TargetPtr(proto), ApplicationFinder::platform().applicationPath("cs2"), QStringList() << "-c")));
+    emitScanFinished();
     return true;
 }
 

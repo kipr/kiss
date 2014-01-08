@@ -15,4 +15,9 @@ const QString &Interface::name() const
 {
 	return m_name;
 }
+
+void Interface::emitScanFinished()
+{
+  emit scanFinished(this);
+}
 	
