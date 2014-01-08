@@ -101,7 +101,7 @@ MainWindow::MainWindow(QWidget *parent)
 		&m_projectsModel, SLOT(activeChanged(kiss::project::ProjectPtr, kiss::project::ProjectPtr)));
     
   connect(ui_projects->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
-    this, SLOT(updateInfoBox()));
+    this, SLOT(projectCurrentChanged(const QModelIndex &, const QModelIndex &)));
 		
 	connect(&target::CommunicationManager::ref(),
 		SIGNAL(targetNeedsAuthentication(kiss::target::TargetPtr, kiss::target::CommunicationManager *)),
@@ -668,7 +668,10 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
 	if(m_currentTab) {
     m_currentTab->activate();
     const project::ProjectPtr project = m_currentTab->project();
-    if(project) projectSetActive(project);
+    if(project) {
+      projectSetActive(project);
+      ui_projects->selectionModel()->setCurrentIndex(m_projectsModel.indexFromFile(m_currentTab->file().absoluteFilePath()), QItemSelectionModel::SelectCurrent);
+    }
   }
 	
 	emit updateActivatable();
@@ -685,6 +688,13 @@ void MainWindow::updateInfoBox()
     ui_infoBox->showProjectInfo(project);
   }
   else ui_infoBox->showFileInfo(m_projectsModel.filePath(current));
+}
+
+void MainWindow::projectCurrentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+  updateInfoBox();
+  if(m_projectsModel.isFileEditable(current))
+    openFile(m_projectsModel.filePath(current), m_projectsModel.project(current));
 }
 
 void MainWindow::activeProjectAddNew()
@@ -1105,10 +1115,7 @@ void MainWindow::projectClicked(const QModelIndex &index)
 
 void MainWindow::projectDoubleClicked(const QModelIndex &index)
 {
-	project::ProjectPtr project = m_projectsModel.project(index);
-	if(m_projectsModel.isFileEditable(index))
-		openFile(m_projectsModel.filePath(index), project);
-  else if(m_projectsModel.isFolder(index))
+  if(m_projectsModel.isFolder(index))
     ui_projects->setExpanded(index, !ui_projects->isExpanded(index));
 }
 

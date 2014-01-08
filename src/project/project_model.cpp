@@ -336,6 +336,17 @@ bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action,
 	return true;
 }
 
+const QModelIndex &Model::indexFromFile(const QString &filePath)
+{
+  QList<QStandardItem *> matches = findItems(QFileInfo(filePath).fileName(),
+    Qt::MatchExactly | Qt::MatchRecursive);
+  foreach(QStandardItem *match, matches) {
+    const FileItem *fileItem = FileItem::fileitem_cast(match);
+    if(!fileItem || fileItem->path() != filePath) continue;
+    return fileItem->index();
+  }
+}
+
 void Model::activeChanged(const ProjectPtr &oldActive, const ProjectPtr &newActive)
 {
 	const QString &oldPath = oldActive ? QFileInfo(oldActive->location()).absoluteFilePath() : QString();

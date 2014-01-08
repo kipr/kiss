@@ -23,9 +23,6 @@ namespace kiss
 			void removeProject(ProjectPtr project);
 			const QStringList &projects() const;
 
-			// void setDependencies(ProjectPtr project, const QStringList &deps);
-
-			// bool isDependency(const QModelIndex &index) const;
 			bool isProject(const QModelIndex &index) const;
       bool isFolder(const QModelIndex &index) const;
 			bool isLink(const QModelIndex &index) const;
@@ -39,6 +36,8 @@ namespace kiss
 			QMimeData *mimeData(const QModelIndexList &indexes) const;
 			bool dropMimeData(const QMimeData *data, Qt::DropAction action,
 				int row, int column, const QModelIndex &parent);
+        
+      const QModelIndex &indexFromFile(const QString &filePath);
 
 		public slots:
 			void activeChanged(const kiss::project::ProjectPtr &oldActive,

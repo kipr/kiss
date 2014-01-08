@@ -175,6 +175,8 @@ namespace kiss
 			bool canClose();
 			bool canGoPrevious();
 			bool canGoNext();
+      
+      void updateInfoBox();
 						
 			friend class menu::MainWindowMenu;
 
@@ -213,7 +215,7 @@ namespace kiss
 
 		private slots:
 			void on_ui_tabWidget_currentChanged(int i);
-      void updateInfoBox();
+      void projectCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
       
       void activeProjectAddNew();
       void activeProjectAddExisting();
