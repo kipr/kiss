@@ -173,6 +173,7 @@ void MainWindow::newFile()
 
 bool MainWindow::openFile(const QString &file, const project::ProjectPtr &project)
 {
+  qDebug() << "------OPEN_FILE:" << file << "FOR PROJECT:" << project->location();
 	QFileInfo fileInfo(file);
 	if(!fileInfo.isFile() || !fileInfo.isReadable()) return false;
 
@@ -180,8 +181,17 @@ bool MainWindow::openFile(const QString &file, const project::ProjectPtr &projec
 	for(int i = 0; i < ui_tabWidget->count(); ++i) {
 		SourceFile *sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
 		if(sourceFile && sourceFile->file() == file) {
-			ui_tabWidget->setCurrentIndex(i);
-			return true;
+      if(sourceFile->project() == project) {
+        qDebug() << "SWITCHING TO TAB" << i << "(FILE AND PROJECT MATCHED)";
+        ui_tabWidget->setCurrentIndex(i);
+        return true;
+      }
+      else {
+        qDebug() << "*****FILE IS OPEN FOR A DIFFERENT PROJECT*****";
+        qDebug() << "Attempting to close stuff";
+        closeFile(file);
+        break;
+      }
 		}
 	}
   
@@ -566,7 +576,7 @@ void MainWindow::previous()
 }
 
 void MainWindow::closeTab(int index, bool force)
-{	
+{
 	if(ui_tabWidget->count() == 0) return;
 	
 	if(!lookup(ui_tabWidget->widget(index))->close() && !force) return;
@@ -601,12 +611,21 @@ bool MainWindow::closeFile(const QString &file)
 	
 	bool removed = false;
 	
-	foreach(Tab *tab, fileTabs) {
+	/*foreach(Tab *tab, fileTabs) {
 		if(file == tab->file().filePath()) {
 			deleteTab(ui_tabWidget->indexOf(tab->widget()));
-			removed |= true;
+			removed = true;
 		}
-	}
+	}*/
+  
+  int i = 0;
+  while(i < ui_tabWidget->count()) {
+    if(file == lookup(ui_tabWidget->widget(i))->file().filePath()) {
+      closeTab(i);
+      removed = true;
+    }
+    else i++;
+  }
 	
 	return removed;
 }
@@ -660,6 +679,7 @@ void MainWindow::showCompilerOutput(const Compiler::OutputList &results)
 
 void MainWindow::on_ui_tabWidget_currentChanged(int i) 
 {
+  qDebug() << "------TAB CHANGED";
 	if(i < 0) return;
 	
 	setUpdatesEnabled(false);
@@ -669,10 +689,16 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
     m_currentTab->activate();
     const project::ProjectPtr project = m_currentTab->project();
     if(project) {
+      qDebug() << "CURRENT TAB HAS PROJECT" << project->location();
       projectSetActive(project);
       const QString &filePath = m_currentTab->file().absoluteFilePath();
-      QModelIndex index = m_projectsModel.indexFromFile(filePath);
-      if(index.isValid()) ui_projects->selectionModel()->setCurrentIndex(index, QItemSelectionModel::SelectCurrent);
+      QModelIndex index = m_projectsModel.indexFromFile(filePath, project);
+      if(!index.isValid()) index = m_projectsModel.indexFromProject(project);
+      if(index.isValid()) {
+        ui_projects->selectionModel()->clearSelection();
+        ui_projects->selectionModel()->setCurrentIndex(index, QItemSelectionModel::SelectCurrent);
+      }
+      else qDebug() << "COULDN'T SELECT BECAUSE INDEX INVALID";
     }
   }
 	
@@ -694,11 +720,16 @@ void MainWindow::updateInfoBox()
 
 void MainWindow::projectCurrentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
+  qDebug() << "-----PROJECT_CURRENT_CHANGED";
   updateInfoBox();
-  if(m_projectsModel.isFileEditable(current))
+  if(m_projectsModel.isFileEditable(current)) {
+    qDebug() << "CHANGED TO EDITABLE FILE, SO OPENING" << m_projectsModel.filePath(current);
     openFile(m_projectsModel.filePath(current), m_projectsModel.project(current));
-  else if(m_projectsModel.isProject(current))
+  }
+  else if(m_projectsModel.isProject(current)) {
+    qDebug() << "CHANGED TO PROJECT, SO MAKING PROJECT ACTIVE" << m_projectsModel.project(current)->location();
     projectSetActive(m_projectsModel.project(current));
+  }
 }
 
 void MainWindow::activeProjectAddNew()
@@ -910,22 +941,32 @@ void MainWindow::projectOpenSettings(const project::ProjectPtr &project)
 
 void MainWindow::projectSetActive(const project::ProjectPtr &project)
 {
+  qDebug() << "-----SETTING PROJECT ACTIVE:" << project->location();
   if(m_projectManager.setActiveProject(project)) emit updateActivatable();
+  else qDebug() << "MANAGER FAILED!";
   
-  if(m_currentTab && m_currentTab->project() != project) {
+  if(!m_currentTab || m_currentTab->project() != project) {
+    qDebug() << "NO CURRENT TAB/CURRENT TAB PROJECT DOESN'T MATCH";
   	for(int i = 0; i < ui_tabWidget->count(); ++i) {
   		SourceFile *sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
   		if(!sourceFile || sourceFile->project() != project) continue;
+      qDebug() << "-----SETTING TAB CORRESPONDING TO" << project->location();
   		ui_tabWidget->setCurrentIndex(i);
   		return;
   	}
+    qDebug() << "NO OPEN TABS FOUND FOR THIS PROJECT, SO LOOKING FOR OTHER (CLOSED) FILES";
     
-    Q_FOREACH(const QString &file, project->files()) {
-      if(project::Manager::hiddenExtensions().contains(QFileInfo(file).suffix())) continue;
-      if(!openFile(file, project)) continue;
+    const QStringList filesAndLinks = project->files() + project->links();
+    Q_FOREACH(const QString &file, filesAndLinks) {
+      const QString &absFile = FileUtils::absolutePath(file, project->location());
+      if(project::Manager::hiddenExtensions().contains(QFileInfo(absFile).suffix())) continue;
+      qDebug() << "ATTEMPTING TO OPEN FILE" << absFile;
+      if(!openFile(absFile, project)) continue;
+      qDebug() << "SUCCESS!";
       return;
     }
     
+    qDebug() << "ABSOLUTELY NO FILES FOUND TO OPEN, SO PROMPTING NEW FILE";
     projectAddNew(project, project->location());
   }
 }

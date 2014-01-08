@@ -336,17 +336,26 @@ bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action,
 	return true;
 }
 
-const QModelIndex Model::indexFromFile(const QString &filePath)
+const QModelIndex Model::indexFromFile(const QString &filePath, const ProjectPtr &project) const
 {
   QList<QStandardItem *> matches = findItems(QFileInfo(filePath).fileName(),
     Qt::MatchExactly | Qt::MatchRecursive);
+    qDebug() << "-----FOUND" << matches.size() << "MATCHES FOR" << filePath << "OF" << project->location();
   foreach(QStandardItem *match, matches) {
     const FileItem *fileItem = FileItem::fileitem_cast(match);
-    if(!fileItem || fileItem->path() != filePath) continue;
-    return fileItem->index();
+    if(fileItem && this->project(fileItem->index()) == project && fileItem->path() == filePath) return fileItem->index();
+    const LinkItem *linkItem = LinkItem::linkitem_cast(match);
+    if(linkItem && this->project(linkItem->index()) == project && linkItem->path() == filePath) return linkItem->index();
   }
   
   return QModelIndex();
+}
+
+const QModelIndex Model::indexFromProject(const ProjectPtr &project) const
+{
+  QList<QStandardItem *> matches = findItems(project->name(), Qt::MatchExactly);
+  if(matches.isEmpty()) return QModelIndex();
+  return matches.first()->index();
 }
 
 void Model::activeChanged(const ProjectPtr &oldActive, const ProjectPtr &newActive)

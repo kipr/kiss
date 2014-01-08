@@ -37,7 +37,8 @@ namespace kiss
 			bool dropMimeData(const QMimeData *data, Qt::DropAction action,
 				int row, int column, const QModelIndex &parent);
         
-      const QModelIndex indexFromFile(const QString &filePath);
+      const QModelIndex indexFromFile(const QString &filePath, const kiss::project::ProjectPtr &project) const;
+      const QModelIndex indexFromProject(const kiss::project::ProjectPtr &project) const;
 
 		public slots:
 			void activeChanged(const kiss::project::ProjectPtr &oldActive,
