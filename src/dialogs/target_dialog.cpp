@@ -88,6 +88,7 @@ void Target::targetChosen(const QModelIndex &index)
 
 void Target::on_ui_refresh_clicked()
 {
+  ui_refresh->setEnabled(false);
   kiss::target::Interface *filter = m_interfaceModel.rowToInterface(ui_interfaces->currentIndex());
   m_model.clear();
   
@@ -100,6 +101,7 @@ void Target::on_ui_refresh_clicked()
     ui_progress->setValue(ui_progress->value() + 1);
   }
   QTimer::singleShot(500, ui_progress, SLOT(hide()));
+  ui_refresh->setEnabled(true);
 }
 
 void Target::on_ui_manual_clicked()
