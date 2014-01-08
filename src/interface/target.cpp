@@ -1,6 +1,8 @@
 #include "target.hpp"
 #include "target_responder.hpp"
 
+#include "interface.hpp"
+
 #include <QDebug>
 
 using namespace kiss::target;
@@ -12,10 +14,12 @@ Target::Target(Interface *interface, const QString &name)
 	connect(this, SIGNAL(response(Response)),
 		SLOT(responseRedirect(Response)));
 	qRegisterMetaType<kiss::target::Target::ReturnCode>("kiss::target::Target::ReturnCode");
+  _time.start();
 }
 
 Target::~Target()
 {
+  qDebug() << "Target on" << m_interface->name() << ". Time alive:" << _time.elapsed();
 }
 
 Interface *Target::interface() const

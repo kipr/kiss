@@ -487,10 +487,10 @@ void MainWindow::addTab(Tab *tab)
 	addLookup(tab);
 	setUpdatesEnabled(false);
 	int tabNum = ui_tabWidget->addTab(tab->widget(), QString::fromLocal8Bit(""));
-	ui_tabWidget->setCurrentIndex(tabNum);
-	setUpdatesEnabled(true);
 	tab->completeSetup();
+	ui_tabWidget->setCurrentIndex(tabNum);
 	moveToTab(tab);
+  setUpdatesEnabled(true);
 	
 	QObject::connect(this, SIGNAL(settingsUpdated()), tab->widget(), SLOT(refreshSettings()));
 	
@@ -670,7 +670,9 @@ void MainWindow::on_ui_tabWidget_currentChanged(int i)
     const project::ProjectPtr project = m_currentTab->project();
     if(project) {
       projectSetActive(project);
-      ui_projects->selectionModel()->setCurrentIndex(m_projectsModel.indexFromFile(m_currentTab->file().absoluteFilePath()), QItemSelectionModel::SelectCurrent);
+      const QString &filePath = m_currentTab->file().absoluteFilePath();
+      QModelIndex index = m_projectsModel.indexFromFile(filePath);
+      if(index.isValid()) ui_projects->selectionModel()->setCurrentIndex(index, QItemSelectionModel::SelectCurrent);
     }
   }
 	
@@ -695,6 +697,8 @@ void MainWindow::projectCurrentChanged(const QModelIndex &current, const QModelI
   updateInfoBox();
   if(m_projectsModel.isFileEditable(current))
     openFile(m_projectsModel.filePath(current), m_projectsModel.project(current));
+  else if(m_projectsModel.isProject(current))
+    projectSetActive(m_projectsModel.project(current));
 }
 
 void MainWindow::activeProjectAddNew()
@@ -725,8 +729,8 @@ void MainWindow::projectAddNew(const project::ProjectPtr &project, const QString
   if(QFileInfo(fileName).suffix().isEmpty()) fileName += "." + sourceFile->templateExt();
   sourceFile->setFile(QDir(dest).filePath(fileName));
   
-  addTab(sourceFile);
   sourceFile->save();
+  addTab(sourceFile);
 }
 
 void MainWindow::activeProjectAddExisting()
@@ -906,8 +910,24 @@ void MainWindow::projectOpenSettings(const project::ProjectPtr &project)
 
 void MainWindow::projectSetActive(const project::ProjectPtr &project)
 {
-  if(!m_projectManager.setActiveProject(project)) return;
-  emit updateActivatable();
+  if(m_projectManager.setActiveProject(project)) emit updateActivatable();
+  
+  if(m_currentTab && m_currentTab->project() != project) {
+  	for(int i = 0; i < ui_tabWidget->count(); ++i) {
+  		SourceFile *sourceFile = dynamic_cast<SourceFile *>(ui_tabWidget->widget(i));
+  		if(!sourceFile || sourceFile->project() != project) continue;
+  		ui_tabWidget->setCurrentIndex(i);
+  		return;
+  	}
+    
+    Q_FOREACH(const QString &file, project->files()) {
+      if(project::Manager::hiddenExtensions().contains(QFileInfo(file).suffix())) continue;
+      if(!openFile(file, project)) continue;
+      return;
+    }
+    
+    projectAddNew(project, project->location());
+  }
 }
 
 const bool MainWindow::activeProjectDownload()

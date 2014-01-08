@@ -35,7 +35,7 @@ ProjectMenu::ProjectMenu()
   m_projectMenu->children.append(node(activeAction("folder.png",
     "Close Project", QKeySequence::UnknownKey, this, "activeProjectClose")));
   m_projectMenu->children.append(node(activeAction("bin_closed.png", SystemUtils::supportsMoveToTrash() ?
-    tr("Move to Trash") : tr("Delete"), QKeySequence::UnknownKey, this, "activeProjectDelete")));
+    tr("Move to Trash") : tr("Permanently Delete"), QKeySequence::UnknownKey, this, "activeProjectDelete")));
     
   m_actions.append(m_projectMenu);
   m_toolbar.append(compileNode);

@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QString>
 #include <QMap>
+#include <QTime>
 #include <QSharedPointer>
 
 #define TARGET_DISPLAY_NAME "disp_name"
@@ -87,6 +88,7 @@ namespace kiss
 
 			Interface *m_interface;
 			Responder *m_responder;
+      QTime _time;
 		};
 
 		typedef QSharedPointer<Target> TargetPtr;

@@ -336,7 +336,7 @@ bool Model::dropMimeData(const QMimeData *data, Qt::DropAction action,
 	return true;
 }
 
-const QModelIndex &Model::indexFromFile(const QString &filePath)
+const QModelIndex Model::indexFromFile(const QString &filePath)
 {
   QList<QStandardItem *> matches = findItems(QFileInfo(filePath).fileName(),
     Qt::MatchExactly | Qt::MatchRecursive);
@@ -345,6 +345,8 @@ const QModelIndex &Model::indexFromFile(const QString &filePath)
     if(!fileItem || fileItem->path() != filePath) continue;
     return fileItem->index();
   }
+  
+  return QModelIndex();
 }
 
 void Model::activeChanged(const ProjectPtr &oldActive, const ProjectPtr &newActive)
