@@ -25,6 +25,7 @@
 
 #include "manual_target_dialog.hpp"
 
+#include <QTimer>
 #include <QDebug>
 
 using namespace kiss::dialog;
@@ -42,6 +43,7 @@ Target::Target(kiss::target::InterfaceManager *manager, QWidget *parent)
 	
   ui_buttons->button(QDialogButtonBox::Ok)->setEnabled(false);
 	ui_targetInfo->hide();
+  ui_progress->hide();
 	
 	connect(ui_targets->selectionModel(),
 		SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
@@ -87,11 +89,17 @@ void Target::targetChosen(const QModelIndex &index)
 void Target::on_ui_refresh_clicked()
 {
   kiss::target::Interface *filter = m_interfaceModel.rowToInterface(ui_interfaces->currentIndex());
-	m_model.clear();
+  m_model.clear();
+  
+  ui_progress->setRange(0, m_manager->interfaces().size() - 1);
+  ui_progress->reset();
+  ui_progress->show();
 	foreach(kiss::target::Interface *interface, m_manager->interfaces()) {
     if(filter && interface->name() != filter->name()) continue;
 		interface->scan(&m_model);
+    ui_progress->setValue(ui_progress->value() + 1);
   }
+  QTimer::singleShot(500, ui_progress, SLOT(hide()));
 }
 
 void Target::on_ui_manual_clicked()
