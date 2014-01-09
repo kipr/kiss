@@ -25,11 +25,7 @@ ApplicationFinder ApplicationFinder::platform()
     
 #ifdef Q_OS_MAC
     {
-      finder.addApplicationPath("cs2", "/Applications/cs2.app/Contents/MacOS/cs2");
       QDir c(QDir::current());
-      c.cdUp();
-      c.cdUp();
-      finder.addApplicationPath("cs2", c.absoluteFilePath("cs2.app/Contents/MacOS/cs2"));
       c.cdUp();
       finder.addApplicationPath("cs2", c.absoluteFilePath("cs2.app/Contents/MacOS/cs2"));
     }
