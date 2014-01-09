@@ -1,0 +1,86 @@
+<html>
+<head>
+  <title>KISS IDE 5.0 Tutorial: Custom Boards</title>
+  <link type="text/css" rel="stylesheet" href="../common/style.css" />
+</head>
+<body>
+  <div class="main">
+    <h1 class="center">KISS IDE 5.0 Tutorial: Custom Boards</h1>
+    <p>
+      The KISS 5 simulator allows the user to choose a background board from a built-in library or from a custom board built by the user and included in the user's project.  To use one of the built-in boards, simply choose the Link Simulator as your project's target.  When the simulator window comes up, click on the <tt>Select Board</tt> button in the upper right, and choose the board you wish.  You can then reset the robot and run the project again directly from the simulator window using the <tt>Run</tt> button in the lower left of the simulator.
+    </p>
+    <p>
+      In order to use your own board design, you need to create a board file and add that file to your project.  Projects that contain a board file will use the board file contained in the project and will not access any of the built-in library boards.
+    </p>
+    
+    <h2>Creating a Board File</h2>
+    <p>
+      To add a new Board file to your project, add a new file to the project (using the Blank file template) and make sure the file has the <tt>.board</tt> extension.  Note that a project cannot run if it only contains a board file; it also needs a program!
+    </p>
+    
+    <h3>Board Commands</h3>
+    <p>
+    Each command for creating a board starts on its own line with the common word. The set of command words are:
+    <ul>
+<li>set-units  &lt;<i>in | cm</i> &gt;</li>
+<li>set-z  &lt;<i>val</i>&gt;</li>
+<li>pen  &lt;<i>color</i>&gt; &lt;<i>width</i>&gt;</li>
+<li>line  &lt;<i>x<sub>1</sub></i>&gt; &lt;<i>y<sub>1</sub></i>&gt; &lt;<i>x<sub>2</sub></i>&gt; &lt;<i>y<sub>2</sub></i>&gt;</li>
+<li>tape  &lt;<i>x<sub>1</sub></i>&gt; &lt;<i>y<sub>1</sub></i>&gt; &lt;<i>x<sub>2</sub></i>&gt; &lt;<i>y<sub>2</sub></i>&gt;</li>
+<li>dec-line  &lt;<i>x<sub>1</sub></i>&gt; &lt;<i>y<sub>1</sub></i>&gt; &lt;<i>x<sub>2</sub></i>&gt; &lt;<i>y<sub>2</sub></i>&gt;</li>
+<li>brush  &lt;<i>color</i>&gt; &lt;<i>width</i>&gt;</li>
+<li>dec-rect  &lt;<i>x<sub>1</sub></i>&gt; &lt;<i>y<sub>1</sub></i>&gt; &lt;<i>width</i>&gt; &lt;<i>height</i>&gt;</li>
+  </ul>
+  In addition, lines that begin with # are comments and are ignored when the board is loaded.
+  </p>
+    
+    <h3>Example Board</h3>
+    <p>
+    To use inches as the unit and to create a white rectangle 100&times;100 inches as the background, we would use the following commands: </p>
+    <pre>
+set-units in
+
+# This will be the bottom graphical layer
+set-z -1.0
+pen white 1
+brush white
+# background
+dec-rect 0 0 100 100
+  </pre>
+
+    <p>
+    These commands will form a white rectangle with a white border (the pen draws the border while the brush fills the rectangle). Since z has been set at -1, anything at a greater level will be drawn on top.
+  </p>
+
+  <p>
+    Next, we will draw some lines on the board.  Lines are like PVC on a game board.  They can be seen by range and touch sensors.  Tape, on the other hand is visible only to downward looking reflectance sensors.  Decorative lines and rectangles are visible to the user, but not to the robot.  Note that the simulated robot can drive through all simulation objects - this makes it easier to test whether or not the robot is properly responding to sensor input.  If we add the following commands to our file, we will have a V made out of PVC and a piece of tape running across the opening.  We will also add a decorative line splitting the angle of the V, just to show that feature.  All tape colors interact with the robot the same way, we will use red tape just to brighten up the board simulation.
+  </p>
+    <pre>
+#PVC V
+set-z 1.0
+pen gray 3
+line 20 20 50 80 
+line 50 80 80 20
+
+#Tape across the V (note tape is placed under the PVC but above background)
+set-z 0
+pen red 4
+tape 20 20 80 20
+
+#The next line is visible only to user.
+#The light blue color is defined using RGB in hex
+pen #8080FF 1
+dec-line 50 80 50 20
+  </pre>
+    
+    <img class="center fill" src="demo_board.png"></img>
+    
+    <h2>Need Help?</h2>
+    <p>
+      If you have any questions or need assistance, you can call KIPR at 405-579-4609 (M-F, 8:30 a.m. - 5:00 p.m. CST) or email <a href="mailto:support@kipr.org">KIPR support</a>.
+    </p>
+  </div>
+  <p class="center">Copyright &copy; 2013 KISS Institute for Practical Robotics</p>
+</body>
+</html>
+
