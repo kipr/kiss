@@ -68,6 +68,7 @@ void ProjectMenu::update()
       const QString &name = project->name();
       const static int maxSize = 8;
       extra += " " + name.left(maxSize);
+      if(name.size() > maxSize) extra += "\u2026";
     }
     compileNode->rawAction->setText(tr("Compile%1").arg(extra));
     downloadNode->rawAction->setText(tr("Download%1").arg(extra));
