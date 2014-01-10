@@ -7,7 +7,7 @@
   <div class="main">
     <h1 class="center">KISS IDE 5.0 Tutorial: Custom Boards</h1>
     <p>
-      The KISS 5 simulator allows the user to choose a background board from a built-in library or from a custom board built by the user and included in the user's project.  To use one of the built-in boards, simply choose the Link Simulator as your project's target.  When the simulator window comes up, click on the <tt>Select Board</tt> button in the upper right, and choose the board you wish.  You can then reset the robot and run the project again directly from the simulator window using the <tt>Run</tt> button in the lower left of the simulator.
+      The KISS 5 simulator allows the user to choose a background board from a built-in library or use a custom board built by the user and included in the user's project.  To use one of the built-in boards, simply choose the Link Simulator as your project's target.  When the simulator window comes up, click on the <tt>Set Default Board</tt> button in the upper right, and choose the board you wish.  You can then reset the robot and run the project again directly from the simulator window using the <tt>Run</tt> button in the lower left of the simulator.
     </p>
     <p>
       In order to use your own board design, you need to create a board file and add that file to your project.  Projects that contain a board file will use the board file contained in the project and will not access any of the built-in library boards.
@@ -15,7 +15,7 @@
     
     <h2>Creating a Board File</h2>
     <p>
-      To add a new Board file to your project, add a new file to the project (using the Blank file template) and make sure the file has the <tt>.board</tt> extension.  Note that a project cannot run if it only contains a board file; it also needs a program!
+      To add a new board file to your project, add a new file to the project and use the <code>Simulator Board Files &rarr; Blank Board</code> template. Make sure to give the file a <code>.board</code> extension (or give no extension and KISS will add it for you). Note that a project cannot run if it only contains a board file; it also needs a program!
     </p>
     
     <h3>Board Commands</h3>
