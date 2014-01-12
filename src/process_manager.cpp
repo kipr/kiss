@@ -37,20 +37,6 @@ bool ProcessManager::start(const QString &path, const QStringList &arguments)
     return QProcess::startDetached(path, arguments);
 }
 
-bool ProcessManager::terminate(const QString &name)
-{
-#ifdef Q_OS_MAC
-    Q_PID pid = lookupPid(name);
-    if(!pid) return false;
-    int sig = 0;
-    proc_terminate(pid, &sig);
-#elif defined(Q_OS_WIN)
-	return false;
-#else
-    return false;
-#endif
-}
-
 unsigned long ProcessManager::lookupPid(const QString &name)
 {
 #ifdef Q_OS_MAC
