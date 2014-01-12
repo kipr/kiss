@@ -125,10 +125,16 @@ Section "Link Driver" linkDriver
 	Call InstallUpgradeDriver
 SectionEnd
 
-Section "Visual C++ Redistributable" VCRedist
+Section "Visual C++ Redistributable 2012" VCRedist2012
 	SetOutPath $INSTDIR
-    File "${KISS_DIR}\deploy\vcredist_x86.exe"
-    ExecWait "$INSTDIR\vcredist_x86.exe"
+    File "${KISS_DIR}\deploy\vcredist_x86_2012.exe"
+    ExecWait "$INSTDIR\vcredist_x86_2012.exe"
+SectionEnd
+
+Section "Visual C++ Redistributable 2010" VCRedist2010
+	SetOutPath $INSTDIR
+    File "${KISS_DIR}\deploy\vcredist_x86_2010.exe"
+    ExecWait "$INSTDIR\vcredist_x86_2010.exe"
 SectionEnd
 
 Section -FinishSection
@@ -140,7 +146,8 @@ SectionEnd
 
 ; Modern install component descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-!insertmacro MUI_DESCRIPTION_TEXT ${VCRedist} "Visual C++ Redistributable for Visual Studio 2012 Update 3"
+!insertmacro MUI_DESCRIPTION_TEXT ${VCRedist2012} "Visual C++ Redistributable for Visual Studio 2012 Update 3"
+!insertmacro MUI_DESCRIPTION_TEXT ${VCRedist2010} "Visual C++ Redistributable for Visual Studio 2010"
 !insertmacro MUI_DESCRIPTION_TEXT ${KISSIDE} "KIPR's Instructional Software System IDE"
 !insertmacro MUI_DESCRIPTION_TEXT ${CS2Target} "A 2-in-1 target for KISS IDE used to run programs locally"
 !insertmacro MUI_DESCRIPTION_TEXT ${MinGW} "Minimalist GNU for Windows"
