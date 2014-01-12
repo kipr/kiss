@@ -53,12 +53,6 @@ OutFile "${KISS_DIR}\releases\${INSTALLER_FILENAME}.exe"
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
-Section "Visual C++ Redistributable" VCRedist
-	SetOutPath $INSTDIR
-    File "${KISS_DIR}\deploy\vcredist_x86.exe"
-    ExecWait "$INSTDIR\vcredist_x86.exe"
-SectionEnd
-
 Section "KISS IDE" KISSIDE
 	; Set Section properties
 	SetOverwrite on  ; overwrite existing files
@@ -129,6 +123,12 @@ Section "Link Driver" linkDriver
 	Push "USB\VID_0525&PID_A4A7"
 
 	Call InstallUpgradeDriver
+SectionEnd
+
+Section "Visual C++ Redistributable" VCRedist
+	SetOutPath $INSTDIR
+    File "${KISS_DIR}\deploy\vcredist_x86.exe"
+    ExecWait "$INSTDIR\vcredist_x86.exe"
 SectionEnd
 
 Section -FinishSection
