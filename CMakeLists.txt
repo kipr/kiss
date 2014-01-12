@@ -16,6 +16,7 @@ set(SRC ${CMAKE_SOURCE_DIR}/src)
 set(UI ${CMAKE_SOURCE_DIR}/ui)
 set(TRADEMARKS ${CMAKE_SOURCE_DIR}/trademarks)
 set(COMPAT ${CMAKE_SOURCE_DIR}/compat)
+set(TS ${CMAKE_SOURCE_DIR}/ts)
 
 set(INCLUDE_DIRS ${INCLUDE} 
 	${INCLUDE}/dialogs
@@ -90,11 +91,19 @@ qt5_add_resources(SRCS_CXX ${QRC_FILES})
 
 add_definitions(-Wall -O2)
 
+find_package(Qt5LinguistTools REQUIRED)
+
+set(TS_FILES
+    ${TS}/${CMAKE_PROJECT_NAME}_zh.ts
+)  
+
+qt5_add_translation(QM_FILES ${TS_FILES})
+
 if(APPLE)
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
 	link_directories(/Library/Frameworks/ /usr/local/lib ${_qt5Core_install_prefix}/lib)
 	include_directories(/usr/local/include /usr/include ${_qt5Core_install_prefix}/include)
-	add_executable(KISS MACOSX_BUNDLE ${SRCS_CXX} ${INCLUDES})
+	add_executable(KISS MACOSX_BUNDLE ${SRCS_CXX} ${INCLUDES} ${QM_FILES})
   set(EXTRA_LIBS ${COCOA_LIBRARY})
 elseif(UNIX)
 	add_executable(KISS ${SRCS_CXX} ${INCLUDES})
@@ -131,7 +140,7 @@ if(APPLE)
 	
 	add_custom_target(copy_qscintilla ALL
 		COMMAND ${CMAKE_COMMAND} -E copy ${_qt5Core_install_prefix}/lib/libqscintilla2.9.dylib
-			${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Frameworks
+			${KISS_SOURCE_DIR}/deploy/KISS.app/Contents/Frameworks/libqscintilla2.9.dylib
 		WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		DEPENDS KISS)
     
@@ -154,6 +163,7 @@ if(APPLE)
 endif()
 
 install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_EXTRAS_DIR})
+install(FILES ${QM_FILES} DESTINATION ${KISS_EXTRAS_DIR})
 
 if(APPLE)
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
@@ -196,5 +206,7 @@ endif()
 # Accessory Programs
 
 link_directories(${KISS_SOURCE_DIR}/lib)
+
+message("${QM_FILES}")
 
 add_subdirectory(docs)

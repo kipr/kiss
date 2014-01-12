@@ -24,6 +24,7 @@
 #include <QMetaType>
 #include <QDir>
 #include <QDebug>
+#include <QTranslator>
 
 #include <cstdio>
 
@@ -67,6 +68,10 @@ void StandardEnvironment::createStandardEnvironment()
 	QApplication::setOrganizationDomain("kipr.org");
 	QApplication::setApplicationName("KISS");
 	QApplication::setWindowIcon(QIcon(":/icon.png"));
+  
+  QTranslator *translator = new QTranslator(QApplication::instance());
+  translator->load("KISS_zh", QDir::current().filePath("locale"));
+  QApplication::instance()->installTranslator(translator);
 	
 	LanguageHelperManager::ref().addLanguageHelper(new LanguageHelperC);
   

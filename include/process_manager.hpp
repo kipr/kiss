@@ -12,7 +12,6 @@ namespace kiss
         static bool isRunDetectionSupported();
         static bool isRunning(const QString &name);
         static bool start(const QString &path, const QStringList &arguments = QStringList());
-        static bool terminate(const QString &name);
         
     private:
         static unsigned long lookupPid(const QString &name);

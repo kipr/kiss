@@ -29,6 +29,7 @@
 
 #include <QDebug>
 #include <QApplication>
+#include <QTranslator>
 #include <iostream>
 #include "process_manager.hpp"
 
