@@ -93,9 +93,7 @@ add_definitions(-Wall -O2)
 
 find_package(Qt5LinguistTools REQUIRED)
 
-set(TS_FILES
-    ${TS}/${CMAKE_PROJECT_NAME}_zh.ts
-)  
+file(GLOB TS_FILES ${TS}/${CMAKE_PROJECT_NAME}_*.ts)
 
 qt5_add_translation(QM_FILES ${TS_FILES})
 
@@ -163,7 +161,7 @@ if(APPLE)
 endif()
 
 install(DIRECTORY ${RC}/template_packs DESTINATION ${KISS_EXTRAS_DIR})
-install(FILES ${QM_FILES} DESTINATION ${KISS_EXTRAS_DIR})
+install(FILES ${QM_FILES} DESTINATION ${KISS_EXTRAS_DIR}/locale)
 
 if(APPLE)
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -headerpad_max_install_names")
