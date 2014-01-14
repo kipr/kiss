@@ -35,32 +35,32 @@ SourceFileMenu::SourceFileMenu(widget::MainWindow *mainWindow)
 {
 	const QIcon disk(ResourceHelper::ref().lookup("disk"));
 	
-	m_file.append(node(activeAction(disk, "Save", QKeySequence::Save, this, "save")));
-	m_file.append(node(activeAction(disk, "Save As...", QKeySequence::SaveAs, this, "saveAs")));
+	m_file.append(node(activeAction(disk, tr("Save"), QKeySequence::Save, this, "save")));
+	m_file.append(node(activeAction(disk, tr("Save As..."), QKeySequence::SaveAs, this, "saveAs")));
 	// m_file.append(convertToProject = node(activeAction("cog_go", "Convert to Project",
 	//	QKeySequence::UnknownKey, this, "convertToProject")));
-	m_file.append(node(activeAction("print", "Print", QKeySequence::Print, this, "print")));
+	m_file.append(node(activeAction("print", tr("Print"), QKeySequence::Print, this, "print")));
 	m_file.append(Node::separator());
 	
-	Node *copy = node(activeAction("copy", "Copy", QKeySequence::Copy, this, "copy"));
-	Node *cut = node(activeAction("cut", "Cut", QKeySequence::Cut, this, "cut"));
-	Node *paste = node(activeAction("paste", "Paste", QKeySequence::Paste, this, "paste"));
+	Node *copy = node(activeAction("copy", tr("Copy"), QKeySequence::Copy, this, "copy"));
+	Node *cut = node(activeAction("cut", tr("Cut"), QKeySequence::Cut, this, "cut"));
+	Node *paste = node(activeAction("paste", tr("Paste"), QKeySequence::Paste, this, "paste"));
 	
 	m_edit.append(copy);
 	m_edit.append(cut);
 	m_edit.append(paste);
 	
 	m_edit.append(Node::separator());
-	m_edit.append(undo = node(activeAction("arrow_undo", "Undo", QKeySequence::Undo, this, "undo")));
-	m_edit.append(redo = node(activeAction("arrow_redo", "Redo", QKeySequence::Redo, this, "redo")));
+	m_edit.append(undo = node(activeAction("arrow_undo", tr("Undo"), QKeySequence::Undo, this, "undo")));
+	m_edit.append(redo = node(activeAction("arrow_redo", tr("Redo"), QKeySequence::Redo, this, "redo")));
 	m_edit.append(Node::separator());
-	m_edit.append(node(activeAction("magnifier_zoom_in", "Zoom In", QKeySequence::ZoomIn, this, "zoomIn")));
-	m_edit.append(node(activeAction("magnifier_zoom_out", "Zoom Out", QKeySequence::ZoomOut, this, "zoomOut")));
-	m_edit.append(node(activeAction("magnifier.png", "Reset Zoom", QKeySequence("Ctrl+0"), this, "zoomReset")));
+	m_edit.append(node(activeAction("magnifier_zoom_in", tr("Zoom In"), QKeySequence::ZoomIn, this, "zoomIn")));
+	m_edit.append(node(activeAction("magnifier_zoom_out", tr("Zoom Out"), QKeySequence::ZoomOut, this, "zoomOut")));
+	m_edit.append(node(activeAction("magnifier.png", tr("Reset Zoom"), QKeySequence("Ctrl+0"), this, "zoomReset")));
 	m_edit.append(Node::separator());
-	m_edit.append(node(activeAction("find", "Find", QKeySequence::Find, this, "find")));
+	m_edit.append(node(activeAction("find", tr("Find"), QKeySequence::Find, this, "find")));
 	m_edit.append(Node::separator());
-	m_edit.append(node(activeAction("text_indent", "Indent All",
+	m_edit.append(node(activeAction("text_indent", tr("Indent All"),
 		QKeySequence("Ctrl+I"), this, "indentAll")));
 	
 	m_toolbar.append(copy);

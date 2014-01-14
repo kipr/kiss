@@ -34,8 +34,8 @@ TemplatePackMenu::TemplatePackMenu(widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName())
 {
 	const QIcon disk(ResourceHelper::ref().lookup("disk"));
-	m_file.append(node(activeAction(disk, "Save", QKeySequence::Save, this, "save")));
-	m_file.append(node(activeAction(disk, "Save As...", QKeySequence::SaveAs, this, "saveAs")));
+	m_file.append(node(activeAction(disk, tr("Save"), QKeySequence::Save, this, "save")));
+	m_file.append(node(activeAction(disk, tr("Save As..."), QKeySequence::SaveAs, this, "saveAs")));
 	m_file.append(Node::separator());
 }
 

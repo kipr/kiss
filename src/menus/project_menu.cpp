@@ -12,28 +12,28 @@ ProjectMenu::ProjectMenu()
   m_projectMenu = new Node(menuName());
   
   m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white_add.png"),
-    "Add New File...", QKeySequence::UnknownKey, this, "activeProjectAddNew")));
+    tr("Add New File..."), QKeySequence::UnknownKey, this, "activeProjectAddNew")));
   m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("page_white_add.png"),
-    "Add Existing Files...", QKeySequence::UnknownKey, this, "activeProjectAddExisting")));
+    tr("Add Existing Files..."), QKeySequence::UnknownKey, this, "activeProjectAddExisting")));
   m_projectMenu->children.append(node(activeAction(ResourceHelper::ref().icon("folder_add.png"),
-    "Add Folder", QKeySequence::UnknownKey, this, "activeProjectAddFolder")));
+    tr("Add Folder"), QKeySequence::UnknownKey, this, "activeProjectAddFolder")));
   m_projectMenu->children.append(Node::separator());
   m_projectMenu->children.append(downloadNode = node(activeAction("ruby_blue",
-    "Download", QKeySequence("Alt+D"), this, "activeProjectDownload")));
+    tr("Download"), QKeySequence("Alt+D"), this, "activeProjectDownload")));
   m_projectMenu->children.append(compileNode = node(activeAction("bricks",
-    "Compile", QKeySequence("Alt+C"), this, "activeProjectCompile")));
+    tr("Compile"), QKeySequence("Alt+C"), this, "activeProjectCompile")));
   m_projectMenu->children.append(runNode = node(activeAction("arrow_right",
-    "Run", QKeySequence("Alt+R"), this, "activeProjectRun")));
+    tr("Run"), QKeySequence("Alt+R"), this, "activeProjectRun")));
   m_projectMenu->children.append(node(activeAction("computer",
-    "Change Target", QKeySequence("Alt+T"), this, "activeProjectChangeTarget")));
+    tr("Change Target"), QKeySequence("Alt+T"), this, "activeProjectChangeTarget")));
   m_projectMenu->children.append(Node::separator());
   m_projectMenu->children.append(node(activeAction("mouse",
-    "View in File Browser", QKeySequence::UnknownKey, this, "activeProjectFileBrowser")));
+    tr("View in File Browser"), QKeySequence::UnknownKey, this, "activeProjectFileBrowser")));
   m_projectMenu->children.append(node(activeAction("folder_wrench.png",
-    "Project Settings", QKeySequence::UnknownKey, this, "activeProjectOpenSettings")));
+    tr("Project Settings"), QKeySequence::UnknownKey, this, "activeProjectOpenSettings")));
   m_projectMenu->children.append(Node::separator());
   m_projectMenu->children.append(node(activeAction("folder.png",
-    "Close Project", QKeySequence::UnknownKey, this, "activeProjectClose")));
+    tr("Close Project"), QKeySequence::UnknownKey, this, "activeProjectClose")));
   m_projectMenu->children.append(node(activeAction("bin_closed.png", SystemUtils::supportsMoveToTrash() ?
     tr("Move to Trash") : tr("Permanently Delete"), QKeySequence::UnknownKey, this, "activeProjectDelete")));
     

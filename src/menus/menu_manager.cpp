@@ -111,8 +111,8 @@ QString Node::uniqueName()
 }
 
 Manager::Manager() : m_root(new Node("")), 
-	m_file(new Node("File")), m_edit(new Node("Edit")),
-	m_help(new Node("Help")), m_tool(new Node), m_menuBar(0), m_toolBar(0)
+	m_file(new Node(tr("File"))), m_edit(new Node(tr("Edit"))),
+	m_help(new Node(tr("Help"))), m_tool(new Node), m_menuBar(0), m_toolBar(0)
 {
 }
 
@@ -163,14 +163,14 @@ void Manager::removeActivation(Menuable *menuable)
 
 void Manager::construct(QMenuBar *menuBar, QToolBar *toolBar)
 {
-	construct(menuBar->addMenu("File"), m_file->children);
+	construct(menuBar->addMenu(tr("File")), m_file->children);
 
-	construct(menuBar->addMenu("Edit"), m_edit->children);
+	construct(menuBar->addMenu(tr("Edit")), m_edit->children);
 
 	foreach(Node *rootChild, m_root->children)
 		construct(menuBar->addMenu(rootChild->name), rootChild->children);
 	
-	construct(menuBar->addMenu("Help"), m_help->children);
+	construct(menuBar->addMenu(tr("Help")), m_help->children);
 	
 	construct(toolBar, m_tool->children);
 	

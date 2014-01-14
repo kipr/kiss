@@ -11,7 +11,7 @@ Rectangle {
 		id: welcome
 		anchors.topMargin: 20
 		anchors.horizontalCenter: parent.horizontalCenter
-		text: 'Welcome to KISS IDE'
+		text: qsTr("Welcome to KISS IDE")
 		font.pointSize: 25
 		y: 10
 		opacity: 0.0
@@ -28,7 +28,7 @@ Rectangle {
 		ImageButton
 		{
 			imageSource: 'new.png'
-			title: 'New Project'
+			title: qsTr("New Project")
 			onClicked: {
 				kiss.newProject()
 			}
@@ -36,7 +36,7 @@ Rectangle {
 		ImageButton
 		{
 			imageSource: 'open.png'
-			title: 'Open'
+			title: qsTr("Open")
 			onClicked: {
 				kiss.open()
 			}
@@ -44,7 +44,7 @@ Rectangle {
 		ImageButton
 		{
 			imageSource: 'browser.png'
-			title: 'Botball Community'
+			title: qsTr("Botball Community")
 			onClicked: {
 				kiss.openWeb("http://community.botball.org/")
 			}
@@ -52,7 +52,7 @@ Rectangle {
 		ImageButton
 		{
 			imageSource: 'settings.png'
-			title: 'Settings'
+			title: qsTr("Settings")
 			onClicked: {
 				kiss.settings()
 			}

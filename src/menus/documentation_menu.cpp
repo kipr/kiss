@@ -32,7 +32,7 @@ DocumentationMenu::DocumentationMenu(widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName()),
 	m_mainWindow(mainWindow)
 {
-	Node *doc = node(action("report", "Documentation"));
+	Node *doc = node(action("report", tr("Documentation")));
 	m_help.append(doc);
 	m_help.append(Node::separator());
 }

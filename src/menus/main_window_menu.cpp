@@ -36,26 +36,26 @@ MainWindowMenu::MainWindowMenu(widget::MainWindow *mainWindow)
 	: ConcreteMenuable(menuName()),
 	m_mainWindow(mainWindow)
 {	
-	Node *packages = new Node("Packages");
+	Node *packages = new Node(tr("Packages"));
 	m_file.append(packages);
-	m_file.append(node(m_hideErrors = action("Hide Errors", QKeySequence::UnknownKey)));
+	m_file.append(node(m_hideErrors = action(tr("Hide Errors"), QKeySequence::UnknownKey)));
 	m_file.append(Node::separator());
-	m_file.append(m_nextNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_right")), "Next", QKeySequence::NextChild, this, "next")));
-	m_file.append(m_prevNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_left")), "Previous", QKeySequence::PreviousChild, this, "previous")));
-	m_file.append(m_closeNode = node(activeAction("cross", "Close", QKeySequence::Close, this, "closeCurrentTab")));
+	m_file.append(m_nextNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_right")), tr("Next"), QKeySequence::NextChild, this, "next")));
+	m_file.append(m_prevNode = node(activeAction(QIcon(ResourceHelper::ref().lookup("arrow_left")), tr("Previous"), QKeySequence::PreviousChild, this, "previous")));
+	m_file.append(m_closeNode = node(activeAction("cross", tr("Close"), QKeySequence::Close, this, "closeCurrentTab")));
 	m_file.append(Node::separator());
-	QAction *quit = activeAction("cross", "Quit", QKeySequence::Quit, this, "close");
+	QAction *quit = activeAction("cross", tr("Quit"), QKeySequence::Quit, this, "close");
 	quit->setMenuRole(QAction::QuitRole);
 	m_file.append(node(quit));
 	
 	m_edit.append(Node::separator());
-	m_edit.append(node(activeAction("cog.png", "Settings", QKeySequence::Preferences, this, "settings")));
-	m_edit.append(node(activeAction("palette.png", "Theme Settings", QKeySequence::Preferences, this, "theme")));
+	m_edit.append(node(activeAction("cog.png", tr("Settings"), QKeySequence::Preferences, this, "settings")));
+	m_edit.append(node(activeAction("palette.png", tr("Theme Settings"), QKeySequence::Preferences, this, "theme")));
 	
-	QAction *about = activeAction("information", "About KISS IDE", QKeySequence::UnknownKey, this, "about");
+	QAction *about = activeAction("information", tr("About KISS IDE"), QKeySequence::UnknownKey, this, "about");
 	m_help.append(node(about));
 #ifdef ENABLE_LOG_WINDOW
-	m_help.append(node(m_errorLog = action("Error Log", QKeySequence::UnknownKey)));
+	m_help.append(node(m_errorLog = action(tr("Error Log"), QKeySequence::UnknownKey)));
 #endif
 }
 
