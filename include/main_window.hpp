@@ -153,6 +153,7 @@ namespace kiss
       void projectAddFolder(const project::ProjectPtr &project, const QString &dest);
       void projectClose(const project::ProjectPtr &project);
       void projectDelete(const project::ProjectPtr &project);
+      void projectMoveTo(const project::ProjectPtr &project);
       void projectFileBrowser(const QString &path);
 			void projectOpenSettings(const kiss::project::ProjectPtr &project);
       void projectSetActive(const kiss::project::ProjectPtr &project);
@@ -222,6 +223,7 @@ namespace kiss
       void activeProjectAddFolder();
       void activeProjectClose();
       void activeProjectDelete();
+      void activeProjectMoveTo();
       void activeProjectFileBrowser();
       void activeProjectOpenSettings();
       const bool activeProjectDownload();
@@ -234,6 +236,7 @@ namespace kiss
       void selectedProjectAddFolder();
       void selectedProjectClose();
       void selectedProjectDelete();
+      void selectedProjectMoveTo();
       void selectedProjectFileBrowser();
       void selectedProjectOpenSettings();
       const bool selectedProjectDownload();

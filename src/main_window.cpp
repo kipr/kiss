@@ -30,6 +30,7 @@
 #include "new_file_dialog.hpp"
 
 #include "new_project_dialog.hpp"
+#include "move_project_to_dialog.hpp"
 #include "template_manager.hpp"
 #include "template_tab.hpp"
 #include "template_pack.hpp"
@@ -398,6 +399,7 @@ void MainWindow::initMenus()
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("arrow_right"), tr("Run"), this, SLOT(selectedProjectRun()));
   m_projectContextMenu->addAction(ResourceHelper::ref().icon("computer"), tr("Change Target"), this, SLOT(selectedProjectChangeTarget()));
   m_projectContextMenu->addSeparator();
+  m_projectContextMenu->addAction(ResourceHelper::ref().icon("brick_go"), tr("Move Project To..."), this, SLOT(selectedProjectMoveTo()));
   QAction *fileBrowserAction = 
     m_projectContextMenu->addAction(ResourceHelper::ref().icon("mouse"), tr("View in File Browser"), this, SLOT(selectedProjectFileBrowser()));
 	m_projectContextMenu->addAction(ResourceHelper::ref().icon("folder_wrench.png"), tr("Project Settings"), this, SLOT(selectedProjectOpenSettings()));
@@ -895,6 +897,42 @@ void MainWindow::projectDelete(const project::ProjectPtr &project)
   if(!project->remove(project->location()))
     QMessageBox::warning(this, tr("Failed to Delete Project"), tr("KISS IDE could not delete the project folder."));
 	else projectClose(project);
+}
+
+void MainWindow::activeProjectMoveTo()
+{
+  projectMoveTo(m_projectManager.activeProject());
+}
+
+void MainWindow::selectedProjectMoveTo()
+{
+  projectMoveTo(m_projectsModel.project(ui_projects->currentIndex()));
+}
+
+void MainWindow::projectMoveTo(const project::ProjectPtr &project)
+{
+  if(!project) return;
+  
+  dialog::MoveProjectToDialog d(this);
+  if(d.exec() == QDialog::Rejected) return;
+  
+  projectClose(project);
+  
+  const QString &newLoc = QDir(d.newLocation()).filePath(project->name());
+  if(!FileUtils::copy(project->location(), newLoc)) {
+    QMessageBox::warning(this, tr("Failed to Move Project"), tr("KISS IDE could not move the project to that location."));
+    return;
+  }
+  
+  if(!openProject(newLoc)) {
+    QMessageBox::warning(this, tr("Failed to Open Project"),
+      tr("KISS IDE has moved the project but failed to open the project in its new location."));
+  }
+  
+  if(!d.removeProject()) return;
+  if(!FileUtils::remove(project->location()))
+    QMessageBox::warning(this, tr("Failed to Remove Project"),
+      tr("KISS IDE has moved the project but failed to remove the original project."));
 }
 
 void MainWindow::activeProjectFileBrowser()

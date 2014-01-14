@@ -27,6 +27,8 @@ ProjectMenu::ProjectMenu()
   m_projectMenu->children.append(node(activeAction("computer",
     tr("Change Target"), QKeySequence("Alt+T"), this, "activeProjectChangeTarget")));
   m_projectMenu->children.append(Node::separator());
+  m_projectMenu->children.append(node(activeAction("brick_go",
+    tr("Move Project To..."), QKeySequence::UnknownKey, this, "activeProjectMoveTo")));
   m_projectMenu->children.append(node(activeAction("mouse",
     tr("View in File Browser"), QKeySequence::UnknownKey, this, "activeProjectFileBrowser")));
   m_projectMenu->children.append(node(activeAction("folder_wrench.png",
