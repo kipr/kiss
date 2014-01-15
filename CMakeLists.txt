@@ -107,7 +107,7 @@ elseif(UNIX)
 	add_executable(KISS ${SRCS_CXX} ${INCLUDES})
 elseif(WIN32)
 	set(COMPAT_SRCS ${COMPAT}/mingw.c)
-	add_executable(KISS WIN32 ${SRCS_CXX} ${COMPAT_SRCS} ${INCLUDES})
+	add_executable(KISS WIN32 ${SRCS_CXX} ${COMPAT_SRCS} ${INCLUDES} ${QM_FILES})
 endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${KISS_SOURCE_DIR}/deploy)
