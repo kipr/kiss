@@ -1,23 +1,24 @@
 KIPR's Instructional Software System
 ====================================
 
-Building this software is very simple. Make sure you have the following pieces of software installed:
+Requirements
+===========
 
-* Qt 4.7 or higher
-* CMake 2.8.0 or higher
-* QScintilla 2
+* Qt 5.0 or higher
+* CMake 2.8.12 or higher
+* QScintilla2
 * libkovanserial
 * pcompiler
 * libkar
 
-Building
-========
+Building (OS X and Linux)
+=========================
 
-	mkdir -p build
+	cd kiss
+	mkdir build
 	cd build
 	cmake ..
 	make
-	make install
 
 You should now have KISS ready to go in the deploy/ directory.
 
@@ -26,3 +27,8 @@ Authors
 
 * Braden McDorman
 * Nafis Zaman
+
+License
+======
+
+kiss is released under the terms of the GPLv3 license. For more information, see the LICENSE file in the root of this project.
