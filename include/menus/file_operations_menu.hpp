@@ -6,16 +6,17 @@
 
 namespace kiss
 {
-	namespace menu
-	{
-		class FileOperationsMenu : public ConcreteMenuable, public ActivatableObject
-		{
-		public:
-			FileOperationsMenu();
+  namespace menu
+  {
+    class FileOperationsMenu : public ConcreteMenuable, public ActivatableObject
+    {
+    Q_OBJECT
+    public:
+      FileOperationsMenu();
 
-			static QString menuName();
-		};
-	}
+      static QString menuName();
+    };
+  }
 }
 
 #endif
