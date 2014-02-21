@@ -70,8 +70,8 @@ void StandardEnvironment::createStandardEnvironment()
 	QApplication::setWindowIcon(QIcon(":/icon.png"));
   
   QTranslator *translator = new QTranslator(QApplication::instance());
-  translator->load("KISS_" + QLocale::system().name(), QDir::current().filePath("locale"));
-  QApplication::instance()->installTranslator(translator);
+  if(translator->load("KISS_" + QLocale::system().name(), QDir::current().filePath("locale")))
+    QApplication::instance()->installTranslator(translator);
 	
 	LanguageHelperManager::ref().addLanguageHelper(new LanguageHelperC);
   
