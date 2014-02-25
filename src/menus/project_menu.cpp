@@ -95,5 +95,5 @@ void ProjectMenu::deactivated()
 
 QString ProjectMenu::menuName()
 {
-  return "Project";
+  return tr("Project");
 }
