@@ -63,7 +63,7 @@ Rectangle {
 	Connections {
 		target: kiss
 		onCompletedSetup: {
-			tab.setTitle('Start Page')
+			tab.setTitle(qsTr("Start Page"))
 			welcome.opacity = 1.0
 			opacity = 1.0
 		}
