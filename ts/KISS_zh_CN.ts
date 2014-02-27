@@ -1929,12 +1929,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="rc/welcome/welcome.qml" line="39"/>
         <source>Open</source>
-        <translation>操作符</translation>
+        <translation>打开</translation>
     </message>
     <message>
         <location filename="rc/welcome/welcome.qml" line="47"/>
         <source>Botball Community</source>
-        <translation>Botball Community</translation>
+        <translation>Botball社区</translation>
     </message>
     <message>
         <location filename="rc/welcome/welcome.qml" line="55"/>
