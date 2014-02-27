@@ -1423,6 +1423,11 @@ p, li { white-space: pre-wrap; }
         <source>Run%1</source>
         <translation>运行%1</translation>
     </message>
+    <message>
+        <location filename="src/menus/project_menu.cpp" line="98"/>
+        <source>Project</source>
+        <translation>工程</translation>
+    </message>
 </context>
 <context>
     <name>kiss::menu::SourceFileMenu</name>
@@ -1940,6 +1945,11 @@ p, li { white-space: pre-wrap; }
         <location filename="rc/welcome/welcome.qml" line="55"/>
         <source>Settings</source>
         <translation>设置</translation>
+    </message>
+    <message>
+        <location filename="rc/welcome/welcome.qml" line="66"/>
+        <source>Start Page</source>
+        <translation>启动页</translation>
     </message>
 </context>
 </TS>
