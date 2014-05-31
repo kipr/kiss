@@ -1,6 +1,9 @@
 ; Header for Modern UI
 !include "MUI.nsh"
 
+; Header for using RunningX64 macro
+!include "x64.nsh"
+
 ; Driver installer utility flies
 !include "nsis-lib\winver.nsh"
 !include "nsis-lib\drvsetup.nsh"
@@ -10,7 +13,7 @@
 !define APP_NAME "KISS Platform"
 !define APP_MAJOR_VERSION "5"
 !define APP_MINOR_VERSION "1"
-!define BUILD_NUMBER "3"
+!define BUILD_NUMBER "4"
 
 ; Standard Release app name and version
 !define VERSION "${APP_MAJOR_VERSION}.${APP_MINOR_VERSION}.${BUILD_NUMBER}"
@@ -23,6 +26,7 @@
 !define MINGW_DIR "C:\Users\Nafis\Documents\Development\MinGW"
 !define LIBKOVAN_DOCS_DIR "C:\Users\Nafis\Documents\Development\libkovan\doc"
 !define LINK_DOCS_DIR "C:\Users\Nafis\Documents\Development\link-docs\KIPR Link C Standard Library"
+!define XTION_DRIVER_DIR "C:\Users\Nafis\Documents\Development\XtionDriver"
 !define INSTALLER_ICON "${KISS_DIR}\rc\logos\windows_icon.ico"
 
 ; Name of the installer
@@ -125,6 +129,16 @@ Section "Link Driver" linkDriver
 	Call InstallUpgradeDriver
 SectionEnd
 
+Section "Xtion Driver" xtionDriver
+	SetOutPath "$INSTDIR\XtionDriver"
+	File /r "${XTION_DRIVER_DIR}\*.*"
+	${If} ${RunningX64}
+		ExecWait "$INSTDIR\XtionDriver\dpinst-amd64.exe"
+	${Else}
+		ExecWait "$INSTDIR\XtionDriver\dpinst-x86.exe"
+	${EndIf}
+SectionEnd
+
 Section "Visual C++ Redistributable 2012" VCRedist2012
 	SetOutPath $INSTDIR
     File "${KISS_DIR}\deploy\vcredist_x86_2012.exe"
@@ -154,6 +168,7 @@ SectionEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${link_doc} "Documentation for the KIPR Link"
 !insertmacro MUI_DESCRIPTION_TEXT ${libkovan_doc} "Documentation for the libkovan standard library"
 !insertmacro MUI_DESCRIPTION_TEXT ${linkDriver} "Windows driver for communication with the KIPR Link"
+!insertmacro MUI_DESCRIPTION_TEXT ${xtionDriver} "Windows driver for the ASUS Xtion Pro sensor"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; Uninstall section
