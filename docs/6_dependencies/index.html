@@ -80,7 +80,7 @@ The main function calls the two functions from your library. It knows that these
     <h3>Additional Settings</h3>
     Some of the project settings can be useful when dealing with dependencies.
     <ul>
-      <li><i>Compiling</i> &rarr; <i>Compile as</i>: Sets whether the project is compiled as an executable or as a library. When you compiled your main project, its dependency was automatically downloaded and compiled as a <i>library</i>. But if try to compile the dependency by itself, you will get errors. This is because your dependency is being compiled as an <i>executable</i> (the default for projects) but doesn't have a <code>main</code> function. Changing this setting to "Library" will allow you to compile the dependency as a library.</li>
+      <li><i>Compiling</i> &rarr; <i>Compile as</i>: Sets whether the project is compiled as an executable or as a library. When you compiled your main project, its dependency was automatically downloaded and compiled as a <i>library</i>. But if you try to compile the dependency by itself, you will get errors. This is because your dependency is being compiled as an <i>executable</i> (the default for projects) but doesn't have a <code>main</code> function. Changing this setting to "Library" will allow you to compile the dependency as a library.</li>
       <li><i>Dependencies</i> &rarr; <i>Download/compile dependencies automatically</i>: Sets whether the project's dependencies should be downloaded/compiled each time the project is downloaded/compiled. Unchecking this can decrease the time needed to download/compile the project. However, changes to dependencies will <i>not</i> take effect unless you manually compile the dependency. </li>
     </ul>
 
