@@ -43,6 +43,9 @@ endif()
 if(WIN32)
   include_directories(${CMAKE_INSTALL_PREFIX}/include)
   link_directories(${CMAKE_INSTALL_PREFIX}/lib)
+  if(DEFINED ENV{QSCINTILLA_LIB_DIR})
+    link_directories($ENV{QSCINTILLA_LIB_DIR})
+  endif()
 endif()
 
 file(GLOB INCLUDES ${INCLUDE}/*.hpp
