@@ -28,6 +28,9 @@ namespace kiss
 			QString name() const;
 			
 			const QString &loadedFrom() const;
+      
+      bool isInternal() const;
+      bool isAdvanced() const;
 			
 			bool addFile(const QString &path, const templates::File &file);
 			void setFile(const QString &path, const templates::File &file);

@@ -37,6 +37,16 @@ const QString &Pack::loadedFrom() const
 	return m_loadedFrom;
 }
 
+bool Pack::isInternal() const
+{
+  return QFileInfo(m_loadedFrom).completeSuffix().startsWith("internal");
+}
+
+bool Pack::isAdvanced() const
+{
+  return QFileInfo(m_loadedFrom).completeSuffix().contains(".adv");
+}
+
 bool Pack::addFile(const QString &path, const templates::File &file)
 {
 	if(isSpecialFile(path)) return false;

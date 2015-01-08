@@ -7,6 +7,7 @@
 
 #include <QItemSelection>
 #include <QItemDelegate>
+#include <QMessageBox>
 #include <QDebug>
 
 using namespace kiss;
@@ -32,12 +33,20 @@ NewFile::NewFile(kiss::templates::Manager *manager, QWidget *parent)
 	m_model(0),
 	ui(new Ui::NewFileDialog())
 {
+  using namespace templates;
+  
 	ui->setupUi(this);
 	m_model = new kiss::templates::Model(m_manager, ui->templates);
 	m_model->setReadOnly(true);
 	ui->templates->setModel(m_model);
 	ui->templates->setItemDelegate(new ItemDelegate(this));
-	ui->templates->expandAll();
+  for(int i = 0; i < m_model->rowCount(); ++i) {
+    const QModelIndex index = m_model->index(i, 0);
+    const Pack *const pack = m_model->indexToPack(index);
+    if(!pack || pack->isAdvanced()) continue;
+    ui->templates->expand(index);
+  }
+
 	ui->removePack->setEnabled(false);
   m_helpText = ui->description->toPlainText();
   updateAcceptable();
@@ -80,7 +89,7 @@ void NewFile::selectionChanged(const QItemSelection &selection)
 	QModelIndex index = selection.indexes()[0];
 	kiss::templates::Pack *pack = m_model->indexToPack(index);
 	
-	ui->removePack->setEnabled(m_model->isIndexPack(index));
+	ui->removePack->setEnabled(m_model->isIndexPack(index) && !pack->isInternal());
 	ui->buttons->button(QDialogButtonBox::Ok)->setEnabled(!m_model->isIndexPack(index));
 	
 	if(!pack) {
@@ -101,6 +110,12 @@ void NewFile::removeSelectedPack()
 	QModelIndex index = selection.indexes()[0];
 	kiss::templates::Pack *pack = m_model->indexToPack(index);
 	if(!pack) return;
+  if(QMessageBox::warning(this, tr("Are you sure?"),
+      tr("You are about to permanently delete the \"%1\" template pack. Are you sure?").arg(pack->name()),
+      QMessageBox::No | QMessageBox::Yes, QMessageBox::No) == QMessageBox::No) {
+    return;
+  }
+  
 	m_manager->removePack(pack, true);
 }
 

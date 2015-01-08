@@ -13,10 +13,13 @@
 #include <QRunnable>
 #include <QThreadPool>
 #include <QBuffer>
+#include <QSemaphore>
 
 using namespace kiss::target;
 
-PortSampler::PortSampler()
+PortSampler::PortSampler(const QString &path, QSemaphore *const sema)
+  : _path(path)
+  , _sema(sema)
 {
 }
 
@@ -26,31 +29,37 @@ PortSampler::~PortSampler()
 
 void PortSampler::run()
 {
-	QStringList paths;
-#ifdef Q_OS_MAC
-	QDir dir("/dev/");
-	QFileInfoList list = dir.entryInfoList(QStringList() << "tty.usbmodem*", QDir::System);
-	foreach(const QFileInfo &info, list) paths << info.filePath();
-#elif defined(Q_OS_WIN)
-	for(int i = 0; i < 15; ++i) paths << QString("COM%1").arg(i);
-#else
-	QDir dir("/dev/");
-	QFileInfoList list = dir.entryInfoList(QStringList() << "ttyACM*", QDir::System);
-	foreach(const QFileInfo &info, list) paths << info.filePath();
-#endif
-	foreach(const QString &path, paths) {
-		UsbSerial usb(path.toUtf8());
-		if(!usb.makeAvailable()) {
-			qWarning() << "Failed to make port" << path << "available";
-			continue;
-		}
-		TransportLayer transport(&usb);
-		KovanSerial proto(&transport);
-		if(proto.knockKnock(150)) emit found(path);
-		proto.hangup();
-		usb.endSession();
+  qDebug() << "Checking port" << _path;
+	UsbSerial usb(_path.toUtf8());
+	if(!usb.makeAvailable()) {
+		qWarning() << "Failed to make port" << _path << "available";
+		return;
 	}
+	TransportLayer transport(&usb);
+	KovanSerial proto(&transport);
+	if(proto.knockKnock(150))
+  {
+    emit found(_path);
+    qDebug() << "EMITTING FOUND";
+  }
+	proto.hangup();
+	usb.endSession();
+  
+  _sema->release();
+}
+
+SamplerFinished::SamplerFinished(const int n, QSemaphore *const sema)
+  : _n(n)
+  , _sema(sema)
+{
+}
+
+void SamplerFinished::run()
+{
+  _sema->acquire(_n);
+  delete _sema;
   emit runFinished();
+  qDebug() << "Semaphore acquired; sampler finished";
 }
 
 KovanSerialInterface::KovanSerialInterface()
@@ -75,16 +84,37 @@ kiss::target::TargetPtr KovanSerialInterface::createTarget(const QString &addres
 const bool KovanSerialInterface::scan(InterfaceResponder *responder)
 {
 	m_responder = responder;
-	PortSampler *sampler = new PortSampler();
-	sampler->setAutoDelete(true);
-	connect(sampler, SIGNAL(found(QString)), SLOT(found(QString)));
-  connect(sampler, SIGNAL(runFinished()), this, SLOT(emitScanFinished()));
-	QThreadPool::globalInstance()->start(sampler);
+	QStringList paths;
+#ifdef Q_OS_MAC
+	QDir dir("/dev/");
+	QFileInfoList list = dir.entryInfoList(QStringList() << "tty.usbmodem*", QDir::System);
+	foreach(const QFileInfo &info, list) paths << info.filePath();
+#elif defined(Q_OS_WIN)
+	for(int i = 0; i < 30; ++i) paths << QString("COM%1").arg(i);
+#else
+	QDir dir("/dev/");
+	QFileInfoList list = dir.entryInfoList(QStringList() << "ttyACM*", QDir::System);
+	foreach(const QFileInfo &info, list) paths << info.filePath();
+#endif
+  
+  QThreadPool::globalInstance()->setMaxThreadCount(qMax(20, QThreadPool::globalInstance()->maxThreadCount()));
+  QSemaphore *sema = new QSemaphore;
+  foreach(const QString &path, paths) {
+    PortSampler *sampler = new PortSampler(path, sema);
+    sampler->setAutoDelete(true);
+    connect(sampler, SIGNAL(found(QString)), SLOT(found(QString)));
+	  QThreadPool::globalInstance()->start(sampler);
+  }
+  
+  SamplerFinished *finished = new SamplerFinished(paths.size(), sema);
+  connect(finished, SIGNAL(runFinished()), this, SLOT(emitScanFinished()));
+  QThreadPool::globalInstance()->start(finished);
 	return true;
 }
 
 void KovanSerialInterface::invalidateResponder()
 {
+  qDebug() << "Invalidate";
 	m_responder = 0;
 }
 
@@ -96,6 +126,8 @@ void KovanSerialInterface::scanStarted()
 
 void KovanSerialInterface::found(const QString &port)
 {
+  qDebug() << "Found called";
+  
 	if(!m_responder) return;
 	
 	UsbSerial *serial = new UsbSerial(port.toUtf8());

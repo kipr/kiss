@@ -7,23 +7,44 @@
 #include "interface.hpp"
 
 class UdpAdvertiser;
+class QSemaphore;
 
 namespace kiss
 {
 	namespace target
 	{
+    
 		class PortSampler : public QObject, public QRunnable
 		{
 		Q_OBJECT
 		public:
-			PortSampler();
+			PortSampler(const QString &path, QSemaphore *const sema);
 			~PortSampler();
 			void run();
 
 		signals:
 			void found(const QString &port);
-      void runFinished();
+      
+    private:
+      QString _path;
+      QSemaphore *_sema;
 		};
+    
+    class SamplerFinished : public QObject, public QRunnable
+    {
+    Q_OBJECT
+    public:
+      SamplerFinished(const int n, QSemaphore *const sema);
+      
+      void run();
+      
+    signals:
+      void runFinished();
+  
+    private:
+      int _n;
+      QSemaphore *_sema;
+    };
 
 		class KovanSerialInterface : public kiss::target::Interface
 		{

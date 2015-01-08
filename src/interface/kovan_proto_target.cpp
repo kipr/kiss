@@ -328,7 +328,7 @@ kiss::target::Target::ReturnCode KovanProtoTarget::authenticate(const quint64 id
 	
 	if(!authNecessary) {
 		std::cout << "Authorized (No authorization necessary)" << std::endl;
-		emit response(Response(id, AUTHENTICATION_KEY, true));
+		// emit response(Response(id, AUTHENTICATION_KEY, true));
 		return Target::Success;
 	}
 	
@@ -338,6 +338,6 @@ kiss::target::Target::ReturnCode KovanProtoTarget::authenticate(const quint64 id
 		std::cout << "Authorization failed. Try again." << std::endl;
 	}
 	
-	emit response(Response(id, AUTHENTICATION_KEY, authed));
+	if(!authed) emit response(Response(id, AUTHENTICATION_KEY, authed));
 	return authed ? Target::Success : Target::AuthenticationFailed;
 }
