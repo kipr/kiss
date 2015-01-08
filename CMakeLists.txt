@@ -125,7 +125,7 @@ else()
 endif()
 
 qt5_use_modules(KISS Widgets Network PrintSupport Declarative)
-target_link_libraries(KISS qscintilla2.11 pcompiler kar kovanserial ${EXTRA_LIBS})
+target_link_libraries(KISS qscintilla2 pcompiler kar kovanserial ${EXTRA_LIBS})
 
 if(WIN32)
 	target_link_libraries(KISS ws2_32)
