@@ -9,7 +9,6 @@ find_package(Qt5Network REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
 find_package(Qt5Declarative REQUIRED)
 
-
 set(INCLUDE ${CMAKE_SOURCE_DIR}/include)
 set(RC ${CMAKE_SOURCE_DIR}/rc)
 set(SRC ${CMAKE_SOURCE_DIR}/src)
@@ -37,9 +36,16 @@ include_directories(
 	${INCLUDE_DIRS}
 )
 
+if(WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/../prefix)
+endif()
+
 if(WIN32)
-  include_directories(${CMAKE_SOURCE_DIR}/../prefix/include)
-  link_directories(${CMAKE_SOURCE_DIR}/../prefix/lib)
+  include_directories(${CMAKE_INSTALL_PREFIX}/include)
+  link_directories(${CMAKE_INSTALL_PREFIX}/lib)
+  if(DEFINED ENV{QSCINTILLA_LIB_DIR})
+    link_directories($ENV{QSCINTILLA_LIB_DIR})
+  endif()
 endif()
 
 file(GLOB INCLUDES ${INCLUDE}/*.hpp
