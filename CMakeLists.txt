@@ -215,4 +215,6 @@ link_directories(${KISS_SOURCE_DIR}/lib)
 
 message("${QM_FILES}")
 
+add_definitions(-g)
+
 add_subdirectory(docs)

@@ -30,7 +30,7 @@ namespace kiss
 {
 	namespace lexer
 	{
-		class JavaLexer : public QsciLexerCPP
+		class JavaLexer : public QsciLexerJava
 		{
 		public:
 			QColor defaultColor(int style) const;

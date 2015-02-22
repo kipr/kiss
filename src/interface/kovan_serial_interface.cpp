@@ -37,11 +37,7 @@ void PortSampler::run()
 	}
 	TransportLayer transport(&usb);
 	KovanSerial proto(&transport);
-	if(proto.knockKnock(150))
-  {
-    emit found(_path);
-    qDebug() << "EMITTING FOUND";
-  }
+	if(proto.knockKnock(400)) emit found(_path);
 	proto.hangup();
 	usb.endSession();
   
